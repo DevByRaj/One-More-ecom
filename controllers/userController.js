@@ -62,6 +62,8 @@ export const postLogin = async(req, res) =>{
             return res.send("You're blocked by Admin")
         }
 
+
+        
         const isMatch = await bcrypt.compare(password, user.password)
 
         if(!isMatch){
