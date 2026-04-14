@@ -1,4 +1,5 @@
 import User from "../models/userModel.js"
+import Product from "../models/productModel.js"
 import bcrypt from "bcryptjs"
 
 
@@ -62,7 +63,6 @@ export const postLogin = async(req, res) =>{
             return res.send("You're blocked by Admin")
         }
 
-
         
         const isMatch = await bcrypt.compare(password, user.password)
 
@@ -70,6 +70,7 @@ export const postLogin = async(req, res) =>{
             return res.send("Invalid Password")
         }
         req.session.user = user._id
+        console.log("session set:", req.session.user)
 
         res.redirect("/")
 
@@ -79,8 +80,19 @@ export const postLogin = async(req, res) =>{
     }
 }
 
-export const getHome = (req, res) =>{
-    res.render('user/home')
+export const getHome = async (req, res) =>{
+    console.log("home route hit")
+    try {
+        const products = await Product.find({isListed: true})
+        console.log(products)
+
+        res.render("user/home", {products,
+            user: req.session.user || null
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("Server Error")
+    }
 }
 
 export const getLogout = (req, res) =>{
@@ -88,3 +100,4 @@ export const getLogout = (req, res) =>{
         res.redirect("/login")
     })
 }
+

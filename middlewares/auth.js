@@ -1,4 +1,5 @@
 export const isUserLoggedIn = (req, res, next) =>{
+    console.log("session:", req.session)
     if(req.session.user){
         next();
     }
