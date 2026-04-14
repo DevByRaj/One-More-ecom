@@ -32,12 +32,8 @@ app.use(
     })
 )
 
-app.get("/", (req, res) => {
-  res.send("Server working");
-});
 
-
-app.use("/user", router)
+app.use("/", router)
 
 
 const startServer = async () =>{

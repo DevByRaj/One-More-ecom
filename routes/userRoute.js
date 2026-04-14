@@ -4,16 +4,17 @@ import { isUserLoggedIn } from "../middlewares/auth.js";
 
 const router = express.Router()
 
-router.get("/", isUserLoggedIn, getHome)
-
-router.get("/login", getLogin)
-router.post("/login", postLogin)
+// router.get("/", isUserLoggedIn, getHome)
+router.get("/", getHome)
 
 router.get("/signup", getSignup)
 router.post("/signup", postSignup)
+
+router.get("/login", getLogin)
+router.post("/login", postLogin)
 
 router.get("/logout", getLogout)
 
 
 
-export default router
+export default router  

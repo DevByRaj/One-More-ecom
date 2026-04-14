@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landing Page</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --dark: #1a1a1a;
+    --dark2: #222222;
+    --dark3: #2a2a2a;
+    --light-bg: #f5f5f0;
+    --white: #ffffff;
+    --text: #1a1a1a;
+    --muted: #888;
+    --accent: #e8c547;
+    --border: rgba(0,0,0,0.1);
+  }
+ 
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--light-bg);
+    color: var(--text);
+    font-size: 13px;
+  }
+ 
+  /* ── NAVBAR ── */
+  nav {
+    background: var(--dark);
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+ 
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 48px;
+  }
+ 
+  /* IM logo */
+  .nav-logo svg { width: 72px; height: 56px; display: block; }
+ 
+  .nav-links {
+    display: flex;
+    gap: 56px;
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+  }
+  .nav-links a {
+    font-size: 18px;
+    font-weight: 400;
+    color: #ddd;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+ 
+  .nav-icons {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .nav-icons svg {
+    width: 28px; height: 28px;
+    stroke: #ccc; fill: none;
+    cursor: pointer; stroke-width: 1.6;
+  }
+  .nav-icons svg:hover { stroke: #fff; }
+ 
+  /* ── HERO BANNER ── */
+  .hero {
+    position: relative;
+    height: 380px;
+    background: #1c1a1e;
+    overflow: hidden;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+ 
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.1) 100%);
+    z-index: 1;
+  }
+ 
+  /* Simulated woman with headphone using CSS + SVG */
+  .hero-img-wrap {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 40%;
+    overflow: hidden;
+  }
+ 
+  .hero-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #1c1520 0%, #2a1a30 40%, #3a1515 100%);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 0;
+  }
+ 
+  /* Woman silhouette SVG */
+  .hero-woman {
+    height: 340px;
+    opacity: 1;
+  }
+ 
+  .hero-content {
+    position: absolute;
+    left: 60px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+ 
+  .hero-title {
+    font-size: 52px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero-title .pipe { color: #aaa; font-weight: 200; margin: 0 14px; }
+  .hero-title .highlight { font-style: italic; font-weight: 700; }
+ 
+  .hero-sub {
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: 400;
+  }
+ 
+  .hero-plus {
+    position: absolute;
+    bottom: 28px; right: 48px;
+    z-index: 2;
+    width: 40px; height: 40px;
+    border: 1.5px solid rgba(255,255,255,0.6);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 22px; cursor: pointer;
+    background: rgba(255,255,255,0.08);
+    transition: background 0.2s;
+  }
+  .hero-plus:hover { background: rgba(255,255,255,0.18); }
+ 
+  /* ── MAIN WRAPPER ── */
+  .main-content {
+    background: var(--white);
+    max-width: 100%;
+  }
+ 
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 24px;
+    letter-spacing: 0.2px;
+  }
+ 
+  /* ── EXPLORE BY CATEGORY ── */
+  .explore {
+    padding: 36px 48px 28px;
+    background: var(--white);
+  }
+ 
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+ 
+  .cat-card {
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+  }
+ 
+  .cat-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+ 
+  /* placeholder cat images using SVG */
+  .cat-img-wrap {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .cat-img-wrap.anc    { background: linear-gradient(135deg, #1a1a2e, #2a2a3e); }
+  .cat-img-wrap.gaming { background: linear-gradient(135deg, #1a0a2e, #3a1a5e); }
+  .cat-img-wrap.tws    { background: linear-gradient(135deg, #0a1a2e, #1a2a4e); }
+ 
+  .cat-label {
+    padding: 10px 0 4px;
+    text-align: center;
+  }
+  .cat-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .cat-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .cat-price {
+    font-size: 16px;
+    color: var(--text);
+    margin-top: 2px;
+  }
+ 
+  /* ── TOP PICKS ── */
+  .top-picks {
+    padding: 28px 48px 36px;
+    background: var(--light-bg);
+    border-top: 1px solid var(--border);
+  }
+ 
+  .prod-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+ 
+  .prod-card {
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .prod-card:hover { transform: translateY(-2px); }
+ 
+  .prod-img-wrap {
+    width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+ 
+  /* product image backgrounds matching screenshot colors */
+  .pi-1 { background: linear-gradient(135deg, #d0d0c8, #b8b8b0); }
+  .pi-2 { background: linear-gradient(135deg, #1a1a1a, #2a2a2a); }
+  .pi-3 { background: linear-gradient(135deg, #1a1a1a, #111); }
+  .pi-4 { background: linear-gradient(135deg, #0a0a1a, #1a1a2a); }
+  .pi-5 { background: linear-gradient(135deg, #c8c8c0, #b0b0a8); }
+  .pi-6 { background: linear-gradient(135deg, #1a1a1a, #222); }
+  .pi-7 { background: linear-gradient(135deg, #1a1a1a, #111); }
+  .pi-8 { background: linear-gradient(135deg, #0a0a1a, #1a1a2a); }
+ 
+  /* big text overlays like "50" and "35" */
+  .big-label {
+    position: absolute;
+    left: 6px; bottom: 6px;
+    font-size: 28px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.15);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .big-label.dark { color: rgba(0,0,0,0.1); }
+ 
+  .hrs-badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 7px;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+ 
+  .prod-info {
+    padding: 10px 12px 13px;
+  }
+  .prod-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .prod-price {
+    font-size: 16px;
+    color: var(--muted);
+  }
+ 
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    padding: 48px 48px 24px;
+    color: #fff;
+  }
+ 
+  .footer-logo-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+ 
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+ 
+  .footer-col-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 14px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+ 
+  .footer-col a, .footer-col span {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    color: #aaa;
+    text-decoration: none;
+    margin-bottom: 8px;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .footer-col a:hover { color: #fff; }
+ 
+  .footer-contact-label {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 500;
+    display: inline;
+  }
+  .footer-contact-val {
+    font-size: 12px;
+    color: #aaa;
+    display: inline;
+    margin-left: 4px;
+  }
+ 
+  .footer-social {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .footer-social svg {
+    width: 20px; height: 20px;
+    fill: #ccc; cursor: pointer;
+    transition: fill 0.2s;
+  }
+  .footer-social svg:hover { fill: #fff; }
+ 
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    font-weight: 300;
+  }
+ 
+  /* ── HEADPHONE SVGs ── */
+  .hp { width: 70%; height: 70%; }
+  .hp-sm { width: 55%; height: 55%; }
+</style>
+</head>
+<body>
+ 
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <svg viewBox="0 0 36 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7" cy="4.5" r="3" fill="#fff"/>
+        <rect x="5" y="10" width="4.5" height="17" rx="1.5" fill="#fff"/>
+        <rect x="15" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
+        <rect x="28.5" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
+        <polygon points="17,4 24,15 31,4 31,9 24,20 17,9" fill="#fff"/>
+      </svg>
+    </div>
+ 
+    <div class="nav-links">
+      <a>Home</a>
+      <a>Shop</a>
+      <a>Contact Us</a>
+      <a>About Us</a>
+    </div>
+ 
+    <div class="nav-icons">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+  </div>
+</nav>
+ 
+<!-- MAIN -->
+<div class="main-content">
+ 
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-img-wrap">
+    <div class="hero-img-placeholder">
+      <!-- Woman with headphone SVG -->
+      <svg class="hero-woman" viewBox="0 0 120 195" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- body silhouette -->
+        <ellipse cx="60" cy="160" rx="35" ry="40" fill="#2a1a1a" opacity="0.8"/>
+        <!-- neck -->
+        <rect x="53" y="100" width="14" height="28" rx="7" fill="#c8956a"/>
+        <!-- head -->
+        <ellipse cx="60" cy="88" rx="22" ry="26" fill="#c8956a"/>
+        <!-- hair -->
+        <ellipse cx="60" cy="70" rx="22" ry="18" fill="#2a1a0a"/>
+        <ellipse cx="60" cy="64" rx="20" ry="14" fill="#1a0a0a"/>
+        <!-- top knot -->
+        <ellipse cx="60" cy="52" rx="12" ry="8" fill="#2a1a0a"/>
+        <!-- arm raised -->
+        <path d="M78 110 Q95 90 90 75 Q88 68 82 72" stroke="#c8956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- hand -->
+        <ellipse cx="83" cy="74" rx="7" ry="5" fill="#c8956a"/>
+        <!-- headphone on head -->
+        <path d="M38 86 Q38 60 60 58 Q82 60 82 86" stroke="#1a1a1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <rect x="33" y="83" width="10" height="16" rx="4" fill="#222" stroke="#444" stroke-width="0.5"/>
+        <rect x="77" y="83" width="10" height="16" rx="4" fill="#222" stroke="#444" stroke-width="0.5"/>
+        <!-- clothing -->
+        <path d="M30 128 Q25 145 28 175 Q40 185 60 185 Q80 185 92 175 Q95 145 90 128 Q75 122 60 122 Q45 122 30 128z" fill="#6a3a6a"/>
+        <!-- face details -->
+        <ellipse cx="52" cy="89" rx="3" ry="3.5" fill="#1a0a0a" opacity="0.6"/>
+        <ellipse cx="68" cy="89" rx="3" ry="3.5" fill="#1a0a0a" opacity="0.6"/>
+        <path d="M53 98 Q60 103 67 98" stroke="#a06040" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+ 
+  <div class="hero-content">
+    <div class="hero-title">
+      RHYTHM <span class="pipe">|</span> <span class="highlight">UNWIND</span> <span class="pipe">|</span> RESONATE
+    </div>
+    <div class="hero-sub">Shop our exclusive audio collection</div>
+  </div>
+ 
+  <div class="hero-plus">+</div>
+</div>
+ 
+  <!-- EXPLORE BY CATEGORY -->
+  <div class="explore">
+    <div class="section-title">Explore by Category</div>
+    <div class="cat-grid">
+ 
+      <!-- ANC -->
+      <div class="cat-card">
+        <div class="cat-img-wrap anc">
+          <svg class="hp" viewBox="0 0 100 100" fill="none">
+            <path d="M25 55 C25 35 36 24 50 24 C64 24 75 35 75 55" stroke="#555" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <rect x="17" y="52" width="16" height="24" rx="7" fill="#2a2a3a" stroke="#666" stroke-width="0.8"/>
+            <rect x="67" y="52" width="16" height="24" rx="7" fill="#2a2a3a" stroke="#666" stroke-width="0.8"/>
+            <circle cx="25" cy="64" r="5" fill="#3a3a4a" stroke="#777" stroke-width="0.5"/>
+            <circle cx="75" cy="64" r="5" fill="#3a3a4a" stroke="#777" stroke-width="0.5"/>
+            <!-- skull logo -->
+            <circle cx="25" cy="82" r="5" fill="#444" opacity="0.6"/>
+            <rect x="23" y="85" width="4" height="3" rx="1" fill="#444" opacity="0.6"/>
+            <circle cx="23.5" cy="81" r="1" fill="#222"/>
+            <circle cx="26.5" cy="81" r="1" fill="#222"/>
+          </svg>
+        </div>
+        <div class="cat-label">
+          <div class="cat-name">ANC</div>
+          <div class="cat-sub">Work Formal Blue</div>
+          <div class="cat-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- GAMING -->
+      <div class="cat-card">
+        <div class="cat-img-wrap gaming">
+          <svg class="hp" viewBox="0 0 100 100" fill="none">
+            <path d="M22 55 C22 32 34 20 50 20 C66 20 78 32 78 55" stroke="#8060c0" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <rect x="13" y="51" width="18" height="28" rx="8" fill="#2a1a3a" stroke="#9070d0" stroke-width="1"/>
+            <rect x="69" y="51" width="18" height="28" rx="8" fill="#2a1a3a" stroke="#9070d0" stroke-width="1"/>
+            <circle cx="22" cy="65" r="6" fill="rgba(140,100,220,0.3)" stroke="#a080e0" stroke-width="0.8"/>
+            <circle cx="78" cy="65" r="6" fill="rgba(140,100,220,0.3)" stroke="#a080e0" stroke-width="0.8"/>
+            <circle cx="22" cy="65" r="2" fill="#9070d0"/>
+            <circle cx="78" cy="65" r="2" fill="#9070d0"/>
+          </svg>
+        </div>
+        <div class="cat-label">
+          <div class="cat-name">GAMING</div>
+          <div class="cat-sub">Work Formal Blue</div>
+          <div class="cat-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- TWS -->
+      <div class="cat-card">
+        <div class="cat-img-wrap tws">
+          <svg class="hp" viewBox="0 0 100 100" fill="none">
+            <!-- floating hand + earbud -->
+            <ellipse cx="50" cy="30" rx="18" ry="28" fill="#1a1a3a" stroke="rgba(100,150,255,0.4)" stroke-width="1"/>
+            <circle cx="50" cy="28" rx="10" ry="10" r="10" fill="#222" stroke="rgba(100,150,255,0.3)" stroke-width="0.8"/>
+            <circle cx="50" cy="28" r="4" fill="rgba(100,150,255,0.2)" stroke="rgba(100,150,255,0.5)" stroke-width="0.8"/>
+            <!-- hand silhouette -->
+            <path d="M30 62 Q28 50 35 44 Q42 38 50 40 Q58 38 65 44 Q72 50 70 62 Q65 75 50 78 Q35 75 30 62z" fill="#0a1020" opacity="0.7"/>
+            <path d="M40 40 Q40 30 50 28 Q60 30 60 40" stroke="rgba(150,180,255,0.3)" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="cat-label">
+          <div class="cat-name">TWS</div>
+          <div class="cat-sub">Free Pro</div>
+          <div class="cat-price">₹₹₹</div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+  <!-- TOP PICKS FOR YOU -->
+  <div class="top-picks">
+    <div class="section-title">Top Picks For You</div>
+ 
+    <!-- Row 1 -->
+    <div class="prod-grid">
+ 
+      <!-- 1: Work Formal Blue (light, 50hrs badge) -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-1">
+          <div class="big-label dark">50</div>
+          <div class="hrs-badge" style="background:rgba(0,0,0,0.5);color:#fff;">HRS</div>
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <path d="M20 44 C20 28 28 20 40 20 C52 20 60 28 60 44" stroke="#888" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <rect x="13" y="41" width="13" height="20" rx="5" fill="#aaa" stroke="#888" stroke-width="0.5"/>
+            <rect x="54" y="41" width="13" height="20" rx="5" fill="#aaa" stroke="#888" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">Work Formal Blue</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- 2: Work Formal Black (35hrs) -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-2">
+          <div class="big-label" style="color:rgba(255,255,255,0.18);">35</div>
+          <div class="hrs-badge">HRS</div>
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <!-- TWS buds -->
+            <rect x="22" y="20" width="14" height="22" rx="6" fill="#2a2a2a" stroke="#555" stroke-width="0.8"/>
+            <rect x="44" y="20" width="14" height="22" rx="6" fill="#2a2a2a" stroke="#555" stroke-width="0.8"/>
+            <circle cx="29" cy="31" r="5" fill="#333" stroke="#666" stroke-width="0.5"/>
+            <circle cx="51" cy="31" r="5" fill="#333" stroke="#666" stroke-width="0.5"/>
+            <circle cx="29" cy="31" r="2" fill="#555"/>
+            <circle cx="51" cy="31" r="2" fill="#555"/>
+            <rect x="26" y="48" width="28" height="18" rx="6" fill="#1a1a1a" stroke="#444" stroke-width="0.8"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">Work Formal Black</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- 3: Casual White Spirit -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-3" style="background:linear-gradient(135deg,#111,#1a1a1a);">
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <!-- hand holding earbud -->
+            <path d="M25 55 Q23 40 30 32 Q37 24 40 26 Q43 24 50 32 Q57 40 55 55" stroke="#444" stroke-width="1.5" fill="#1a1a1a"/>
+            <ellipse cx="40" cy="28" rx="10" ry="14" fill="#282828" stroke="#555" stroke-width="0.8"/>
+            <circle cx="40" cy="26" r="6" fill="#222" stroke="#666" stroke-width="0.8"/>
+            <circle cx="40" cy="26" r="2.5" fill="#555"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">Casual White Spirit</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- 4: California Blue (red+blue) -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-4">
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <path d="M18 42 C18 26 27 18 40 18 C53 18 62 26 62 42" stroke="#222" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <rect x="11" y="39" width="13" height="20" rx="5" fill="#1a1a1a" stroke="#e04040" stroke-width="1.5"/>
+            <rect x="56" y="39" width="13" height="20" rx="5" fill="#1a1a1a" stroke="#4040e0" stroke-width="1.5"/>
+            <circle cx="17.5" cy="49" r="4" fill="#e04040" opacity="0.8"/>
+            <circle cx="62.5" cy="49" r="4" fill="#4040e0" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">California Blue</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+    </div>
+ 
+    <!-- Row 2 -->
+    <div class="prod-grid">
+ 
+      <!-- 5: Work Formal Blue (light) -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-5">
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <path d="M20 44 C20 28 28 20 40 20 C52 20 60 28 60 44" stroke="#999" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <rect x="13" y="41" width="13" height="20" rx="5" fill="#bbb" stroke="#999" stroke-width="0.5"/>
+            <rect x="54" y="41" width="13" height="20" rx="5" fill="#bbb" stroke="#999" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">Work Formal Blue</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- 6: Work Formal Black (35hrs) -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-6">
+          <div class="big-label" style="color:rgba(255,255,255,0.15);">35</div>
+          <div class="hrs-badge">HRS</div>
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <rect x="22" y="20" width="14" height="22" rx="6" fill="#2a2a2a" stroke="#555" stroke-width="0.8"/>
+            <rect x="44" y="20" width="14" height="22" rx="6" fill="#2a2a2a" stroke="#555" stroke-width="0.8"/>
+            <circle cx="29" cy="31" r="5" fill="#333" stroke="#666" stroke-width="0.5"/>
+            <circle cx="51" cy="31" r="5" fill="#333" stroke="#666" stroke-width="0.5"/>
+            <circle cx="29" cy="31" r="2" fill="#555"/>
+            <circle cx="51" cy="31" r="2" fill="#555"/>
+            <rect x="26" y="48" width="28" height="18" rx="6" fill="#1a1a1a" stroke="#444" stroke-width="0.8"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">Work Formal Black</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- 7: Casual White Spirit -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-7" style="background:linear-gradient(135deg,#111,#1a1a1a);">
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <path d="M25 55 Q23 40 30 32 Q37 24 40 26 Q43 24 50 32 Q57 40 55 55" stroke="#444" stroke-width="1.5" fill="#1a1a1a"/>
+            <ellipse cx="40" cy="28" rx="10" ry="14" fill="#282828" stroke="#555" stroke-width="0.8"/>
+            <circle cx="40" cy="26" r="6" fill="#222" stroke="#666" stroke-width="0.8"/>
+            <circle cx="40" cy="26" r="2.5" fill="#555"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">Casual White Spirit</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+      <!-- 8: California Blue -->
+      <div class="prod-card">
+        <div class="prod-img-wrap pi-8">
+          <svg class="hp-sm" viewBox="0 0 80 80" fill="none">
+            <path d="M18 42 C18 26 27 18 40 18 C53 18 62 26 62 42" stroke="#222" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <rect x="11" y="39" width="13" height="20" rx="5" fill="#1a1a1a" stroke="#e04040" stroke-width="1.5"/>
+            <rect x="56" y="39" width="13" height="20" rx="5" fill="#1a1a1a" stroke="#4040e0" stroke-width="1.5"/>
+            <circle cx="17.5" cy="49" r="4" fill="#e04040" opacity="0.8"/>
+            <circle cx="62.5" cy="49" r="4" fill="#4040e0" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="prod-info">
+          <div class="prod-name">California Blue</div>
+          <div class="prod-price">₹₹₹₹</div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+</div><!-- /main-content -->
+ 
+<!-- FOOTER -->
+<footer>
+ 
+  <!-- centered logo -->
+  <div class="footer-logo-row">
+    <svg width="44" height="36" viewBox="0 0 36 30" fill="none">
+      <circle cx="7" cy="4.5" r="3" fill="#fff"/>
+      <rect x="5" y="10" width="4.5" height="17" rx="1.5" fill="#fff"/>
+      <rect x="15" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
+      <rect x="28.5" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
+      <polygon points="17,4 24,15 31,4 31,9 24,20 17,9" fill="#fff"/>
+    </svg>
+  </div>
+ 
+  <div class="footer-grid">
+ 
+    <!-- SUPPORT -->
+    <div class="footer-col">
+      <div class="footer-col-title">SUPPORT</div>
+      <a>Order Status</a>
+      <a>Product Support</a>
+      <a>Shipping &amp; Return Policy</a>
+      <a>Complaint Registration</a>
+    </div>
+ 
+    <!-- About Us -->
+    <div class="footer-col">
+      <div class="footer-col-title">About Us</div>
+      <a>Contact Us</a>
+      <a>Privacy Policy</a>
+      <a>Terms of use</a>
+      <a>FAQ</a>
+    </div>
+ 
+    <!-- Contact -->
+    <div class="footer-col">
+      <div class="footer-col-title">Contact</div>
+      <div style="margin-bottom:5px;">
+        <span class="footer-contact-label">Email :</span>
+        <span class="footer-contact-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="127d7c777f7d607752757f737b7e3c717d7f">[email&#160;protected]</a></span>
+      </div>
+      <div>
+        <span class="footer-contact-label">Phone :</span>
+        <span class="footer-contact-val">+91 8888888888</span>
+      </div>
+    </div>
+ 
+    <!-- Connect with us -->
+    <div class="footer-col">
+      <div class="footer-col-title">Connect with us</div>
+      <div class="footer-social">
+        <!-- Instagram -->
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        <!-- Facebook -->
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <!-- X -->
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2025 onemore . All Rights Reserved.
+  </div>
+</footer>
+
+</body>
+</html>
