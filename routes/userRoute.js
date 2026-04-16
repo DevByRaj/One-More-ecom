@@ -1,5 +1,9 @@
 import express from "express";
-import { getHome, getLogin, getSignup, postSignup, postLogin,getLogout} from "../controllers/userController.js";
+import { getHome,
+        getLogin, postLogin,
+        getSignup, postSignup, 
+        getLogout,
+        getProfile, getEditProfile, postEditProfile} from "../controllers/userController.js";
 import { isUserLoggedIn } from "../middlewares/auth.js";
 
 const router = express.Router()
@@ -15,5 +19,8 @@ router.post("/login", postLogin)
 router.get("/logout", getLogout)
 
 router.get("/profile", isUserLoggedIn, getProfile)
+
+router.get("/profile/edit", isUserLoggedIn, getEditProfile)
+router.post("/profile/edit", isUserLoggedIn, postEditProfile)
 
 export default router

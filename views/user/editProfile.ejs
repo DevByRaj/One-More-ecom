@@ -1,0 +1,13 @@
+<h2>Edit Profile</h2>
+
+<form action="/profile/edit" method="POST">
+
+  <input type="text" name="name" value="<%= user.name %>" placeholder="Name" />
+
+  <input type="email" name="email" value="<%= user.email %>" placeholder="Email" />
+
+  <input type="text" name="phone" value="<%= user.phone %>" placeholder="Phone Number" />
+
+  <button type="submit">Save Changes</button>
+
+</form>
