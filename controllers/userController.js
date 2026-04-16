@@ -101,3 +101,48 @@ export const getLogout = (req, res) =>{
     })
 }
 
+
+export const getProfile = async(req, res) =>{
+    try{
+        const userId = req.session.user
+        
+        const user = await User.findById(userId)
+
+        res.render("user/profile",{user})
+    } catch(error){
+        console.log(error)
+        res.status(500).send("Server Error")
+    }
+}
+
+export const getEditProfile = async(req, res) =>{
+    try {
+        const userId = req.session.user
+
+        const user = await User.findById(userId)
+
+        res.render("user/editProfile", {user})
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("Server Error")        
+    }
+}
+
+export const postEditProfile = async(req, res) =>{
+    try {
+        console.log("BODY:", req.body)
+        const userId = req.session.user
+        const {name, email, phone} = req.body
+
+        if(!/^\d{10}$/.test(phone)){
+            return res.send("Phone number should be exactly 10 digits")
+        }
+        await User.findByIdAndUpdate(userId,{
+            name, email, phone
+        })
+        res.redirect("/profile")
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("Server error")
+    }
+}
