@@ -36,39 +36,31 @@
  
   .nav-inner {
     display: flex;
+    height: 90px;
     align-items: center;
     justify-content: space-between;
-    padding: 22px 48px;
+    padding: 14px 32px;
   }
  
-  /* IM logo */
-  .nav-logo svg { width: 72px; height: 56px; display: block; }
+  .logo-img {
+   width: 80px;     /* adjust size */
+   height: auto;
+   object-fit: contain;
+  }
  
   .nav-links {
-    display: flex;
-    gap: 56px;
-    position: absolute;
-    left: 50%; transform: translateX(-50%);
+    display: flex; gap: 36px;
+    position: absolute; left: 50%; transform: translateX(-50%);
   }
   .nav-links a {
-    font-size: 18px;
-    font-weight: 400;
-    color: #ddd;
-    text-decoration: none;
-    letter-spacing: 0.2px;
-    cursor: pointer;
-    transition: color 0.2s;
+    font-size: 14px; font-weight: 400;
+    color: #ccc; text-decoration: none;
+    cursor: pointer; transition: color 0.2s;
   }
   .nav-links a:hover { color: #fff; }
- 
-  .nav-icons {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    
-  }
+  .nav-icons { display: flex; gap: 18px; align-items: center; }
   .nav-icons svg {
-    width: 28px; height: 28px;
+    width: 22px; height: 22px;
     stroke: #ccc; fill: none;
     cursor: pointer; stroke-width: 1.6;
   }
@@ -318,6 +310,16 @@
     padding: 48px 48px 24px;
     color: #fff;
   }
+
+  .footer-logo {
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center;     /* Vertical center */
+  width: 100%;
+  margin-bottom: 40px;     /* Space between logo and the links below */
+}
+
+
  
   .footer-logo-row {
     display: flex;
@@ -398,14 +400,8 @@
 <nav>
   <div class="nav-inner">
     <div class="nav-logo">
-      <svg viewBox="0 0 36 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="7" cy="4.5" r="3" fill="#fff"/>
-        <rect x="5" y="10" width="4.5" height="17" rx="1.5" fill="#fff"/>
-        <rect x="15" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
-        <rect x="28.5" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
-        <polygon points="17,4 24,15 31,4 31,9 24,20 17,9" fill="#fff"/>
-      </svg>
-    </div>
+  <img src="/images/logo.png" alt="logo" class="logo-img">
+</div>
  
     <div class="nav-links">
       <a>Home</a>
@@ -722,15 +718,9 @@
 <footer>
  
   <!-- centered logo -->
-  <div class="footer-logo-row">
-    <svg width="44" height="36" viewBox="0 0 36 30" fill="none">
-      <circle cx="7" cy="4.5" r="3" fill="#fff"/>
-      <rect x="5" y="10" width="4.5" height="17" rx="1.5" fill="#fff"/>
-      <rect x="15" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
-      <rect x="28.5" y="4" width="4.5" height="22" rx="1.5" fill="#fff"/>
-      <polygon points="17,4 24,15 31,4 31,9 24,20 17,9" fill="#fff"/>
-    </svg>
-  </div>
+   <div class="footer-logo">
+  <img src="/images/logo.png" class="logo-img">
+</div>
  
   <div class="footer-grid">
  

@@ -1,13 +1,500 @@
-<h2>Edit Profile</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>update Personal Information</title>
+<link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet"/>
+<script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<form action="/profile/edit" method="POST">
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #1a1a1a;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-  <input type="text" name="name" value="<%= user.name %>" placeholder="Name" />
+  /* ── NAVBAR ── */   
+  nav {
+    background: #1a1a1a;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-inner {
+    display: flex;
+    height: 90px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+  }
+  .logo-img {
+  width: 80px;     /* adjust size */
+  height: auto;
+  object-fit: contain;
+}
 
-  <input type="email" name="email" value="<%= user.email %>" placeholder="Email" />
+  
+ .nav-links {
+    display: flex; gap: 36px;
+    position: absolute; left: 50%; transform: translateX(-50%);
+  }
+  .nav-links a {
+    font-size: 14px; font-weight: 400;
+    color: #ccc; text-decoration: none;
+    cursor: pointer; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-icons { display: flex; gap: 18px; align-items: center; }
+  .nav-icons svg {
+    width: 22px; height: 22px;
+    stroke: #ccc; fill: none;
+    cursor: pointer; stroke-width: 1.6;
+  }
+  .nav-icons svg:hover { stroke: #fff; }
 
-  <input type="text" name="phone" value="<%= user.phone %>" placeholder="Phone Number" />
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    background: #f0f0eb;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 36px 20px 48px;
+  }
 
-  <button type="submit">Save Changes</button>
+  /* ── CARD ── */
+  .card {
+    background: #f5f5f2;
+    border: 1px solid #d8d8d4;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 460px;
+    padding: 28px 32px 32px;
+  }
 
-</form>
+  .card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 24px;
+    letter-spacing: 0.2px;
+  }
+
+  /* ── AVATAR UPLOAD ── */
+  .avatar-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .avatar-upload {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 1.5px solid #bbb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-upload:hover {
+    border-color: #888;
+    background: #f8f8f8;
+  }
+  .avatar-upload svg {
+    width: 32px; height: 32px;
+    stroke: #aaa; fill: none; stroke-width: 1.4;
+  }
+  .avatar-upload input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  #avatar-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+  .show-img {
+  display: block;
+}
+
+/* .hide-img {
+  display: none;
+} */
+
+.upload-icon {
+  position: absolute;
+}
+
+/* hide icon when image exists */
+.avatar-upload img.show-img + .upload-icon {
+  display: none;
+}
+
+
+.show-img {
+  display: block;
+}
+
+.hide-img {
+  display: none;
+}
+
+.upload-icon {
+  position: absolute;
+}
+
+/* hide icon when image exists */
+.avatar-upload img.show-img + .upload-icon {
+  display: none;
+}
+
+
+  /* ── FORM FIELDS ── */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: #555;
+    margin-bottom: 6px;
+    padding-left: 2px;
+    letter-spacing: 0.2px;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid #d0d0cc;
+    border-radius: 20px;
+    padding: 11px 18px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #1a1a1a;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input::placeholder { color: #bbb; }
+  .form-group input:focus {
+    border-color: #888;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  }
+
+  /* ── SAVE BUTTON ── */
+  .save-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .save-btn {
+    background: #1a1a1a;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 44px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .save-btn:hover { background: #333; }
+  .save-btn:active { transform: scale(0.98); }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #1a1a1a; color: #fff;
+    font-size: 12px; padding: 11px 20px;
+    border-radius: 6px; display: none;
+    border: 1px solid #444; z-index: 999;
+    font-family: 'Poppins', sans-serif;
+    animation: fadeUp 0.25s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #1a1a1a;
+    padding: 40px 60px 20px;
+    color: #fff;
+  }
+
+  /* Center the footer logo container */
+.footer-logo {
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center;     /* Vertical center */
+  width: 100%;
+  margin-bottom: 40px;     /* Space between logo and the links below */
+}
+
+/* Ensure the image inside stays responsive */
+.footer-logo .logo-img {
+  width: 80px;            /* Increased slightly for footer prominence */
+  height: auto;
+  display: block;
+} 
+
+  .footer-logo-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  /* big footer logo */
+  .footer-logo-big svg { width: 72px; height: 58px; }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .footer-col-title {
+    font-size: 12px; font-weight: 700;
+    color: #fff; margin-bottom: 14px;
+    letter-spacing: 0.4px; text-transform: uppercase;
+  }
+
+  .footer-col a {
+    display: block; font-size: 11.5px;
+    font-weight: 300; color: #aaa;
+    text-decoration: none; margin-bottom: 8px;
+    cursor: pointer; transition: color 0.2s; line-height: 1.5;
+  }
+  .footer-col a:hover { color: #fff; }
+
+  .contact-row { margin-bottom: 6px; }
+  .contact-label { font-size: 11.5px; color: #fff; font-weight: 500; }
+  .contact-val   { font-size: 11.5px; color: #aaa; margin-left: 4px; }
+
+  .social-row { display: flex; gap: 14px; margin-top: 6px; }
+  .social-row svg {
+    width: 20px; height: 20px; fill: #ccc;
+    cursor: pointer; transition: fill 0.2s;
+  }
+  .social-row svg:hover { fill: #fff; }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 18px;
+    font-size: 11px; color: #555; font-weight: 300;
+  }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <!-- logo -->
+    <div class="nav-logo">
+  <img src="/images/logo.png" alt="logo" class="logo-img">
+</div>
+
+    <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="#">Shop</a>
+    <a href="#">Contact Us</a>
+    <a href="#">About Us</a>
+  </div>
+
+    <div class="nav-icons">
+      <!-- person -->
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <!-- heart -->
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <!-- cart -->
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <div class="card">
+    <div class="card-title">Personal Information</div>
+    
+    <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+
+    <!-- avatar upload -->
+    <div class="avatar-wrap">
+  <div class="avatar-upload" title="Click to upload photo">
+
+    <!-- PROFILE IMAGE -->
+    <img id="avatar-preview" 
+         src="<%= user.profileImage || '' %>" 
+         class="<%= user.profileImage ? 'show-img' : 'hide-img' %>">
+
+    <!-- IMAGE ICON -->
+    <svg class="upload-icon" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="18" height="18" rx="3"/>
+      <circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21 15 16 10 5 21"/>
+    </svg>
+
+    <!-- FILE INPUT -->
+    <input type="file" 
+           name="profileImage" 
+           accept="image/*" 
+           onchange="previewAvatar(this)">
+
+  </div>
+</div>
+
+    <!-- first name -->
+    <div class="form-group">
+      <label>first name</label>
+      <input type="text" name="fname" value="<%= user.name.split(' ')[0] %>">
+    </div>
+
+    <!-- last name -->
+    <div class="form-group">
+      <label>last name</label>  
+      <input type="text" name="lname" value="<%= user.name.split(' ')[1] || '' %>">
+    </div>
+
+    <!-- email -->
+    <div class="form-group">
+      <label>email</label>
+      <input type="email" name="email" value="<%= user.email %>">
+    </div>
+
+    <!-- phone -->
+    <div class="form-group">
+      <label>phone</label>
+      <input type="tel" name="phone" value="<%= user.phone %>" maxlength="10">
+    </div>
+
+    <!-- save -->
+    <div class="save-wrap">
+      <button type="submit" class="save-btn">Save</button>
+    </div>
+    </form>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+  <img src="/images/logo.png" class="logo-img">
+</div>  
+
+  <div class="footer-grid">
+    <!-- SUPPORT -->
+    <div class="footer-col">
+      <div class="footer-col-title">SUPPORT</div>
+      <a>Order Status</a>
+      <a>Product Support</a>
+      <a>Shipping &amp; Return Policy</a>
+      <a>Complaint Registration</a>
+    </div>
+
+    <!-- About Us -->
+    <div class="footer-col">
+      <div class="footer-col-title">About Us</div>
+      <a>Contact Us</a>
+      <a>Privacy Policy</a>
+      <a>Terms of use</a>
+      <a>FAQ</a>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-col">
+      <div class="footer-col-title">Contact</div>
+      <div class="contact-row">
+        <span class="contact-label">Email :</span>
+        <span class="contact-val">onemore@gmail.com</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Phone :</span>
+        <span class="contact-val">+91 8888888888</span>
+      </div>
+    </div>
+
+    <!-- Connect -->
+    <div class="footer-col">
+      <div class="footer-col-title">Connect with us</div>
+      <div class="social-row">
+        <!-- Instagram -->
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        <!-- Facebook -->
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <!-- X -->
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">© 2025 onemore . All Rights Reserved.</div>
+</footer>
+
+<script>
+  function previewAvatar(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const img = document.getElementById('avatar-preview');
+      img.src = e.target.result;
+      img.classList.remove("hide-img");
+      img.classList.add("show-img");
+
+      // hide icon
+      const icon = input.closest('.avatar-upload').querySelector('.upload-icon');
+      icon.style.display = "none";
+    };
+
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+  function handleSave() {
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!fname || !lname || !email) {
+      showToast('Please fill in all required fields.');
+      return;
+    }
+    showToast('Profile saved successfully!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.style.display = 'none', 2500);
+  }
+</script>
+</body>
+</html>

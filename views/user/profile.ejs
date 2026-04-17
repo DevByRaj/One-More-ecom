@@ -25,11 +25,19 @@
   }
   .nav-inner {
     display: flex;
+    height: 90px;
     align-items: center;
     justify-content: space-between;
     padding: 14px 32px;
   }
-  .nav-logo svg { width: 52px; height: 42px; display: block; }
+
+
+   .logo-img {
+   width: 80px;     /* adjust size */
+   height: auto;
+   object-fit: contain;
+  }
+
   .nav-links {
     display: flex; gap: 36px;
     position: absolute; left: 50%; transform: translateX(-50%);
@@ -269,6 +277,22 @@
     padding: 40px 48px 20px;
     color: #fff;
   }
+
+  /* Center the footer logo container */
+.footer-logo {
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center;     /* Vertical center */
+  width: 100%;
+  margin-bottom: 40px;     /* Space between logo and the links below */
+}
+
+/* Ensure the image inside stays responsive */
+.footer-logo .logo-img {
+  width: 80px;            /* Increased slightly for footer prominence */
+  height: auto;
+  display: block;
+}
  
   .footer-logo-row {
     display: flex;
@@ -334,17 +358,14 @@
 <nav>
   <div class="nav-inner">
     <div class="nav-logo">
-      <svg viewBox="0 0 52 42" fill="none">
-        <circle cx="9" cy="6" r="4" fill="#fff"/>
-        <rect x="6.5" y="13" width="5" height="20" rx="2" fill="#fff"/>
-        <rect x="19" y="5" width="5" height="30" rx="2" fill="#fff"/>
-        <rect x="36" y="5" width="5" height="30" rx="2" fill="#fff"/>
-        <polygon points="21,5 30.5,18 40,5 40,11 30.5,24 21,11" fill="#fff"/>
-      </svg>
-    </div>
+  <img src="/images/logo.png" alt="logo" class="logo-img">
+</div>
     <div class="nav-links">
-      <a>Home</a><a>Shop</a><a>Contact Us</a><a>About Us</a>
-    </div>
+    <a href="/">Home</a>
+    <a href="#">Shop</a>
+    <a href="#">Contact Us</a>
+    <a href="#">About Us</a>
+  </div>
     <div class="nav-icons">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -407,21 +428,11 @@
       <!-- avatar + ref -->
       <div class="profile-header">
         <div class="avatar-wrap">
-          <div class="avatar">
-            <!-- Headphone avatar SVG -->
-            <svg viewBox="0 0 56 56" fill="none">
-              <circle cx="28" cy="28" r="28" fill="#1a1a3a"/>
-              <path d="M14 30 C14 20 20 13 28 13 C36 13 42 20 42 30" stroke="#5a5aaa" stroke-width="5" fill="none" stroke-linecap="round"/>
-              <rect x="10" y="28" width="9" height="14" rx="4" fill="#3a3a6a" stroke="#6a6aaa" stroke-width="0.8"/>
-              <rect x="37" y="28" width="9" height="14" rx="4" fill="#3a3a6a" stroke="#6a6aaa" stroke-width="0.8"/>
-              <circle cx="14.5" cy="35" r="3.5" fill="#5a5aaa" opacity="0.7"/>
-              <circle cx="41.5" cy="35" r="3.5" fill="#5a5aaa" opacity="0.7"/>
-            </svg>
-          </div>
-          <div class="avatar-edit">
-            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-          </div>
-        </div>
+  <div class="avatar">
+    <img src="<%= user.profileImage || '/images/default-user.png' %>" 
+         style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+  </div> <!-- ✅ ADD THIS -->
+</div>
  
         <div class="ref-section">
           <span class="ref-label">REF</span>
@@ -456,15 +467,9 @@
  
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo-row">
-    <svg width="56" height="46" viewBox="0 0 52 42" fill="none">
-      <circle cx="9" cy="6" r="4" fill="#fff"/>
-      <rect x="6.5" y="13" width="5" height="20" rx="2" fill="#fff"/>
-      <rect x="19" y="5" width="5" height="30" rx="2" fill="#fff"/>
-      <rect x="36" y="5" width="5" height="30" rx="2" fill="#fff"/>
-      <polygon points="21,5 30.5,18 40,5 40,11 30.5,24 21,11" fill="#fff"/>
-    </svg>
-  </div>
+  <div class="footer-logo">
+  <img src="/images/logo.png" class="logo-img">
+</div>
  
   <div class="footer-grid">
     <div class="footer-col">
