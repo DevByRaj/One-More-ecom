@@ -1,49 +1,91 @@
 import User from "../models/userModel.js"
 import Product from "../models/productModel.js"
 import bcrypt from "bcryptjs"
+import { validationResult } from "express-validator"
+import crypto from "crypto"
+import {sendOTP} from "../config/mail.js"
 
 
-export const getSignup=(req, res) =>{
-    res.render("user/signup")
+
+export const getSignup = (req, res) =>{
+    res.render("user/signup",{
+        errors: [],
+        oldData: {}
+    })
 }
 
 export const postSignup = async (req, res) =>{
-    try{
-        const {name, email, password, confirmPassword}= req.body
+    try {
+        const errors = validationResult(req)
 
-        if(!name || !email || !password || !confirmPassword){
-            return res.send("All fields are required")
+        if(!errors.isEmpty()){
+            return res.render("user/signup",{
+                errors: errors.array(),
+                oldData: req.body
+            })
         }
 
-        if(password !== confirmPassword){
-            return res.send("Password not matched")
-        }
-        if(password.length < 8){
-            return res.send("Password must be atlleast 8 characters ")
-        }
+        const {name, email, password, refCode} = req.body
 
         const existingUser = await User.findOne({email})
 
         if(existingUser){
-            return res.send("User already exists")
+            return res.render("user/signup", {
+                errors:[{msg: "Email already exists", path: "email"}],
+                oldData: req.body
+            })
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+        const hashedpassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
             name,
             email,
-            password: hashedPassword,
+            password: hashedpassword,
+            refCode: refCode || null,
+            otp,
+            otpExpires: Date.now()+2*60*1000,
+            isVerified: false
         })
 
-        await newUser.save();
+        await newUser.save()
+        await sendOTP(email.otp)
 
-        res.redirect("/login")
-    } catch(error){
-        console.error("Signup error:", error)
+        res.redirect(`/verify-otp?email=${email}`)
+
+
+    } catch (error) {
+        console.error("signup error: ", error)
         res.status(500).send("Server Error")
     }
 }
+
+export const verifyOTP = async (req, res) =>{
+    const {email, otp} = req.body
+    const user = await User.findOne({email})
+
+    if(!user){
+        return res.send("User not found")
+    }
+
+    if(user.otp != otp){
+        return res.render("user/verifyOtp", {email,error: "Invalid OTP"})
+    }
+
+    if(user.otpExpires < Date.now()){
+        return res.render("user/verifyOtp", {email,error: "OTP expired"})
+    }
+
+    user.isVerified = true
+    user.otp = null
+    user.otpExpires = null
+
+    await user.save("/login")
+}
+
+
 
 export const getLogin= (req, res) =>{
     res.render("user/login")

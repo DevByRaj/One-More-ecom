@@ -12,10 +12,11 @@ const userSchema = new mongoose.Schema(
         required: true,
         unique: true,
         lowercase: true,
+        // match: [/^[a-zA-Z0-9._%+-]+@gmail\.com$/, "Require valid email"],
     },
     password: {
         type: String,
-        required: false,
+        required: true,
     },
     phone: {
         type: String,
@@ -48,11 +49,11 @@ const userSchema = new mongoose.Schema(
         type: String,
     },
     resetTokenExpires:{
-        type: String,
+        type: Date,
     },
 },
 {
-    timestamp: true,
+    timestamps: true,
 }
 )
 
