@@ -34,6 +34,12 @@ nav {
   font-weight: 600;
 }
 
+ .logo-img {
+   width: 60px;     /* adjust size */
+   height: auto;
+   object-fit: contain;
+  }
+
 .nav-links {
   display: flex;
   gap: 40px;
@@ -145,10 +151,18 @@ footer {
 
 /* center logo */
 .footer-logo {
-  text-align: center;
-  font-size: 40px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center;     /* Vertical center */
+  width: 100%;
+  margin-bottom: 40px;     /* Space between logo and the links below */
+}
+
+/* Ensure the image inside stays responsive */
+.footer-logo .logo-img {
+  width: 80px;            /* Increased slightly for footer prominence */
+  height: auto;
+  display: block;
 }
 
 .footer-section h4 {
@@ -177,7 +191,9 @@ footer {
 
 <!-- NAVBAR -->
 <nav>
-  <div class="logo">IM</div>
+  <div class="nav-logo">
+  <img src="/images/logo.png" alt="logo" class="logo-img">
+</div>
 
   <div class="nav-links">
     <a href="/">Home</a>
@@ -225,7 +241,9 @@ footer {
 <footer>
 
   <!-- center logo -->
-  <div class="footer-logo">IM</div>
+  <div class="footer-logo">
+  <img src="/images/logo.png" class="logo-img">
+</div>
 
   <div class="footer-container">
 

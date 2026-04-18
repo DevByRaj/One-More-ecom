@@ -70,9 +70,11 @@ export const postLogin = async(req, res) =>{
             return res.send("Invalid Password")
         }
         req.session.user = user._id
-        console.log("session set:", req.session.user)
+        
 
-        res.redirect("/")
+        req.session.save(()=>{
+            res.redirect("/")
+        })
 
     } catch (error) {
         console.log(error)
@@ -130,17 +132,25 @@ export const getEditProfile = async(req, res) =>{
 
 export const postEditProfile = async(req, res) =>{
     try {
-        console.log("BODY:", req.body)
         const userId = req.session.user
-        const {name, email, phone} = req.body
+        const {fname, lname, email, phone} = req.body
+
+        const name = fname + " " + lname
 
         if(!/^\d{10}$/.test(phone)){
             return res.send("Phone number should be exactly 10 digits")
         }
-        await User.findByIdAndUpdate(userId,{
+        let updateData ={
             name, email, phone
-        })
+        }
+        if(req.file){
+            updateData.profileImage = "/uploads/" + req.file.filename
+        }
+
+        await User.findByIdAndUpdate(userId, updateData)
+
         res.redirect("/profile")
+        
     } catch (error) {
         console.log(error)
         res.status(500).send("Server error")
