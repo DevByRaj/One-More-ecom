@@ -137,6 +137,23 @@ nav {
   margin-top: 5px;
 }
 
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: black;
+  margin-top: 10px;
+}
+
+.google-btn:hover {
+  background-color: #f5f5f5;
+}
+
 /* ================= FOOTER ================= */
 footer {
   background: #0f0f0f;
@@ -216,23 +233,49 @@ footer {
     <h2>Signup</h2>
 
     <form action="/signup" method="POST">
-      <input type="text" name="name" placeholder="Username" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-      <input type="text" name="refCode" placeholder="ref Code">
 
-      <div class="login-link">
-        <a href="/login">Login</a>
-      </div>
+  <!-- NAME -->
+  <input type="text" name="name" placeholder="Username"
+         value="<%= oldData?.name || '' %>" required>
+  <span style="color:red;">
+    <%= errors?.find(e => e.path === 'name')?.msg %>
+  </span>
 
-      <button type="submit" class="btn">Signup</button>
-    </form>
+  <!-- EMAIL -->
+  <input type="email" name="email" placeholder="Email"
+         value="<%= oldData?.email || '' %>" required>
+  <span style="color:red;">
+    <%= errors?.find(e => e.path === 'email')?.msg %>
+  </span>
 
-    <p class="google-text">Or Signup with</p>
-    <div class="google-icon">
-  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
-</div>
+  <!-- PASSWORD -->
+  <input type="password" name="password" placeholder="Password" required>
+  <span style="color:red;">
+    <%= errors?.find(e => e.path === 'password')?.msg %>
+  </span>
+
+  <!-- CONFIRM PASSWORD -->
+  <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+  <span style="color:red;">
+    <%= errors?.find(e => e.path === 'confirmPassword')?.msg %>
+  </span>
+
+  <!-- REF CODE -->
+  <input type="text" name="refCode" placeholder="ref Code"
+         value="<%= oldData?.refCode || '' %>">
+
+  <div class="login-link">
+    <a href="/login">Login</a>
+  </div>
+
+  <button type="submit" class="btn">Signup</button>
+
+</form>
+
+    <a href="/auth/google" class="google-btn">
+  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+  <span>Continue with Google</span>
+</a>
 
   </div>
 </div>
