@@ -39,17 +39,29 @@ router.get("/auth/google/callback",
                 failureRedirect: "/login"
         }),
         (req, res) =>{
-                req.session.user = req.user._id
-                res.redirect("/")
+                
+                if(req.user.isVerified){
+                        req.session.user = req.user._id
+
+                        return req.session.save(() =>{
+                                res.redirect("/")
+                        })
+                } else{
+                        return res.redirect(`/verify-otp?email=${req.user.email}`)
+                }
         }
 )
 
 router.get("/verify-otp", (req, res) => {
-    res.render("user/verifyOtp", {
-        email: req.query.email,
-        error: null
-    });
+  const { email } = req.query;
+
+  if (!email) {
+    return res.redirect("/signup");
+  }
+
+  res.render("user/verifyOtp", { email, error: null });
 });
+
 router.post("/verify-otp", verifyOTP)
 
 export default router

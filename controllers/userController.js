@@ -14,77 +14,113 @@ export const getSignup = (req, res) =>{
     })
 }
 
-export const postSignup = async (req, res) =>{
-    try {
-        const errors = validationResult(req)
+export const postSignup = async (req, res) => {
+  try {
+    const errors = validationResult(req)
 
-        if(!errors.isEmpty()){
-            return res.render("user/signup",{
-                errors: errors.array(),
-                oldData: req.body
-            })
-        }
-
-        const {name, email, password, refCode} = req.body
-
-        const existingUser = await User.findOne({email})
-
-        if(existingUser){
-            return res.render("user/signup", {
-                errors:[{msg: "Email already exists", path: "email"}],
-                oldData: req.body
-            })
-        }
-
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
-
-        const hashedpassword = await bcrypt.hash(password, 10);
-
-        const newUser = new User({
-            name,
-            email,
-            password: hashedpassword,
-            refCode: refCode || null,
-            otp,
-            otpExpires: Date.now()+2*60*1000,
-            isVerified: false
-        })
-
-        await newUser.save()
-        await sendOTP(email.otp)
-
-        res.redirect(`/verify-otp?email=${email}`)
-
-
-    } catch (error) {
-        console.error("signup error: ", error)
-        res.status(500).send("Server Error")
+    if (!errors.isEmpty()) {
+      return res.render("user/signup", {
+        errors: errors.array(),
+        oldData: req.body
+      })
     }
+
+    const { name, email, password, refCode } = req.body
+
+    let user = await User.findOne({ email })
+
+
+    if (user && user.isVerified) {
+      return res.render("user/signup", {
+        errors: [{ msg: "User already exists. Please login.", path: "email" }],
+        oldData: req.body
+      })
+    }
+
+
+    if (user && !user.isVerified) {
+      const otp = Math.floor(1000 + Math.random() * 9000).toString()
+
+      user.otp = otp
+      user.otpExpires = Date.now() + 2 * 60 * 1000
+
+      await user.save()
+      await sendOTP(email, otp)
+
+      return res.redirect(`/verify-otp?email=${email}`)
+    }
+
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString()
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      refCode: refCode || null,
+      otp,
+      otpExpires: Date.now() + 2 * 60 * 1000,
+      isVerified: false
+    })
+
+    await user.save()
+    await sendOTP(email, otp)
+
+    res.redirect(`/verify-otp?email=${email}`)
+
+  } catch (error) {
+    console.error("signup error:", error)
+    res.status(500).send("Server Error")
+  }
 }
 
-export const verifyOTP = async (req, res) =>{
-    const {email, otp} = req.body
-    const user = await User.findOne({email})
+export const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
 
-    if(!user){
-        return res.send("User not found")
+    if (!email) {
+      return res.redirect("/signup");
     }
 
-    if(user.otp != otp){
-        return res.render("user/verifyOtp", {email,error: "Invalid OTP"})
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.send("User not found");
     }
 
-    if(user.otpExpires < Date.now()){
-        return res.render("user/verifyOtp", {email,error: "OTP expired"})
+    if (user.otp !== otp) {
+      return res.render("user/verifyOtp", {
+        email,
+        error: "Invalid OTP"
+      });
+    }
+
+    if (user.otpExpires < Date.now()) {
+      return res.render("user/verifyOtp", {
+        email,
+        error: "OTP expired"
+      });
     }
 
     user.isVerified = true
-    user.otp = null
+    user.otp = null;
     user.otpExpires = null
 
-    await user.save("/login")
-}
+    await user.save();
 
+    req.session.user = user._id
+
+    req.session.save(() => {
+      res.redirect("/")
+    });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).send("server Error")
+  }
+}
 
 
 export const getLogin= (req, res) =>{
@@ -147,15 +183,24 @@ export const getLogout = (req, res) =>{
 
 
 export const getProfile = async(req, res) =>{
-    try{
+    try {
         const userId = req.session.user
-        
-        const user = await User.findById(userId)
+        if(!userId){
+            return res.redirect("/login")
+        }
 
-        res.render("user/profile",{user})
-    } catch(error){
+        const user = await User.findById(userId);
+
+        if(!user){
+            return res.redirect("/login")
+        }
+
+        res.render("user/profile", {user})
+       
+    } catch (error) {
         console.log(error)
-        res.status(500).send("Server Error")
+        res.status(500).send("server Error")
+        
     }
 }
 
@@ -180,8 +225,14 @@ export const postEditProfile = async(req, res) =>{
         const name = fname + " " + lname
 
         if(!/^\d{10}$/.test(phone)){
-            return res.send("Phone number should be exactly 10 digits")
+            const user = await User.findById(userId)
+
+            return res.render("user/editProfile", {
+                user,
+                error: "Phone number should be exactly 10 digits"
+            })
         }
+
         let updateData ={
             name, email, phone
         }
