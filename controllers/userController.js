@@ -45,8 +45,15 @@ export const postSignup = async (req, res) => {
       user.otpExpires = Date.now() + 2 * 60 * 1000
 
       await user.save()
-      await sendOTP(email, otp)
+      
+      const isEmailSent = await sendOTP(email, otp)
 
+      if(!isEmailSent){
+        return res.render("user/signup", {
+            errors: [{msg: "Invalid email address. Please use a valid email", path: "email" }],
+            oldData: req.body
+        })
+      }
       return res.redirect(`/verify-otp?email=${email}`)
     }
 
@@ -71,7 +78,7 @@ export const postSignup = async (req, res) => {
     res.redirect(`/verify-otp?email=${email}`)
 
   } catch (error) {
-    console.error("signup error:", error)
+    
     res.status(500).send("Server Error")
   }
 }
@@ -95,7 +102,7 @@ export const verifyOTP = async (req, res) => {
         email,
         error: "Invalid OTP"
       });
-    }
+    }  
 
     if (user.otpExpires < Date.now()) {
       return res.render("user/verifyOtp", {
@@ -117,7 +124,6 @@ export const verifyOTP = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error)
     res.status(500).send("server Error")
   }
 }
@@ -132,7 +138,7 @@ export const postLogin = async(req, res) =>{
         
         const {email, password} = req.body
 
-        const user = await User.findOne({email})
+        const user = await User.findOne({email})    
 
         if(!user){
             return res.send("User not found")
@@ -161,7 +167,7 @@ export const postLogin = async(req, res) =>{
 }
 
 export const getHome = async (req, res) =>{
-    console.log("home route hit")
+    
     try {
         const products = await Product.find({isListed: true})
         console.log(products)
@@ -176,7 +182,12 @@ export const getHome = async (req, res) =>{
 }
 
 export const getLogout = (req, res) =>{
-    req.session.destroy(() =>{
+    req.session.destroy((err) =>{
+        if(err){
+            return res.redirect("/")    
+        }
+        res.clearCookie("connect.sid")
+
         res.redirect("/login")
     })
 }

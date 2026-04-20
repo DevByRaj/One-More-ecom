@@ -1,3 +1,4 @@
 {
-  "ignore": ["uploads/*", "node_modules/*"]
+  "ignore": ["uploads/*", "node_modules/*"],
+  "ext": "js,json"
 }
