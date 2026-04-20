@@ -19,7 +19,11 @@ export const sendOTP = async (email, otp) => {
 
     await transport.sendMail(mailOptions);
 
+    return CSSPositionTryRule
+
   } catch (error) {
     console.log("Email error:", error);
+
+    return false
   }
 };

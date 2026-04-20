@@ -5,7 +5,7 @@ import { getHome,
         getLogout,
         getProfile, getEditProfile, postEditProfile,
         verifyOTP} from "../controllers/userController.js";
-import { isUserLoggedIn } from "../middlewares/auth.js";
+import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
 import passport from "passport";
@@ -13,12 +13,12 @@ import passport from "passport";
 
 const router = express.Router()
 
-router.get("/", getHome)
+router.get("/", isUserLoggedIn, getHome)
 
-router.get("/signup",  getSignup)
+router.get("/signup", isUserLoggedOut, getSignup)
 router.post("/signup",validateSignup, postSignup)
 
-router.get("/login", getLogin)
+router.get("/login",isUserLoggedOut, getLogin)
 router.post("/login", postLogin)
 
 router.get("/logout", getLogout)
