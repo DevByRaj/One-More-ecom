@@ -3,7 +3,7 @@ import Product from "../models/productModel.js"
 import bcrypt from "bcryptjs"
 import { validationResult } from "express-validator"
 import crypto from "crypto"
-import {sendOTP} from "../config/mail.js"
+import {sendOtpEmail} from "../services/mailService.js"
 
 
 
@@ -41,12 +41,13 @@ export const postSignup = async (req, res) => {
     if (user && !user.isVerified) {
       const otp = Math.floor(1000 + Math.random() * 9000).toString()
 
+      console.log(otp)
       user.otp = otp
       user.otpExpires = Date.now() + 2 * 60 * 1000
 
       await user.save()
       
-      const isEmailSent = await sendOTP(email, otp)
+      const isEmailSent = await sendOtpEmail(email, otp)
 
       if(!isEmailSent){
         return res.render("user/signup", {
@@ -73,7 +74,16 @@ export const postSignup = async (req, res) => {
     })
 
     await user.save()
-    await sendOTP(email, otp)
+    
+    const isSent = await sendOtpEmail(email, otp)
+
+    if(!isSent){
+        return res.render("user/signup",{
+
+            errors:[{msg: "Faild to send OTP. Try agai.", path: "email"}],
+            oldData: req.body
+        })
+    }
 
     res.redirect(`/verify-otp?email=${email}`)
 
@@ -130,7 +140,10 @@ export const verifyOTP = async (req, res) => {
 
 
 export const getLogin= (req, res) =>{
-    res.render("user/login")
+    res.render("user/login",{
+        errors: {},
+        oldData: {}
+    })
 }
 
 export const postLogin = async(req, res) =>{
@@ -141,23 +154,38 @@ export const postLogin = async(req, res) =>{
         const user = await User.findOne({email})    
 
         if(!user){
-            return res.send("User not found")
+            return res.render('user/login',{
+                errors: {email: "user not found"},
+                oldData: req.body
+            })
         }
         if(user.isBlocked){
-            return res.send("You're blocked by Admin")
+            return res.render("user/login",{
+                errors: {email:"You are blocked by admin",
+                    oldData: req.body
+                }
+            })
         }
 
-        
         const isMatch = await bcrypt.compare(password, user.password)
 
         if(!isMatch){
-            return res.send("Invalid Password")
+            return res.render("user/login", {
+                errors: {password: "invalid password"},
+                oldData: req.body
+            })
         }
-        req.session.user = user._id
-        
+        req.session.regenerate((err)=>{
+            if(err){
+                console.log( err)
+                return res.redirect("/login")
+            }
+            req.session.user = user._id
 
-        req.session.save(()=>{
-            res.redirect("/")
+            req.session.save(() =>{
+                res.redirect("/")
+                                   
+            })
         })
 
     } catch (error) {
@@ -182,14 +210,16 @@ export const getHome = async (req, res) =>{
 }
 
 export const getLogout = (req, res) =>{
+
     req.session.destroy((err) =>{
         if(err){
-            return res.redirect("/")    
+            console.log("logout error:", err)
+            return res.redirect("/")
         }
-        res.clearCookie("connect.sid")
-
-        res.redirect("/login")
+        res.clearCookie("onemore.sid")
+         res.redirect("/login")
     })
+
 }
 
 
@@ -221,7 +251,11 @@ export const getEditProfile = async(req, res) =>{
 
         const user = await User.findById(userId)
 
-        res.render("user/editProfile", {user})
+        res.render("user/editProfile", {
+            user,
+            errors: {},
+            oldData: {}
+        })
     } catch (error) {
         console.log(error)
         res.status(500).send("Server Error")        
@@ -240,7 +274,10 @@ export const postEditProfile = async(req, res) =>{
 
             return res.render("user/editProfile", {
                 user,
-                error: "Phone number should be exactly 10 digits"
+                errors: {
+                    phone: "Phone number should be exactly 10 digits"
+                },
+                oldData: req.body
             })
         }
 

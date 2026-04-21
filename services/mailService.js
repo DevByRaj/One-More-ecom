@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const sendOTP = async (email, otp) => {
+export const sendOtpEmail = async (email, otp) => {
   try {
     const transport = nodemailer.createTransport({
       service: "gmail",
@@ -19,7 +19,7 @@ export const sendOTP = async (email, otp) => {
 
     await transport.sendMail(mailOptions);
 
-    return CSSPositionTryRule
+    return true
 
   } catch (error) {
     console.log("Email error:", error);

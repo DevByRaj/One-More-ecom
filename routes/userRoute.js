@@ -13,13 +13,24 @@ import passport from "passport";
 
 const router = express.Router()
 
-router.get("/", isUserLoggedIn, getHome)
+router.get("/",(req, res) =>{
+        res.render("user/home", {
+                user: req.session.user || null
+        })
+})
+
+// router.get("/", (req, res) => {
+//     if (req.session.user) return getHome(req, res);
+//     return res.redirect("/login");
+// });
+
+
 
 router.get("/signup", isUserLoggedOut, getSignup)
-router.post("/signup",validateSignup, postSignup)
+router.post("/signup",isUserLoggedOut, validateSignup, postSignup)
 
 router.get("/login",isUserLoggedOut, getLogin)
-router.post("/login", postLogin)
+router.post("/login",isUserLoggedOut, postLogin)
 
 router.get("/logout", getLogout)
 
@@ -34,26 +45,26 @@ router.get("/auth/google",
         passport.authenticate("google", {scope:["profile", "email"]})
 )
 
-router.get("/auth/google/callback",
+router.get("/auth/gg-oogle/callback",
         passport.authenticate("google", {
                 failureRedirect: "/login"
         }),
-        (req, res) =>{
-                
-                if(req.user.isVerified){
-                        req.session.user = req.user._id
-
-                        return req.session.save(() =>{
-                                res.redirect("/")
-                        })
-                } else{
-                        return res.redirect(`/verify-otp?email=${req.user.email}`)
+        async(req, res) =>{
+                if(!req.user.isVerifeid){
+                        req.user.isVerifeid = true
+                        await req.user.save()
                 }
+                req.session.user = req.user._id
+                req.session.save(() =>{
+                        res.redirect("/")
+                })
         }
 )
 
-router.get("/verify-otp", (req, res) => {
+
+router.get("/verify-otp",isUserLoggedOut, (req, res) => {
   const { email } = req.query;
+
 
   if (!email) {
     return res.redirect("/signup");
