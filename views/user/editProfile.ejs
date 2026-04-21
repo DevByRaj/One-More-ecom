@@ -244,6 +244,12 @@
     color: #fff;
   }
 
+  .error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
   /* Center the footer logo container */
 .footer-logo {
   display: flex;
@@ -391,7 +397,16 @@
     <!-- phone -->
     <div class="form-group">
       <label>phone</label>
-      <input type="tel" name="phone" value="<%= user.phone %>" maxlength="10">
+      <input 
+  type="text" 
+  name="phone" 
+  value="<%= oldData?.phone || user.phone || '' %>" 
+  placeholder="Phone"
+>
+
+<% if (errors && errors.phone) { %>
+  <p class="error"><%= errors.phone %></p>
+<% } %>
     </div>
 
     <!-- save -->

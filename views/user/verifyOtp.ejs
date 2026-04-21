@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, private">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>verify OTP</title>
@@ -54,6 +57,12 @@
     transition: stroke 0.2s;
   }
   .nav-icons svg:hover { stroke: #fff; }
+
+   .logo-img {
+  width: 80px;     /* adjust size */
+  height: auto;
+  object-fit: contain;
+}
 
   /* ── MAIN ── */
   main {
@@ -258,19 +267,8 @@
 
     <!-- IM Logo — swap SVG here to change logo -->
     <div class="nav-logo">
-      <svg viewBox="0 0 56 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- i dot -->
-        <circle cx="10" cy="7" r="5" fill="#fff"/>
-        <!-- i stem -->
-        <rect x="7" y="15" width="6" height="23" rx="2.5" fill="#fff"/>
-        <!-- M left post -->
-        <rect x="22" y="6" width="6" height="32" rx="2.5" fill="#fff"/>
-        <!-- M right post -->
-        <rect x="42" y="6" width="6" height="32" rx="2.5" fill="#fff"/>
-        <!-- M chevron -->
-        <polygon points="25,6 35,21 45,6 45,13 35,28 25,13" fill="#fff"/>
-      </svg>
-    </div>
+  <img src="/images/logo.png" alt="logo" class="logo-img">
+</div>
 
     <div class="nav-links">
       <a>Home</a>
@@ -333,16 +331,9 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo-row">
-    <div class="footer-logo-big">
-      <!-- Footer logo — same as nav, can swap -->
-      <svg viewBox="0 0 72 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="13" cy="9"  r="6"  fill="#fff"/>
-        <rect   x="9.5" y="19" width="7" height="30" rx="3" fill="#fff"/>
-        <rect   x="28"  y="8"  width="7" height="42" rx="3" fill="#fff"/>
-        <rect   x="54"  y="8"  width="7" height="42" rx="3" fill="#fff"/>
-        <polygon points="32,8 44.5,27 57,8 57,17 44.5,36 32,17" fill="#fff"/>
-      </svg>
-    </div>
+    <div class="footer-logo">
+  <img src="/images/logo.png" class="logo-img">
+</div>
   </div>
 
   <div class="footer-grid">
@@ -490,6 +481,13 @@ document.querySelector("form").addEventListener("submit", function (e) {
 
   document.getElementById("fullOtp").value = otp;
 });
+
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+      window.location.reload();
+    }
+  });
+
 </script>
 </body>
 </html>

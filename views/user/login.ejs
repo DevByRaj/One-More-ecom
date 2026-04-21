@@ -233,8 +233,15 @@ footer {
 
     <form action="/login" method="POST">
 
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <input type="email" name="email" value="<%= oldData.email || '' %>" placeholder="Email">
+<% if (errors.email) { %>
+    <p style="color:red;"><%= errors.email %></p>
+<% } %>
+
+<input type="password" name="password" placeholder="Password">
+<% if (errors.password) { %>
+    <p style="color:red;"><%= errors.password %></p>
+<% } %>
 
       <div class="links">
         <a href="/signup">Signup</a>

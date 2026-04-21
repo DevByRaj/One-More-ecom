@@ -2,7 +2,7 @@
 import passport from "passport"
 import { Strategy  as GoogleStrategy} from "passport-google-oauth20"
 import User from "../models/userModel.js"
-import { sendOTP } from "./mail.js";
+import { sendOtpEmail } from "../services/mailService.js";
 
 
 
@@ -36,7 +36,7 @@ passport.use(
                     })
 
                     await user.save()
-                    await sendOTP(email, otp)
+                    await sendOtpEmail(email, otp)
                 } else {
                     
                     if(user.isVerified){
@@ -50,7 +50,7 @@ passport.use(
 
                     await user.save()
 
-                await sendOTP(email,otp)
+                await sendOtpEmail(email,otp)
 
                 }
                 
