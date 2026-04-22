@@ -198,7 +198,6 @@ export const getHome = async (req, res) =>{
     
     try {
         const products = await Product.find({isListed: true})
-        console.log(products)
 
         res.render("user/home", {products,
             user: req.session.user || null
@@ -267,7 +266,8 @@ export const postEditProfile = async(req, res) =>{
         const userId = req.session.user
         const {fname, lname, email, phone} = req.body
 
-        const name = fname + " " + lname
+        // const name = fname + " " + lname
+        const name = `${fname || ""} ${lname || ""}`.trim();
 
         if(!/^\d{10}$/.test(phone)){
             const user = await User.findById(userId)
@@ -296,4 +296,69 @@ export const postEditProfile = async(req, res) =>{
         console.log(error)
         res.status(500).send("Server error")
     }
+}
+
+export const getAddressPage = async (req, res) => {
+  const userId = req.session.user;
+
+  const addresses = await Address.find({ userId });
+
+  res.render("user/address", { addresses });
+}
+
+export const getAddAddress = (req, res) => {
+  res.render("user/addAddress", {
+    errors: {},
+    oldData: {}
+  });
+};
+
+export const postAddAddress = async( req, res) =>{
+    try{
+        const userId = req.session.user
+
+        const{
+            fname, lname, phone,
+            house, street, city,
+            state, pin, type
+        } = req.body
+        if (!fname || !phone || !house || !city || !state || !pin) {
+          return res.send("All required fields must be filled");
+}
+        const name = fname+" "+lname
+        await Address.create({
+            userId,
+            name,
+            houseName: house,
+            street,
+            city,
+            state,
+            country: "india",
+            phone,
+            pincode: pin,
+            type
+
+        })
+        res.redirect("/address")
+    } catch(error){
+        console.log(error)
+        res.status(500).send("error saving address")
+    }
+}
+
+export const deleteAddress = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const addressId = req.params.id;
+
+    await Address.findOneAndDelete({
+      _id: addressId,
+      userId: userId
+    });
+
+    res.redirect("/address");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error deleting address");
+  }
 }
