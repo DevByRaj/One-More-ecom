@@ -9,11 +9,12 @@ import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
 import passport from "passport";
+import { getAddressPage, getAddAddress, postAddAddress, deleteAddress } from "../controllers/userController.js";
 
 
 const router = express.Router()
 
-router.get("/", isUserLoggedIn, getHome)
+router.get("/", getHome)
 
 router.get("/signup", isUserLoggedOut, getSignup)
 router.post("/signup",validateSignup, postSignup)
@@ -63,5 +64,10 @@ router.get("/verify-otp", (req, res) => {
 });
 
 router.post("/verify-otp", verifyOTP)
+
+router.get("/address", isUserLoggedIn, getAddressPage)
+router.get("/address/add", isUserLoggedIn, getAddAddress)
+router.post("/address/add", isUserLoggedIn, postAddAddress)
+router.get("/address/delete/:id", isUserLoggedIn, deleteAddress);
 
 export default router
