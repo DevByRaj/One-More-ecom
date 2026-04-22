@@ -16,25 +16,60 @@
   }
 
   /* ── NAVBAR ── */
-  .navbar {
-    background: #1a1a1a !important;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 12px 28px;
+nav {
+  background: #1a1a1a;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-inner {
+  display: flex;
+  height: 90px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+}
+
+.logo-img {
+  width: 80px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.nav-links a {
+  font-size: 14px;
+  color: #ccc;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: #fff;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 18px;
+}
+
+.nav-icons svg {
+  width: 22px;
+  height: 22px;
+  stroke: #ccc;
+  fill: none;
+}
+   .logo-img {
+   width: 80px;     /* adjust size */
+   height: auto;
+   object-fit: contain;
   }
-  .navbar-brand svg { width: 52px; height: 42px; }
-  .navbar-nav .nav-link {
-    font-size: 13px; font-weight: 400;
-    color: #ccc !important; padding: 0 4px;
-    transition: color 0.2s;
-  }
-  .navbar-nav .nav-link:hover { color: #fff !important; }
-  .nav-icons svg {
-    width: 20px; height: 20px;
-    stroke: #ccc; fill: none;
-    cursor: pointer; stroke-width: 1.6;
-    transition: stroke 0.2s;
-  }
-  .nav-icons svg:hover { stroke: #fff; }
 
   /* ── MAIN ── */
   main {
@@ -271,31 +306,36 @@
 <div id="toast"></div>
 
 <!-- ── NAVBAR ── -->
-<nav class="navbar navbar-expand-lg">
-  <div class="container-fluid px-3">
-    <a class="navbar-brand p-0" href="#">
-      <!-- NAV LOGO — replace SVG to change logo -->
-      <svg viewBox="0 0 52 42" fill="none">
-        <circle cx="9"  cy="6"  r="4"   fill="#fff"/>
-        <rect   x="6.5" y="13" width="5" height="20" rx="2" fill="#fff"/>
-        <rect   x="19"  y="5"  width="5" height="30" rx="2" fill="#fff"/>
-        <rect   x="36"  y="5"  width="5" height="30" rx="2" fill="#fff"/>
-        <polygon points="21,5 30.5,18 40,5 40,11 30.5,24 21,11" fill="#fff"/>
-      </svg>
-    </a>
-    <div class="collapse navbar-collapse justify-content-center">
-      <ul class="navbar-nav gap-4">
-        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-      </ul>
+<nav>
+  <div class="nav-inner">
+
+    <!-- LOGO -->
+    <div class="nav-logo">
+      <img src="/images/logo.png" class="logo-img">
     </div>
-    <div class="d-flex align-items-center gap-3 nav-icons">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+
+    <!-- CENTER LINKS -->
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/about">About Us</a>
+    </div>
+
+    <!-- RIGHT ICONS -->
+    <div class="nav-icons">
+      <a href="/profile">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="7" r="4"/>
+          <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </a>
+      
       <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      
     </div>
+
   </div>
 </nav>
 
@@ -306,10 +346,17 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-title">My Account</div>
-      <div class="menu-item" onclick="setActive(this)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        Personal Information
-      </div>
+
+      <a href="/profile" style="text-decoration:none;">
+  <div class="menu-item">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    Personal Information
+  </div>
+</a>
+      
       <div class="menu-item active" onclick="setActive(this)">
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Address
@@ -345,9 +392,22 @@
       <div class="panel-title">Address</div>
 
       <!-- Add New Address -->
-      <button class="add-btn" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+      <button class="add-btn"
+  <% if(addresses.length >= 3){ %> disabled <% } %>
+  data-bs-toggle="modal" data-bs-target="#addAddressModal">
         <span>+</span> Add New Address
       </button>
+      <% if(error === "limit"){ %>
+  <div class="alert alert-danger py-2">
+    Only 3 addresses allowed
+  </div>
+<% } %>
+
+<% if(error === "empty"){ %>
+  <div class="alert alert-danger py-2">
+    All fields are required
+  </div>
+<% } %>
 
       <!-- Address List -->
       <div id="address-list">
@@ -361,7 +421,11 @@
   <div class="address-card">
     <div class="addr-header">
       <div>
-        <span class="addr-name"><%= addr.name || "No Name" %></span>
+        <span class="addr-name"><%= addr.name || "No Name" %>
+        <% if(addr.isDefault){ %>
+    <span style="color:green; font-size:10px;">(Default)</span>
+  <% } %>
+        </span>
         <span class="addr-phone"><%= addr.phone || "" %></span>
       </div>
 
@@ -369,8 +433,9 @@
         <button class="addr-menu-btn" onclick="toggleMenu('menu-<%= i %>')">⋮</button>
 
         <div class="addr-dropdown" id="menu-<%= i %>">
-          <a href="/address/edit/<%= addr._id %>">✏️ Edit</a>
-          <a class="del" href="/address/delete/<%= addr._id %>">🗑 Delete</a>
+          <a onclick="editAddress('<%= addr._id %>')">Edit</a>
+          <a onclick="setDefault('<%= addr._id %>')">Set Default</a>
+          <a class="del" onclick="openDeleteModal('<%= addr._id %>')">Delete</a>
         </div>
       </div>
     </div>
@@ -400,8 +465,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <form id="addressForm" action="/address/add" method="POST" novalidate>
-         <input type="text" name="fakeusernameremembered" style="display:none">
-  <input type="password" name="fakepasswordremembered" style="display:none">
+        <input type="hidden" name="addressId" id="addressId">
+        <input type="text" name="fakeusernameremembered" style="display:none">
+        <input type="password" name="fakepasswordremembered" style="display:none">
       <div class="modal-body pt-3">
         <input type="hidden" id="edit-index" value="">
         <div class="row g-3">
@@ -467,18 +533,27 @@
   </div>
 </div>
 
+<div class="modal fade" id="deleteModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-3">
+      <h6>Delete Address?</h6>
+      <p>Are you sure delete this address</p>
+
+      <form id="deleteForm" method="POST">
+        <button class="btn btn-danger w-100">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- ── FOOTER ── -->
 <footer class="pt-4 pb-3">
   <div class="container-fluid px-5">
     <div class="d-flex justify-content-center mb-4 footer-logo">
       <!-- FOOTER LOGO — replace SVG to change logo -->
-      <svg viewBox="0 0 64 52" fill="none">
-        <circle cx="11" cy="8"  r="5"  fill="#fff"/>
-        <rect   x="8"  y="16" width="6" height="26" rx="2.5" fill="#fff"/>
-        <rect   x="24" y="7"  width="6" height="38" rx="2.5" fill="#fff"/>
-        <rect   x="48" y="7"  width="6" height="38" rx="2.5" fill="#fff"/>
-        <polygon points="27,7 39,24 51,7 51,15 39,32 27,15" fill="#fff"/>
-      </svg>
+       <div class="footer-logo">
+  <img src="/images/logo.png" class="logo-img">
+</div>
     </div>
     <div class="row mb-4">
       <div class="col-12 col-md-3 footer-col">
@@ -572,7 +647,7 @@
 const form = document.getElementById("addressForm");
 
 form.addEventListener("submit", function(e) {
-  e.preventDefault(); // stop submit first
+  e.preventDefault();
 
   let isValid = true;
 
@@ -661,6 +736,40 @@ setTimeout(() => {
     }, 100);
   });
 }, 100);
+
+function editAddress(id){
+  fetch(`/address/${id}`)
+  .then(res =>res.json())
+  .then(data =>{
+
+    document.getElementById("addressId").value = data._id
+
+    const names = data.name.split(" ")
+    document.getElementById("a-fname").value = names[0] || "";
+document.getElementById("a-lname").value = names.slice(1).join(" ") || "";
+
+    document.getElementById("a-phone").value = data.phone;
+    document.getElementById("a-house").value = data.houseName;
+    document.getElementById("a-street").value = data.street;
+    document.getElementById("a-city").value = data.city;
+    document.getElementById("a-state").value = data.state;
+    document.getElementById("a-pin").value = data.pincode;
+    document.getElementById("a-type").value = data.type;
+
+    document.getElementById("modalLabel").textContent = "Edit Address";
+
+      new bootstrap.Modal(document.getElementById('addAddressModal')).show();
+  })
+}
+
+function openDeleteModal(id) {
+  document.getElementById("deleteForm").action = "/address/delete/" + id;
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+function setDefault(id) {
+  window.location.href = "/address/default/" + id;
+}
 
 </script>
 </body>
