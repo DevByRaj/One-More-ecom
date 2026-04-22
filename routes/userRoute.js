@@ -20,11 +20,6 @@ router.get("/",(req, res) =>{
         })
 })
 
-// router.get("/", (req, res) => {
-//     if (req.session.user) return getHome(req, res);
-//     return res.redirect("/login");
-// });
-
 
 
 router.get("/signup", isUserLoggedOut, getSignup)
@@ -46,21 +41,30 @@ router.get("/auth/google",
         passport.authenticate("google", {scope:["profile", "email"]})
 )
 
+// router.get("/auth/google/callback",
+//         passport.authenticate("google", {
+//                 failureRedirect: "/login"
+//         }),
+//         async(req, res) =>{
+//                 if(!req.user.isVerifeid){
+//                         req.user.isVerifeid = true
+//                         await req.user.save()
+//                 }
+//                 req.session.user = req.user._id
+//                 req.session.save(() =>{
+//                         res.redirect("/")
+//                 })
+//         }
+// )
 router.get("/auth/google/callback",
-        passport.authenticate("google", {
-                failureRedirect: "/login"
-        }),
-        async(req, res) =>{
-                if(!req.user.isVerifeid){
-                        req.user.isVerifeid = true
-                        await req.user.save()
-                }
-                req.session.user = req.user._id
-                req.session.save(() =>{
-                        res.redirect("/")
-                })
-        }
-)
+  passport.authenticate("google", {
+    failureRedirect: "/login"
+  }),
+  (req, res) => {
+    req.session.user = req.user._id;
+    res.redirect("/");
+  }
+);
 
 
 router.get("/verify-otp",isUserLoggedOut, (req, res) => {
