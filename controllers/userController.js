@@ -170,7 +170,6 @@ export const getHome = async (req, res) =>{
     
     try {
         const products = await Product.find({isListed: true})
-        console.log(products)
 
         res.render("user/home", {products,
             user: req.session.user || null
