@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import { validationResult } from "express-validator"
 import crypto from "crypto"
 import {sendOtpEmail} from "../services/mailService.js"
+import Address from "../models/addressModel.js"
 
 
 
@@ -38,54 +39,65 @@ export const postSignup = async (req, res) => {
     }
 
 
-    if (user && !user.isVerified) {
-      const otp = Math.floor(1000 + Math.random() * 9000).toString()
+    // if (user && !user.isVerified) {
+    //   const otp = Math.floor(1000 + Math.random() * 9000).toString()
 
-      console.log(otp)
-      user.otp = otp
-      user.otpExpires = Date.now() + 2 * 60 * 1000
+    //   console.log(otp)
+    //   user.otp = otp
+    //   user.otpExpires = Date.now() + 2 * 60 * 1000
 
-      await user.save()
+    //   await user.save()
       
-      const isEmailSent = await sendOtpEmail(email, otp)
+    //   const isEmailSent = await sendOtpEmail(email, otp)
 
-      if(!isEmailSent){
-        return res.render("user/signup", {
-            errors: [{msg: "Invalid email address. Please use a valid email", path: "email" }],
-            oldData: req.body
-        })
-      }
-      return res.redirect(`/verify-otp?email=${email}`)
-    }
+    //   if(!isEmailSent){
+    //     return res.render("user/signup", {
+    //         errors: [{msg: "Invalid email address. Please use a valid email", path: "email" }],
+    //         oldData: req.body
+    //     })
+    //   }
+    //   return res.redirect(`/verify-otp?email=${email}`)
+    // }
 
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString()
+const hashedPassword = await bcrypt.hash(password, 10)
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+req.session.tempUser = {
+  name,
+  email,
+  password: hashedPassword,
+  refCode: refCode || null,
+  otp,
+  otpExpires: Date.now() + 2 * 60 * 1000
+}
 
-    user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      refCode: refCode || null,
-      otp,
-      otpExpires: Date.now() + 2 * 60 * 1000,
-      isVerified: false
-    })
+// send OTP
+const isSent = await sendOtpEmail(email, otp)
 
-    await user.save()
+if (!isSent) {
+  return res.render("user/signup", {
+    errors: [{ msg: "Failed to send OTP. Try again.", path: "email" }],
+    oldData: req.body
+  })
+}
+
+res.redirect(`/verify-otp?email=${email}`)
+  
+
+    // user = new User({
+    //   name,
+    //   email,
+    //   password: hashedPassword,
+    //   refCode: refCode || null,
+    //   otp,
+    //   otpExpires: Date.now() + 2 * 60 * 1000,
+    //   isVerified: false
+    // })
+
+    // await user.save()
     
-    const isSent = await sendOtpEmail(email, otp)
 
-    if(!isSent){
-        return res.render("user/signup",{
-
-            errors:[{msg: "Faild to send OTP. Try agai.", path: "email"}],
-            oldData: req.body
-        })
-    }
-
-    res.redirect(`/verify-otp?email=${email}`)
 
   } catch (error) {
     
@@ -97,46 +109,95 @@ export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    if (!email) {
+    const tempUser = req.session.tempUser;
+
+    if (!tempUser || tempUser.email !== email) {
       return res.redirect("/signup");
     }
 
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.send("User not found");
-    }
-
-    if (user.otp !== otp) {
+    if (tempUser.otp !== otp) {
       return res.render("user/verifyOtp", {
         email,
         error: "Invalid OTP"
       });
-    }  
+    }
 
-    if (user.otpExpires < Date.now()) {
+    if (tempUser.otpExpires < Date.now()) {
       return res.render("user/verifyOtp", {
         email,
         error: "OTP expired"
       });
     }
 
-    user.isVerified = true
-    user.otp = null;
-    user.otpExpires = null
+    // ✅ SAVE USER ONLY AFTER SUCCESS
+    const newUser = new User({
+      name: tempUser.name,
+      email: tempUser.email,
+      password: tempUser.password,
+      refCode: tempUser.refCode,
+      isVerified: true
+    });
 
-    await user.save();
+    await newUser.save();
 
-    req.session.user = user._id
+    req.session.user = newUser._id;
+
+    // clear session temp data
+    req.session.tempUser = null;
 
     req.session.save(() => {
-      res.redirect("/")
+      res.redirect("/");
     });
 
   } catch (error) {
-    res.status(500).send("server Error")
+    res.status(500).send("server Error");
   }
-}
+};
+
+// export const verifyOTP = async (req, res) => {
+//   try {
+//     const { email, otp } = req.body;
+
+//     if (!email) {
+//       return res.redirect("/signup");
+//     }
+
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       return res.send("User not found");
+//     }
+
+//     if (user.otp !== otp) {
+//       return res.render("user/verifyOtp", {
+//         email,
+//         error: "Invalid OTP"
+//       });
+//     }  
+
+//     if (user.otpExpires < Date.now()) {
+//       return res.render("user/verifyOtp", {
+//         email,
+//         error: "OTP expired"
+//       });
+//     }
+
+//     user.isVerified = true
+//     user.otp = null;
+//     user.otpExpires = null
+
+//     await user.save();
+
+//     req.session.user = user._id
+
+//     req.session.save(() => {
+//       res.redirect("/")
+//     });
+
+//   } catch (error) {
+//     res.status(500).send("server Error")
+//   }
+// }
 
 
 export const getLogin= (req, res) =>{
@@ -303,7 +364,9 @@ export const getAddressPage = async (req, res) => {
 
   const addresses = await Address.find({ userId });
 
-  res.render("user/address", { addresses });
+  const error = req.query.error || null
+
+  res.render("user/address", { addresses, error });
 }
 
 export const getAddAddress = (req, res) => {
@@ -320,25 +383,40 @@ export const postAddAddress = async( req, res) =>{
         const{
             fname, lname, phone,
             house, street, city,
-            state, pin, type
+            state, pin, type,
+            addressId
         } = req.body
         if (!fname || !phone || !house || !city || !state || !pin) {
-          return res.send("All required fields must be filled");
+          return res.redirect("/address?error=empty")
 }
         const name = fname+" "+lname
-        await Address.create({
-            userId,
-            name,
-            houseName: house,
-            street,
-            city,
-            state,
-            country: "india",
-            phone,
-            pincode: pin,
-            type
+          
+        
 
-        })
+        const addressData = {
+          userId,
+          name,
+          houseName: house,
+          street,
+          city,
+          state,
+          country: "india",
+          phone,
+          pincode: pin,
+          type
+        }
+
+        if(addressId){
+          await Address.findByIdAndUpdate(addressId, addressData)
+        }
+        else{
+          const count = await Address.countDocuments({userId})
+
+          if(count >= 3){
+            return res.redirect("/address?error=limit")
+          }
+          await Address.create(addressData)
+        }
         res.redirect("/address")
     } catch(error){
         console.log(error)
@@ -360,5 +438,25 @@ export const deleteAddress = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send("Error deleting address");
+  }
+}
+
+export const setDefaultAddress = async(req, res) =>{
+  const userId = req.session.user
+
+  await Address.updateMany({userId}, {isDefault: false})
+
+  await Address.findByIdAndUpdate(req.params.id,{
+    isDefault: true
+  })
+  res.redirect("/address")
+}
+
+export const getSingleAddress = async (req, res) =>{
+  try{
+    const address = await Address.findById(req.params.id)
+    res.json(address)
+  } catch(error){
+    res.status(500).send("Error fetching address")
   }
 }

@@ -9,7 +9,7 @@ import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
 import passport from "passport";
-import { getAddressPage, getAddAddress, postAddAddress, deleteAddress } from "../controllers/userController.js";
+import { getAddressPage, getAddAddress, postAddAddress, deleteAddress, setDefaultAddress,getSingleAddress} from "../controllers/userController.js";
 
 
 const router = express.Router()
@@ -46,7 +46,7 @@ router.get("/auth/google",
         passport.authenticate("google", {scope:["profile", "email"]})
 )
 
-router.get("/auth/gg-oogle/callback",
+router.get("/auth/google/callback",
         passport.authenticate("google", {
                 failureRedirect: "/login"
         }),
@@ -77,8 +77,10 @@ router.get("/verify-otp",isUserLoggedOut, (req, res) => {
 router.post("/verify-otp", verifyOTP)
 
 router.get("/address", isUserLoggedIn, getAddressPage)
-router.get("/address/add", isUserLoggedIn, getAddAddress)
 router.post("/address/add", isUserLoggedIn, postAddAddress)
-router.get("/address/delete/:id", isUserLoggedIn, deleteAddress);
+router.get("/address/:id",isUserLoggedIn, getSingleAddress)
+router.post("/address/delete/:id", isUserLoggedIn, deleteAddress);
+router.get("/address/default/:id",isUserLoggedIn, setDefaultAddress)
+
 
 export default router
