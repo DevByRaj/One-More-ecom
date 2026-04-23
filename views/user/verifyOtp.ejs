@@ -295,6 +295,7 @@
     <form action="/verify-otp" method="POST">
 
   <input type="hidden" name="email" value="<%= email %>">
+  <input type="hidden" name="type" value="<%= type %>">
 
   <!-- OTP boxes -->
   <div class="otp-row">
@@ -320,7 +321,7 @@
         <span class="resend-text">Didn't get the OTP?</span>
         <a class="resend-link disabled" id="resend-btn" onclick="resendOTP()">Resend OTP</a>
       </div>
-      <div class="timer" id="timer">00:56</div>
+      <div class="timer" id="timer">00:60</div>
     </div>
 
     <!-- submit -->
@@ -452,21 +453,40 @@
   startTimer();
 
   /* ── RESEND OTP ── */
-  function resendOTP() {
-    const resendEl = document.getElementById('resend-btn');
-    if (resendEl.classList.contains('disabled')) return;
 
-    /* reset boxes */
+async function resendOTP() {
+  const resendEl = document.getElementById('resend-btn');
+  if (resendEl.classList.contains('disabled')) return;
+
+  const email = "<%= email %>";
+  const type = "<%= type %>";
+
+  try {
+    const res = await fetch("/resend-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, type })
+    });
+
+    const data = await res.text();
+
+    // reset OTP boxes
     boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
     boxes[0].focus();
 
-    /* restart timer */
-    totalSeconds = 56;
+    // restart timer
+    totalSeconds = 60;
     document.getElementById('timer').classList.remove('expired');
     startTimer();
 
-    showToast('OTP resent successfully!');
+    showToast("OTP sent successfully!");
+
+  } catch (err) {
+    showToast("Failed to resend OTP");
   }
+}
 
   /* ── SUBMIT ── */
 document.querySelector("form").addEventListener("submit", function (e) {

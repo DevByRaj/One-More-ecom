@@ -4,12 +4,20 @@ import { getHome,
         getSignup, postSignup, 
         getLogout,
         getProfile, getEditProfile, postEditProfile,
-        verifyOTP} from "../controllers/userController.js";
+        verifyOTP,
+        setDefaultAddress,
+        getForgotPassword,
+        postForgotPassword,
+        getResetPassword,
+        postResetPassword,
+        getAddressPage, getAddAddress, postAddAddress, deleteAddress,
+        getSingleAddress,
+        resendOTP} from "../controllers/userController.js";
 import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
 import passport from "passport";
-import { getAddressPage, getAddAddress, postAddAddress, deleteAddress, setDefaultAddress,getSingleAddress} from "../controllers/userController.js";
+
 
 
 const router = express.Router()
@@ -41,21 +49,6 @@ router.get("/auth/google",
         passport.authenticate("google", {scope:["profile", "email"]})
 )
 
-// router.get("/auth/google/callback",
-//         passport.authenticate("google", {
-//                 failureRedirect: "/login"
-//         }),
-//         async(req, res) =>{
-//                 if(!req.user.isVerifeid){
-//                         req.user.isVerifeid = true
-//                         await req.user.save()
-//                 }
-//                 req.session.user = req.user._id
-//                 req.session.save(() =>{
-//                         res.redirect("/")
-//                 })
-//         }
-// )
 router.get("/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/login"
@@ -68,14 +61,18 @@ router.get("/auth/google/callback",
 
 
 router.get("/verify-otp",isUserLoggedOut, (req, res) => {
-  const { email } = req.query;
+  const { email,type } = req.query;
 
 
   if (!email) {
     return res.redirect("/signup");
   }
 
-  res.render("user/verifyOtp", { email, error: null });
+  res.render("user/verifyOtp", { 
+    email, 
+    error: null,
+    type
+  });
 });
 
 router.post("/verify-otp", verifyOTP)
@@ -85,6 +82,14 @@ router.post("/address/add", isUserLoggedIn, postAddAddress)
 router.get("/address/:id",isUserLoggedIn, getSingleAddress)
 router.post("/address/delete/:id", isUserLoggedIn, deleteAddress);
 router.get("/address/default/:id",isUserLoggedIn, setDefaultAddress)
+
+router.get("/forgot-password", getForgotPassword)
+router.post("/forgot-password", postForgotPassword)
+
+router.get("/reset-password",  getResetPassword)
+router.post("/reset-password", postResetPassword)
+
+router.post("/resend-otp", resendOTP)
 
 
 export default router
