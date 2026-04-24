@@ -70,21 +70,25 @@ res.redirect(`/verify-otp?email=${email}`)
 
 export const verifyOTP = async(req, res) =>{
   try {
-
     const {email, otp, type} = req.body
+    
+    // Calculate remaining time
+    let remainingSeconds = 60;
     
     if(type === "forgot"){
       const user = await User.findOne({email})
 
       if(!user){
-      return res.send("user not found")
+        return res.send("user not found")
       }
       
       if(user.otp !== otp){
+        remainingSeconds = Math.max(0, Math.floor((user.otpExpires - Date.now()) / 1000));
         return res.render('user/verifyOtp', {
           email,
           error: "Invalid OTP",
-          type
+          type,
+          remainingSeconds
         })
       }
 
@@ -92,7 +96,8 @@ export const verifyOTP = async(req, res) =>{
         return res.render("user/verifyOtp", {
           email,
           error: "OTP expired",
-          type
+          type,
+          remainingSeconds: 0
         })
       }
       return res.redirect(`/reset-password?email=${email}`)
@@ -103,18 +108,23 @@ export const verifyOTP = async(req, res) =>{
     if(!tempUser || tempUser.email !== email){
       return res.redirect("/signup")
     }
+    
     if(tempUser.otp !== otp){
+      remainingSeconds = Math.max(0, Math.floor((tempUser.otpExpires - Date.now()) / 1000));
       return res.render("user/verifyOtp", {
         email,
         error: "Invalid OTP",
-        type
+        type,
+        remainingSeconds
       })
     }
+    
     if(tempUser.otpExpires < Date.now()){
       return res.render("user/verifyOtp",{
         email,
         error: "OTP expired",
-        type
+        type,
+        remainingSeconds: 0
       })
     }
 
@@ -141,7 +151,6 @@ export const verifyOTP = async(req, res) =>{
     
   }
 }
-
 
 export const getLogin= (req, res) =>{
 
@@ -426,7 +435,7 @@ export const postForgotPassword = async (req, res) =>{
     const otp = Math.floor(1000 + Math.random()* 9000).toString()
 
      user.otp = otp
-     user.otpExoires = Date.now()+1*60*1000
+     user.otpExpires = Date.now()+1*60*1000
      console.log(otp)
      await user.save()
 
@@ -520,10 +529,12 @@ export const resendOTP = async (req, res) => {
     }
 
     if (user.otpExpires > Date.now()) {
+      const remainingSeconds = Math.floor((user.otpExpires - Date.now()) / 1000);
       return res.render("user/verifyOtp", {
         email,
         type,
-        error: "Please wait before requesting new OTP"
+        error: "Please wait before requesting new OTP",
+        remainingSeconds
       });
     }
 
@@ -541,7 +552,8 @@ export const resendOTP = async (req, res) => {
     res.render("user/verifyOtp", {
       email,
       type,
-      error: "New OTP sent successfully"
+      error: "New OTP sent successfully",
+      remainingSeconds: 60
     });
 
   } catch (error) {
