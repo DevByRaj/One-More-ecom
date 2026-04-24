@@ -426,7 +426,7 @@
   });
 
   /* ── COUNTDOWN TIMER ── */
-  let totalSeconds = 56;
+  let totalSeconds = <%= locals.remainingSeconds || 60 %>;
   let timerInterval = null;
 
   function startTimer() {
