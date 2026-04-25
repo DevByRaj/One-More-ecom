@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 * {
   margin: 0;
@@ -20,7 +21,7 @@ body {
   color: #fff;
 }
 
-/* ================= NAVBAR ================= */
+/* NAVBAR */
 nav {
   background: #0f0f0f;
   padding: 20px 60px;
@@ -29,16 +30,9 @@ nav {
   align-items: center;
 }
 
-.logo {
-  font-size: 28px;
-  font-weight: 600;
+.logo-img {
+  width: 60px;
 }
-
- .logo-img {
-   width: 60px;     /* adjust size */
-   height: auto;
-   object-fit: contain;
-  }
 
 .nav-links {
   display: flex;
@@ -51,17 +45,13 @@ nav {
   font-size: 14px;
 }
 
-.nav-links a:hover {
-  color: #fff;
-}
-
 .icons {
   display: flex;
   gap: 25px;
   font-size: 18px;
 }
 
-/* ================= MAIN ================= */
+/* MAIN */
 .main {
   background: #dcdcdc;
   min-height: 70vh;
@@ -70,7 +60,7 @@ nav {
   align-items: center;
 }
 
-/* ================= CARD ================= */
+/* CARD */
 .card {
   background: #efefef;
   border: 2px solid #000;
@@ -83,21 +73,28 @@ nav {
 .card h2 {
   margin-bottom: 20px;
   color: #000;
-  font-weight: 500;
 }
 
-/* ================= INPUT ================= */
+/* INPUT */
 .card input {
   width: 100%;
   padding: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 5px;
   border-radius: 10px;
   border: none;
   background: #cfcfcf;
   outline: none;
 }
 
-/* ================= LOGIN LINK ================= */
+/* ERROR */
+.error-msg {
+  color: red;
+  font-size: 12px;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+/* LOGIN LINK */
 .login-link {
   text-align: right;
   font-size: 12px;
@@ -106,100 +103,81 @@ nav {
 
 .login-link a {
   color: #000;
-  text-decoration: none;
 }
 
-/* ================= BUTTON ================= */
+.toggle-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+  font-size: 14px;
+}
+
+.toggle-eye:hover {
+  color: #000;
+}
+
+/* prevent text overlap */
+.card input {
+  padding-right: 35px;
+}
+
+/* BUTTON */
 .btn {
   width: 100%;
   padding: 12px;
   background: #000;
   color: #fff;
-  border: none;
   border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
+  border: none;
 }
 
-.btn:hover {
-  background: #222;
-}
-
-/* ================= GOOGLE ================= */
-.google-text {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #555;
-}
-
-.google-icon {
-  font-size: 18px;
-  margin-top: 5px;
-}
-
+/* GOOGLE */
 .google-btn {
   display: flex;
-  align-items: center;
   justify-content: center;
   gap: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 6px;
+  margin-top: 10px;
   text-decoration: none;
   color: black;
-  margin-top: 10px;
 }
 
-.google-btn:hover {
-  background-color: #f5f5f5;
-}
-
-/* ================= FOOTER ================= */
+/* FOOTER */
 footer {
   background: #0f0f0f;
   padding: 50px 80px;
 }
 
+.footer-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.footer-logo img {
+  width: 80px;
+}
+
 .footer-container {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-}
-
-/* center logo */
-.footer-logo {
-  display: flex;
-  justify-content: center; /* Horizontal center */
-  align-items: center;     /* Vertical center */
-  width: 100%;
-  margin-bottom: 40px;     /* Space between logo and the links below */
-}
-
-/* Ensure the image inside stays responsive */
-.footer-logo .logo-img {
-  width: 80px;            /* Increased slightly for footer prominence */
-  height: auto;
-  display: block;
 }
 
 .footer-section h4 {
   color: #fff;
-  margin-bottom: 12px;
-  font-size: 14px;
 }
 
 .footer-section p {
-  font-size: 13px;
   color: #aaa;
-  margin-bottom: 6px;
+  font-size: 13px;
 }
 
-/* bottom line */
 .bottom {
   margin-top: 30px;
   font-size: 12px;
   color: #777;
-  text-align: left;
 }
 </style>
 </head>
@@ -208,9 +186,7 @@ footer {
 
 <!-- NAVBAR -->
 <nav>
-  <div class="nav-logo">
-  <img src="/images/logo.png" alt="logo" class="logo-img">
-</div>
+  <img src="/images/logo.png" class="logo-img">
 
   <div class="nav-links">
     <a href="/">Home</a>
@@ -219,11 +195,11 @@ footer {
     <a href="#">About Us</a>
   </div>
 
-<div class="icons">
-  <i class="fa-regular fa-user"></i>
-  <i class="fa-regular fa-heart"></i>
-  <i class="fa-solid fa-cart-shopping"></i>
-</div>
+  <div class="icons">
+    <i class="fa-regular fa-user"></i>
+    <i class="fa-regular fa-heart"></i>
+    <i class="fa-solid fa-cart-shopping"></i>
+  </div>
 </nav>
 
 <!-- MAIN -->
@@ -232,50 +208,57 @@ footer {
 
     <h2>Signup</h2>
 
-    <form action="/signup" method="POST">
+    <!-- 🔥 IMPORTANT: novalidate added -->
+    <form id="signupForm" action="/signup" method="POST" novalidate>
 
-  <!-- NAME -->
-  <input type="text" name="name" placeholder="Username"
-         value="<%= oldData?.name || '' %>" required>
-  <span style="color:red;">
-    <%= errors?.find(e => e.path === 'name')?.msg %>
-  </span>
+      <!-- NAME -->
+      <input type="text" id="name" name="name" placeholder="Username"
+        value="<%= oldData?.name || '' %>">
+      <div id="nameError" class="error-msg">
+        <%= errors?.find(e => e.path === 'name')?.msg %>
+      </div>
 
-  <!-- EMAIL -->
-  <input type="email" name="email" placeholder="Email"
-         value="<%= oldData?.email || '' %>" required>
-  <span style="color:red;">
-    <%= errors?.find(e => e.path === 'email')?.msg %>
-  </span>
+      <!-- EMAIL -->
+      <input type="email" id="email" name="email" placeholder="Email"
+        value="<%= oldData?.email || '' %>">
+      <div id="emailError" class="error-msg">
+        <%= errors?.find(e => e.path === 'email')?.msg %>
+      </div>
 
-  <!-- PASSWORD -->
-  <input type="password" name="password" placeholder="Password" required>
-  <span style="color:red;">
-    <%= errors?.find(e => e.path === 'password')?.msg %>
-  </span>
+      <!-- PASSWORD -->
+<div style="position: relative;">
+  <input type="password" id="password" name="password" placeholder="Password">
+  <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('password', this)"></i>
+</div>
+<div id="passwordError" class="error-msg">
+  <%= errors?.find(e => e.path === 'password')?.msg %>
+</div>
 
-  <!-- CONFIRM PASSWORD -->
-  <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-  <span style="color:red;">
-    <%= errors?.find(e => e.path === 'confirmPassword')?.msg %>
-  </span>
+<!-- CONFIRM PASSWORD -->
+<div style="position: relative;">
+  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+  <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('confirmPassword', this)"></i>
+</div>
+<div id="confirmError" class="error-msg">
+  <%= errors?.find(e => e.path === 'confirmPassword')?.msg %>
+</div>
 
-  <!-- REF CODE -->
-  <input type="text" name="refCode" placeholder="ref Code"
-         value="<%= oldData?.refCode || '' %>">
+      <!-- REF CODE -->
+      <input type="text" id="refCode" name="refCode" placeholder="ref Code"
+        value="<%= oldData?.refCode || '' %>">
 
-  <div class="login-link">
-    <a href="/login">Login</a>
-  </div>
+      <div class="login-link">
+        <a href="/login">Login</a>
+      </div>
 
-  <button type="submit" class="btn">Signup</button>
+      <button type="submit" class="btn">Signup</button>
 
-</form>
+    </form>
 
     <a href="/auth/google" class="google-btn">
-  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-  <span>Continue with Google</span>
-</a>
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+      Continue with Google
+    </a>
 
   </div>
 </div>
@@ -283,10 +266,9 @@ footer {
 <!-- FOOTER -->
 <footer>
 
-  <!-- center logo -->
   <div class="footer-logo">
-  <img src="/images/logo.png" class="logo-img">
-</div>
+    <img src="/images/logo.png">
+  </div>
 
   <div class="footer-container">
 
@@ -326,12 +308,80 @@ footer {
   </div>
 
 </footer>
+
+<!-- JS VALIDATION -->
 <script>
-  window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      window.location.reload();
-    }
-  });
+const form = document.getElementById("signupForm");
+
+form.addEventListener("submit", function (e) {
+  let valid = true;
+
+  const name = document.getElementById("name");
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirmPassword");
+
+  const nameError = document.getElementById("nameError");
+  const emailError = document.getElementById("emailError");
+  const passwordError = document.getElementById("passwordError");
+  const confirmError = document.getElementById("confirmError");
+
+  nameError.textContent = "";
+  emailError.textContent = "";
+  passwordError.textContent = "";
+  confirmError.textContent = "";
+
+  // NAME
+  if (name.value.trim() === "") {
+    nameError.textContent = "Username is required";
+    valid = false;
+  } else if (name.value.length < 3) {
+    nameError.textContent = "Minimum 3 characters required";
+    valid = false;
+  }
+
+  // EMAIL
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email.value.trim() === "") {
+    emailError.textContent = "Email is required";
+    valid = false;
+  } else if (!emailPattern.test(email.value)) {
+    emailError.textContent = "Enter valid email";
+    valid = false;
+  }
+
+  // PASSWORD
+  if (password.value.trim() === "") {
+    passwordError.textContent = "Password is required";
+    valid = false;
+  } else if (password.value.length < 6) {
+    passwordError.textContent = "Minimum 6 characters required";
+    valid = false;
+  }
+
+  // CONFIRM PASSWORD
+  if (confirmPassword.value.trim() === "") {
+    confirmError.textContent = "Confirm your password";
+    valid = false;
+  } else if (password.value !== confirmPassword.value) {
+    confirmError.textContent = "Passwords do not match";
+    valid = false;
+  }
+
+  if (!valid) e.preventDefault();
+});
+function togglePassword(inputId, icon) {
+  const input = document.getElementById(inputId);
+
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.replace("fa-eye", "fa-eye-slash");
+  } else {
+    input.type = "password";
+    icon.classList.replace("fa-eye-slash", "fa-eye");
+  }
+}
 </script>
+
 </body>
 </html>

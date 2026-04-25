@@ -6,151 +6,130 @@
 <title>Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background: #0f0f0f;
-  color: #fff;
+  font-family:'Poppins',sans-serif;
+  background:#0f0f0f;
+  color:#fff;
 }
 
-/* ================= NAVBAR ================= */
+/* NAVBAR */
 nav {
-  background: #0f0f0f;
-  padding: 20px 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
- .logo-img {
-   width: 60px;     /* adjust size */
-   height: auto;
-   object-fit: contain;
-  }
-
-
-.logo {
-  font-size: 28px;
-  font-weight: 600;
+  background:#0f0f0f;
+  padding:20px 60px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.nav-links {
-  display: flex;
-  gap: 40px;
-}
+.logo-img { width:60px; }
+
+.nav-links { display:flex; gap:40px; }
 
 .nav-links a {
-  color: #cfcfcf;
-  text-decoration: none;
-  font-size: 14px;
+  color:#cfcfcf;
+  text-decoration:none;
+  font-size:14px;
 }
 
-.nav-links a:hover {
-  color: #fff;
-}
-
-.icons {
-  display: flex;
-  gap: 25px;
-}
+.icons { display:flex; gap:25px; }
 
 .icons i {
-  font-size: 18px;
-  cursor: pointer;
-  color: #ccc;
+  font-size:18px;
+  color:#ccc;
 }
 
-.icons i:hover {
-  color: #fff;
-}
-
-/* ================= MAIN ================= */
+/* MAIN */
 .main {
-  background: #dcdcdc;
-  min-height: 70vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background:#dcdcdc;
+  min-height:70vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-/* ================= CARD ================= */
+/* CARD */
 .card {
-  background: #efefef;
-  border: 2px solid #000;
-  border-radius: 20px;
-  padding: 40px 30px;
-  width: 360px;
-  text-align: center;
+  background:#efefef;
+  border:2px solid #000;
+  border-radius:20px;
+  padding:40px 30px;
+  width:360px;
+  text-align:center;
 }
 
 .card h2 {
-  margin-bottom: 25px;
-  color: #000;
-  font-weight: 500;
+  margin-bottom:25px;
+  color:#000;
 }
 
-/* ================= INPUT ================= */
+/* INPUT */
 .card input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  border: none;
-  background: #cfcfcf;
-  outline: none;
+  width:100%;
+  padding:12px;
+  padding-right:35px;
+  margin-bottom:5px;
+  border-radius:10px;
+  border:none;
+  background:#cfcfcf;
 }
 
-/* ================= LINKS ================= */
+/* INPUT GROUP */
+.input-group { position:relative; }
+
+.toggle-eye {
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:#555;
+}
+
+/* ERROR */
+.error-msg {
+  color:red;
+  font-size:12px;
+  text-align:left;
+  margin-bottom:10px;
+}
+
+/* LINKS */
 .links {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  margin-bottom: 15px;
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  margin-bottom:15px;
 }
 
-.links a {
-  color: #000;
-  text-decoration: none;
-}
+.links a { color:#000; }
 
-/* ================= BUTTON ================= */
+/* BUTTON */
 .btn {
-  width: 100%;
-  padding: 12px;
-  background: #000;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
+  width:100%;
+  padding:12px;
+  background:#000;
+  color:#fff;
+  border-radius:10px;
+  border:none;
 }
 
-.btn:hover {
-  background: #222;
-}
-
-/* ================= GOOGLE ================= */
+/* GOOGLE */
 .google-text {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #555;
+  margin-top:10px;
+  font-size:12px;
+  color:#555;
 }
 
 .google-icon {
-  font-size: 18px;
-  margin-top: 5px;
+  margin-top:5px;
 }
 
-/* ================= FOOTER ================= */
+/* FOOTER */
 footer {
   background: #0f0f0f;
   padding: 50px 80px;
@@ -158,25 +137,12 @@ footer {
 
 .footer-logo {
   display: flex;
-  justify-content: center; /* Horizontal center */
-  align-items: center;     /* Vertical center */
-  width: 100%;
-  margin-bottom: 40px;     /* Space between logo and the links below */
+  justify-content: center;
+  margin-bottom: 40px;
 }
 
-/* Ensure the image inside stays responsive */
-.footer-logo .logo-img {
-  width: 80px;            /* Increased slightly for footer prominence */
-  height: auto;
-  display: block;
-}
-  
-
-.footer-logo {
-  text-align: center;
-  font-size: 40px;
-  font-weight: 600;
-  margin-bottom: 20px;
+.footer-logo img {
+  width: 80px;
 }
 
 .footer-container {
@@ -186,29 +152,24 @@ footer {
 
 .footer-section h4 {
   color: #fff;
-  margin-bottom: 12px;
-  font-size: 14px;
 }
 
 .footer-section p {
-  font-size: 13px;
   color: #aaa;
-  margin-bottom: 6px;
+  font-size: 13px;
 }
 
 .bottom {
   margin-top: 30px;
   font-size: 12px;
   color: #777;
-}
+}from 
 </style>
-</head>
 
 <body>
 
-<!-- NAVBAR -->
 <nav>
-   <img src="/images/logo.png" alt="logo" class="logo-img">
+  <img src="/images/logo.png" class="logo-img">
 
   <div class="nav-links">
     <a href="/">Home</a>
@@ -224,23 +185,29 @@ footer {
   </div>
 </nav>
 
-<!-- MAIN -->
 <div class="main">
   <div class="card">
 
     <h2>Login</h2>
 
-    <form action="/login" method="POST">
+    <!-- FORM -->
+    <form id="loginForm" action="/login" method="POST" novalidate>
 
-      <input type="email" name="email" value="<%= oldData.email || '' %>" placeholder="Email">
-<% if (errors.email) { %>
-    <p style="color:red;"><%= errors.email %></p>
-<% } %>
+      <!-- EMAIL -->
+      <input type="email" id="email" name="email" placeholder="Email"
+        value="<%= oldData?.email || '' %>">
+      <div id="emailError" class="error-msg">
+        <%= errors?.email %>
+      </div>
 
-<input type="password" name="password" placeholder="Password">
-<% if (errors.password) { %>
-    <p style="color:red;"><%= errors.password %></p>
-<% } %>
+      <!-- PASSWORD -->
+      <div class="input-group">
+        <input type="password" id="password" name="password" placeholder="Password">
+        <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
+      </div>
+      <div id="passwordError" class="error-msg">
+        <%= errors?.password %>
+      </div>
 
       <div class="links">
         <a href="/signup">Signup</a>
@@ -251,22 +218,23 @@ footer {
 
     </form>
 
+    <!-- GOOGLE AUTH -->
     <p class="google-text">Or continue with</p>
+
     <div class="google-icon">
-  <a href="/auth/google">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="30">
-  </a>
-</div>
+      <a href="/auth/google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="30">
+      </a>
+    </div>
 
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
 
   <div class="footer-logo">
-  <img src="/images/logo.png" class="logo-img">
-</div>
+    <img src="/images/logo.png">
+  </div>
 
   <div class="footer-container">
 
@@ -307,6 +275,60 @@ footer {
 
 </footer>
 
+<script>
+const form = document.getElementById("loginForm");
+
+form.addEventListener("submit", function (e) {
+  let valid = true;
+
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+
+  const emailError = document.getElementById("emailError");
+  const passwordError = document.getElementById("passwordError");
+
+  emailError.textContent = "";
+  passwordError.textContent = "";
+
+  const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+  // EMAIL VALIDATION
+  if (email.value.trim() === "") {
+    emailError.textContent = "Email is required";
+    valid = false;
+  } else if (!emailPattern.test(email.value)) {
+    emailError.textContent = "Enter valid email";
+    valid = false;
+  }
+
+  // PASSWORD VALIDATION
+  if (password.value.trim() === "") {
+    passwordError.textContent = "Password is required";
+    valid = false;
+  } else if (!passwordPattern.test(password.value)) {
+    passwordError.textContent =
+      "Must include uppercase, lowercase, number & special character";
+    valid = false;
+  }
+
+  if (!valid) e.preventDefault();
+}); // ✅ IMPORTANT: properly closed
+
+/* 🔥 EYE TOGGLE (OUTSIDE submit) */
+function togglePassword() {
+  const input = document.getElementById("password");
+  const icon = document.querySelector(".toggle-eye");
+
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.replace("fa-eye","fa-eye-slash");
+  } else {
+    input.type = "password";
+    icon.classList.replace("fa-eye-slash","fa-eye");
+  }
+}
+</script>
 
 </body>
 </html>
