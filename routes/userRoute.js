@@ -63,6 +63,9 @@ router.get("/auth/google/callback",
 router.get("/verify-otp",isUserLoggedOut, (req, res) => {
   const { email,type } = req.query;
 
+  if(type === "forgot" && req.session.resetDone){
+    return res.redirect(`/reset-password?email=${req.query.email}`)
+  }
 
   if (!email) {
     return res.redirect("/signup");

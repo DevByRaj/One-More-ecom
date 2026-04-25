@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+  window.history.forward();
+  function noBack() {
+    window.history.forward();
+  }
+</script>
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, private">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -257,7 +263,7 @@
   }
 </style>
 </head>
-<body>
+<body onload="noBack()" onpageshow="if (event.persisted) noBack();">
 
 <div id="toast"></div>
 
@@ -321,7 +327,7 @@
         <span class="resend-text">Didn't get the OTP?</span>
         <a class="resend-link disabled" id="resend-btn" onclick="resendOTP()">Resend OTP</a>
       </div>
-      <div class="timer" id="timer">00:60</div>
+      <div class="timer" id="timer">01:00</div>
     </div>
 
     <!-- submit -->

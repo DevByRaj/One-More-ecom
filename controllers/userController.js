@@ -34,7 +34,7 @@ export const postSignup = async (req, res) => {
 
     if (user && user.isVerified) {
       return res.render("user/signup", {
-        errors: [{ msg: "User already exists. Please login.", path: "email" }],
+        errors: [{ msg: "Email already Registered. Please login.", path: "email" }],
         oldData: req.body
       })
     }
@@ -100,6 +100,8 @@ export const verifyOTP = async(req, res) =>{
           remainingSeconds: 0
         })
       }
+      req.session.resetDone = true
+
       return res.redirect(`/reset-password?email=${email}`)
     }
 
@@ -508,7 +510,9 @@ export const postResetPassword = async (req, res) => {
     
 
     await user.save()
-console.log("Password working");
+    console.log("Password working")
+
+    req.session.resetDone = false
 
     res.redirect("/login?reset=success")
 
