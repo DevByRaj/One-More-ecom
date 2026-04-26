@@ -485,22 +485,29 @@ export const deleteAddress = async (req, res) => {
 }
 
 export const setDefaultAddress = async(req, res) =>{
-  const userId = req.session.user
+  try {
 
-  await Address.updateMany({userId}, {isDefault: false})
+    const userId = req.session.user
+    const addressId = req.params.id
+    
+    const address = await Address.findOne({_id: addressId, userId})
 
-  await Address.findByIdAndUpdate(req.params.id,{
-    isDefault: true
-  })
-  res.redirect("/address")
-}
+    if(!address){
+      return res.redirect("/address?error=notfound")
+    }
 
-export const getSingleAddress = async (req, res) =>{
-  try{
-    const address = await Address.findById(req.params.id)
-    res.json(address)
-  } catch(error){
-    res.status(500).send("Error fetching address")
+    await Address.updateMany({userId}, {isDefault: false})
+
+    address.isDefault = true
+    await address.save()
+
+    res.redirect("/address")
+    
+  } catch (error) {
+    console.log(error);
+    res.redirect("/address?error=server")
+    
+    
   }
 }
 
@@ -720,5 +727,14 @@ export const resendOTP = async (req, res) => {
       type: "",
       error: "Error resending OTP"
     }) 
+  }
+};
+
+export const getSingleAddress = async (req, res) => {
+  try {
+    const address = await Address.findById(req.params.id);
+    res.json(address);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching address" });
   }
 };

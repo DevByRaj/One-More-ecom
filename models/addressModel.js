@@ -20,6 +20,11 @@ const addressSchema = new mongoose.Schema({
         type: String,
         enum:["Home","Work", "Other"],
         default: "Home"
+    },
+     
+    isDefault: {
+        type: Boolean,
+        default: false
     }
 
 }, {timestamps: true})
