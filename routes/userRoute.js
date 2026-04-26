@@ -41,12 +41,11 @@ router.get("/logout", getLogout)
 router.get("/profile", isUserLoggedIn, getProfile)
 
 router.get("/profile/edit", isUserLoggedIn, getEditProfile)
-// router.post("/profile/edit", isUserLoggedIn, postEditProfile)
 
 router.post("/profile/edit", isUserLoggedIn, upload.single("profileImage"), postEditProfile)
 
 router.get("/auth/google",
-        passport.authenticate("google", {scope:["profile", "email"]})
+    passport.authenticate("google", {scope:["profile", "email"]})
 )
 
 router.get("/auth/google/callback",
@@ -60,7 +59,7 @@ router.get("/auth/google/callback",
 );
 
 
-router.get("/verify-otp", (req, res) => {
+router.get("/verify-otp",(req, res) => {
   const { email,type } = req.query;
 
   if(type === "forgot" && req.session.resetDone){
