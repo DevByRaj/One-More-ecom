@@ -40,7 +40,11 @@ export const postSignup = async (req, res) => {
     }
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString()
-const hashedPassword = await bcrypt.hash(password, 10)
+    
+    console.log("signup Otp:", otp);
+    
+
+    const hashedPassword = await bcrypt.hash(password, 10)
 
 req.session.tempUser = {
   name,
@@ -60,9 +64,10 @@ if (!isSent) {
   })
 }
 
-res.redirect(`/verify-otp?email=${email}`)
+res.redirect(`/verify-otp?email=${email}&type=signup`)
   
   } catch (error) {
+    console.log(error);
     
     res.status(500).send("Server Error")
   }
@@ -72,7 +77,6 @@ export const verifyOTP = async(req, res) =>{
   try {
     const {email, otp, type} = req.body
     
-    // Calculate remaining time
     let remainingSeconds = 60;
     
     if(type === "forgot"){
@@ -104,6 +108,46 @@ export const verifyOTP = async(req, res) =>{
 
       return res.redirect(`/reset-password?email=${email}`)
     }
+
+    if (type === "emailEdit") {
+  const data = req.session.emailEdit;
+
+  if (!data) {
+    return res.redirect("/profile");
+  }
+
+  if (data.otp !== otp) {
+    return res.render("user/verifyOtp", {
+      email: data.newEmail,
+      error: "Invalid OTP",
+      type,
+      remainingSeconds: Math.max(
+        0,
+        Math.floor((data.otpExpires - Date.now()) / 1000)
+      )
+    })
+  }
+
+  if (data.otpExpires < Date.now()) {
+    return res.render("user/verifyOtp", {
+      email: data.newEmail,
+      error: "OTP expired",
+      type,
+      remainingSeconds: 0
+    })
+  }
+
+  await User.findByIdAndUpdate(req.session.user, {
+    email: data.newEmail,
+    name: data.name,
+    phone: data.phone,
+    profileImage: data.profileImage
+  })
+
+  req.session.emailEdit = null
+
+  return res.redirect("/profile/edit?msg=email-updated");
+}
 
     const tempUser = req.session.tempUser
 
@@ -268,10 +312,14 @@ export const getEditProfile = async(req, res) =>{
 
         const user = await User.findById(userId)
 
+        const message =
+            req.query.msg === "email-updated"? "Email updated successfully" : null
+
         res.render("user/editProfile", {
             user,
             errors: {},
-            oldData: {}
+            oldData: {},
+            message
         })
     } catch (error) {
         console.log(error)
@@ -296,7 +344,38 @@ export const postEditProfile = async(req, res) =>{
                     phone: "Phone number should be exactly 10 digits"
                 },
                 oldData: req.body
+                // message: null
             })
+        }
+
+        const user = await User.findById(userId)
+
+        if(email !== user.email){
+
+          const existing = await User.findOne({email})
+          if(existing){
+            return res.render("user/editProfile",{
+              user,
+              errors: {email: "Email already exists"},
+              oldData: req.body 
+            })
+          }
+
+          const otp = Math.floor(1000+ Math.random()* 9000).toString()
+
+          req.session.emailEdit = {
+            newEmail: email,
+            oldEmail: user.email,
+            otp,
+            otpExpires: Date.now()+ 60 * 1000,
+            name,
+            phone,
+            profileImage: req.file?"/uploads/"+ req.file.filename : user.profileImage
+          }
+
+          await sendOtpEmail(user.email,otp)                
+
+          return res.redirect("/verify-otp?type=emailEdit")
         }
 
         let updateData ={
@@ -312,7 +391,14 @@ export const postEditProfile = async(req, res) =>{
         
     } catch (error) {
         console.log(error)
-        res.status(500).send("Server error")
+        const user = await User.findById(req.session.user)
+        res.render("user/editProfile", {
+          user,
+          errors: {},
+          oldData: {},
+          message: null,
+          error: "Something went wrong"
+        })
     }
 }
 
@@ -438,7 +524,7 @@ export const postForgotPassword = async (req, res) =>{
 
      user.otp = otp
      user.otpExpires = Date.now()+1*60*1000
-     console.log(otp)
+     
      await user.save()
 
      await sendOtpEmail(email, otp)
@@ -524,7 +610,73 @@ export const postResetPassword = async (req, res) => {
 
 export const resendOTP = async (req, res) => {
   try {
-    const { email, type } = req.body;
+    const { email, type } = req.body || req.query
+
+    if(type === "signup"){
+      const tempUser = req.session.tempUser
+
+      if(!tempUser){
+        return res.redirect("/signup")
+      }
+
+      if(tempUser.otpExpires > Date.now()){
+        const remainingSeconds = Math.floor((tempUser.otpExpires - Date.now())/ 1000)
+
+        return res.render("user/verifyOtp", {
+        email: tempUser.email,
+        type,
+        error: "Please wait before requesting new OTP",
+        remainingSeconds
+        })
+      }
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString()
+
+    tempUser.otp = otp
+    tempUser.otpExpires = Date.now()+ 60 * 1000
+
+    await sendOtpEmail(tempUser.email, otp)
+
+    return res.render("user/verifyOtp", {
+      email: tempUser.email,
+      type,
+      error: "New OTP sent successfully",
+      remainingSeconds: 60
+    })
+  }
+
+    if(type === "emailEdit"){
+      const data = req.session.emailEdit
+
+      if(!data){
+        return res.redirect("/profile")
+      }
+
+      if(data.otpExpires > Date.now()){
+        const remainingSeconds = Math.floor((data.otpExpires - Date.now()) /1000)
+
+        return res.render("user/verifyOtp",{
+          email: data.newEmail,
+          type,
+          error: "Please wait before requesting new OTP",
+          remainingSeconds
+        })
+      }
+
+      const otp = Math.floor(1000 + Math.random()* 9000).toString()
+
+      data.otp = otp
+      data.otpExpires = Date.now() + 60 * 1000
+
+      await sendOtpEmail(data.oldEmail, otp)
+
+      return res.render("user/verifyOtp", {
+        email: data.newEmail,
+        type,
+        error: "New OTP sent successfully",
+        remainingSeconds: 60
+      })
+    }
 
     const user = await User.findOne({ email });
 
@@ -561,6 +713,12 @@ export const resendOTP = async (req, res) => {
     });
 
   } catch (error) {
-    res.send("Error resending OTP")
+    console.log(error)
+    
+    res.render("user/verifyOtp",{
+      email:"",
+      type: "",
+      error: "Error resending OTP"
+    }) 
   }
 };

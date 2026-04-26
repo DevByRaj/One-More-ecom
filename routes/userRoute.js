@@ -60,23 +60,33 @@ router.get("/auth/google/callback",
 );
 
 
-router.get("/verify-otp",isUserLoggedOut, (req, res) => {
+router.get("/verify-otp", (req, res) => {
   const { email,type } = req.query;
 
   if(type === "forgot" && req.session.resetDone){
     return res.redirect(`/reset-password?email=${req.query.email}`)
   }
 
-  if (!email) {
-    return res.redirect("/signup");
+  let finalEmail = email
+
+  if(type === "emailEdit"){
+    if(!req.session.emailEdit){
+      return res.redirect("/profile")
+    }
+    finalEmail = req.session.emailEdit.newEmail
+  }
+  
+
+  if (!finalEmail) {
+    return res.redirect("/signup")
   }
 
   res.render("user/verifyOtp", { 
-    email, 
+    email: finalEmail, 
     error: null,
     type
-  });
-});
+  })
+})
 
 router.post("/verify-otp", verifyOTP)
 
