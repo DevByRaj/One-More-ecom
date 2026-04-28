@@ -5,9 +5,8 @@ export const validateSignup = [
 
     body("email").trim()
     .isEmail().withMessage("Enter valid Email")
-    .notEmpty().withMessage("Email is required")
-    .matches(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)
-    .withMessage("Required valid email address"),
+    .notEmpty().withMessage("Email is required"),
+    
 
     body("password").notEmpty().withMessage("Password is required")
     .isLength({min: 10}).withMessage("Password must be atleast 10 characters")
