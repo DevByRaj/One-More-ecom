@@ -345,7 +345,7 @@ form.addEventListener("submit", function (e) {
   if (email.value.trim() === "") {
     emailError.textContent = "Email is required";
     valid = false;
-  } else if (!emailPattern.test(email.value)) {
+  } else if (!emailPattern.test(email.value.trim())) {
     emailError.textContent = "Enter valid email";
     valid = false;
   }

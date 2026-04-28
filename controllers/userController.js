@@ -1,12 +1,11 @@
 import User from "../models/userModel.js"
 import Product from "../models/productModel.js"
-import bcrypt from "bcryptjs"
+import bcrypt, { compare } from "bcryptjs"
 import { validationResult } from "express-validator"
 import crypto from "crypto"
 import {sendOtpEmail} from "../services/mailService.js"
 import Address from "../models/addressModel.js"
 import { log } from "console"
-
 
 
 export const getSignup = (req, res) =>{
@@ -41,7 +40,7 @@ export const postSignup = async (req, res) => {
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString()
     
-    console.log("signup Otp:", otp);
+    console.log("Signup Otp:", otp);
     
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -56,6 +55,7 @@ req.session.tempUser = {
 }
 
 const isSent = await sendOtpEmail(email, otp)
+console.log("mail sent result:", isSent);
 
 if (!isSent) {
   return res.render("user/signup", {
@@ -109,6 +109,39 @@ export const verifyOTP = async(req, res) =>{
       return res.redirect(`/reset-password?email=${email}`)
     }
 
+    if(type === "passwordChange"){
+      const data = req.session.passwordChange
+
+      if(!data){
+        return res.redirect("/profile")
+      }
+
+      if(data.otp !== otp){
+        return res.render("user/verifyOtp", {
+          email: "",
+          type,
+          error: "Invalid OTP",
+          remainingSeconds: Math.max(0, Math.floor((data.otpExpires-Date.now())/1000))
+        })
+      }
+
+      if(data.otpExpires < Date.now()){
+      return res.render("user/verifyOtp", {
+        email: "",
+        type,
+        error: "OTP expired",
+        remainingSeconds: 0
+      })
+    }
+
+      await User.findByIdAndUpdate(data.userId, {
+      password: data.newPassword
+    })
+    req.session.passwordChange = null
+
+    return res.redirect("/?msg=password-updated")
+    }
+    
     if (type === "emailEdit") {
   const data = req.session.emailEdit;
 
@@ -252,7 +285,10 @@ export const postLogin = async(req, res) =>{
 
     } catch (error) {
         console.log(error)
-        res.status(500).send("found server error")
+        res.render("user/login",{
+          errors: {general: 'Something went Wrong'},
+          oldData: req.body
+        })
     }
 }
 
@@ -291,17 +327,24 @@ export const getProfile = async(req, res) =>{
             return res.redirect("/login")
         }
 
+        const success = req.session.success
+
+        req.session.success = null
+
         const user = await User.findById(userId);
 
         if(!user){
             return res.redirect("/login")
         }
 
-        res.render("user/profile", {user})
+        res.render("user/profile", {user, success})
        
     } catch (error) {
         console.log(error)
-        res.status(500).send("server Error")
+        res.render("user/profile", {
+          user: null,
+          success,
+          error: null })
         
     }
 }
@@ -619,6 +662,42 @@ export const resendOTP = async (req, res) => {
   try {
     const { email, type } = req.body || req.query
 
+    if(type === "passwordChange"){
+      const data = req.session.passwordChange
+      
+      if(!data){
+        return res.redirect("/profile")
+      }
+
+      if(data.otpExpires > Date.now()){
+        const remainingSeconds = Math.floor((data.otpExpires - Date.now())/1000)
+
+        return res.render("user/verifyOtp", {
+          email: "",
+          type,
+          error: "Please wait before requesting New OTP",
+          remainingSeconds
+        })
+      }
+
+      const otp = Math.floor(1000 + Math.random()* 9000).toString()
+
+      data.otp = otp
+      data.otpExpires = Date.now()+60 * 1000
+
+      const user = await User.findById(data.userId)
+
+      await sendOtpEmail(user.email, otp)
+
+      return res.render("user/verifyOtp", {
+        email: "",
+        type,
+        error: "New OTP sent successfully",
+        remainingSeconds : 60
+      })
+    }
+
+
     if(type === "signup"){
       const tempUser = req.session.tempUser
 
@@ -738,3 +817,54 @@ export const getSingleAddress = async (req, res) => {
     res.status(500).json({ message: "Error fetching address" });
   }
 };
+
+export const postChangePassword = async (req, res) =>{
+  try {
+    console.log('Body:', req.body);
+    
+    
+    const userId = req.session.user
+    const {currentPassword, newPassword, confirmPassword} = req.body
+
+    const user = await User.findById(userId)
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password)
+    if(!isMatch){
+      return res.render("user/changePassword", {
+        error: "Incorrect current password"
+      })
+    }
+
+    if(newPassword !== confirmPassword){
+      return res.render("user/changePassword", {
+        error: "password do not match"
+      })
+    }
+
+    if(newPassword.length < 8){
+      return res.render("user/changePassword", {
+        error: "Password must be at least 8 characters"
+      })
+    }
+
+    const isSame = await bcrypt.compare(newPassword, user.password)
+    if(isSame){
+      return readdirSync.render("user/changePassword", {
+        error: "New password cannot be same as old password"
+      })
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10)
+    await user.save()
+
+    req.session.success = "Password changed successfully"
+
+    return res.redirect("/profile")
+
+  } catch (error) {
+    console.log(error)
+    res.render("user/changePassword", {
+      error: "Something went wrong"
+    })
+  }
+}

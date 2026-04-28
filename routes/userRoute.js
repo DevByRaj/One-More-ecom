@@ -12,7 +12,8 @@ import { getHome,
         postResetPassword,
         getAddressPage, getAddAddress, postAddAddress, deleteAddress,
         getSingleAddress,
-        resendOTP} from "../controllers/userController.js";
+        resendOTP,
+        postChangePassword} from "../controllers/userController.js";
 import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
@@ -23,8 +24,15 @@ import passport from "passport";
 const router = express.Router()
 
 router.get("/",(req, res) =>{
+
+  let message = null
+
+  if(req.query.msg === "password-updated"){
+    message = "Password changed successfully"
+  }
         res.render("user/home", {
-                user: req.session.user || null
+                user: req.session.user || null,
+                message
         })
 })
 
@@ -102,6 +110,12 @@ router.get("/reset-password",  getResetPassword)
 router.post("/reset-password", postResetPassword)
 
 router.post("/resend-otp", resendOTP)
+
+router.get("/change-password", isUserLoggedIn, (req, res) =>{
+  res.render("user/changePassword", {error: null})
+})
+
+router.post("/change-password", isUserLoggedIn, postChangePassword)
 
 
 export default router

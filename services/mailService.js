@@ -13,8 +13,12 @@ export const sendOtpEmail = async (email, otp) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Your OTP - OneMore",
-      text: `Your OTP is ${otp}. It expires in 2 minutes`,
+      subject: "OneMore OTP Verification",
+      text: `Welcoe to OneMore! 
+      Your OTP is ${otp}.
+      This OTP is valid for 1 minutes.
+      Do not share this code for security reasons
+      - Team OneMore`,
     };
 
     await transport.sendMail(mailOptions);
