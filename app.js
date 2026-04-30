@@ -1,7 +1,8 @@
 import "dotenv/config";   // ✅ only this needed
 
 import express from "express";
-import router from "./routes/userRoute.js";
+import userRouter from "./routes/userRoute.js";
+import adminRouter from "./routes/adminRoutes.js";
 import connectDB from "./config/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -55,7 +56,8 @@ app.use((req, res, next) =>{
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/", router);
+app.use("/", userRouter);
+app.use("/admin", adminRouter)
 
 const startServer = async () => {
   try {
