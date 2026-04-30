@@ -69,7 +69,10 @@ res.redirect(`/verify-otp?email=${email}&type=signup`)
   } catch (error) {
     console.log(error);
     
-    res.status(500).send("Server Error")
+    return res.render("user/signup", {
+      errors: [{msg: "something went wrong. Please try again.", path: "general"}],
+      oldData: req.body || {}
+    })
   }
 }
 
@@ -217,17 +220,29 @@ export const verifyOTP = async(req, res) =>{
 
     await newUser.save()
 
-    req.session.user = newUser._id
+    // req.session.user = newUser._id
 
     req.session.tempUser = null
 
-    req.session.save(() =>{
-      res.redirect("/")
-    })
+    return res.redirect("/login?msg=signup-success")
+
+    // req.session.save(() =>{
+    //   res.redirect("/")
+    // })
 
   } catch (err) {
-    res.status(500).send("Server error")
-    
+    console.log("OTP Error:", err);
+
+    const email = req.body?.email || ""
+    const type = req.body?.type || "signup"
+
+    return res.render("user/verifyOtp", {
+      email,
+      type,
+      error: "Something went wrong. Please try again.",
+      remainingSeconds: 0
+    })
+        
   }
 }
 
@@ -301,8 +316,12 @@ export const getHome = async (req, res) =>{
             user: req.session.user || null
         })
     } catch (error) {
-        console.log(error)
-        res.status(500).send("Server Error")
+        console.error("user/home", error);
+
+        return res.render("user/home", {
+          products: [],
+          error: "Unable load Products. Please try again later" 
+        })   
     }
 }
 
@@ -366,7 +385,12 @@ export const getEditProfile = async(req, res) =>{
         })
     } catch (error) {
         console.log(error)
-        res.status(500).send("Server Error")        
+        res.status(500).render("user/editProfile", {
+          user: null,
+          error: "Something went worng. Please try again.",
+          errors: {},
+          oldData: {}
+        })       
     }
 }
 
@@ -387,7 +411,6 @@ export const postEditProfile = async(req, res) =>{
                     phone: "Phone number should be exactly 10 digits"
                 },
                 oldData: req.body
-                // message: null
             })
         }
 
@@ -446,13 +469,23 @@ export const postEditProfile = async(req, res) =>{
 }
 
 export const getAddressPage = async (req, res) => {
+  try{
   const userId = req.session.user;
 
   const addresses = await Address.find({ userId });
 
   const error = req.query.error || null
 
-  res.render("user/address", { addresses, error });
+  res.render("user/address", {
+    user: userId,
+    addresses,
+    error
+  });
+} catch(error){
+  console.log(error);
+  res.redirect("/address?error=server")
+  
+}
 }
 
 export const getAddAddress = (req, res) => {
@@ -522,8 +555,12 @@ export const deleteAddress = async (req, res) => {
 
     res.redirect("/address");
   } catch (error) {
-    console.log(error);
-    res.status(500).send("Error deleting address");
+    res.rednder("user/address", {
+      user,
+      addresses,
+      error
+    })
+    
   }
 }
 
