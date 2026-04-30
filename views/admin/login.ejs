@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Logo Styling */
+        .login-logo {
+            width: 100px;
+            margin-bottom: 30px;
+        }
+
+        /* The Card with the Purple Glow/Border */
+        .login-card {
+            background-color: #0d0d0d;
+            border: 2px solid #8a7df0; /* The purple border from your image */
+            border-radius: 40px; /* Highly rounded corners */
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 15px rgba(138, 125, 240, 0.2); /* Subtle glow */
+        }
+
+        .login-title {
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 4px;
+            margin-bottom: 40px;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        /* Input Styling */
+        .form-control {
+            background-color: transparent !important;
+            border: 1.5px solid #ffffff !important;
+            border-radius: 12px;
+            color: #ffffff !important;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-control::placeholder {
+            color: #888;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+            border-color: #ffffff;
+        }
+
+        /* Login Button */
+        .btn-login {
+            background-color: #e9ecef; /* Light grey/white button */
+            color: #000000;
+            border-radius: 12px;
+            padding: 8px 60px;
+            font-weight: 600;
+            border: none;
+            display: block;
+            margin: 10px auto 0;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            background-color: #ffffff;
+            transform: scale(1.02);
+        }
+
+        /* Footer */
+        .footer-text {
+            position: absolute;
+            bottom: 30px;
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo Section -->
+    <div class="text-center">
+        <!-- Replace with your actual logo path -->
+        <img src="/images/logo.png" alt="IM Logo" class="login-logo">
+    </div>
+
+    <!-- Login Form Card -->
+    <div class="login-card">
+        <h2 class="login-title">Admin Login</h2>
+        
+        <form action="/admin/login" method="POST">
+            <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+            
+            <div class="mb-4">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-text">
+        © 2026 onemore. All Rights Reserved.
+    </div>
+
+</body>
+</html>

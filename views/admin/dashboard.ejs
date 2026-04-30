@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Font: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --card-bg: #0d0d0d;
+            --accent-purple: #8a7df0;
+            --text-muted: #888888;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Border removed here */
+        .dashboard-container {
+            padding: 30px;
+            min-height: 90vh;
+            position: relative;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background-color: var(--card-bg);
+            border: 2px solid var(--accent-purple);
+            border-radius: 25px;
+            padding: 20px 10px;
+            height: fit-content;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-size: 13px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+        }
+
+        .nav-link i { font-size: 18px; }
+        .nav-link:hover { color: var(--accent-purple); }
+        .nav-link.active { color: var(--accent-purple); font-weight: 600; }
+
+        /* --- CARDS & CONTENT --- */
+        .section-title {
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-decoration: underline;
+            text-underline-offset: 8px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--accent-purple);
+            border-radius: 15px;
+            padding: 15px;
+            height: 100%;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value { font-size: 18px; font-weight: 500; }
+        .trend-up { color: #f2a900; } 
+        .trend-down { color: #ff4d4d; }
+        .trend-neutral { color: #00ff88; }
+
+        /* --- CHART AREA --- */
+        .chart-container {
+            background-color: var(--card-bg);
+            border: 2px solid var(--accent-purple);
+            border-radius: 25px;
+            padding: 30px;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .view-details-btn {
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            background: transparent;
+            border-radius: 20px;
+            padding: 5px 20px;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        /* --- TOP TOOLS --- */
+        .top-tools {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .btn-download {
+            background-color: #e9ecef;
+            color: #000;
+            border-radius: 15px;
+            padding: 8px 30px;
+            font-weight: 600;
+            border: none;
+        }
+
+        .year-select {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            border-radius: 15px;
+            padding: 5px 15px;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container container-fluid">
+        <!-- Dashboard Header Label Removed -->
+
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-2 pe-lg-4">
+                <div class="text-center mb-4">
+                    <!-- Replace with your actual logo path -->
+                    <img src="/images/logo.png" alt="IM" style="width: 60px;">
+                </div>
+                <div class="sidebar">
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#"><i class="bi bi-pie-chart"></i> Dashboard</a>
+                        <a class="nav-link" href="#"><i class="bi bi-grid"></i> Products</a>
+                        <a class="nav-link" href="#"><i class="bi bi-person"></i> Customers</a>
+                        <a class="nav-link" href="#"><i class="bi bi-cart"></i> Orders</a>
+                        <a class="nav-link" href="#"><i class="bi bi-ticket-perforated"></i> Coupons</a>
+                        <a class="nav-link" href="#"><i class="bi bi-app-indicator"></i> Category</a>
+                        <a class="nav-link" href="#"><i class="bi bi-bag"></i> Brand</a>
+                        <a class="nav-link" href="#"><i class="bi bi-percent"></i> Offers</a>
+                        <a class="nav-link" href="#"><i class="bi bi-image"></i> Banner</a>
+                        <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Sales Report</a>
+                        <a class="nav-link mt-4" href="#"><i class="bi bi-power"></i> Logout</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-lg-10">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="section-title">Sales Summary</h2>
+                    <div class="top-tools">
+                        <select class="year-select">
+                            <option>2024</option>
+                        </select>
+                        <button class="btn-download">Download</button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Revenue</span> <span class="trend-up">+ 22%</span></div>
+                            <div class="stat-value">$7,825</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Orders</span> <span class="trend-down">- 25%</span></div>
+                            <div class="stat-value">900</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Products Sold</span> <span class="trend-neutral">+ 45%</span></div>
+                            <div class="stat-value">14.4k</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Total customers</span> <span class="trend-neutral">+ 4%</span></div>
+                            <div class="stat-value">100</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Placeholder -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="small"><span style="color: #f2a900;">●</span> Orders Update</div>
+                        <a href="#" class="view-details-btn">View Details <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                    <div style="height: 300px; border-bottom: 1px dashed #333; position: relative;">
+                        <p class="text-muted text-center pt-5 mt-5">Chart visualization goes here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-text">
+            © 2026 onemore. All Rights Reserved.
+        </div>
+    </div>
+
+</body>
+</html>
