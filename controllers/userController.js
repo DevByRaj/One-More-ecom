@@ -6,6 +6,7 @@ import crypto from "crypto"
 import {sendOtpEmail} from "../services/mailService.js"
 import Address from "../models/addressModel.js"
 import { log } from "console"
+import { create } from "domain"
 
 
 export const getSignup = (req, res) =>{
@@ -248,12 +249,15 @@ export const verifyOTP = async(req, res) =>{
 
 export const getLogin= (req, res) =>{
 
-  // const success = req.query.reset = "success"
-    res.render("user/login",{
-      // success,
-      errors: {},
-      oldData: {}
-    })
+  let errors = {}
+
+  if(req.query.error === "blocked"){
+    errors.general = 'Your account is blocked by admin'
+  }
+  res.render("user/login", {
+    errors,
+    oldData: {}
+  })
 }
 
 export const postLogin = async(req, res) =>{
@@ -269,13 +273,6 @@ export const postLogin = async(req, res) =>{
                 oldData: req.body
             })
         }
-        if(user.isBlocked){
-            return res.render("user/login",{
-                errors: {email:"You are blocked by admin",
-                    oldData: req.body
-                }
-            })
-        }
 
         const isMatch = await bcrypt.compare(password, user.password)
 
@@ -285,6 +282,16 @@ export const postLogin = async(req, res) =>{
                 oldData: req.body
             })
         }
+
+        if(user.isBlocked){
+            return res.render("user/login",{
+                errors: {email:"You  acoount is blocked by admin",
+                    oldData: req.body
+                }
+            })
+        }
+
+        
         req.session.regenerate((err)=>{
             if(err){
                 console.log( err)
@@ -534,6 +541,11 @@ export const postAddAddress = async( req, res) =>{
           if(count >= 3){
             return res.redirect("/address?error=limit")
           }
+
+          if(count === 0){
+            addressData.isDefault = true
+          }
+
           await Address.create(addressData)
         }
         res.redirect("/address")
@@ -903,5 +915,26 @@ export const postChangePassword = async (req, res) =>{
     res.render("user/changePassword", {
       error: "Something went wrong"
     })
+  }
+}
+
+export const checkUserStatus = async (req, res) =>{
+  try {
+    if(!req.session.user){
+      return res.status(401).json({blocked: true})
+    }
+
+    const user = await User.findById(req.session.user)
+
+    if(user && user.isBlocked){
+      req.session.destroy(() =>{
+        return res.status(401).json({blocked: true})
+      })
+    }
+    res.status(200).json({ok: true})
+    
+  } catch (error) {
+    res.status(500).json({error: true})
+    
   }
 }
