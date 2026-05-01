@@ -13,7 +13,8 @@ import { getHome,
         getAddressPage, getAddAddress, postAddAddress, deleteAddress,
         getSingleAddress,
         resendOTP,
-        postChangePassword} from "../controllers/userController.js";
+        postChangePassword,
+        checkUserStatus} from "../controllers/userController.js";
 import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
@@ -116,6 +117,8 @@ router.get("/change-password", isUserLoggedIn, (req, res) =>{
 })
 
 router.post("/change-password", isUserLoggedIn, postChangePassword)
+
+router.get("/check-user-status", checkUserStatus)
 
 
 export default router

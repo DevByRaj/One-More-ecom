@@ -1,334 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-body {
-  font-family:'Poppins',sans-serif;
-  background:#0f0f0f;
-  color:#fff;
-}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+    }
 
-/* NAVBAR */
-nav {
-  background:#0f0f0f;
-  padding:20px 60px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+    /* NAVBAR */
+    nav {
+      background: #0f0f0f;
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.logo-img { width:60px; }
+    .logo-img {
+      width: 60px;
+    }
 
-.nav-links { display:flex; gap:40px; }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+    }
 
-.nav-links a {
-  color:#cfcfcf;
-  text-decoration:none;
-  font-size:14px;
-}
+    .nav-links a {
+      color: #cfcfcf;
+      text-decoration: none;
+      font-size: 14px;
+    }
 
-.icons { display:flex; gap:25px; }
+    .icons {
+      display: flex;
+      gap: 25px;
+    }
 
-.icons i {
-  font-size:18px;
-  color:#ccc;
-}
+    .icons i {
+      font-size: 18px;
+      color: #ccc;
+    }
 
-/* MAIN */
-.main {
-  background:#dcdcdc;
-  min-height:70vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+    /* MAIN */
+    .main {
+      background: #dcdcdc;
+      min-height: 70vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-/* CARD */
-.card {
-  background:#efefef;
-  border:2px solid #000;
-  border-radius:20px;
-  padding:40px 30px;
-  width:360px;
-  text-align:center;
-}
+    /* CARD */
+    .card {
+      background: #efefef;
+      border: 2px solid #000;
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 360px;
+      text-align: center;
+    }
 
-.card h2 {
-  margin-bottom:25px;
-  color:#000;
-}
+    .card h2 {
+      margin-bottom: 25px;
+      color: #000;
+    }
 
-/* INPUT */
-.card input {
-  width:100%;
-  padding:12px;
-  padding-right:35px;
-  margin-bottom:5px;
-  border-radius:10px;
-  border:none;
-  background:#cfcfcf;
-}
+    /* INPUT */
+    .card input {
+      width: 100%;
+      padding: 12px;
+      padding-right: 35px;
+      margin-bottom: 5px;
+      border-radius: 10px;
+      border: none;
+      background: #cfcfcf;
+    }
 
-/* INPUT GROUP */
-.input-group { position:relative; }
+    /* INPUT GROUP */
+    .input-group {
+      position: relative;
+    }
 
-.toggle-eye {
-  position:absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  cursor:pointer;
-  color:#555;
-}
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #555;
+    }
 
-/* ERROR */
-.error-msg {
-  color:red;
-  font-size:12px;
-  text-align:left;
-  margin-bottom:10px;
-}
+    /* ERROR */
+    .error-msg {
+      color: red;
+      font-size: 12px;
+      text-align: left;
+      margin-bottom: 10px;
+    }
 
-/* LINKS */
-.links {
-  display:flex;
-  justify-content:space-between;
-  font-size:12px;
-  margin-bottom:15px;
-}
+    /* LINKS */
+    .links {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
 
-.links a { color:#000; }
+    .links a {
+      color: #000;
+    }
 
-/* BUTTON */
-.btn {
-  width:100%;
-  padding:12px;
-  background:#000;
-  color:#fff;
-  border-radius:10px;
-  border:none;
-}
+    /* BUTTON */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #000;
+      color: #fff;
+      border-radius: 10px;
+      border: none;
+    }
 
-/* GOOGLE */
-.google-text {
-  margin-top:10px;
-  font-size:12px;
-  color:#555;
-}
+    /* GOOGLE */
+    .google-text {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #555;
+    }
 
-.google-icon {
-  margin-top:5px;
-}
+    .google-icon {
+      margin-top: 5px;
+    }
 
-/* FOOTER */
-footer {
-  background: #0f0f0f;
-  padding: 50px 80px;
-}
+    /* FOOTER */
+    footer {
+      background: #0f0f0f;
+      padding: 50px 80px;
+    }
 
-.footer-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 40px;
-}
+    .footer-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
 
-.footer-logo img {
-  width: 80px;
-}
+    .footer-logo img {
+      width: 80px;
+    }
 
-.footer-container {
-  display: flex;
-  justify-content: space-between;
-}
+    .footer-container {
+      display: flex;
+      justify-content: space-between;
+    }
 
-.footer-section h4 {
-  color: #fff;
-}
+    .footer-section h4 {
+      color: #fff;
+    }
 
-.footer-section p {
-  color: #aaa;
-  font-size: 13px;
-}
+    .footer-section p {
+      color: #aaa;
+      font-size: 13px;
+    }
 
-.bottom {
-  margin-top: 30px;
-  font-size: 12px;
-  color: #777;
-}
-</style>
+    .bottom {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
 
 <body>
 
-<nav>
-  <img src="/images/logo.png" class="logo-img">
+  <nav>
+    <img src="/images/logo.png" class="logo-img">
 
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="#">Shop</a>
-    <a href="#">Contact Us</a>
-    <a href="#">About Us</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="#">Shop</a>
+      <a href="#">Contact Us</a>
+      <a href="#">About Us</a>
+    </div>
+
+    <div class="icons">
+      <i class="fa-regular fa-user"></i>
+      <i class="fa-regular fa-heart"></i>
+      <i class="fa-solid fa-cart-shopping"></i>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="card">
+
+      <h2>Login</h2>
+
+      <% if(errors.general){ %>
+        <div style="color:red; text-align:center; margin-bottom:10px;">
+          <%= errors.general %>
+        </div>
+        <% } %>
+
+          <!-- FORM -->
+          <form id="loginForm" action="/login" method="POST" novalidate>
+
+            <!-- EMAIL -->
+            <input type="email" id="email" name="email" placeholder="Email" value="<%= oldData?.email || '' %>">
+            <div id="emailError" class="error-msg">
+              <%= errors?.email %>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group">
+              <input type="password" id="password" name="password" placeholder="Password">
+              <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
+            </div>
+            <div id="passwordError" class="error-msg">
+              <%= errors?.password %>
+            </div>
+
+            <div class="links">
+              <a href="/signup">Signup</a>
+              <a href="/forgot-password">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+
+          </form>
+
+          <!-- GOOGLE AUTH -->
+          <p class="google-text">Or continue with</p>
+
+          <div class="google-icon">
+            <a href="/auth/google">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="30">
+            </a>
+          </div>
+
+    </div>
   </div>
 
-  <div class="icons">
-    <i class="fa-regular fa-user"></i>
-    <i class="fa-regular fa-heart"></i>
-    <i class="fa-solid fa-cart-shopping"></i>
-  </div>
-</nav>
+  <footer>
 
-<div class="main">
-  <div class="card">
+    <div class="footer-logo">
+      <img src="/images/logo.png">
+    </div>
 
-    <h2>Login</h2>
+    <div class="footer-container">
 
-    <!-- FORM -->
-    <form id="loginForm" action="/login" method="POST" novalidate>
-
-      <!-- EMAIL -->
-      <input type="email" id="email" name="email" placeholder="Email"
-        value="<%= oldData?.email || '' %>">
-      <div id="emailError" class="error-msg">
-        <%= errors?.email %>
+      <div class="footer-section">
+        <h4>SUPPORT</h4>
+        <p>Order Status</p>
+        <p>Product Support</p>
+        <p>Shipping & Return Policy</p>
+        <p>Complaint Registration</p>
       </div>
 
-      <!-- PASSWORD -->
-      <div class="input-group">
-        <input type="password" id="password" name="password" placeholder="Password">
-        <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
-      </div>
-      <div id="passwordError" class="error-msg">
-        <%= errors?.password %>
-      </div>
-
-      <div class="links">
-        <a href="/signup">Signup</a>
-        <a href="/forgot-password">Forgot Password?</a>
+      <div class="footer-section">
+        <h4>About Us</h4>
+        <p>Contact Us</p>
+        <p>Privacy Policy</p>
+        <p>Terms of use</p>
+        <p>FAQ</p>
       </div>
 
-      <button type="submit" class="btn">Login</button>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>Email : onemore@gmail.com</p>
+        <p>Phone : +91 8888888888</p>
+      </div>
 
-    </form>
+      <div class="footer-section">
+        <h4>Connect with us</h4>
+        <p>Instagram</p>
+        <p>Facebook</p>
+        <p>X</p>
+      </div>
 
-    <!-- GOOGLE AUTH -->
-    <p class="google-text">Or continue with</p>
-
-    <div class="google-icon">
-      <a href="/auth/google">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="30">
-      </a>
     </div>
 
-  </div>
-</div>
-
-<footer>
-
-  <div class="footer-logo">
-    <img src="/images/logo.png">
-  </div>
-
-  <div class="footer-container">
-
-    <div class="footer-section">
-      <h4>SUPPORT</h4>
-      <p>Order Status</p>
-      <p>Product Support</p>
-      <p>Shipping & Return Policy</p>
-      <p>Complaint Registration</p>
+    <div class="bottom">
+      © 2025 onemore. All Rights Reserved.
     </div>
 
-    <div class="footer-section">
-      <h4>About Us</h4>
-      <p>Contact Us</p>
-      <p>Privacy Policy</p>
-      <p>Terms of use</p>
-      <p>FAQ</p>
-    </div>
+  </footer>
 
-    <div class="footer-section">
-      <h4>Contact</h4>
-      <p>Email : onemore@gmail.com</p>
-      <p>Phone : +91 8888888888</p>
-    </div>
+  <script>
+    const form = document.getElementById("loginForm");
 
-    <div class="footer-section">
-      <h4>Connect with us</h4>
-      <p>Instagram</p>
-      <p>Facebook</p>
-      <p>X</p>
-    </div>
+    form.addEventListener("submit", function (e) {
+      let valid = true;
 
-  </div>
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
 
-  <div class="bottom">
-    © 2025 onemore. All Rights Reserved.
-  </div>
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
 
-</footer>
+      emailError.textContent = "";
+      passwordError.textContent = "";
 
-<script>
-const form = document.getElementById("loginForm");
+      const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-form.addEventListener("submit", function (e) {
-  let valid = true;
+      // EMAIL VALIDATION
+      if (email.value.trim() === "") {
+        emailError.textContent = "Email is required";
+        valid = false;
+      } else if (!emailPattern.test(email.value)) {
+        emailError.textContent = "Enter valid email";
+        valid = false;
+      }
 
-  const email = document.getElementById("email"); 
-  const password = document.getElementById("password");
+      // PASSWORD VALIDATION
+      if (password.value.trim() === "") {
+        passwordError.textContent = "Password is required";
+        valid = false;
+      } else if (!passwordPattern.test(password.value)) {
+        passwordError.textContent =
+          "Must include uppercase, lowercase, number & special character";
+        valid = false;
+      }
 
-  const emailError = document.getElementById("emailError");
-  const passwordError = document.getElementById("passwordError");
+      if (!valid) e.preventDefault();
+    }); // ✅ IMPORTANT: properly closed
 
-  emailError.textContent = "";
-  passwordError.textContent = "";
+    /* 🔥 EYE TOGGLE (OUTSIDE submit) */
+    function togglePassword() {
+      const input = document.getElementById("password");
+      const icon = document.querySelector(".toggle-eye");
 
-  const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
-  // EMAIL VALIDATION
-  if (email.value.trim() === "") {
-    emailError.textContent = "Email is required";
-    valid = false;
-  } else if (!emailPattern.test(email.value)) {
-    emailError.textContent = "Enter valid email";
-    valid = false;
-  }
-
-  // PASSWORD VALIDATION
-  if (password.value.trim() === "") {
-    passwordError.textContent = "Password is required";
-    valid = false;
-  } else if (!passwordPattern.test(password.value)) {
-    passwordError.textContent =
-      "Must include uppercase, lowercase, number & special character";
-    valid = false;
-  }
-
-  if (!valid) e.preventDefault();
-}); // ✅ IMPORTANT: properly closed
-
-/* 🔥 EYE TOGGLE (OUTSIDE submit) */
-function togglePassword() {
-  const input = document.getElementById("password");
-  const icon = document.querySelector(".toggle-eye");
-
-  if (input.type === "password") {
-    input.type = "text";
-    icon.classList.replace("fa-eye","fa-eye-slash");
-  } else {
-    input.type = "password";
-    icon.classList.replace("fa-eye-slash","fa-eye");
-  }
-}
-</script>
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    }
+  </script>
 
 </body>
+
 </html>

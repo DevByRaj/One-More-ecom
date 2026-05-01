@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import passport from "passport";
 import session from "express-session";
+import { checkBlockedUser } from "./middlewares/auth.js";
 
 import "./config/passport.js";
 
@@ -25,10 +26,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-    res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
-    res.set("Pragma", "no-cache");
-    res.set("Expires", "0");
-    next();
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
 });
 
 app.use(
@@ -46,8 +47,8 @@ app.use(
   })
 );
 
-app.use((req, res, next) =>{
-  if(req.session){
+app.use((req, res, next) => {
+  if (req.session) {
     res.locals.user = req.session?.user || null
   }
   next()
@@ -55,6 +56,8 @@ app.use((req, res, next) =>{
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/", checkBlockedUser)
 
 app.use("/", userRouter);
 app.use("/admin", adminRouter)
