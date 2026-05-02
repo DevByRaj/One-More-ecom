@@ -60,7 +60,10 @@ app.use(passport.session());
 app.use("/", checkBlockedUser)
 
 app.use("/", userRouter);
+
 app.use("/admin", adminRouter)
+
+
 
 const startServer = async () => {
   try {

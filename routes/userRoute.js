@@ -1,49 +1,50 @@
 import express from "express";
-import { getHome,
-        getLogin, postLogin,
-        getSignup, postSignup, 
-        getLogout,
-        getProfile, getEditProfile, postEditProfile,
-        verifyOTP,
-        setDefaultAddress,
-        getForgotPassword,
-        postForgotPassword,
-        getResetPassword,
-        postResetPassword,
-        getAddressPage, getAddAddress, postAddAddress, deleteAddress,
-        getSingleAddress,
-        resendOTP,
-        postChangePassword,
-        checkUserStatus} from "../controllers/userController.js";
+import {
+  getHome,
+  getLogin, postLogin,
+  getSignup, postSignup,
+  getLogout,
+  getProfile, getEditProfile, postEditProfile,
+  verifyOTP,
+  setDefaultAddress,
+  getForgotPassword,
+  postForgotPassword,
+  getResetPassword,
+  postResetPassword,
+  getAddressPage, getAddAddress, postAddAddress, deleteAddress,
+  getSingleAddress,
+  resendOTP,
+  postChangePassword,
+  checkUserStatus
+} from "../controllers/userController.js";
 import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
 import passport from "passport";
 
 
-
 const router = express.Router()
 
-router.get("/",(req, res) =>{
+router.get("/", (req, res) => {
 
   let message = null
 
-  if(req.query.msg === "password-updated"){
+  if (req.query.msg === "password-updated") {
     message = "Password changed successfully"
   }
-        res.render("user/home", {
-                user: req.session.user || null,
-                message
-        })
+  res.render("user/home", {
+    user: req.session.user || null,
+    message
+  })
 })
 
 
 
 router.get("/signup", isUserLoggedOut, getSignup)
-router.post("/signup",isUserLoggedOut, validateSignup, postSignup)
+router.post("/signup", isUserLoggedOut, validateSignup, postSignup)
 
-router.get("/login",isUserLoggedOut, getLogin)
-router.post("/login",isUserLoggedOut, postLogin)
+router.get("/login", isUserLoggedOut, getLogin)
+router.post("/login", isUserLoggedOut, postLogin)
 
 router.get("/logout", getLogout)
 
@@ -54,7 +55,7 @@ router.get("/profile/edit", isUserLoggedIn, getEditProfile)
 router.post("/profile/edit", isUserLoggedIn, upload.single("profileImage"), postEditProfile)
 
 router.get("/auth/google",
-    passport.authenticate("google", {scope:["profile", "email"]})
+  passport.authenticate("google", { scope: ["profile", "email"] })
 )
 
 router.get("/auth/google/callback",
@@ -68,29 +69,29 @@ router.get("/auth/google/callback",
 );
 
 
-router.get("/verify-otp",(req, res) => {
-  const { email,type } = req.query;
+router.get("/verify-otp", (req, res) => {
+  const { email, type } = req.query;
 
-  if(type === "forgot" && req.session.resetDone){
+  if (type === "forgot" && req.session.resetDone) {
     return res.redirect(`/reset-password?email=${req.query.email}`)
   }
 
   let finalEmail = email
 
-  if(type === "emailEdit"){
-    if(!req.session.emailEdit){
+  if (type === "emailEdit") {
+    if (!req.session.emailEdit) {
       return res.redirect("/profile")
     }
     finalEmail = req.session.emailEdit.newEmail
   }
-  
+
 
   if (!finalEmail) {
     return res.redirect("/signup")
   }
 
-  res.render("user/verifyOtp", { 
-    email: finalEmail, 
+  res.render("user/verifyOtp", {
+    email: finalEmail,
     error: null,
     type
   })
@@ -100,20 +101,20 @@ router.post("/verify-otp", verifyOTP)
 
 router.get("/address", isUserLoggedIn, getAddressPage)
 router.post("/address/add", isUserLoggedIn, postAddAddress)
-router.get("/address/:id",isUserLoggedIn, getSingleAddress)
+router.get("/address/:id", isUserLoggedIn, getSingleAddress)
 router.post("/address/delete/:id", isUserLoggedIn, deleteAddress);
-router.get("/address/default/:id",isUserLoggedIn, setDefaultAddress)
+router.get("/address/default/:id", isUserLoggedIn, setDefaultAddress)
 
 router.get("/forgot-password", getForgotPassword)
 router.post("/forgot-password", postForgotPassword)
 
-router.get("/reset-password",  getResetPassword)
+router.get("/reset-password", getResetPassword)
 router.post("/reset-password", postResetPassword)
 
 router.post("/resend-otp", resendOTP)
 
-router.get("/change-password", isUserLoggedIn, (req, res) =>{
-  res.render("user/changePassword", {error: null})
+router.get("/change-password", isUserLoggedIn, (req, res) => {
+  res.render("user/changePassword", { error: null })
 })
 
 router.post("/change-password", isUserLoggedIn, postChangePassword)

@@ -1,130 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Poppins Font -->
+
+    <!-- Font Awesome 6 (Required for Eye Icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+
     <style>
+        :root {
+            --bg-dark: #000000;
+            --card-bg: #0d0d0d;
+            --accent-purple: #8a7df0;
+            --text-muted: #888888;
+            --error-red: #ff4d4d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: #000000;
+            background-color: var(--bg-dark);
             color: #ffffff;
             font-family: 'Poppins', sans-serif;
-            height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            margin: 0;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* Logo Styling */
-        .login-logo {
-            width: 100px;
+        /* Logo size increased significantly */
+        .logo-container {
             margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
         }
 
-        /* The Card with the Purple Glow/Border */
+        .logo-container img {
+            width: 120px;
+            /* Increased from 80px to 120px */
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+        }
+
         .login-card {
-            background-color: #0d0d0d;
-            border: 2px solid #8a7df0; /* The purple border from your image */
-            border-radius: 40px; /* Highly rounded corners */
-            padding: 50px 40px;
+            background-color: var(--card-bg);
+            border: 1.5px solid var(--accent-purple);
+            border-radius: 30px;
+            padding: 50px 45px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 0 15px rgba(138, 125, 240, 0.2); /* Subtle glow */
-        }
-
-        .login-title {
+            max-width: 450px;
             text-align: center;
-            font-weight: 400;
-            letter-spacing: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-weight: 500;
+            letter-spacing: 1.5px;
             margin-bottom: 40px;
-            font-size: 24px;
-            color: #ffffff;
+            font-size: 28px;
         }
 
-        /* Input Styling */
-        .form-control {
-            background-color: transparent !important;
-            border: 1.5px solid #ffffff !important;
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            background: transparent;
+            border: 1.5px solid #333;
             border-radius: 12px;
-            color: #ffffff !important;
-            padding: 12px 20px;
-            margin-bottom: 25px;
-            font-size: 14px;
+            padding: 15px 20px;
+            padding-right: 50px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
         }
 
-        .form-control::placeholder {
-            color: #888;
+        input:focus {
+            border-color: var(--accent-purple);
         }
 
-        .form-control:focus {
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-            border-color: #ffffff;
+        .toggle-eye {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+            font-size: 18px;
+            z-index: 10;
         }
 
-        /* Login Button */
+        .toggle-eye:hover {
+            color: var(--accent-purple);
+        }
+
+        .error-text {
+            color: var(--error-red);
+            font-size: 12px;
+            text-align: left;
+            height: 20px;
+            margin-top: 4px;
+            margin-left: 5px;
+            visibility: hidden;
+            /* Keeps the gap to prevent button jumping */
+        }
+
         .btn-login {
-            background-color: #e9ecef; /* Light grey/white button */
-            color: #000000;
-            border-radius: 12px;
-            padding: 8px 60px;
-            font-weight: 600;
+            background-color: #f0f0f0;
+            color: #000;
             border: none;
-            display: block;
-            margin: 10px auto 0;
-            transition: all 0.2s;
+            border-radius: 12px;
+            padding: 14px 0;
+            font-weight: 600;
+            cursor: pointer;
+            width: 180px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            font-size: 16px;
         }
 
         .btn-login:hover {
             background-color: #ffffff;
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
         }
 
-        /* Footer */
         .footer-text {
-            position: absolute;
-            bottom: 30px;
+            margin-top: 50px;
             font-size: 12px;
-            color: #888;
-            letter-spacing: 1px;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Logo Section -->
-    <div class="text-center">
+    <div class="logo-container">
         <!-- Replace with your actual logo path -->
-        <img src="/images/logo.png" alt="IM Logo" class="login-logo">
+        <img src="/images/logo.png" alt="Logo">
     </div>
 
-    <!-- Login Form Card -->
     <div class="login-card">
-        <h2 class="login-title">Admin Login</h2>
-        
-        <form action="/admin/login" method="POST">
-            <div class="mb-3">
-                <input type="email" name="email" class="form-control" placeholder="Email" required>
+        <h2>Admin Login</h2>
+
+        <form id="adminForm" action="/admin/login" method="POST" novalidate>
+
+            <!-- Email -->
+            <div class="input-wrapper">
+                <input type="email" id="email" name="email" placeholder="Email" autocomplete="off">
             </div>
-            
-            <div class="mb-4">
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            <div id="emailErr" class="error-text">Please enter a valid email address.</div>
+
+            <!-- Password -->
+            <div class="input-wrapper">
+                <input type="password" id="password" name="password" placeholder="Password">
+                <i class="fa-solid fa-eye toggle-eye" id="togglePassword"></i>
             </div>
+            <div id="passErr" class="error-text">Password is required.</div>
 
             <button type="submit" class="btn-login">Login</button>
         </form>
     </div>
 
-    <!-- Footer -->
     <div class="footer-text">
         © 2026 onemore. All Rights Reserved.
     </div>
 
+    <script>
+        // 1. Password Visibility Toggle
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+
+            // Toggle font-awesome classes
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // 2. Custom Field-Wise Validation
+        const form = document.getElementById('adminForm');
+        const emailInput = document.getElementById('email');
+        const emailErr = document.getElementById('emailErr');
+        const passErr = document.getElementById('passErr');
+
+        form.addEventListener('submit', function (e) {
+            let isValid = true;
+
+            // Email Logic
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value.trim())) {
+                emailErr.style.visibility = 'visible';
+                emailInput.style.borderColor = 'var(--error-red)';
+                isValid = false;
+            } else {
+                emailErr.style.visibility = 'hidden';
+                emailInput.style.borderColor = '#333';
+            }
+
+            // Password Logic
+            if (passwordInput.value.trim() === '') {
+                passErr.style.visibility = 'visible';
+                passwordInput.style.borderColor = 'var(--error-red)';
+                isValid = false;
+            } else {
+                passErr.style.visibility = 'hidden';
+                passwordInput.style.borderColor = '#333';
+            }
+
+            if (!isValid) {
+                e.preventDefault(); // Stop form submission
+            }
+        });
+
+        // Clear errors immediately when user starts typing
+        [emailInput, passwordInput].forEach(input => {
+            input.addEventListener('input', function () {
+                this.style.borderColor = '#333';
+                this.parentElement.nextElementSibling.style.visibility = 'hidden';
+            });
+        });
+    </script>
 </body>
+
 </html>
