@@ -1,12 +1,12 @@
 import User from "../models/userModel.js"
 import Product from "../models/productModel.js"
-import bcrypt, { compare } from "bcryptjs"
-import { validationResult } from "express-validator"
+import bcrypt, {compare} from "bcryptjs"
+import {validationResult} from "express-validator"
 import crypto from "crypto"
-import { sendOtpEmail } from "../services/mailService.js"
+import {sendOtpEmail} from "../services/mailService.js"
 import Address from "../models/addressModel.js"
-import { log } from "console"
-import { create } from "domain"
+import {log} from "console"
+import {create} from "domain"
 
 
 export const getSignup = (req, res) => {
@@ -27,14 +27,14 @@ export const postSignup = async (req, res) => {
       })
     }
 
-    const { name, email, password, refCode } = req.body
+    const {name, email, password, refCode} = req.body
 
-    let user = await User.findOne({ email })
+    let user = await User.findOne({email})
 
 
     if (user && user.isVerified) {
       return res.render("user/signup", {
-        errors: [{ msg: "Email already Registered. Please login.", path: "email" }],
+        errors: [{msg: "Email already Registered. Please login.", path: "email"}],
         oldData: req.body
       })
     }
@@ -60,7 +60,7 @@ export const postSignup = async (req, res) => {
 
     if (!isSent) {
       return res.render("user/signup", {
-        errors: [{ msg: "Failed to send OTP. Try again.", path: "email" }],
+        errors: [{msg: "Failed to send OTP. Try again.", path: "email"}],
         oldData: req.body
       })
     }
@@ -71,7 +71,7 @@ export const postSignup = async (req, res) => {
     console.log(error);
 
     return res.render("user/signup", {
-      errors: [{ msg: "something went wrong. Please try again.", path: "general" }],
+      errors: [{msg: "something went wrong. Please try again.", path: "general"}],
       oldData: req.body || {}
     })
   }
@@ -79,12 +79,12 @@ export const postSignup = async (req, res) => {
 
 export const verifyOTP = async (req, res) => {
   try {
-    const { email, otp, type } = req.body
+    const {email, otp, type} = req.body
 
     let remainingSeconds = 60;
 
     if (type === "forgot") {
-      const user = await User.findOne({ email })
+      const user = await User.findOne({email})
 
       if (!user) {
         return res.send("user not found")
@@ -263,13 +263,13 @@ export const getLogin = (req, res) => {
 export const postLogin = async (req, res) => {
   try {
 
-    const { email, password } = req.body
+    const {email, password} = req.body
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({email})
 
     if (!user) {
       return res.render('user/login', {
-        errors: { email: "user not found" },
+        errors: {email: "Invalid email or password"},
         oldData: req.body
       })
     }
@@ -278,7 +278,7 @@ export const postLogin = async (req, res) => {
 
     if (!isMatch) {
       return res.render("user/login", {
-        errors: { password: "invalid password" },
+        errors: {password: "invalid password"},
         oldData: req.body
       })
     }
@@ -308,7 +308,7 @@ export const postLogin = async (req, res) => {
   } catch (error) {
     console.log(error)
     res.render("user/login", {
-      errors: { general: 'Something went Wrong' },
+      errors: {general: 'Something went Wrong'},
       oldData: req.body
     })
   }
@@ -317,7 +317,7 @@ export const postLogin = async (req, res) => {
 export const getHome = async (req, res) => {
 
   try {
-    const products = await Product.find({ isListed: true })
+    const products = await Product.find({isListed: true})
 
     res.render("user/home", {
       products,
@@ -354,7 +354,7 @@ export const getProfile = async (req, res) => {
       return res.redirect("/login")
     }
 
-    const success = req.session.success
+    const success = req.session.success || null
 
     req.session.success = null
 
@@ -364,14 +364,14 @@ export const getProfile = async (req, res) => {
       return res.redirect("/login")
     }
 
-    res.render("user/profile", { user, success })
+    res.render("user/profile", {user, success})
 
   } catch (error) {
     console.log(error)
     res.render("user/profile", {
       user: null,
-      success,
-      error: null
+      success: null,
+      error: "Something went wrong"
     })
 
   }
@@ -406,7 +406,7 @@ export const getEditProfile = async (req, res) => {
 export const postEditProfile = async (req, res) => {
   try {
     const userId = req.session.user
-    const { fname, lname, email, phone } = req.body
+    const {fname, lname, email, phone} = req.body
 
     // const name = fname + " " + lname
     const name = `${fname || ""} ${lname || ""}`.trim();
@@ -427,11 +427,11 @@ export const postEditProfile = async (req, res) => {
 
     if (email !== user.email) {
 
-      const existing = await User.findOne({ email })
+      const existing = await User.findOne({email})
       if (existing) {
         return res.render("user/editProfile", {
           user,
-          errors: { email: "Email already exists" },
+          errors: {email: "Email already exists"},
           oldData: req.body
         })
       }
@@ -462,6 +462,8 @@ export const postEditProfile = async (req, res) => {
 
     await User.findByIdAndUpdate(userId, updateData)
 
+    req.session.success = "profile edited successfully"
+
     res.redirect("/profile")
 
   } catch (error) {
@@ -481,7 +483,7 @@ export const getAddressPage = async (req, res) => {
   try {
     const userId = req.session.user;
 
-    const addresses = await Address.find({ userId });
+    const addresses = await Address.find({userId});
 
     const error = req.query.error || null
 
@@ -538,7 +540,7 @@ export const postAddAddress = async (req, res) => {
       await Address.findByIdAndUpdate(addressId, addressData)
     }
     else {
-      const count = await Address.countDocuments({ userId })
+      const count = await Address.countDocuments({userId})
 
       if (count >= 3) {
         return res.redirect("/address?error=limit")
@@ -584,13 +586,13 @@ export const setDefaultAddress = async (req, res) => {
     const userId = req.session.user
     const addressId = req.params.id
 
-    const address = await Address.findOne({ _id: addressId, userId })
+    const address = await Address.findOne({_id: addressId, userId})
 
     if (!address) {
       return res.redirect("/address?error=notfound")
     }
 
-    await Address.updateMany({ userId }, { isDefault: false })
+    await Address.updateMany({userId}, {isDefault: false})
 
     address.isDefault = true
     await address.save()
@@ -606,14 +608,14 @@ export const setDefaultAddress = async (req, res) => {
 }
 
 export const getForgotPassword = (req, res) => {
-  res.render("user/forgotPassword", { error: null })
+  res.render("user/forgotPassword", {error: null})
 }
 
 export const postForgotPassword = async (req, res) => {
   try {
-    const { email } = req.body
+    const {email} = req.body
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({email})
 
     if (!user) {
       return res.render("user/forgotPassword", {
@@ -636,7 +638,7 @@ export const postForgotPassword = async (req, res) => {
 }
 
 export const getResetPassword = (req, res) => {
-  const { email } = req.query
+  const {email} = req.query
 
   res.render("user/resetPassword", {
     email,
@@ -646,9 +648,9 @@ export const getResetPassword = (req, res) => {
 
 export const postResetPassword = async (req, res) => {
   try {
-    const { email, otp, password, confirmPassword } = req.body
+    const {email, otp, password, confirmPassword} = req.body
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({email})
 
 
     if (!user) {
@@ -711,7 +713,7 @@ export const postResetPassword = async (req, res) => {
 
 export const resendOTP = async (req, res) => {
   try {
-    const { email, type } = req.body || req.query
+    const {email, type} = req.body || req.query
 
     if (type === "passwordChange") {
       const data = req.session.passwordChange
@@ -815,7 +817,7 @@ export const resendOTP = async (req, res) => {
       })
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({email});
 
     if (!user) {
       return res.send("User not found");
@@ -865,7 +867,7 @@ export const getSingleAddress = async (req, res) => {
     const address = await Address.findById(req.params.id);
     res.json(address);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching address" });
+    res.status(500).json({message: "Error fetching address"});
   }
 };
 
@@ -875,7 +877,7 @@ export const postChangePassword = async (req, res) => {
 
 
     const userId = req.session.user
-    const { currentPassword, newPassword, confirmPassword } = req.body
+    const {currentPassword, newPassword, confirmPassword} = req.body
 
     const user = await User.findById(userId)
 
@@ -900,7 +902,7 @@ export const postChangePassword = async (req, res) => {
 
     const isSame = await bcrypt.compare(newPassword, user.password)
     if (isSame) {
-      return readdirSync.render("user/changePassword", {
+      return res.render("user/changePassword", {
         error: "New password cannot be same as old password"
       })
     }
@@ -923,20 +925,20 @@ export const postChangePassword = async (req, res) => {
 export const checkUserStatus = async (req, res) => {
   try {
     if (!req.session.user) {
-      return res.status(401).json({ blocked: true })
+      return res.status(401).json({blocked: true})
     }
 
     const user = await User.findById(req.session.user)
 
     if (user && user.isBlocked) {
       req.session.destroy(() => {
-        return res.status(401).json({ blocked: true })
+        return res.status(401).json({blocked: true})
       })
     }
-    res.status(200).json({ ok: true })
+    res.status(200).json({ok: true})
 
   } catch (error) {
-    res.status(500).json({ error: true })
+    res.status(500).json({error: true})
 
   }
 }

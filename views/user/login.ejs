@@ -20,6 +20,9 @@
       font-family: 'Poppins', sans-serif;
       background: #0f0f0f;
       color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     /* NAVBAR */
@@ -44,6 +47,11 @@
       color: #cfcfcf;
       text-decoration: none;
       font-size: 14px;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
     }
 
     .icons {
@@ -54,15 +62,17 @@
     .icons i {
       font-size: 18px;
       color: #ccc;
+      cursor: pointer;
     }
 
     /* MAIN */
     .main {
       background: #dcdcdc;
-      min-height: 70vh;
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 40px 20px;
     }
 
     /* CARD */
@@ -71,24 +81,34 @@
       border: 2px solid #000;
       border-radius: 20px;
       padding: 40px 30px;
-      width: 360px;
+      width: 100%;
+      max-width: 380px;
       text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
     .card h2 {
       margin-bottom: 25px;
       color: #000;
+      font-weight: 600;
     }
 
     /* INPUT */
     .card input {
       width: 100%;
       padding: 12px;
-      padding-right: 35px;
+      padding-right: 40px;
       margin-bottom: 5px;
       border-radius: 10px;
-      border: none;
+      border: 1.5px solid transparent;
       background: #cfcfcf;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s;
+    }
+
+    .card input:focus {
+      outline: none;
+      border-color: #000;
     }
 
     /* INPUT GROUP */
@@ -98,19 +118,21 @@
 
     .toggle-eye {
       position: absolute;
-      right: 12px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
       color: #555;
+      padding: 5px;
     }
 
     /* ERROR */
     .error-msg {
-      color: red;
-      font-size: 12px;
+      color: #d93025;
+      font-size: 11px;
       text-align: left;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      min-height: 15px;
     }
 
     /* LINKS */
@@ -118,11 +140,17 @@
       display: flex;
       justify-content: space-between;
       font-size: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .links a {
       color: #000;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
     }
 
     /* BUTTON */
@@ -133,23 +161,41 @@
       color: #fff;
       border-radius: 10px;
       border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #333;
     }
 
     /* GOOGLE */
     .google-text {
-      margin-top: 10px;
+      margin-top: 20px;
       font-size: 12px;
       color: #555;
+      position: relative;
     }
 
     .google-icon {
-      margin-top: 5px;
+      margin-top: 10px;
+    }
+
+    .google-icon a {
+      display: inline-block;
+      padding: 8px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #ddd;
+      line-height: 0;
     }
 
     /* FOOTER */
     footer {
       background: #0f0f0f;
-      padding: 50px 80px;
+      padding: 60px 80px 30px;
     }
 
     .footer-logo {
@@ -163,30 +209,47 @@
     }
 
     .footer-container {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .footer-section h4 {
       color: #fff;
+      margin-bottom: 15px;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .footer-section p {
       color: #aaa;
       font-size: 13px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .footer-section p:hover {
+      color: #fff;
     }
 
     .bottom {
-      margin-top: 30px;
+      margin-top: 50px;
       font-size: 12px;
-      color: #777;
+      color: #555;
+      text-align: center;
+      border-top: 1px solid #222;
+      padding-top: 20px;
     }
   </style>
+</head>
 
 <body>
 
   <nav>
-    <img src="/images/logo.png" class="logo-img">
+    <a href="/"><img src="/images/logo.png" class="logo-img" alt="Logo"></a>
 
     <div class="nav-links">
       <a href="/">Home</a>
@@ -204,62 +267,58 @@
 
   <div class="main">
     <div class="card">
-
       <h2>Login</h2>
 
       <% if(errors.general){ %>
-        <div style="color:red; text-align:center; margin-bottom:10px;">
+        <div style="color:#d93025; text-align:center; margin-bottom:15px; font-size: 13px;">
           <%= errors.general %>
         </div>
-        <% } %>
+      <% } %>
 
-          <!-- FORM -->
-          <form id="loginForm" action="/login" method="POST" novalidate>
+      <!-- FORM -->
+      <form id="loginForm" action="/login" method="POST" novalidate>
 
-            <!-- EMAIL -->
-            <input type="email" id="email" name="email" placeholder="Email" value="<%= oldData?.email || '' %>">
-            <div id="emailError" class="error-msg">
-              <%= errors?.email %>
-            </div>
+        <!-- EMAIL -->
+        <input type="email" id="email" name="email" placeholder="Email" value="<%= oldData?.email || '' %>">
+        <div id="emailError" class="error-msg">
+          <%= errors?.email %>
+        </div>
 
-            <!-- PASSWORD -->
-            <div class="input-group">
-              <input type="password" id="password" name="password" placeholder="Password">
-              <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
-            </div>
-            <div id="passwordError" class="error-msg">
-              <%= errors?.password %>
-            </div>
+        <!-- PASSWORD -->
+        <div class="input-group">
+          <input type="password" id="password" name="password" placeholder="Password">
+          <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
+        </div>
+        <div id="passwordError" class="error-msg">
+          <%= errors?.password %>
+        </div>
 
-            <div class="links">
-              <a href="/signup">Signup</a>
-              <a href="/forgot-password">Forgot Password?</a>
-            </div>
+        <div class="links">
+          <a href="/signup">Signup</a>
+          <a href="/forgot-password">Forgot Password?</a>
+        </div>
 
-            <button type="submit" class="btn">Login</button>
+        <button type="submit" class="btn">Login</button>
 
-          </form>
+      </form>
 
-          <!-- GOOGLE AUTH -->
-          <p class="google-text">Or continue with</p>
+      <!-- GOOGLE AUTH -->
+      <p class="google-text">Or continue with</p>
 
-          <div class="google-icon">
-            <a href="/auth/google">
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="30">
-            </a>
-          </div>
-
+      <div class="google-icon">
+        <a href="/auth/google">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" alt="Google">
+        </a>
+      </div>
     </div>
   </div>
 
   <footer>
-
     <div class="footer-logo">
-      <img src="/images/logo.png">
+      <img src="/images/logo.png" alt="Footer Logo">
     </div>
 
     <div class="footer-container">
-
       <div class="footer-section">
         <h4>SUPPORT</h4>
         <p>Order Status</p>
@@ -278,8 +337,8 @@
 
       <div class="footer-section">
         <h4>Contact</h4>
-        <p>Email : onemore@gmail.com</p>
-        <p>Phone : +91 8888888888</p>
+        <p>Email: onemore@gmail.com</p>
+        <p>Phone: +91 8888888888</p>
       </div>
 
       <div class="footer-section">
@@ -288,13 +347,11 @@
         <p>Facebook</p>
         <p>X</p>
       </div>
-
     </div>
 
     <div class="bottom">
       © 2025 onemore. All Rights Reserved.
     </div>
-
   </footer>
 
   <script>
@@ -335,9 +392,8 @@
       }
 
       if (!valid) e.preventDefault();
-    }); // ✅ IMPORTANT: properly closed
+    });
 
-    /* 🔥 EYE TOGGLE (OUTSIDE submit) */
     function togglePassword() {
       const input = document.getElementById("password");
       const icon = document.querySelector(".toggle-eye");
@@ -353,5 +409,4 @@
   </script>
 
 </body>
-
 </html>
