@@ -1,5 +1,4 @@
 import User from "../models/userModel.js"
-import Product from "../models/productModel.js"
 import bcrypt, {compare} from "bcryptjs"
 import {validationResult} from "express-validator"
 import crypto from "crypto"
@@ -7,6 +6,8 @@ import {sendOtpEmail} from "../services/mailService.js"
 import Address from "../models/addressModel.js"
 import {log} from "console"
 import {create} from "domain"
+import Product from "../models/productModel.js"
+import Category from "../models/categoryModel.js"
 
 
 export const getSignup = (req, res) => {
@@ -940,5 +941,29 @@ export const checkUserStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({error: true})
 
+  }
+}
+
+export const getShop = async(req, res) =>{
+  try {
+    const products = await Product.find({
+      isListed: true
+    })
+
+    const categories = await Category.find({
+      isListed: true
+    })
+
+    res.render("user/shop",{
+      products,
+      categories,
+      query: req.query || {},
+      currentPage: 1,
+      totalPages: 1
+    })
+
+  } catch (error) {
+    console.log(error)
+    res.redirect("/")
   }
 }
