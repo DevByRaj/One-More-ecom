@@ -15,7 +15,8 @@ import {
   getSingleAddress,
   resendOTP,
   postChangePassword,
-  checkUserStatus
+  checkUserStatus,
+  getShop
 } from "../controllers/userController.js";
 import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
@@ -120,6 +121,8 @@ router.get("/change-password", isUserLoggedIn, (req, res) => {
 router.post("/change-password", isUserLoggedIn, postChangePassword)
 
 router.get("/check-user-status", checkUserStatus)
+
+router.get("/shop", getShop)
 
 
 export default router
