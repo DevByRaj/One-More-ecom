@@ -78,6 +78,96 @@ export const postSignup = async (req, res) => {
   }
 }
 
+export const getVerifyOTP = async (req, res) => {
+
+  try {
+
+    const {email, type} = req.query
+
+    if (type === "forgot" && req.session.resetDone) {
+      return res.redirect(`/reset-password?email=${email}`)
+    }
+
+    let finalEmail = email
+    let remainingSeconds = 0
+
+    if (type === "emailEdit") {
+
+      if (!req.session.emailEdit) {
+        return res.redirect("/profile")
+      }
+
+      finalEmail = req.session.emailEdit.newEmail
+
+      remainingSeconds = Math.max(
+        0,
+        Math.floor(
+          (req.session.emailEdit.otpExpires - Date.now()) / 1000
+        )
+      )
+    }
+
+    else if (type === "signup") {
+
+      const tempUser = req.session.tempUser
+
+      if (tempUser?.otpExpires) {
+        remainingSeconds = Math.max(
+          0,
+          Math.floor(
+            (tempUser.otpExpires - Date.now()) / 1000
+          )
+        )
+      }
+    }
+
+    else if (type === "passwordChange") {
+
+      const data = req.session.passwordChange
+
+      if (data?.otpExpires) {
+        remainingSeconds = Math.max(
+          0,
+          Math.floor(
+            (data.otpExpires - Date.now()) / 1000
+          )
+        )
+      }
+    }
+
+    else if (type === "forgot") {
+
+      const user = await User.findOne({email})
+
+      if (user?.otpExpires) {
+        remainingSeconds = Math.max(
+          0,
+          Math.floor(
+            (user.otpExpires - Date.now()) / 1000
+          )
+        )
+      }
+    }
+
+    if (!finalEmail) {
+      return res.redirect("/signup")
+    }
+
+    return res.render("user/verifyOtp", {
+      email: finalEmail,
+      error: null,
+      type,
+      remainingSeconds
+    })
+
+  } catch (error) {
+
+    console.log(error)
+
+    return res.redirect("/login")
+  }
+}
+
 export const verifyOTP = async (req, res) => {
   try {
     const {email, otp, type} = req.body
@@ -222,15 +312,9 @@ export const verifyOTP = async (req, res) => {
 
     await newUser.save()
 
-    // req.session.user = newUser._id
-
     req.session.tempUser = null
 
     return res.redirect("/login?msg=signup-success")
-
-    // req.session.save(() =>{
-    //   res.redirect("/")
-    // })
 
   } catch (err) {
     console.log("OTP Error:", err);
@@ -572,7 +656,7 @@ export const deleteAddress = async (req, res) => {
 
     res.redirect("/address");
   } catch (error) {
-    res.rednder("user/address", {
+    res.render("user/address", {
       user,
       addresses,
       error
@@ -634,7 +718,9 @@ export const postForgotPassword = async (req, res) => {
     await sendOtpEmail(email, otp)
     res.redirect(`/verify-otp?email=${email}&type=forgot`)
   } catch (err) {
-    res.send("Error")
+    return res.render("user/forgotPassword",{
+      error: "Something went wrong"
+    })
   }
 }
 
@@ -657,20 +743,6 @@ export const postResetPassword = async (req, res) => {
     if (!user) {
       return res.render("user/forgotPassword", {
         error: "User not found"
-      })
-    }
-
-    if (user.otp !== otp) {
-      return res.render("user/resetPassword", {
-        email,
-        error: "Invalid OTP"
-      })
-    }
-
-    if (user.otpExpires < Date.now()) {
-      return res.render("user/resetPassword", {
-        email,
-        error: "OTP expired"
       })
     }
 
@@ -707,7 +779,10 @@ export const postResetPassword = async (req, res) => {
     res.redirect("/login?reset=success")
 
   } catch (error) {
-    res.send("Error resetting password")
+    return res.render("user/resetPassword",{
+      email: req.body.email,
+      error: "Something went Wrong"
+    })
   }
 }
 
