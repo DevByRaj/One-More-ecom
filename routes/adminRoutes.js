@@ -1,8 +1,13 @@
 import express from "express"
-import { getAdminLogin, postAdminLogin, adminLogout } from "../controllers/adminController.js"
+import { getAdminLogin, postAdminLogin,
+     adminLogout,
+     getUsers,
+     toggleUserBlock,
+     getCategory,
+     getAddCategory, postAddCategory,
+     toggleCategoryStatus,
+     getEditCategory, postEditCategory } from "../controllers/adminController.js"
 import { isAdminLoggedIn, isAdminLoggedOut } from "../middlewares/adminAuth.js"
-import { getUsers } from "../controllers/adminController.js"
-import { toggleUserBlock } from "../controllers/adminController.js"
 
 
 const router = express.Router()
@@ -20,6 +25,14 @@ router.get("/users", isAdminLoggedIn, getUsers)
 
 router.post("/users/toggle-block/:id", isAdminLoggedIn, toggleUserBlock)
 
+router.get("/category", isAdminLoggedIn, getCategory)
 
+router.get("/addCategory", isAdminLoggedIn, getAddCategory)
+router.post("/addCategory", isAdminLoggedIn, postAddCategory)
+
+router.post("/listCategory", isAdminLoggedIn, toggleCategoryStatus)
+
+router.get("/editCategory", isAdminLoggedIn, getEditCategory)
+router.post("/editCategory", isAdminLoggedIn, postEditCategory)
 
 export default router

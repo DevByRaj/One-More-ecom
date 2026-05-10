@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    productname: {
+    
+    productName: {
         type: String,
         required: true,
         trim: true
@@ -9,7 +10,8 @@ const productSchema = new mongoose.Schema({
 
     description: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
 
     brand:{
@@ -36,17 +38,13 @@ const productSchema = new mongoose.Schema({
 
     quantity:{
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
 
     productImage: [{
         type: String
     }],
-
-    isBlocked:{
-        type: Boolean,
-        default: false
-    },
 
     isListed:{
         type: Boolean,
