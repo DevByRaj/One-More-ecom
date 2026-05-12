@@ -94,6 +94,35 @@
             color: #000;
         }
 
+        .filter-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px;
+    border-radius: 12px;
+    gap: 5px;
+}
+
+.filter-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 15px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.filter-link:hover {
+    color: #fff;
+    background: rgba(138, 125, 240, 0.1);
+}
+
+.filter-link.active {
+    background: var(--accent-purple);
+    color: #000 !important;
+    font-weight: 600;
+}
+
         /* --- TABLE CONTAINER --- */
         .table-container {
             background-color: var(--card-bg);
@@ -264,7 +293,39 @@
 
             <div class="col-lg-10">
                 <div class="search-container">
-                    <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">Products</h4>
+                    <div class="d-flex align-items-center gap-4">
+                    
+                        <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">
+                    
+                            Products
+                    
+                        </h4>
+                    
+                        <div class="filter-tabs">
+                    
+                            <a href="/admin/products?search=<%= search || '' %>" class="filter-link <%= !status ? 'active' : '' %>">
+                    
+                                All
+                    
+                            </a>
+                    
+                            <a href="/admin/products?status=active&search=<%= search || '' %>"
+                                class="filter-link <%= status === 'active' ? 'active' : '' %>">
+                    
+                                Active
+                    
+                            </a>
+                    
+                            <a href="/admin/products?status=blocked&search=<%= search || '' %>"
+                                class="filter-link <%= status === 'blocked' ? 'active' : '' %>">
+                    
+                                Blocked
+                    
+                            </a>
+                    
+                        </div>
+                    
+                    </div>
 
                     <div class="search-box">
                         <form action="/admin/products" method="GET" class="d-flex align-items-center w-100">
@@ -290,6 +351,7 @@
                                 <th>Image</th>
                                 <th>Description</th>
                                 <th>Category</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -333,17 +395,30 @@
                                         </td>
 
                                         <td>
+                                            <span class="
+                                                <%= product.isListed
+                                                    ? 'text-success'
+                                                    : 'text-danger'
+                                                %>
+                                            ">
+                                                <%= product.isListed ? 'Listed' : 'Unlisted' %>
+                                            </span>
+                                        </td>
+
+                                        <td>
 
                                             <a href="#" class="btn-variant me-2">
                                                 Variant
                                             </a>
 
-                                            <a href="/admin/edit-product?id=<%= product._id %>" class="btn-edit me-2">
+                                            <a href="/admin/edit-product/<%= product._id %>" class="btn-edit me-2">
                                                 Edit
                                             </a>
 
                                             <a href="/admin/toggle-product?id=<%= product._id %>" class="btn-remove">
-                                                <%= product.isListed ? 'Remove' : 'Restore' %>
+                                            
+                                                <%= product.isListed ? 'Unlist' : 'List' %>
+                                            
                                             </a>
 
                                         </td>
