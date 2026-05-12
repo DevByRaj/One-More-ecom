@@ -273,7 +273,7 @@
                                             <%= category.name %>
                                         </td>
                                         <td>
-                                            <span class="badge <%= category.isListed ? 'bg-success' : 'bg-danger' %>">
+                                            <span class="<%= category.isListed ? 'text-success' : 'text-danger' %>">
                                                 <%= category.isListed ? 'Active' : 'Inactive' %>
                                             </span>
                                         </td>

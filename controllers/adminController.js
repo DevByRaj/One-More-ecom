@@ -521,13 +521,22 @@ export const getProducts = async (req, res) => {
 
     const page = parseInt(req.query.page) || 1
 
-    const limit = 5
+    const limit = 4
 
     const skip = (page - 1) * limit
 
     const search = (req.query.search || "").trim()
 
+    const status = req.query.status || ""
+
     let query = {}
+
+    if(status === "active"){
+      query.isListed = true
+    }
+    else if(status === "blocked"){
+      query.isListed = false
+    }
 
     if (search) {
 
@@ -547,7 +556,8 @@ export const getProducts = async (req, res) => {
       products,
       currentPage: page,
       totalPages,
-      search
+      search,
+      status
     })
 
   } catch (error) {
@@ -558,6 +568,7 @@ export const getProducts = async (req, res) => {
       currentPage: 1,
       totalPages: 1,
       search: "",
+      status: "",
       error: "Faild to load products"
     })
 
@@ -579,7 +590,8 @@ export const getAddProduct = async (req, res) => {
       categories,
       brands,
       errors: {},
-      oldData: {}
+      oldData: {},
+      isEdit: false
     })
 
   } catch (error) {
@@ -618,13 +630,14 @@ export const postAddProduct = async (req, res) => {
       errors.description = "Description is required"
     }
 
-    const selectedCategory =
-      await Category.findById(category)
+    let isWired = false
 
-    const isWired =
-      selectedCategory?.name
-        .toLowerCase()
-        .includes("wired")
+    if(category){
+
+      const selectedCategory = await Category.findById(category)
+
+      isWired = selectedCategory?.name?.toLowerCase().includes("wired")
+    }
 
     if (!isWired && !playtime?.trim()) {
 
@@ -650,7 +663,8 @@ export const postAddProduct = async (req, res) => {
         errors,
         oldData: req.body,
         categories,
-        brands        
+        brands,
+        isEdit: false
       })
     }
 
@@ -663,7 +677,7 @@ export const postAddProduct = async (req, res) => {
       productName: productName.trim(),
 
       description: description.trim(),
-      playtime: playtime ? playtime.trim() : "",
+      playtime: playtime ? `${playtime} Hrs` : "",
       brand,
       category,
       productImage: [image]
@@ -678,5 +692,104 @@ export const postAddProduct = async (req, res) => {
 
     return res.redirect("/admin/add-product")
 
+  }
+}
+
+export const toggleProduct = async (req, res) => {
+  try {
+
+    const productId = req.query.id
+    
+    const product = await Product.findById(productId)
+
+    if(!product){
+      return res.redirect("/admin/products")
+    }
+
+    product.isListed = !product.isListed
+
+    await product.save()
+
+    return res.redirect("/admin/products")
+    
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/products")
+    
+  }
+}
+
+export const getEditProduct = async(req, res) =>{
+  try {
+
+    const productId = req.params.id
+
+    const product = await Product.findById(productId)
+
+    const categories = await Category.find({
+      isListed: true
+    })
+
+    const brands = await Brand.find({
+      isListed: true
+    })
+
+    if(!product){
+      return res.redirect("/admin/products")
+    }
+
+    return res.render("admin/addProduct",{
+      product,
+      categories,
+      brands,
+      errors: {},
+      oldData: product,
+      isEdit: true
+    })
+    
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/products")
+    
+  }
+}
+
+export const postEditProduct = async(req, res) =>{
+  try {
+
+    const productId = req.params.id
+
+    const{
+      productName,
+      description,
+      playtime,
+      brand,
+      category
+    } = req.body
+
+    const updateData = {
+      productName: productName.trim(),
+      description: description.trim(),
+      playtime: playtime ? `${playtime} Hrs`: "",
+      brand,
+      category
+    }
+
+    if(req.file){
+
+      updateData.productImage = [req.file.filename]
+    }
+
+    await Product.findByIdAndUpdate(productId, updateData)
+
+    return res.redirect("/admin/products")
+    
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/products")
+    
   }
 }

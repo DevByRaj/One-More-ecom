@@ -11,8 +11,8 @@ import {
     getBrand, getAddBrand, postAddBrand,
     toggleBrand,
     getEditBrand, postEditBrand,
-    getProducts, getAddProduct, postAddProduct
-} from "../controllers/adminController.js"
+    getProducts, getAddProduct, postAddProduct, getEditProduct, postEditProduct,
+    toggleProduct} from "../controllers/adminController.js"
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
 
@@ -57,5 +57,9 @@ router.get("/products", isAdminLoggedIn, getProducts)
 router.get("/add-product", isAdminLoggedIn, getAddProduct)
 router.post("/add-product", isAdminLoggedIn, upload.single("productImage"), postAddProduct)
 
+router.get("/toggle-product", isAdminLoggedIn, toggleProduct)
+
+router.get("/edit-product/:id", isAdminLoggedIn, getEditProduct)
+router.post("/edit-product/:id", isAdminLoggedIn, upload.single("productImage"), postEditProduct)
 
 export default router
