@@ -1,13 +1,20 @@
 import express from "express"
-import { getAdminLogin, postAdminLogin,
-     adminLogout,
-     getUsers,
-     toggleUserBlock,
-     getCategory,
-     getAddCategory, postAddCategory,
-     toggleCategoryStatus,
-     getEditCategory, postEditCategory } from "../controllers/adminController.js"
-import { isAdminLoggedIn, isAdminLoggedOut } from "../middlewares/adminAuth.js"
+import {
+    getAdminLogin, postAdminLogin,
+    adminLogout,
+    getUsers,
+    toggleUserBlock,
+    getCategory,
+    getAddCategory, postAddCategory,
+    toggleCategoryStatus,
+    getEditCategory, postEditCategory,
+    getBrand, getAddBrand, postAddBrand,
+    toggleBrand,
+    getEditBrand, postEditBrand,
+    getProducts, getAddProduct, postAddProduct
+} from "../controllers/adminController.js"
+import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
+import upload from "../middlewares/multer.js"
 
 
 const router = express.Router()
@@ -34,5 +41,21 @@ router.post("/listCategory", isAdminLoggedIn, toggleCategoryStatus)
 
 router.get("/editCategory", isAdminLoggedIn, getEditCategory)
 router.post("/editCategory", isAdminLoggedIn, postEditCategory)
+
+router.get("/brand", isAdminLoggedIn, getBrand)
+
+router.get("/addBrand", isAdminLoggedIn, getAddBrand)
+router.post("/addBrand", isAdminLoggedIn, postAddBrand)
+
+router.get("/listbrand", isAdminLoggedIn, toggleBrand)
+
+router.get("/editBrand", isAdminLoggedIn, getEditBrand)
+router.post("/editBrand", isAdminLoggedIn, postEditBrand)
+
+router.get("/products", isAdminLoggedIn, getProducts)
+
+router.get("/add-product", isAdminLoggedIn, getAddProduct)
+router.post("/add-product", isAdminLoggedIn, upload.single("productImage"), postAddProduct)
+
 
 export default router
