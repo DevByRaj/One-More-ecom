@@ -2,10 +2,11 @@ import mongoose from "mongoose";
 
 const brandSchema = new mongoose.Schema({
 
-    brandName:{
+    name:{
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
 
     isListed: {
@@ -14,4 +15,4 @@ const brandSchema = new mongoose.Schema({
     }
 }, {timestamps: true})
 
-export default mongoose.Schema("Brand", brandSchema)
+export default mongoose.model("Brand", brandSchema)

@@ -26,24 +26,15 @@ const productSchema = new mongoose.Schema({
         required: true
     },
 
-    regularPrice:{
-        type: Number,
-        required: true
-    },
-    
-    salePrice:{
-        type: Number,
-        required: true
-    },
-
-    quantity:{
-        type: Number,
-        required: true,
-        default: 0
+    playtime: {
+        type: String,
+        default: true,
+        trim: true
     },
 
     productImage: [{
-        type: String
+        type: String,
+        required: true
     }],
 
     isListed:{

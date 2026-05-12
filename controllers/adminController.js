@@ -3,6 +3,7 @@ import Address from "../models/addressModel.js"
 import Category from "../models/categoryModel.js"
 import categoryModel from "../models/categoryModel.js"
 import Product from "../models/productModel.js"
+import Brand from "../models/brandModel.js"
 
 export const getAdminLogin = (req, res) => {
   res.render("admin/login", {error: null})
@@ -163,20 +164,20 @@ export const getCategory = async (req, res) => {
   }
 }
 
-export const getAddCategory = (req, res) =>{
+export const getAddCategory = (req, res) => {
   res.render("admin/addCategory", {
-     category: null,
+    category: null,
     error: null
   })
 }
 
-export const postAddCategory = async(req, res) =>{
+export const postAddCategory = async (req, res) => {
   try {
     let {name} = req.body
 
     name = name.trim()
 
-    if(!name){
+    if (!name) {
       return res.render("admin/addCategory", {
         category: null,
         error: "Category name is required"
@@ -190,7 +191,7 @@ export const postAddCategory = async(req, res) =>{
       }
     })
 
-    if(existingCategory){
+    if (existingCategory) {
       return res.render("admin/addCategory", {
         category: null,
         error: "Category already exist"
@@ -198,8 +199,7 @@ export const postAddCategory = async(req, res) =>{
     }
 
     const category = new Category({
-      name,
-      description
+      name
     })
 
     await category.save()
@@ -214,15 +214,15 @@ export const postAddCategory = async(req, res) =>{
       error: "Failed tto add category"
     })
   }
-} 
+}
 
-export const toggleCategoryStatus = async (req, res) =>{
+export const toggleCategoryStatus = async (req, res) => {
   try {
     const categoryId = req.query.id
-    
+
     const category = await Category.findById(categoryId)
 
-    if(!category){
+    if (!category) {
       return res.redirect("/admin/category")
     }
 
@@ -231,21 +231,21 @@ export const toggleCategoryStatus = async (req, res) =>{
     await category.save()
 
     return res.redirect("/admin/category")
-    
+
   } catch (error) {
     console.log(error)
 
     return res.redirect("/admin/category")
-    
+
   }
 }
 
-export const getEditCategory = async (req, res) =>{
+export const getEditCategory = async (req, res) => {
   try {
-   
-    const category = await Category.findById(req.query .id)
 
-    if(!category){
+    const category = await Category.findById(req.query.id)
+
+    if (!category) {
       return res.redirect("/admin/category")
     }
 
@@ -253,17 +253,17 @@ export const getEditCategory = async (req, res) =>{
       category,
       error: null
     })
-    
+
   } catch (error) {
 
     console.log(error)
 
     return res.redirect("/admin/category")
-    
+
   }
 }
 
-export const postEditCategory = async(req, res) =>{
+export const postEditCategory = async (req, res) => {
   try {
 
     const categoryId = req.query.id
@@ -272,7 +272,7 @@ export const postEditCategory = async(req, res) =>{
 
     name = name.trim()
 
-    if(!name){
+    if (!name) {
 
       return res.render("admin/addCategory", {
         error: "Category name is required",
@@ -290,10 +290,10 @@ export const postEditCategory = async(req, res) =>{
       }
     })
 
-    if(existingCategory){
-      return res.render("admin/addCategory",{
+    if (existingCategory) {
+      return res.render("admin/addCategory", {
         error: "Category already exists",
-        category:{
+        category: {
           _id: categoryId,
           name
         }
@@ -305,49 +305,251 @@ export const postEditCategory = async(req, res) =>{
     })
 
     return res.redirect("/admin/category")
-    
+
   } catch (error) {
     console.log(error)
 
     return res.redirect("/admin/category")
-    
+
   }
 }
 
-export const getProducts = async (req, res) =>{
+export const getBrand = async (req, res) => {
   try {
 
     const page = parseInt(req.query.page) || 1
 
     const limit = 5
 
-    const skip = (page - 1)* limit
-    
+    const skip = (page - 1) * limit
+
     const search = (req.query.search || "").trim()
 
     let query = {}
 
-    if(search){
+    if (search) {
+      query.name = {
+        $regex: search,
+        $options: "i"
+      }
+    }
+
+    const totalBrands = await Brand.countDocuments(query)
+
+    const brands = await Brand.find(query).sort({createdAt: -1}).skip(skip).limit(limit).lean()
+
+    const totalPages = Math.ceil(totalBrands / limit)
+
+    return res.render("admin/brand", {
+      brands,
+      currentPage: page,
+      totalPages,
+      search
+    })
+
+  } catch (error) {
+    console.log(error)
+
+    return res.render("admin/brand", {
+      brands: [],
+      currentPage: 1,
+      totalPages: 1,
+      search: "",
+      error: "Failed to loaf brands"
+    })
+  }
+}
+
+export const getAddBrand = (req, res) => {
+
+  return res.render("admin/addBrand", {
+    brand: null,
+    error: null
+  })
+}
+
+export const postAddBrand = async (req, res) => {
+  try {
+
+    let {name} = req.body
+
+    name = name?.trim()
+
+    if (!name) {
+
+      return res.render("admin/addBrand", {
+        brand: null,
+        error: "brand name is required"
+      })
+    }
+
+    const existingBrand = await Brand.findOne({
+      name: {
+        $regex: `^${name}$`,
+        $options: "i"
+      }
+    })
+
+    if (existingBrand) {
+
+      return res.render("admin/addBrand", {
+        brand: null,
+        error: "Brand already exists"
+      })
+    }
+
+    const brand = new Brand({
+      name
+    })
+
+    await brand.save()
+
+    return res.redirect("/admin/brand")
+
+  } catch (error) {
+    console.log(error)
+
+    return res.render("admin/addBrand", {
+      brand: null,
+      error: "Failed to add brand"
+    })
+  }
+}
+
+export const getEditBrand = async (req, res) => {
+  try {
+
+    const brand = await Brand.findById(req.query.id)
+
+    if (!brand) {
+      return res.redirect("/admin/brand")
+    }
+
+    return res.render("admin/addBrand", {
+      brand,
+      error: null
+    })
+
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/brand")
+
+  }
+}
+
+export const postEditBrand = async (req, res) => {
+  try {
+
+    const brandId = req.query.id
+    let {name} = req.body
+
+    name = name.trim()
+
+    if (!name) {
+
+      return res.render("admin/addBrand", {
+        error: "Brand name Required",
+        brand: {
+          _id: brandId,
+          name
+        }
+      })
+    }
+
+    const existingBrand = await Brand.findOne({
+      _id: {$ne: brandId},
+      name: {
+        $regex: `^${name}$`,
+        $options: "i"
+      }
+    })
+
+    if (existingBrand) {
+
+      return res.render("admin/addBrand", {
+        error: "Brand aleady exists",
+        brand: {
+          _id: brandId,
+          name
+        }
+      })
+    }
+
+    await Brand.findByIdAndUpdate(brandId, {
+      name
+    })
+
+    return res.redirect(("/admin/brand"))
+
+  } catch (error) {
+    console.log(error);
+
+    return res.redirect("/admin/brand")
+
+
+  }
+}
+
+export const toggleBrand = async (req, res) => {
+  try {
+
+    const brandId = req.query.id
+
+    const brand = await Brand.findById(brandId)
+
+    if (!brand) {
+      return res.redirect("/admin/brand")
+    }
+
+    brand.isListed = !brand.isListed
+
+    await brand.save()
+
+    return res.redirect("/admin/brand")
+
+  } catch (error) {
+    console.log(error);
+
+    return res.redirect("/admin/brand")
+
+  }
+}
+
+export const getProducts = async (req, res) => {
+  try {
+
+    const page = parseInt(req.query.page) || 1
+
+    const limit = 5
+
+    const skip = (page - 1) * limit
+
+    const search = (req.query.search || "").trim()
+
+    let query = {}
+
+    if (search) {
 
       query.productName = {
         $regex: search,
-        $option: "i"
+        $options: "i"
       }
     }
 
     const totalProducts = await Product.countDocuments(query)
 
-    const products = (await Product.find(query).populate("category")).toSorted({createdAt: -1}).skip(skip).limit(limit).lean()
-
-    const totalPages = Math.ceil(totalProducts/limit)
+    const products = await Product.find(query).populate("category").populate("brand").sort({createdAt: -1}).skip(skip).limit(limit).lean()
+    
+    const totalPages = Math.ceil(totalProducts / limit)
 
     return res.render("admin/products", {
       products,
-      currentpage: page,
+      currentPage: page,
       totalPages,
       search
     })
-    
+
   } catch (error) {
     console.log(error)
 
@@ -358,6 +560,123 @@ export const getProducts = async (req, res) =>{
       search: "",
       error: "Faild to load products"
     })
+
+  }
+}
+
+export const getAddProduct = async (req, res) => {
+  try {
+
+    const categories = await Category.find({
+      isListed: true
+    }).sort({name: 1})
+
+    const brands = await Brand.find({
+      isListed: true
+    }).sort({name: 1})
+
+    return res.render("admin/addProduct", {
+      categories,
+      brands,
+      errors: {},
+      oldData: {}
+    })
+
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/product")
+
+  }
+}
+
+export const postAddProduct = async (req, res) => {
+  try {
+
+    const {
+      productName,
+      description,
+      playtime,
+      brand,
+      category} = req.body
+
+    const categories = await Category.find({
+      isListed: true
+    })
+
+    const brands = await Brand.find({
+      isListed: true
+    })
+
+    const errors = {}
+
+    if(!productName?.trim()){
+      errors.productName = "Product name is reqquired"
+    }
+
+    if(!description?.trim()){
+      errors.description = "Description is required"
+    }
+
+    const selectedCategory =
+      await Category.findById(category)
+
+    const isWired =
+      selectedCategory?.name
+        .toLowerCase()
+        .includes("wired")
+
+    if (!isWired && !playtime?.trim()) {
+
+      errors.playtime =
+        "Playtime is required"
+    }
+
+    if(!brand){
+      errors.brand = "Brand is required"
+    }
+
+    if(!category){
+      errors.category = "Category is required"
+    }
+
+    if(!req.file){
+      errors.productImage = "Producr image is required"
+    }
+
+    if(Object.keys(errors).length > 0){
+
+      return res.render("admin/addProduct", {
+        errors,
+        oldData: req.body,
+        categories,
+        brands        
+      })
+    }
+
+    const image = req.file.filename
+
+    console.log("Selected Brand:", brand)
     
+    const product = new Product({
+
+      productName: productName.trim(),
+
+      description: description.trim(),
+      playtime: playtime ? playtime.trim() : "",
+      brand,
+      category,
+      productImage: [image]
+    })
+
+    await product.save()
+
+    return res.redirect("/admin/products")
+
+  } catch (error) {
+    console.log(error);
+
+    return res.redirect("/admin/add-product")
+
   }
 }
