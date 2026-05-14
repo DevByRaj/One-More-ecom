@@ -12,7 +12,7 @@ export const uploadCloudinary = async (filePath) => {
             {
                 folder: "onemore-products",
                 resource_type: "image",
-                timeout: 120000,
+                timeout: 12000000,
                 quality: "auto"
             }
         );

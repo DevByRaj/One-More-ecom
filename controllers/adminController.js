@@ -797,6 +797,7 @@ export const postEditProduct = async (req, res) => {
     }
 
     if (req.file) {
+      console.log( "file path",  req.file.path)
 
       const imageUrl =
         await uploadCloudinary(req.file.path)
