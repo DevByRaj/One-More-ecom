@@ -95,33 +95,33 @@
         }
 
         .filter-tabs {
-    display: flex;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 5px;
-    border-radius: 12px;
-    gap: 5px;
-}
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px;
+            border-radius: 12px;
+            gap: 5px;
+        }
 
-.filter-link {
-    text-decoration: none;
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 500;
-    padding: 6px 15px;
-    border-radius: 8px;
-    transition: 0.3s;
-}
+        .filter-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 15px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
 
-.filter-link:hover {
-    color: #fff;
-    background: rgba(138, 125, 240, 0.1);
-}
+        .filter-link:hover {
+            color: #fff;
+            background: rgba(138, 125, 240, 0.1);
+        }
 
-.filter-link.active {
-    background: var(--accent-purple);
-    color: #000 !important;
-    font-weight: 600;
-}
+        .filter-link.active {
+            background: var(--accent-purple);
+            color: #000 !important;
+            font-weight: 600;
+        }
 
         /* --- TABLE CONTAINER --- */
         .table-container {
@@ -294,37 +294,38 @@
             <div class="col-lg-10">
                 <div class="search-container">
                     <div class="d-flex align-items-center gap-4">
-                    
+
                         <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">
-                    
+
                             Products
-                    
+
                         </h4>
-                    
+
                         <div class="filter-tabs">
-                    
-                            <a href="/admin/products?search=<%= search || '' %>" class="filter-link <%= !status ? 'active' : '' %>">
-                    
+
+                            <a href="/admin/products?search=<%= search || '' %>"
+                                class="filter-link <%= !status ? 'active' : '' %>">
+
                                 All
-                    
+
                             </a>
-                    
+
                             <a href="/admin/products?status=active&search=<%= search || '' %>"
                                 class="filter-link <%= status === 'active' ? 'active' : '' %>">
-                    
+
                                 Active
-                    
+
                             </a>
-                    
+
                             <a href="/admin/products?status=blocked&search=<%= search || '' %>"
                                 class="filter-link <%= status === 'blocked' ? 'active' : '' %>">
-                    
+
                                 Blocked
-                    
+
                             </a>
-                    
+
                         </div>
-                    
+
                     </div>
 
                     <div class="search-box">
@@ -374,7 +375,7 @@
                                         <td>
 
                                             <img src="<%= product.productImage && product.productImage.length > 0
-                                                    ? '/uploads/' + product.productImage[0]
+                                                    ? product.productImage[0]
                                                     : '/images/default-product.png'
                                                 %>" class="product-img" alt="Product">
 
@@ -416,9 +417,9 @@
                                             </a>
 
                                             <a href="/admin/toggle-product?id=<%= product._id %>" class="btn-remove">
-                                            
+
                                                 <%= product.isListed ? 'Unlist' : 'List' %>
-                                            
+
                                             </a>
 
                                         </td>

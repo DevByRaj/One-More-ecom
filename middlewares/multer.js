@@ -3,15 +3,15 @@ import path from "path";
 
 const storage = multer.diskStorage({
 
-    destination: function (req, file, cb) {
-
+    destination: (req, file, cb) => {
         cb(null, "public/uploads/");
     },
 
-    filename: function (req, file, cb) {
+    filename: (req, file, cb) => {
 
         const uniqueName =
-            Date.now() + path.extname(file.originalname);
+            Date.now() +
+            path.extname(file.originalname);
 
         cb(null, uniqueName);
     }
@@ -19,27 +19,24 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
 
-    const allowedTypes =
-        /jpeg|jpg|png|webp/
+    const allowed =
+        /jpg|jpeg|png|webp/;
 
-    const extname = allowedTypes.test(
-        path.extname(file.originalname).toLowerCase()
-    )
+    const ext =
+        allowed.test(
+            path.extname(file.originalname).toLowerCase()
+        );
 
-    const mimetype =
-        allowedTypes.test(file.mimetype)
-
-    if (extname && mimetype) {
-
-        return cb(null, true)
+    if (ext) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only images allowed"));
     }
-
-    cb(new Error("Only image files are allowed"))
-}
+};
 
 const upload = multer({
     storage,
     fileFilter
-})
+});
 
-export default upload;
+export default upload;  

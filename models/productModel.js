@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    
+
     productName: {
         type: String,
         required: true,
@@ -14,13 +14,13 @@ const productSchema = new mongoose.Schema({
         trim: true
     },
 
-    brand:{
+    brand: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Brand',
         required: true
     },
 
-    category:{
+    category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
         required: true
@@ -28,20 +28,20 @@ const productSchema = new mongoose.Schema({
 
     playtime: {
         type: String,
-        default: true,
+        default: "",
         trim: true
     },
 
     productImage: [{
-        type: String,
+        type: [String],
         required: true
     }],
 
-    isListed:{
+    isListed: {
         type: Boolean,
         default: true
     }
 
-},{timestamps: true})
+}, {timestamps: true})
 
 export default mongoose.model("Product", productSchema)
