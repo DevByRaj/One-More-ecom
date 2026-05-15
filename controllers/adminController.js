@@ -5,6 +5,7 @@ import categoryModel from "../models/categoryModel.js"
 import Product from "../models/productModel.js"
 import Brand from "../models/brandModel.js"
 import {uploadCloudinary} from "../utils/cloudinary.js";
+import Variant from "../models/variantModel.js"
 
 export const getAdminLogin = (req, res) => {
   res.render("admin/login", {error: null})
@@ -819,5 +820,82 @@ export const postEditProduct = async (req, res) => {
 
     return res.redirect("/admin/products")
 
+  }
+}
+
+export const getVariants = async(req, res) =>{
+  try {
+
+    const variants = await Variant.find()
+    .populate("productId")
+    .sort({createdAt: -1})
+    .lean()
+
+    const products = await Product.find({
+      isListed: true
+    }).sort({productName: 1})
+
+    return res.render("admin/variants", {
+    variants,
+    products
+    })
+    
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/dashboard")
+    
+  }
+}
+
+export const getAddVariant = async (req, res) =>{
+  try {
+
+    const products = await Product.find({
+      isListed: true
+    }).sort({productName: 1})
+
+    return res.render("admin/addVariant",{
+      products,
+      errors: {},
+      odlData: {}
+    })
+    
+  } catch (error) {
+    console.log(error)
+    return res.redirect("/admin/variants")
+    
+  }
+}
+
+export const postAddVariant = async(req, res) =>{
+  try {
+
+    const{
+      productId,
+      color,
+      stock,
+      price
+    } = req.body
+
+    const variant = new Variant({
+
+      productId,
+      variantName: color,
+      regularPrice: price,
+      salesPrice: price,
+      stock,
+      sku: "SKU-" + Date.now()
+    })
+
+    await variant.save()
+
+    return res.redirect("/admin/products")
+    
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/add-variant")
+    
   }
 }
