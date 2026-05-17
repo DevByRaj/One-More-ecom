@@ -214,67 +214,103 @@
                 <div class="form-panel">
                     <form id="variantForm" action="/admin/add-variant" method="POST" enctype="multipart/form-data"
                         novalidate>
-                        <button type="submit" class="save-btn">SAVE</button>
 
-                        <div class="form-group-custom">
-                        
-                            <label>Product Name</label>
-                        
-                            <select name="productId" class="form-control">
-                        
-                                <option value="">
-                                    Select Product
-                                </option>
-                        
-                                <% products.forEach(product=> { %>
-                        
-                                    <option value="<%= product._id %>">
-                        
-                                        <%= product.productName %>
-                        
-                                    </option>
-                        
-                                    <% }) %>
-                        
-                            </select>
-                        
-                        </div>
+                        <input type="hidden" name="productId" value="<%= productId %>">
+
+                        <button type="submit" class="save-btn">
+                            SAVE
+                        </button>
 
                         <div class="form-group-custom">
                             <label for="color">Color</label>
+
                             <input type="text" id="color" name="color" class="form-control"
                                 placeholder="e.g. Midnight Blue">
-                            <div id="colorError" class="error-message">Please enter a valid color.</div>
+
+                            <div id="colorError" class="error-message">
+                                Please enter a valid color.
+                            </div>
                         </div>
 
                         <div class="form-group-custom">
                             <label for="stock">Stock</label>
+
                             <input type="number" id="stock" name="stock" class="form-control" placeholder="0">
-                            <div id="stockError" class="error-message">Stock cannot be negative.</div>
+
+                            <div id="stockError" class="error-message">
+                                Stock cannot be negative.
+                            </div>
                         </div>
 
-                        <div class="form-group-custom">
-                            <label for="price">Price</label>
-                            <input type="number" id="price" name="price" class="form-control" placeholder="0.00">
-                            <div id="priceError" class="error-message">Price must be a positive number.</div>
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <div class="form-group-custom">
+
+                                    <label for="regularPrice">
+                                        Regular Price
+                                    </label>
+
+                                    <input type="number" id="regularPrice" name="regularPrice" class="form-control"
+                                        placeholder="0.00">
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="form-group-custom">
+
+                                    <label for="salePrice">
+                                        Sale Price
+                                    </label>
+
+                                    <input type="number" id="salePrice" name="salePrice" class="form-control"
+                                        placeholder="0.00">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="priceError" class="error-message">
+                            Price must be a positive number.
                         </div>
 
                         <div class="mt-4">
-                            <label>variant Image</label>
+
+                            <label>Variant Image</label>
+
                             <div class="image-upload-wrapper">
-                                <% for(let i=1; i<=3; i++) { %>
+
+                                <% for(let i=1; i <=3; i++) { %>
+
                                     <div class="img-placeholder" onclick="triggerInput(<%= i %>)">
+
                                         <input type="file" id="fileInput<%= i %>" name="variantImage" class="d-none"
                                             accept="image/*" onchange="previewImg(this, <%= i %>)">
+
                                         <div id="placeholderText<%= i %>">
                                             <i class="bi bi-image"></i>
                                         </div>
+
                                         <img id="preview<%= i %>" class="d-none" alt="Preview">
+
                                     </div>
+
                                     <% } %>
+
                             </div>
-                            <div id="imageError" class="error-message">Please upload at least one image.</div>
+
+                            <div id="imageError" class="error-message">
+                                Please upload at least one image.
+                            </div>
+
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -310,7 +346,11 @@
 
             const color = document.getElementById('color');
             const stock = document.getElementById('stock');
-            const price = document.getElementById('price');
+            const regularPrice =
+                document.getElementById('regularPrice');
+
+            const salePrice =
+                document.getElementById('salePrice');
             const files = document.querySelectorAll('input[type="file"]');
 
             // Color check
@@ -334,7 +374,12 @@
             }
 
             // Price check
-            if (price.value === '' || price.value <= 0) {
+            if (
+                regularPrice.value === '' ||
+                regularPrice.value <= 0 ||
+                salePrice.value === '' ||
+                salePrice.value <= 0
+            ) {
                 price.classList.add('is-invalid');
                 document.getElementById('priceError').style.display = 'block';
                 isValid = false;
