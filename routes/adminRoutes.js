@@ -14,7 +14,8 @@ import {
     getProducts, getAddProduct, postAddProduct, getEditProduct, postEditProduct,
     toggleProduct,
     getVariants, getAddVariant, 
-    postAddVariant} from "../controllers/adminController.js"
+    postAddVariant, toggleVariantStatus,
+    getEditVariant, postEditVariant } from "../controllers/adminController.js"
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
 
@@ -66,7 +67,19 @@ router.post("/edit-product/:id", isAdminLoggedIn, upload.single("productImage"),
 
 router.get("/variants/:productId", isAdminLoggedIn, getVariants)
 router.get("/add-variant/:productId", isAdminLoggedIn, getAddVariant)
-router.post("/add-variant", isAdminLoggedIn, upload.array("variantImage", 3) , postAddVariant)
+router.post("/add-variant", isAdminLoggedIn,  upload.fields([
+    {name: "variantImage0", maxCount: 1},
+    {name: "variantImage1", maxCount: 1},
+    {name: "variantImage2", maxCount: 1}
+]) , postAddVariant)
 
+router.get("/toggle-variant/:id", isAdminLoggedIn, toggleVariantStatus)
+
+router.get("/edit-variant/:id", isAdminLoggedIn, getEditVariant)
+router.post("/edit-variant/:id", isAdminLoggedIn, upload.fields([
+    {name: "variantImage0", maxCount: 1},
+    {name: "variantImage1", maxCount: 1},
+    {name: "variantImage2", maxCount: 1}
+]), postEditVariant)
 
 export default router

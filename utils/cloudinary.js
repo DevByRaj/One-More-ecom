@@ -19,8 +19,18 @@ export const uploadCloudinary = async (filePath) => {
 
         console.log("Upload success");
 
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        try {
+
+            if (fs.existsSync(filePath)) {
+
+                fs.unlinkSync(filePath)
+            }
+
+        } catch (err) {
+
+            console.log(
+                "File delete skipped"
+            )
         }
 
         return result.secure_url;
