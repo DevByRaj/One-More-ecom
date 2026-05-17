@@ -212,8 +212,10 @@
                 </div>
 
                 <div class="form-panel">
-                    <form id="variantForm" action="/admin/add-variant" method="POST" enctype="multipart/form-data"
-                        novalidate>
+                    <form id="variantForm" action="<%= variant
+                            ? '/admin/edit-variant/' + variant._id
+                            : '/admin/add-variant'
+                        %>" method="POST" enctype="multipart/form-data" novalidate>
 
                         <input type="hidden" name="productId" value="<%= productId %>">
 
@@ -224,8 +226,8 @@
                         <div class="form-group-custom">
                             <label for="color">Color</label>
 
-                            <input type="text" id="color" name="color" class="form-control"
-                                placeholder="e.g. Midnight Blue">
+                            <input type="text" id="color" name="color" class="form-control" placeholder="e.g. Midnight Blue"
+                                value="<%= variant?.variantName || '' %>">
 
                             <div id="colorError" class="error-message">
                                 Please enter a valid color.
@@ -235,7 +237,7 @@
                         <div class="form-group-custom">
                             <label for="stock">Stock</label>
 
-                            <input type="number" id="stock" name="stock" class="form-control" placeholder="0">
+                            <input type="number" id="stock" name="stock" class="form-control" placeholder="0" value="<%= variant?.stock || '' %>">
 
                             <div id="stockError" class="error-message">
                                 Stock cannot be negative.
@@ -252,8 +254,8 @@
                                         Regular Price
                                     </label>
 
-                                    <input type="number" id="regularPrice" name="regularPrice" class="form-control"
-                                        placeholder="0.00">
+                                    <input type="number" id="regularPrice" name="regularPrice" class="form-control" placeholder="0.00"
+                                        value="<%= variant?.regularPrice || '' %>">
 
                                 </div>
 
@@ -267,8 +269,8 @@
                                         Sale Price
                                     </label>
 
-                                    <input type="number" id="salePrice" name="salePrice" class="form-control"
-                                        placeholder="0.00">
+                                    <input type="number" id="salePrice" name="salePrice" class="form-control" placeholder="0.00"
+                                        value="<%= variant?.salePrice || '' %>">
 
                                 </div>
 
@@ -286,25 +288,35 @@
 
                             <div class="image-upload-wrapper">
 
-                                <% for(let i=1; i <=3; i++) { %>
-
+                                <% for(let i=0; i < 3; i++) { %>
+                                
                                     <div class="img-placeholder" onclick="triggerInput(<%= i %>)">
-
-                                        <input type="file" id="fileInput<%= i %>" name="variantImage" class="d-none"
-                                            accept="image/*" onchange="previewImg(this, <%= i %>)">
-
-                                        <div id="placeholderText<%= i %>">
-                                            <i class="bi bi-image"></i>
-                                        </div>
-
-                                        <img id="preview<%= i %>" class="d-none" alt="Preview">
-
+                                
+                                        <input type="file" id="fileInput<%= i %>" name="variantImage<%= i %>" class="d-none" accept="image/*"
+                                            onchange="previewImg(this, <%= i %>)">
+                                
+                                        <% if( variant?.variantImage && variant.variantImage[i] ){ %>
+                                
+                                            <img id="preview<%= i %>" src="<%= variant.variantImage[i] %>" class="existing-variant-image" alt="Preview">
+                                
+                                            <% } else { %>
+                                
+                                                <div id="placeholderText<%= i %>">
+                                
+                                                    <i class="bi bi-image"></i>
+                                
+                                                </div>
+                                
+                                                <img id="preview<%= i %>" class="d-none" alt="Preview">
+                                
+                                                <% } %>
+                                
                                     </div>
-
+                                
                                     <% } %>
 
                             </div>
-
+                            
                             <div id="imageError" class="error-message">
                                 Please upload at least one image.
                             </div>
@@ -327,18 +339,46 @@
         }
 
         function previewImg(input, id) {
-            const preview = document.getElementById('preview' + id);
-            const placeholder = document.getElementById('placeholderText' + id);
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('d-none');
-                    placeholder.classList.add('d-none');
+
+                const preview =
+                    document.getElementById(
+                        'preview' + id
+                    );
+
+                const placeholder =
+                    document.getElementById(
+                        'placeholderText' + id
+                    );
+
+                if (
+                    input.files &&
+                    input.files[0]
+                ) {
+
+                    const reader =
+                        new FileReader();
+
+                    reader.onload =
+                        function (e) {
+
+                            preview.src =
+                                e.target.result;
+
+                            preview.classList
+                                .remove('d-none');
+
+                            if (placeholder) {
+
+                                placeholder.classList
+                                    .add('d-none');
+                            }
+                        }
+
+                    reader.readAsDataURL(
+                        input.files[0]
+                    );
                 }
-                reader.readAsDataURL(input.files[0]);
             }
-        }
 
         // Field-wise Validation
         document.getElementById('variantForm').addEventListener('submit', function (e) {
@@ -376,25 +416,49 @@
             // Price check
             if (
                 regularPrice.value === '' ||
-                regularPrice.value <= 0 ||
-                salePrice.value === '' ||
-                salePrice.value <= 0
+                regularPrice.value <= 0
             ) {
-                price.classList.add('is-invalid');
-                document.getElementById('priceError').style.display = 'block';
+
+                regularPrice.classList.add('is-invalid');
+
+                document.getElementById('priceError')
+                    .style.display = 'block';
+
                 isValid = false;
+
             } else {
-                price.classList.remove('is-invalid');
-                document.getElementById('priceError').style.display = 'none';
+
+                regularPrice.classList.remove('is-invalid');
+
+                document.getElementById('priceError')
+                    .style.display = 'none';
             }
 
             // Image check
-            let hasImage = Array.from(files).some(f => f.files.length > 0);
-            if (!hasImage) {
-                document.getElementById('imageError').style.display = 'block';
+
+            const existingImages =
+                document.querySelectorAll(
+                    '.existing-variant-image'
+                );
+
+            let hasImage =
+                Array.from(files)
+                    .some(f => f.files.length > 0);
+
+            if (
+                !hasImage &&
+                existingImages.length === 0
+            ) {
+
+                document.getElementById('imageError')
+                    .style.display = 'block';
+
                 isValid = false;
+
             } else {
-                document.getElementById('imageError').style.display = 'none';
+
+                document.getElementById('imageError')
+                    .style.display = 'none';
             }
 
             if (!isValid) e.preventDefault();

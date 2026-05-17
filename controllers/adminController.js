@@ -854,7 +854,8 @@ export const getAddVariant = async (req, res) => {
     const {productId} = req.params
 
     return res.render("admin/addVariants", {
-      productId
+      productId,
+      variant: null
     })
 
   } catch (error) {
@@ -876,21 +877,65 @@ export const postAddVariant = async (req, res) => {
     } = req.body
 
     let {salePrice} = req.body
+
+    const errors = {}
+
+    if (!color || color.trim() === "") {
+      errors.color = "Color is required"
+    }
+
+    if (!stock || stock <= 0) {
+      errors.stock = "Stck must be greater than 0"
+    }
+
+    if (!regularPrice || regularPrice <= 0) {
+      errors.regularPrice = "Regular price is required"
+    }
+
     if (!salePrice || salePrice === "") {
       salePrice = regularPrice
     }
 
     const imageUrls = []
 
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
+    for (let i = 0; i < 3; i++) {
+
+      const fieldName =
+        `variantImage${i}`
+
+      const file =
+        req.files[fieldName]?.[0]
+
+      if(file){
+
         const imageUrl = await uploadCloudinary(file.path)
 
-        if (imageUrl) {
-          imageUrls.push(imageUrl)
+        if(imageUrl){
+          imageUrls[i] = imageUrl
         }
       }
     }
+
+    const hasImage = imageUrls.some(image => image)
+
+    if (!hasImage) {
+
+      errors.variantImage = "Please upload at least one image"
+    }
+
+    if (Object.keys(errors).length > 0) {
+
+      return res.render("admin/addVariants",
+        {
+          errors,
+          oldData: req.body,
+          productId,
+          variant: null
+        }
+      )
+    }
+
+    const cleanedImages = imageUrls.map(image => image || "")
 
     const variant = new Variant({
 
@@ -900,7 +945,7 @@ export const postAddVariant = async (req, res) => {
       salePrice,
       stock,
       sku: "SKU-" + Date.now(),
-      variantImage: imageUrls
+      variantImage: cleanedImages
     })
 
     await variant.save()
@@ -911,6 +956,165 @@ export const postAddVariant = async (req, res) => {
     console.log(error)
 
     return res.redirect("/admin/add-variant")
+
+  }
+}
+
+export const toggleVariantStatus = async (req, res) => {
+  try {
+
+    const {id} = req.params
+
+    const variant = await Variant.findById(id)
+
+    if (!variant) {
+      return res.redirect("/admin/products")
+    }
+    variant.isListed = !variant.isListed
+
+    await variant.save()
+
+    return res.redirect(`/admin/variants/${variant.productId}`)
+
+  } catch (error) {
+    console.log(error)
+
+    return res.redirect("/admin/products")
+
+  }
+}
+
+export const getEditVariant = async (req, res) => {
+  try {
+
+    const {id} = req.params
+
+    const variantData = await Variant.findById(id).lean()
+
+    if (!variantData) {
+
+      return res.redirect("/admin/products")
+    }
+
+    return res.render("admin/addVariants", {
+      variant: variantData,
+      productId: variantData.productId
+    })
+
+  } catch (error) {
+
+    console.log(error)
+
+    return res.redirect("/admin/products")
+
+  }
+}
+
+export const postEditVariant = async (req, res) => {
+  try {
+
+    const {id} = req.params
+    const {
+      color,
+      stock,
+      regularPrice
+    } = req.body
+
+    let {salePrice} = req.body
+
+    const errors = {}
+
+    if (!color || color.trim() === "") {
+
+      errors.color =
+        "Color is required"
+    }
+
+    if (!stock || stock <= 0) {
+
+      errors.stock =
+        "Stock must be greater than 0"
+    }
+
+    if (!regularPrice || regularPrice <= 0) {
+
+      errors.regularPrice =
+        "Regular price is required"
+    }
+
+    const variant = await Variant.findById(id)
+
+    if (!variant) {
+
+      return res.redirect("/admin/products")
+    }
+
+    if (!salePrice || salePrice == "") {
+      salePrice = regularPrice
+    }
+
+    if (Object.keys(errors).length > 0) {
+
+      return res.render(
+        "admin/addVariants",
+        {
+          errors,
+
+          variant: {
+            ...variant.toObject(),
+
+            variantName: color,
+
+            stock,
+
+            regularPrice,
+
+            salePrice
+          },
+
+          productId:
+            variant.productId
+        }
+      )
+    }
+
+    let imageUrls = [...variant.variantImage]
+
+    for (let i = 0; i < 3; i++) {
+
+      const fieldName = `variantImage${i}`
+
+      const file = req.files[fieldName]?.[0]
+
+      if (file) {
+
+        const uploadedImage = await uploadCloudinary(file.path)
+
+        if (uploadedImage) {
+
+          imageUrls[i] = uploadedImage
+        }
+      }
+    }
+
+    variant.variantName = color
+
+    variant.stock = stock
+
+    variant.regularPrice = regularPrice
+
+    variant.salePrice = salePrice
+
+    variant.variantImage = imageUrls
+
+    await variant.save()
+
+    return res.redirect(`/admin/variants/${variant.productId}`)
+
+  } catch (error) {
+    console.log(error);
+
+    return res.redirect("/admin/products")
 
   }
 }

@@ -177,6 +177,33 @@
             text-decoration: none;
             display: inline-block;
         }
+        .status-listed{
+
+    background: #00c853;
+    color: white;
+
+    padding: 6px 14px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.status-unlisted{
+
+    background: #ff3d00;
+    color: white;
+
+    padding: 6px 14px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
 
         .footer-text {
             text-align: center;
@@ -231,6 +258,7 @@
                                 <th>Image</th>
                                 <th>Price</th>
                                 <th>Stock</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -285,18 +313,43 @@
                                             <%= variant.stock %>
                                         </td>
                                         <td>
+                                        
+                                            <% if(variant.isListed){ %>
+                                        
+                                                <span class="status-listed">
+                                                    Listed
+                                                </span>
+                                        
+                                                <% } else { %>
+                                        
+                                                    <span class="status-unlisted">
+                                                        Unlisted
+                                                    </span>
+                                        
+                                                    <% } %>
+                                        
+                                        </td>
+                                        <td>
                                             <div class="d-inline-flex gap-2">
-                                                <a href="/admin/products/edit-variant?id=<%= variant._id %>"
+                                                <a href="/admin/edit-variant/<%= variant._id %>"
                                                     class="btn-action-edit">Edit</a>
-                                                <a href="/admin/products/delete-variant?id=<%= variant._id %>"
-                                                    class="btn-action-remove">Remove</a>
+                                                <a href="/admin/toggle-variant/<%= variant._id %>" class="
+                                                        <%= variant.isListed
+                                                            ? 'btn-action-remove'
+                                                            : 'btn-action-edit'
+                                                        %>
+                                                    ">
+                                                
+                                                    <%= variant.isListed ? 'Unlist' : 'List' %>
+                                                
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
                                     <% }) %>
                                         <% } else { %>
                                             <tr>
-                                                <td colspan="5" class="text-center py-5 text-muted">
+                                                <td colspan="6" class="text-center py-5 text-muted">
                                                     No variants added for this product yet.
                                                 </td>
                                             </tr>
