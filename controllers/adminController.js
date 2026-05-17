@@ -705,7 +705,7 @@ export const postAddProduct = async (req, res) => {
 
     await product.save()
 
-    return res.redirect("/admin/products")
+    return res.redirect(`/admin/variants/${product._id}`)
 
   } catch (error) {
     console.log(error);
@@ -798,7 +798,7 @@ export const postEditProduct = async (req, res) => {
     }
 
     if (req.file) {
-      console.log( "file path",  req.file.path)
+      console.log("file path", req.file.path)
 
       const imageUrl =
         await uploadCloudinary(req.file.path)
@@ -823,79 +823,94 @@ export const postEditProduct = async (req, res) => {
   }
 }
 
-export const getVariants = async(req, res) =>{
+export const getVariants = async (req, res) => {
   try {
 
-    const variants = await Variant.find()
-    .populate("productId")
-    .sort({createdAt: -1})
-    .lean()
+    const {productId} = req.params
 
-    const products = await Product.find({
-      isListed: true
-    }).sort({productName: 1})
-
-    return res.render("admin/variants", {
-    variants,
-    products
+    const variants = await Variant.find({
+      productId
     })
-    
+      .populate("productId")
+      .sort({createdAt: -1})
+      .lean()
+
+    return res.render("admin/variantList", {
+      variants,
+      productId
+    })
+
   } catch (error) {
     console.log(error)
 
     return res.redirect("/admin/dashboard")
-    
+
   }
 }
 
-export const getAddVariant = async (req, res) =>{
+export const getAddVariant = async (req, res) => {
   try {
 
-    const products = await Product.find({
-      isListed: true
-    }).sort({productName: 1})
+    const {productId} = req.params
 
-    return res.render("admin/addVariant",{
-      products,
-      errors: {},
-      odlData: {}
+    return res.render("admin/addVariants", {
+      productId
     })
-    
+
   } catch (error) {
-    console.log(error)
-    return res.redirect("/admin/variants")
-    
+    console.log(error);
+
+    return res.redirect("/admin/products")
+
   }
 }
 
-export const postAddVariant = async(req, res) =>{
+export const postAddVariant = async (req, res) => {
   try {
 
-    const{
+    const {
       productId,
       color,
       stock,
-      price
+      regularPrice
     } = req.body
+
+    let {salePrice} = req.body
+    if (!salePrice || salePrice === "") {
+      salePrice = regularPrice
+    }
+
+    const imageUrls = []
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const imageUrl = await uploadCloudinary(file.path)
+
+        if (imageUrl) {
+          imageUrls.push(imageUrl)
+        }
+      }
+    }
 
     const variant = new Variant({
 
       productId,
       variantName: color,
-      regularPrice: price,
-      salesPrice: price,
+      regularPrice,
+      salePrice,
       stock,
-      sku: "SKU-" + Date.now()
+      sku: "SKU-" + Date.now(),
+      variantImage: imageUrls
     })
 
     await variant.save()
 
-    return res.redirect("/admin/products")
-    
+    return res.redirect(`/admin/variants/${productId}`)
+
   } catch (error) {
     console.log(error)
 
     return res.redirect("/admin/add-variant")
-    
+
   }
 }

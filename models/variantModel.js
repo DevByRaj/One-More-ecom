@@ -19,7 +19,7 @@ const variantSchema = new mongoose.Schema({
         required: true
     },
 
-    salesPrice:{
+    salePrice:{
         type: Number,
         required: true
     },
@@ -35,6 +35,11 @@ const variantSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+
+    variantImage: [{
+        type: String,
+        required: true
+    }],
     
     isListed:{
         type: Boolean,
