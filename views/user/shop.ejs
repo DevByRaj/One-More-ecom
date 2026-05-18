@@ -160,12 +160,12 @@
         }
 
         .product-img {
-            width: 100%;
-            border-radius: 12px;
-            aspect-ratio: 1/1.2;
-            object-fit: cover;
-            background: #f8f8f8;
-        }
+    width: 100%;
+    height: 280px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #f8f8f8;
+}
 
         .wishlist-btn {
             position: absolute;
@@ -309,13 +309,28 @@
             </div>
 
             <div class="search-container">
+            
                 <form action="/shop" method="GET">
-                    <input type="text" name="search" class="search-bar" placeholder="Search An Item"
-                        value="<%= query.search %>">
-                    <button type="submit" class="search-icon-btn"><i class="fa fa-search text-muted"></i></button>
+            
+                    <input type="text" name="search" class="search-bar" placeholder="Search An Item" value="<%= query.search %>">
+            
+                    <button type="submit" class="search-icon-btn">
+                        <i class="fa fa-search text-muted"></i>
+                    </button>
+            
                     <!-- Persist existing filters -->
                     <input type="hidden" name="sort" value="<%= query.sort %>">
+            
+                    <% if(query.search){ %>
+            
+                        <a href="/shop" class="btn btn-sm btn-outline-dark rounded-pill mt-2">
+                            Clear
+                        </a>
+            
+                        <% } %>
+            
                 </form>
+            
             </div>
 
             <div class="w-100 mb-5 overflow-hidden">
@@ -336,7 +351,7 @@
                             <div class="product-card">
                                 <!-- Dynamic Link to Detail Page -->
                                 <a href="/productDetails?id=<%= product._id %>" class="text-decoration-none text-dark">
-                                    <img src="/uploads/<%= product.productImage[0] %>" class="product-img" alt="<%= product.productName %>">
+                                    <img src="<%= product.productImage[0] %>" class="product-img" alt="<%= product.productName %>">
                                 </a>
                         
                                 <button class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">
@@ -344,6 +359,10 @@
                                 </button>
                         
                                 <div class="product-info">
+                                    <%= JSON.stringify(product.brand) %>
+                                    <div class="text-muted small mb-1">
+                                        <%= product.brand.name %>
+                                    </div>
                                     <div class="product-name">
                                         <%= product.productName %>
                                     </div>

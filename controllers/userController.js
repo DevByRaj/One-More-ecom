@@ -1021,24 +1021,89 @@ export const checkUserStatus = async (req, res) => {
 
 export const getShop = async(req, res) =>{
   try {
-    const products = await Product.find({
+
+    const{
+      search,
+      sort,
+      category,
+      minPrice,
+      maxPrice,
+      page
+    } = req.query
+    let query = {
       isListed: true
-    })
+    }
+
+    if(search){
+      query.productName = {
+        $regex: search,
+        $options: "i"
+      }
+    }
+
+    if(category){
+      query.category = category
+    }
+
+    if(minPrice || maxPrice){
+
+      query.salePrice = {}
+
+      if (minPrice) {
+        query.salePrice.$gte = Number(minPrice)
+      }
+
+      if(maxPrice){
+        query.salePrice.$lte = Number(maxPrice)
+      }
+    }
+
+    let sortOption = {createdAt: -1}
+
+    switch(sort){
+      
+      case "low-high": sortOption = {salePrice : 1}
+      break
+
+      case "high-low": sortOption = {salePrice: -1}
+      break
+
+      case "a-z": sortOption = {productName: 1}
+      break
+
+      case "z-a": sortOption = {productName: -1}
+      break
+      
+    }
+
+    const currentPage = Number(page) || 1
+
+    const limit = 6
+
+    const skip = (currentPage - 1)* limit
+
+    const totalProduct = await Product.countDocuments(query)
+
+    const totalPages = Math.ceil(totalProduct / limit)
+
+    const products = await Product.find(query).populate("brand").sort(sortOption).skip(skip).limit(limit)
 
     const categories = await Category.find({
       isListed: true
     })
 
-    res.render("user/shop",{
+    res.render("user/shop", {
       products,
       categories,
-      query: req.query || {},
-      currentPage: 1,
-      totalPages: 1
+      query: req.query,
+      currentPage,
+      totalPages
     })
-
+    
   } catch (error) {
     console.log(error)
+
     res.redirect("/")
+    
   }
 }

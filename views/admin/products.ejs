@@ -159,6 +159,12 @@
             border-bottom: 1px solid #222;
         }
 
+        .product-name{
+    font-weight: 600;
+    color: #ffffff;
+    min-width: 160px;
+}
+
         .product-img {
             width: 80px;
             height: 80px;
@@ -349,6 +355,7 @@
                             <tr>
                                 <th>Sl.No</th>
                                 <th>Brand</th>
+                                <th>Product Name</th>
                                 <th>Image</th>
                                 <th>Description</th>
                                 <th>Category</th>
@@ -370,6 +377,10 @@
 
                                         <td>
                                             <%= product.brand?.name || "No Brand" %>
+                                        </td>
+
+                                        <td class="product-name">
+                                            <%= product.productName || "No Name" %>
                                         </td>
 
                                         <td>
