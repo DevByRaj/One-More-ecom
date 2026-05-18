@@ -1,19 +1,27 @@
 import multer from "multer";
 import path from "path";
+import crypto from "crypto";
 
 const storage = multer.diskStorage({
 
     destination: (req, file, cb) => {
+
         cb(null, "public/uploads/");
     },
 
     filename: (req, file, cb) => {
 
         const uniqueName =
-            Date.now() +
-            path.extname(file.originalname);
+            crypto.randomUUID();
 
-        cb(null, uniqueName);
+        cb(
+            null,
+
+            uniqueName +
+            path.extname(
+                file.originalname
+            )
+        );
     }
 });
 
@@ -24,13 +32,22 @@ const fileFilter = (req, file, cb) => {
 
     const ext =
         allowed.test(
-            path.extname(file.originalname).toLowerCase()
+            path.extname(
+                file.originalname
+            ).toLowerCase()
         );
 
     if (ext) {
+
         cb(null, true);
+
     } else {
-        cb(new Error("Only images allowed"));
+
+        cb(
+            new Error(
+                "Only images allowed"
+            )
+        );
     }
 };
 
@@ -39,4 +56,4 @@ const upload = multer({
     fileFilter
 });
 
-export default upload;  
+export default upload;
