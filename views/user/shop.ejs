@@ -53,12 +53,6 @@
             padding-right: 20px;
         }
 
-        .sidebar h2 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 40px;
-        }
-
         .filter-label {
             font-weight: 600;
             font-size: 14px;
@@ -160,12 +154,37 @@
         }
 
         .product-img {
-    width: 100%;
-    height: 280px;
-    border-radius: 12px;
-    object-fit: cover;
-    background: #f8f8f8;
-}
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 18px;
+            display: block;
+            background: #f5f5f5;
+            transition: 0.3s ease;
+        }
+
+        .product-img:hover {
+            transform: scale(1.02);
+        }
+
+        .product-card {
+            position: relative;
+        }
+
+        .product-info {
+            padding-top: 14px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .product-price {
+            margin-top: 4px;
+            font-size: 18px;
+        }
 
         .wishlist-btn {
             position: absolute;
@@ -242,6 +261,176 @@
             font-size: 14px;
             border: none;
         }
+
+        /* ── RESPONSIVE ─────────────────────────────────────────── */
+
+        /* Sidebar toggle (mobile) */
+        .sidebar-toggle {
+            display: none;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 18px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        /* Tablet – 992px */
+        @media (max-width: 992px) {
+            nav {
+                padding: 12px 20px;
+            }
+
+            .main-container {
+                padding: 30px 24px;
+                gap: 16px;
+            }
+
+            .sidebar {
+                width: 180px;
+            }
+
+            .content-area {
+                padding-left: 10px;
+            }
+
+            .product-img {
+                height: 260px;
+            }
+        }
+
+        /* Mobile – 768px */
+        @media (max-width: 768px) {
+            nav {
+                padding: 10px 16px;
+            }
+
+            /* Stack sidebar above content */
+            .main-container {
+                flex-direction: column;
+                padding: 20px 16px;
+                gap: 0;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                padding-right: 0;
+                padding-bottom: 16px;
+                margin-bottom: 20px;
+                /* Collapsed by default on mobile */
+                overflow: hidden;
+                max-height: 0;
+                transition: max-height 0.35s ease;
+            }
+
+            .sidebar.open {
+                max-height: 1000px;
+            }
+
+            .sidebar-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .content-area {
+                padding-left: 0;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            /* Stack header row */
+            .content-area>.d-flex.justify-content-between {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .toggle-container {
+                font-size: 11px;
+            }
+
+            .btn-sort-black {
+                float: none;
+                width: 100%;
+                text-align: left;
+            }
+
+            /* Product images a bit shorter */
+            .product-img {
+                height: 220px;
+            }
+
+            .product-name {
+                font-size: 13px;
+            }
+
+            .product-price {
+                font-size: 13px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 40px 24px 20px;
+            }
+
+            .footer-logo {
+                margin-bottom: 20px;
+            }
+
+            .social-icons {
+                margin-top: 16px;
+            }
+
+            .text-md-end {
+                text-align: left !important;
+            }
+        }
+
+        /* Small phones – 480px */
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 16px 12px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .product-img {
+                height: 190px;
+                border-radius: 12px;
+            }
+
+            .wishlist-btn {
+                bottom: 70px;
+                font-size: 1rem;
+            }
+
+            footer {
+                padding: 30px 16px 16px;
+            }
+
+            .load-more-btn {
+                width: 100%;
+            }
+
+            /* Pagination wraps neatly */
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Navbar toggler icon color fix */
+        .navbar-toggler-icon {
+            filter: invert(1);
+        }
     </style>
 </head>
 
@@ -250,26 +439,36 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="/"><img src="/images/logo.png" height="40"></a>
-            <div class="collapse navbar-collapse justify-content-center">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/contact">Contact Us</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/about">About Us</a></li>
                 </ul>
-            </div>
-            <div class="nav-icons d-flex align-items-center">
-                <a href="/profile"><i class="fa-regular fa-user"></i></a>
-                <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
-                <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                <!-- Icons inside collapsed menu on mobile -->
+                <div class="nav-icons d-flex align-items-center ms-lg-auto mt-2 mt-lg-0">
+                    <a href="/profile"><i class="fa-regular fa-user"></i></a>
+                    <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
+                    <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="main-container">
+
+        <!-- Mobile filter toggle -->
+        <button class="sidebar-toggle" onclick="toggleSidebar()" id="filterToggleBtn">
+            <i class="fa-solid fa-sliders"></i> Filters
+        </button>
+
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2>ANC</h2>
+        <aside class="sidebar" id="sidebar">
             <span class="filter-label">Filter :</span>
 
             <form action="/shop" method="GET" id="filterForm">
@@ -309,28 +508,20 @@
             </div>
 
             <div class="search-container">
-            
                 <form action="/shop" method="GET">
-            
-                    <input type="text" name="search" class="search-bar" placeholder="Search An Item" value="<%= query.search %>">
-            
+                    <input type="text" name="search" class="search-bar" placeholder="Search An Item"
+                        value="<%= query.search %>">
                     <button type="submit" class="search-icon-btn">
                         <i class="fa fa-search text-muted"></i>
                     </button>
-            
                     <!-- Persist existing filters -->
                     <input type="hidden" name="sort" value="<%= query.sort %>">
-            
                     <% if(query.search){ %>
-            
                         <a href="/shop" class="btn btn-sm btn-outline-dark rounded-pill mt-2">
                             Clear
                         </a>
-            
                         <% } %>
-            
                 </form>
-            
             </div>
 
             <div class="w-100 mb-5 overflow-hidden">
@@ -346,35 +537,39 @@
             <div class="row g-4 mt-2">
                 <% if(products.length> 0) { %>
                     <% products.forEach(product=> { %>
-                        <!-- Inside the products.forEach loop -->
-                        <div class="col-md-4">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6 mb-5">
                             <div class="product-card">
-                                <!-- Dynamic Link to Detail Page -->
                                 <a href="/productDetails?id=<%= product._id %>" class="text-decoration-none text-dark">
-                                    <img src="<%= product.productImage[0] %>" class="product-img" alt="<%= product.productName %>">
+                                    <img src="<%= product.productImage[0] %>" class="product-img"
+                                        alt="<%= product.productName %>">
                                 </a>
-                        
+
                                 <button class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">
                                     <i class="fa-regular fa-heart"></i>
                                 </button>
-                        
+
                                 <div class="product-info">
-                                    <%= JSON.stringify(product.brand) %>
                                     <div class="text-muted small mb-1">
-                                        <%= product.brand.name %>
+                                        <%= product.brand.name || "Brand" %>
                                     </div>
                                     <div class="product-name">
                                         <%= product.productName %>
                                     </div>
-                                    <div class="product-price">
-                                        <% if (product.salePrice < product.regularPrice) { %>
-                                            <!-- Show struck-through regular price only if there is a discount -->
-                                            <span class="text-muted text-decoration-line-through me-2">₹100<%= product.regularPrice %></span>
-                                            <b>₹<%= product.salePrice %></b>
-                                            <% } else { %>
-                                                <!-- Show only regular price if no sale price exists -->
-                                                <b>₹<%= product.regularPrice %></b>
-                                                <% } %>
+                                    <div class="product-price mt-1">
+                                        <% if(product.variant){ %>
+                                            <% if(product.variant.salePrice < product.variant.regularPrice){ %>
+                                                <span class="text-muted text-decoration-line-through me-2 small">
+                                                    ₹<%= product.variant.regularPrice %>
+                                                </span>
+                                                <span class="fw-bold text-dark">
+                                                    ₹<%= product.variant.salePrice %>
+                                                </span>
+                                                <% } else { %>
+                                                    <span class="fw-bold text-dark">
+                                                        ₹<%= product.variant.salePrice %>
+                                                    </span>
+                                                    <% } %>
+                                                        <% } %>
                                     </div>
                                     <div class="rating">
                                         <i class="fa-solid fa-star"></i>
@@ -417,7 +612,7 @@
     <footer>
         <div class="footer-logo"><img src="/images/logo.png" height="50"></div>
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-4">
                 <div class="footer-head">Support</div>
                 <div class="footer-links">
                     <a href="#">Order Status</a>
@@ -426,7 +621,7 @@
                     <a href="#">Complaint Registration</a>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-4">
                 <div class="footer-head">About Us</div>
                 <div class="footer-links">
                     <a href="#">Contact Us</a>
@@ -435,12 +630,12 @@
                     <a href="#">FAQ</a>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-4">
                 <div class="footer-head">Contact</div>
                 <p class="small mb-1">Email : onemore@gmail.com</p>
                 <p class="small">Phone : +91 8888888888</p>
             </div>
-            <div class="col-md-3 text-md-end">
+            <div class="col-md-3 col-6 mb-4 text-md-end">
                 <div class="footer-head">Connect with us</div>
                 <div class="social-icons">
                     <i class="fa-brands fa-instagram"></i>
@@ -453,6 +648,18 @@
             © 2025 onemore. All Rights Reserved.
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const btn = document.getElementById('filterToggleBtn');
+            sidebar.classList.toggle('open');
+            btn.innerHTML = sidebar.classList.contains('open')
+                ? '<i class="fa-solid fa-xmark"></i> Close Filters'
+                : '<i class="fa-solid fa-sliders"></i> Filters';
+        }
+    </script>
 
 </body>
 

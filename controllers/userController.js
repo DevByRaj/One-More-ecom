@@ -8,6 +8,7 @@ import {log} from "console"
 import {create} from "domain"
 import Product from "../models/productModel.js"
 import Category from "../models/categoryModel.js"
+import Variant from "../models/variantModel.js"
 
 
 export const getSignup = (req, res) => {
@@ -1086,7 +1087,16 @@ export const getShop = async(req, res) =>{
 
     const totalPages = Math.ceil(totalProduct / limit)
 
-    const products = await Product.find(query).populate("brand").sort(sortOption).skip(skip).limit(limit)
+    const products = await Product.find(query).populate("brand").sort({createdAt: -1}).skip(skip).limit(limit).lean()
+
+    for (let product of products) {
+
+      const firstVariant = await Variant.findOne({
+        productId: product._id
+      }).sort({createdAt: 1})
+
+      product.variant = firstVariant
+    }
 
     const categories = await Category.find({
       isListed: true
