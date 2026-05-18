@@ -610,6 +610,8 @@ export const postAddProduct = async (req, res) => {
     const {
       productName,
       description,
+      regularPrice,
+      salePrice,
       playtime,
       brand,
       category} = req.body
@@ -692,6 +694,10 @@ export const postAddProduct = async (req, res) => {
       productName: productName.trim(),
 
       description: description.trim(),
+
+      regularPrice,
+
+      salePrice,
 
       playtime: playtime
         ? `${playtime} Hrs`
