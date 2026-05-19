@@ -9,6 +9,7 @@ import {create} from "domain"
 import Product from "../models/productModel.js"
 import Category from "../models/categoryModel.js"
 import Variant from "../models/variantModel.js"
+import Brand from "../models/brandModel.js"
 
 
 export const getSignup = (req, res) => {
@@ -1027,13 +1028,18 @@ export const getShop = async(req, res) =>{
       search,
       sort,
       category,
+      brand,
+      color,
       minPrice,
       maxPrice,
       page
     } = req.query
+
     let query = {
       isListed: true
     }
+
+    let filteredProductIds = null
 
     if(search){
       query.productName = {
@@ -1046,48 +1052,95 @@ export const getShop = async(req, res) =>{
       query.category = category
     }
 
-    if(minPrice || maxPrice){
+    if(brand){
+      query.brand = brand
+    }
 
-      query.salePrice = {}
+    if (color) {
+
+      const variants = await Variant.find({
+        variantName: color
+      })
+
+      const colorProductIds =
+        variants.map(v => v.productId.toString())
+
+      filteredProductIds = colorProductIds
+    }
+
+    if (minPrice || maxPrice) {
+
+      let variantQuery = {}
 
       if (minPrice) {
-        query.salePrice.$gte = Number(minPrice)
+
+        variantQuery.salePrice = {
+          ...variantQuery.salePrice,
+          $gte: Number(minPrice)
+        }
       }
 
-      if(maxPrice){
-        query.salePrice.$lte = Number(maxPrice)
+      if (maxPrice) {
+
+        variantQuery.salePrice = {
+          ...variantQuery.salePrice,
+          $lte: Number(maxPrice)
+        }
+      }
+
+      const variants = await Variant.find(variantQuery)
+
+      const priceProductIds =
+        variants.map(v => v.productId.toString())
+
+      if (filteredProductIds) {
+
+        filteredProductIds =
+          filteredProductIds.filter(id =>
+            priceProductIds.includes(id)
+          )
+
+      } else {
+
+        filteredProductIds = priceProductIds
+      }
+    }
+
+    if (filteredProductIds) {
+
+      query._id = {
+        $in: filteredProductIds
       }
     }
 
     let sortOption = {createdAt: -1}
 
-    switch(sort){
-      
-      case "low-high": sortOption = {salePrice : 1}
-      break
+    switch (sort) {
 
-      case "high-low": sortOption = {salePrice: -1}
-      break
+      case "a-z":
+        sortOption = {productName: 1}
+        break
 
-      case "a-z": sortOption = {productName: 1}
-      break
+      case "z-a":
+        sortOption = {productName: -1}
+        break
 
-      case "z-a": sortOption = {productName: -1}
-      break
-      
+      case "low-high":
+        sortOption = "low-high"
+        break
+
+      case "high-low":
+        sortOption = "high-low"
+        break
     }
 
     const currentPage = Number(page) || 1
 
-    const limit = 6
+    const limit = 3
 
     const skip = (currentPage - 1)* limit
 
-    const totalProduct = await Product.countDocuments(query)
-
-    const totalPages = Math.ceil(totalProduct / limit)
-
-    const products = await Product.find(query).populate("brand").sort({createdAt: -1}).skip(skip).limit(limit).lean()
+    let products = await Product.find(query).populate("brand").sort(typeof sortOption === "object"? sortOption: {createdAt: -1}).lean()
 
     for (let product of products) {
 
@@ -1098,13 +1151,41 @@ export const getShop = async(req, res) =>{
       product.variant = firstVariant
     }
 
+    if (sortOption === "low-high") {
+
+      products.sort((a, b) =>
+        (a.variant?.salePrice || 0) - (b.variant?.salePrice || 0)
+      )
+    }
+
+    if (sortOption === "high-low") {
+
+      products.sort((a, b) =>
+        (b.variant?.salePrice || 0) - (a.variant?.salePrice || 0)
+      )
+    }
+
+    const totalProduct = products.length
+    const totalPages = Math.ceil(totalProduct/limit)
+
+    const paginatedProducts = products.slice(skip, skip + limit)
+    
+
     const categories = await Category.find({
       isListed: true
     })
 
+    const brands = await Brand.find({
+      isListed: true
+    })
+
+    const colors = await Variant.distinct("variantName")
+
     res.render("user/shop", {
-      products,
+      products: paginatedProducts,
       categories,
+      brands,
+      colors,
       query: req.query,
       currentPage,
       totalPages
