@@ -19,80 +19,134 @@
             color: #333;
         }
 
-        /* Navbar */
-        nav {
+        /* ── NAVBAR MODIFICATIONS ── */
+        nav.navbar {
             background-color: var(--bg-dark);
-            padding: 15px 50px;
+            padding: 22px 50px;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
+        .navbar-brand img {
+            height: 48px;
+            width: auto;
+        }
+
         .nav-link {
-            font-size: 13px;
-            margin: 0 10px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 16px;
+            letter-spacing: 0.5px;
         }
 
         .nav-icons a {
             color: #fff;
-            margin-left: 20px;
-            font-size: 1.1rem;
+            margin-left: 24px;
+            font-size: 1.2rem;
         }
 
-        /* Sidebar & Layout */
+        /* ── LAYOUT & SIDEBAR VISIBILITY OVERHAUL ── */
         .main-container {
             display: flex;
-            padding: 40px 60px;
-            gap: 20px;
+            padding: 40px 50px;
+            gap: 35px;
         }
 
         .sidebar {
-            width: 220px;
+            width: 260px;
             flex-shrink: 0;
-            border-right: 1px solid #eee;
-            padding-right: 20px;
+            border-right: 1px solid #eaeaea;
+            padding-right: 25px;
         }
 
         .filter-label {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 20px;
             display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .filter-section {
             border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
         }
 
         .filter-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
+            color: #222;
             cursor: pointer;
             text-transform: capitalize;
+            user-select: none;
+            padding: 5px 0;
+        }
+
+        /* Dropdown Chevron Animation */
+        .filter-header i {
+            transition: transform 0.25s ease;
+        }
+
+        .filter-section.collapsed .filter-header i {
+            transform: rotate(-90deg);
+            /* Points left/down when collapsed */
+        }
+
+        /* Dropdown Content Area Wrapper */
+        .filter-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, opacity 0.25s ease, margin-top 0.2s ease;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        .filter-section.collapsed .filter-content {
+            max-height: 0 !important;
+            opacity: 0;
+            margin-top: 0;
+            pointer-events: none;
+        }
+
+        /* Custom styling inside dropdowns */
+        .filter-options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .filter-options-list li {
+            padding: 6px 0;
+            font-size: 13px;
+        }
+
+        .filter-options-list input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: #000;
         }
 
         .price-inputs input {
-            width: 60px;
-            font-size: 10px;
-            border-radius: 15px;
-            border: 1px solid #000;
+            width: 75px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
             text-align: center;
-            padding: 2px;
+            padding: 5px;
         }
 
         /* Content Area */
         .content-area {
             flex: 1;
-            padding-left: 20px;
         }
 
         .section-title {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
         }
 
@@ -106,7 +160,7 @@
             width: 100%;
             border-radius: 25px;
             border: 1px solid #ddd;
-            padding: 10px 25px;
+            padding: 12px 25px;
             font-size: 13px;
         }
 
@@ -118,8 +172,8 @@
             border: none;
             background: #eee;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
         }
 
         .toggle-container {
@@ -140,73 +194,72 @@
             background: #000;
             color: #fff;
             border-radius: 8px;
-            padding: 5px 30px;
+            padding: 6px 30px;
             font-size: 13px;
             border: none;
             float: right;
         }
 
-        /* Product Cards */
+        /* ── PRODUCT IMAGES (EQUAL WIDTH & HEIGHT) ── */
         .product-card {
             border: none;
             position: relative;
             margin-bottom: 30px;
         }
 
+        .product-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 14px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .product-img {
             width: 100%;
-            height: 320px;
-            object-fit: cover;
-            border-radius: 18px;
-            display: block;
-            background: #f5f5f5;
-            transition: 0.3s ease;
+            height: 100%;
+            border-radius: 26px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            padding: 10px;
         }
 
-        .product-img:hover {
-            transform: scale(1.02);
-        }
-
-        .product-card {
-            position: relative;
-        }
-
-        .product-info {
-            padding-top: 14px;
-        }
-
-        .product-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .product-price {
-            margin-top: 4px;
-            font-size: 18px;
+        .product-img-wrapper:hover .product-img {
+            transform: scale(1.04);
         }
 
         .wishlist-btn {
             position: absolute;
-            right: 10px;
-            bottom: 80px;
-            background: none;
+            right: 12px;
+            top: 12px;
+            background: rgba(255, 255, 255, 0.9);
             border: none;
             font-size: 1.1rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 5;
         }
 
         .product-info {
-            padding: 12px 0;
+            padding: 14px 0;
         }
 
         .product-name {
             font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 2px;
+            font-size: 15px;
+            margin-bottom: 4px;
         }
 
         .product-price {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
         }
 
@@ -214,6 +267,77 @@
             color: #ffc107;
             font-size: 10px;
             margin-top: 4px;
+        }
+
+        /* ── CLEAN BORDERLESS PREMIUM PAGINATION ── */
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 60px;
+            margin-bottom: 40px;
+        }
+
+        .custom-pagination {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+        }
+
+        .custom-pagination li a {
+            text-decoration: none;
+            color: #555555;
+            font-size: 14px;
+            font-weight: 500;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.25s ease;
+            border: none;
+            background: #f5f5f5;
+        }
+
+        .custom-pagination li:first-child a,
+        .custom-pagination li:last-child a {
+            width: auto;
+            padding: 0 20px;
+            border-radius: 20px;
+            background-color: #f5f5f5;
+            color: #333333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .custom-pagination li a:hover {
+            background-color: #e0e0e0;
+            color: #000000;
+        }
+
+        .custom-pagination li:first-child a:hover,
+        .custom-pagination li:last-child a:hover {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .custom-pagination li a.active-page {
+            background: #000000 !important;
+            color: #ffffff !important;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-pagination li a.disabled-link {
+            pointer-events: none;
+            background-color: #fdfdfd !important;
+            color: #cccccc !important;
+            opacity: 0.6;
         }
 
         /* Footer */
@@ -253,18 +377,7 @@
             cursor: pointer;
         }
 
-        .load-more-btn {
-            background: #222;
-            color: #fff;
-            border-radius: 25px;
-            padding: 10px 40px;
-            font-size: 14px;
-            border: none;
-        }
-
-        /* ── RESPONSIVE ─────────────────────────────────────────── */
-
-        /* Sidebar toggle (mobile) */
+        /* ── RESPONSIVE ── */
         .sidebar-toggle {
             display: none;
             background: #000;
@@ -277,37 +390,26 @@
             cursor: pointer;
         }
 
-        /* Tablet – 992px */
         @media (max-width: 992px) {
-            nav {
-                padding: 12px 20px;
+            nav.navbar {
+                padding: 15px 25px;
             }
 
             .main-container {
                 padding: 30px 24px;
-                gap: 16px;
+                gap: 20px;
             }
 
             .sidebar {
-                width: 180px;
-            }
-
-            .content-area {
-                padding-left: 10px;
-            }
-
-            .product-img {
-                height: 260px;
+                width: 220px;
             }
         }
 
-        /* Mobile – 768px */
         @media (max-width: 768px) {
-            nav {
-                padding: 10px 16px;
+            nav.navbar {
+                padding: 12px 16px;
             }
 
-            /* Stack sidebar above content */
             .main-container {
                 flex-direction: column;
                 padding: 20px 16px;
@@ -321,14 +423,13 @@
                 padding-right: 0;
                 padding-bottom: 16px;
                 margin-bottom: 20px;
-                /* Collapsed by default on mobile */
                 overflow: hidden;
                 max-height: 0;
                 transition: max-height 0.35s ease;
             }
 
             .sidebar.open {
-                max-height: 1000px;
+                max-height: 2000px;
             }
 
             .sidebar-toggle {
@@ -337,55 +438,24 @@
                 gap: 8px;
             }
 
-            .content-area {
-                padding-left: 0;
-            }
-
             .section-title {
                 font-size: 20px;
             }
 
-            /* Stack header row */
             .content-area>.d-flex.justify-content-between {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
 
-            .toggle-container {
-                font-size: 11px;
-            }
-
-            .btn-sort-black {
+            .btn-sort-black {https://deadshot.io/?party=nf6sk8
                 float: none;
                 width: 100%;
                 text-align: left;
             }
 
-            /* Product images a bit shorter */
-            .product-img {
-                height: 220px;
-            }
-
-            .product-name {
-                font-size: 13px;
-            }
-
-            .product-price {
-                font-size: 13px;
-            }
-
-            /* Footer */
             footer {
                 padding: 40px 24px 20px;
-            }
-
-            .footer-logo {
-                margin-bottom: 20px;
-            }
-
-            .social-icons {
-                margin-top: 16px;
             }
 
             .text-md-end {
@@ -393,41 +463,27 @@
             }
         }
 
-        /* Small phones – 480px */
         @media (max-width: 480px) {
             .main-container {
                 padding: 16px 12px;
             }
 
-            .section-title {
-                font-size: 18px;
+            .custom-pagination {
+                gap: 6px;
             }
 
-            .product-img {
-                height: 190px;
-                border-radius: 12px;
+            .custom-pagination li a {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
             }
 
-            .wishlist-btn {
-                bottom: 70px;
-                font-size: 1rem;
-            }
-
-            footer {
-                padding: 30px 16px 16px;
-            }
-
-            .load-more-btn {
-                width: 100%;
-            }
-
-            /* Pagination wraps neatly */
-            .pagination {
-                flex-wrap: wrap;
+            .custom-pagination li:first-child a,
+            .custom-pagination li:last-child a {
+                padding: 0 12px;
             }
         }
 
-        /* Navbar toggler icon color fix */
         .navbar-toggler-icon {
             filter: invert(1);
         }
@@ -438,20 +494,20 @@
 
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><img src="/images/logo.png" height="40"></a>
+            <a class="navbar-brand" href="/"><img src="/images/logo.png" alt="Logo"></a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav">
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto text-center">
                     <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/contact">Contact Us</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/about">About Us</a></li>
                 </ul>
-                <!-- Icons inside collapsed menu on mobile -->
-                <div class="nav-icons d-flex align-items-center ms-lg-auto mt-2 mt-lg-0">
+                <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
                     <a href="/profile"><i class="fa-regular fa-user"></i></a>
                     <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
                     <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
@@ -462,42 +518,135 @@
 
     <div class="main-container">
 
-        <!-- Mobile filter toggle -->
         <button class="sidebar-toggle" onclick="toggleSidebar()" id="filterToggleBtn">
             <i class="fa-solid fa-sliders"></i> Filters
         </button>
 
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
-            <span class="filter-label">Filter :</span>
-
+            <span class="filter-label">Filter By</span>
             <form action="/shop" method="GET" id="filterForm">
+
                 <div class="filter-section">
-                    <div class="filter-header">Category <i class="fa-solid fa-chevron-down small"></i></div>
-                </div>
-                <div class="filter-section">
-                    <div class="filter-header">Brand <i class="fa-solid fa-chevron-down small"></i></div>
-                </div>
-                <div class="filter-section">
-                    <div class="filter-header">Price <i class="fa-solid fa-chevron-up small"></i></div>
-                    <div class="price-inputs d-flex align-items-center gap-2 mt-3 justify-content-center">
-                        <input type="number" name="minPrice" placeholder="Min" value="<%= query.minPrice %>">
-                        <div style="width: 20px; height: 1px; background: #000;"></div>
-                        <input type="number" name="maxPrice" placeholder="Max" value="<%= query.maxPrice %>">
+                
+                    <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
+                        Category
+                        <i class="fa-solid fa-chevron-down small"></i>
                     </div>
-                    <button type="submit" class="btn btn-dark btn-sm w-100 mt-2 rounded-pill"
-                        style="font-size: 10px;">Apply</button>
+                
+                    <div class="filter-content">
+                
+                        <% categories.forEach(category=> { %>
+                
+                            <div class="form-check mb-2">
+                
+                                <input class="form-check-input" type="radio" name="category" value="<%= category._id %>" id="cat-<%= category._id %>"
+                                    onchange="document.getElementById('filterForm').submit()" <%=query.category==category._id.toString() ? 'checked'
+                                    : '' %>
+                                >
+                
+                                <label class="form-check-label small" for="cat-<%= category._id %>">
+                                    <%= category.name %>
+                                </label>
+                
+                            </div>
+                
+                            <% }) %>
+                
+                    </div>
+                
                 </div>
+
                 <div class="filter-section">
-                    <div class="filter-header">Color <i class="fa-solid fa-chevron-down small"></i></div>
+                
+                    <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
+                        Brand
+                        <i class="fa-solid fa-chevron-down small"></i>
+                    </div>
+                
+                    <div class="filter-content">
+                
+                        <% brands.forEach(brand=> { %>
+                
+                            <div class="form-check mb-2">
+                
+                                <input class="form-check-input" type="radio" name="brand" value="<%= brand._id %>" id="brand-<%= brand._id %>"
+                                    onchange="document.getElementById('filterForm').submit()" <%=query.brand==brand._id.toString() ? 'checked' : '' %>
+                                >
+                
+                                <label class="form-check-label small" for="brand-<%= brand._id %>">
+                                    <%= brand.name %>
+                                </label>
+                
+                            </div>
+                
+                            <% }) %>
+                
+                    </div>
+                
                 </div>
+
                 <div class="filter-section">
-                    <div class="filter-header">Audio Playtime <i class="fa-solid fa-chevron-down small"></i></div>
+                    <div class="filter-header" onclick="toggleFilterDropdown(this)">
+                        Price <i class="fa-solid fa-chevron-down small"></i>
+                    </div>
+                    <div class="filter-content">
+                        <div class="price-inputs d-flex align-items-center gap-2 justify-content-center">
+                            <input type="number" name="minPrice" placeholder="Min" value="<%= query.minPrice %>">
+                            <div style="width: 20px; height: 1px; background: #000;"></div>
+                            <input type="number" name="maxPrice" placeholder="Max" value="<%= query.maxPrice %>">
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-sm w-100 mt-3 rounded-pill"
+                            style="font-size: 11px; padding: 6px 0;">Apply Filter</button>
+                    </div>
                 </div>
+
+                <div class="filter-section">
+                
+                    <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
+                        Color
+                        <i class="fa-solid fa-chevron-down small"></i>
+                    </div>
+                
+                    <div class="filter-content">
+                
+                        <% colors.forEach(color=> { %>
+                
+                            <div class="form-check mb-2">
+                
+                                <input class="form-check-input" type="radio" name="color" value="<%= color %>" id="color-<%= color %>"
+                                    onchange="document.getElementById('filterForm').submit()" <%=query.color==color ? 'checked' : '' %>
+                                >
+                
+                                <label class="form-check-label small" for="color-<%= color %>">
+                                    <%= color %>
+                                </label>
+                
+                            </div>
+                
+                            <% }) %>
+                
+                    </div>
+                
+                </div>
+
+                <div class="filter-section collapsed">
+                    <div class="filter-header" onclick="toggleFilterDropdown(this)">
+                        Audio Playtime <i class="fa-solid fa-chevron-down small"></i>
+                    </div>
+                    <div class="filter-content">
+                        <ul class="filter-options-list">
+                            <li><label><input type="checkbox" name="playtime" value="10"> Up to 10 Hours</label></li>
+                            <li><label><input type="checkbox" name="playtime" value="20"> Up to 20 Hours</label></li>
+                            <li><label><input type="checkbox" name="playtime" value="30"> 30+ Hours</label></li>
+                        </ul>
+                    </div>
+                </div>
+                <a href="/shop" class="btn btn-outline-dark w-100 rounded-pill mt-3">
+                    Clear Filters
+                </a>
             </form>
         </aside>
 
-        <!-- Main Content -->
         <main class="content-area">
             <div class="d-flex justify-content-between align-items-end">
                 <h1 class="section-title">Our Collection</h1>
@@ -514,12 +663,9 @@
                     <button type="submit" class="search-icon-btn">
                         <i class="fa fa-search text-muted"></i>
                     </button>
-                    <!-- Persist existing filters -->
                     <input type="hidden" name="sort" value="<%= query.sort %>">
                     <% if(query.search){ %>
-                        <a href="/shop" class="btn btn-sm btn-outline-dark rounded-pill mt-2">
-                            Clear
-                        </a>
+                        <a href="/shop" class="btn btn-sm btn-outline-dark rounded-pill mt-2">Clear</a>
                         <% } %>
                 </form>
             </div>
@@ -533,20 +679,21 @@
                 </select>
             </div>
 
-            <!-- Product Grid -->
             <div class="row g-4 mt-2">
                 <% if(products.length> 0) { %>
                     <% products.forEach(product=> { %>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6 mb-5">
                             <div class="product-card">
-                                <a href="/productDetails?id=<%= product._id %>" class="text-decoration-none text-dark">
-                                    <img src="<%= product.productImage[0] %>" class="product-img"
-                                        alt="<%= product.productName %>">
-                                </a>
-
                                 <button class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">
                                     <i class="fa-regular fa-heart"></i>
                                 </button>
+
+                                <a href="/productDetails?id=<%= product._id %>" class="text-decoration-none text-dark">
+                                    <div class="product-img-wrapper">
+                                        <img src="<%= product.productImage[0] %>" class="product-img"
+                                            alt="<%= product.productName %>">
+                                    </div>
+                                </a>
 
                                 <div class="product-info">
                                     <div class="text-muted small mb-1">
@@ -558,16 +705,12 @@
                                     <div class="product-price mt-1">
                                         <% if(product.variant){ %>
                                             <% if(product.variant.salePrice < product.variant.regularPrice){ %>
-                                                <span class="text-muted text-decoration-line-through me-2 small">
-                                                    ₹<%= product.variant.regularPrice %>
-                                                </span>
-                                                <span class="fw-bold text-dark">
-                                                    ₹<%= product.variant.salePrice %>
-                                                </span>
+                                                <span class="text-muted text-decoration-line-through me-2 small">₹<%=
+                                                        product.variant.regularPrice %></span>
+                                                <span class="fw-bold text-dark">₹<%= product.variant.salePrice %></span>
                                                 <% } else { %>
-                                                    <span class="fw-bold text-dark">
-                                                        ₹<%= product.variant.salePrice %>
-                                                    </span>
+                                                    <span class="fw-bold text-dark">₹<%= product.variant.salePrice %>
+                                                            </span>
                                                     <% } %>
                                                         <% } %>
                                     </div>
@@ -589,28 +732,40 @@
                                 <% } %>
             </div>
 
-            <!-- Pagination -->
-            <% if(totalPages> 1) { %>
-                <div class="text-center mt-5">
-                    <p class="small text-muted mb-3">Showing 1 - <%= products.length %> of Total items</p>
-                    <div class="pagination justify-content-center gap-2">
-                        <% for(let i=1; i <=totalPages; i++) { %>
-                            <a href="/shop?page=<%= i %>&search=<%= query.search %>&sort=<%= query.sort %>&minPrice=<%= query.minPrice %>&maxPrice=<%= query.maxPrice %>"
-                                class="btn btn-outline-dark btn-sm rounded-pill <%= currentPage === i ? 'active-page' : '' %>">
-                                <%= i %>
+            <% if(totalPages> 1){ %>
+                <div class="pagination-wrapper">
+                    <ul class="custom-pagination">
+                        <li>
+                            <a class="<%= currentPage === 1 ? 'disabled-link' : '' %>"
+                                href="?page=<%= currentPage - 1 %>&search=<%= query.search || '' %>&sort=<%= query.sort || '' %>&category=<%= query.category || '' %>">
+                                Prev
                             </a>
+                        </li>
+
+                        <% for(let i=1; i <=totalPages; i++){ %>
+                            <li>
+                                <a class="<%= currentPage === i ? 'active-page' : '' %>"
+                                    href="?page=<%= i %>&search=<%= query.search || '' %>&sort=<%= query.sort || '' %>&category=<%= query.category || '' %>">
+                                    <%= i %>
+                                </a>
+                            </li>
                             <% } %>
-                    </div>
-                    <button class="load-more-btn mt-4">Load More <i
-                            class="fa-solid fa-chevron-right ms-2 small"></i></button>
+
+                                <li>
+                                    <a class="<%= currentPage === totalPages ? 'disabled-link' : '' %>"
+                                        href="?page=<%= currentPage + 1 %>&search=<%= query.search || '' %>&sort=<%= query.sort || '' %>&category=<%= query.category || '' %>">
+                                        Next
+                                    </a>
+                                </li>
+                    </ul>
                 </div>
                 <% } %>
+
         </main>
     </div>
 
-    <!-- Footer -->
     <footer>
-        <div class="footer-logo"><img src="/images/logo.png" height="50"></div>
+        <div class="footer-logo"><img src="/images/logo.png" height="50" alt="Logo"></div>
         <div class="row">
             <div class="col-md-3 col-6 mb-4">
                 <div class="footer-head">Support</div>
@@ -645,12 +800,13 @@
             </div>
         </div>
         <div class="text-center mt-5 pt-4 border-top border-secondary small opacity-50">
-            © 2025 onemore. All Rights Reserved.
+            © 2026 onemore. All Rights Reserved.
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Toggle mobile sidebar view
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const btn = document.getElementById('filterToggleBtn');
@@ -659,8 +815,13 @@
                 ? '<i class="fa-solid fa-xmark"></i> Close Filters'
                 : '<i class="fa-solid fa-sliders"></i> Filters';
         }
-    </script>
 
+        // Toggle Sidebar Filter Dropdowns Accordion Style
+        function toggleFilterDropdown(headerElement) {
+            const parentSection = headerElement.parentElement;
+            parentSection.classList.toggle('collapsed');
+        }
+    </script>
 </body>
 
 </html>
