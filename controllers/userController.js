@@ -1198,3 +1198,38 @@ export const getShop = async(req, res) =>{
     
   }
 }
+
+export const getProductDetails = async(req, res) =>{
+  
+  try {
+
+    const productId = req.query.id
+    
+    const product = await Product.findById(productId).populate("brand").populate("category").lean()
+
+    if(!product || !product.isListed){
+      return res.redirect("/shop")
+    }
+
+    const variants = await Variant.find({
+      productId: product._id
+    })
+
+    const relatedProducts = await Product.find({
+      category: product.category._id,
+      _id: {$ne: product.category._id},
+      isListed: true
+    }).limit(4)
+
+    res.render("user/productDetails", {
+      product,
+      variants,
+      similarProducts: relatedProducts
+    })
+    
+  } catch (error) {
+    console.log(error)
+    
+    res.redirect("/shop")
+  }
+}
