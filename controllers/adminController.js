@@ -732,9 +732,9 @@ export const toggleProduct = async (req, res) => {
       return res.redirect("/admin/products")
     }
 
-    product.isListed = !product.isListed
-
-    await product.save()
+   await Product.findByIdAndUpdate(productId, {
+    isListed: !product.isListed
+   })
 
     return res.redirect("/admin/products")
 
@@ -1103,17 +1103,27 @@ export const postEditVariant = async (req, res) => {
       }
     }
 
-    variant.variantName = color
+    // variant.variantName = color
 
-    variant.stock = stock
+    // variant.stock = stock
 
-    variant.regularPrice = regularPrice
+    // variant.regularPrice = regularPrice
 
-    variant.salePrice = salePrice
+    // variant.salePrice = salePrice
 
-    variant.variantImage = imageUrls
+    // variant.variantImage = imageUrls
 
-    await variant.save()
+    // await variant.save()
+
+    await Variant.findByIdAndUpdate( id,{
+      
+      variantName: color,
+      stock,
+      regularPrice,
+      salePrice,
+      variantImage: imageUrls
+      
+    })
 
     return res.redirect(`/admin/variants/${variant.productId}`)
 

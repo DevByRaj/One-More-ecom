@@ -17,7 +17,8 @@ import {
   resendOTP,
   postChangePassword,
   checkUserStatus,
-  getShop
+  getShop,
+  getProductDetails
 } from "../controllers/userController.js";
 import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
 import { validateSignup } from "../middlewares/validation.js";
@@ -98,6 +99,8 @@ router.post("/change-password", isUserLoggedIn, postChangePassword)
 router.get("/check-user-status", checkUserStatus)
 
 router.get("/shop", getShop)
+
+router.get("/productDetails", getProductDetails)
 
 
 export default router
