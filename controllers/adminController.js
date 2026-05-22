@@ -610,8 +610,6 @@ export const postAddProduct = async (req, res) => {
     const {
       productName,
       description,
-      regularPrice,
-      salePrice,
       playtime,
       brand,
       category} = req.body
@@ -695,10 +693,6 @@ export const postAddProduct = async (req, res) => {
 
       description: description.trim(),
 
-      regularPrice,
-
-      salePrice,
-
       playtime: playtime
         ? `${playtime} Hrs`
         : "",
@@ -732,9 +726,9 @@ export const toggleProduct = async (req, res) => {
       return res.redirect("/admin/products")
     }
 
-   await Product.findByIdAndUpdate(productId, {
-    isListed: !product.isListed
-   })
+    await Product.findByIdAndUpdate(productId, {
+      isListed: !product.isListed
+    })
 
     return res.redirect("/admin/products")
 
@@ -912,11 +906,11 @@ export const postAddVariant = async (req, res) => {
       const file =
         req.files[fieldName]?.[0]
 
-      if(file){
+      if (file) {
 
         const imageUrl = await uploadCloudinary(file.path)
 
-        if(imageUrl){
+        if (imageUrl) {
           imageUrls[i] = imageUrl
         }
       }
@@ -1103,26 +1097,15 @@ export const postEditVariant = async (req, res) => {
       }
     }
 
-    // variant.variantName = color
 
-    // variant.stock = stock
+    await Variant.findByIdAndUpdate(id, {
 
-    // variant.regularPrice = regularPrice
-
-    // variant.salePrice = salePrice
-
-    // variant.variantImage = imageUrls
-
-    // await variant.save()
-
-    await Variant.findByIdAndUpdate( id,{
-      
       variantName: color,
       stock,
       regularPrice,
       salePrice,
       variantImage: imageUrls
-      
+
     })
 
     return res.redirect(`/admin/variants/${variant.productId}`)

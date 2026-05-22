@@ -13,15 +13,6 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    regularPrice: {
-        type: Number,
-        required: true
-    },
-
-    salePrice: {
-        type: Number,
-        required: true
-    },
 
     brand: {
         type: mongoose.Schema.Types.ObjectId,
