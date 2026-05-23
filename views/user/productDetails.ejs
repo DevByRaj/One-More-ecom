@@ -21,12 +21,12 @@
         }
 
         body {
-    font-family: 'Poppins', sans-serif;
-    background: #f5f5f5;
-    color: #111;
-    margin: 0;
-    padding: 0;
-}
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            color: #111;
+            margin: 0;
+            padding: 0;
+        }
 
         a {
             text-decoration: none;
@@ -34,65 +34,65 @@
 
         /* NAVBAR */
 
-        
-.navbar {
-    background-color: #000 !important;
-    padding: 22px 40px;
-    position: sticky;
-    top: 0;
-    z-index: 9999;
-    width: 100%;
-    margin: 0;
-    border: none;
-}
 
-.navbar-brand img {
-    height: 55px;
-}
+        .navbar {
+            background-color: #000 !important;
+            padding: 22px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            width: 100%;
+            margin: 0;
+            border: none;
+        }
 
-.navbar-nav {
-    gap: 18px;
-}
+        .navbar-brand img {
+            height: 55px;
+        }
 
-.navbar-nav .nav-link {
-    color: #fff !important;
-    font-size: 15px;
-    font-weight: 500;
-    transition: 0.2s ease;
-}
+        .navbar-nav {
+            gap: 18px;
+        }
 
-.navbar-nav .nav-link:hover {
-    color: #8a7df0 !important;
-}
+        .navbar-nav .nav-link {
+            color: #fff !important;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
 
-.nav-icons {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-}
+        .navbar-nav .nav-link:hover {
+            color: #8a7df0 !important;
+        }
 
-.nav-icons a {
-    color: #fff !important;
-    font-size: 22px;
-    text-decoration: none;
-    transition: 0.2s ease;
-}
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
 
-.nav-icons a:hover {
-    color: #8a7df0 !important;
-}
+        .nav-icons a {
+            color: #fff !important;
+            font-size: 22px;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
 
-.navbar-toggler {
-    border: none;
-}
+        .nav-icons a:hover {
+            color: #8a7df0 !important;
+        }
 
-.navbar-toggler:focus {
-    box-shadow: none;
-}
+        .navbar-toggler {
+            border: none;
+        }
 
-.navbar-toggler-icon {
-    filter: invert(1)
-}
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(1)
+        }
 
         /* THUMBNAILS */
 
@@ -118,13 +118,33 @@
 
         /* MAIN IMAGE */
 
-        .main-img-wrapper {
+        .main-image-wrapper {
+            position: relative;
+            width: 100%;
             height: 500px;
             background: #ece9ff;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+        }
+
+        .col-md-5 {
+            position: relative;
+        }
+
+        #zoomResult {
+            position: absolute;
+            top: 0;
+            left: 102%;
+            width: 700px;
+            height: 700px;
+            border: 1px solid #ddd;
+            background-repeat: no-repeat;
+            display: none;
+            z-index: 999;
+            background-color: #fff;
+            border-radius: 10px;
         }
 
         .main-product-img {
@@ -207,20 +227,21 @@
             border: none;
             cursor: pointer;
         }
-        .variant-color-btn {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: none;
-    outline: 1px solid #999;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
 
-.variant-color-btn.active-variant {
-    transform: scale(1.25);
-    outline: 2px solid #000;
-}
+        .variant-color-btn {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: none;
+            outline: 1px solid #999;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .variant-color-btn.active-variant {
+            transform: scale(1.25);
+            outline: 2px solid #000;
+        }
 
         /* BUTTONS */
 
@@ -258,9 +279,9 @@
             margin-bottom: 30px;
         }
 
-        .product-main-container{
-    padding-top: 90px;
-}
+        .product-main-container {
+            padding-top: 90px;
+        }
 
         .product-card {
             position: relative;
@@ -272,6 +293,19 @@
             object-fit: cover;
             border-radius: 10px;
             background: #f5f5f5;
+        }
+
+        #zoomResult {
+            position: absolute;
+            top: 0;
+            left: 105%;
+            width: 500px;
+            height: 500px;
+            border: 1px solid #ddd;
+            background-repeat: no-repeat;
+            display: none;
+            z-index: 999;
+            background-color: #fff;
         }
 
         .product-name {
@@ -359,59 +393,59 @@
 
 <body>
     <nav class="navbar navbar-expand-lg">
-    
+
         <div class="container-fluid">
-    
+
             <a class="navbar-brand" href="/">
                 <img src="/images/logo.png" alt="logo">
             </a>
-    
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-    
+
                 <ul class="navbar-nav mx-auto">
-    
+
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
-    
+
                     <li class="nav-item">
                         <a class="nav-link" href="/shop">Shop</a>
                     </li>
-    
+
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact Us</a>
                     </li>
-    
+
                     <li class="nav-item">
                         <a class="nav-link" href="/about">About Us</a>
                     </li>
-    
+
                 </ul>
-    
+
                 <div class="nav-icons">
-    
+
                     <a href="/profile">
                         <i class="bi bi-person"></i>
                     </a>
-    
+
                     <a href="/wishlist">
                         <i class="bi bi-heart"></i>
                     </a>
-    
+
                     <a href="/cart">
                         <i class="bi bi-bag"></i>
                     </a>
-    
+
                 </div>
-    
+
             </div>
-    
+
         </div>
-    
+
     </nav>
 
     <div class="container product-main-container">
@@ -454,12 +488,13 @@
 
                 <div class="col-md-5 col-10">
 
-                    <div class="main-img-wrapper">
+                    <div class="main-image-wrapper" id="zoomContainer">
 
                         <img id="mainProductImage" src="<%= variants[0]?.variantImage[0] || product.productImage[0] %>"
                             class="main-product-img" alt="<%= product.productName %>">
 
                     </div>
+                    <div id="zoomResult"></div>
 
                 </div>
 
@@ -515,11 +550,11 @@
                     <div class="section-title mt-4 mb-2">
                         Color
                     </div>
-                    
+
                     <div class="d-flex align-items-center gap-2 mb-4">
-                    
+
                         <% variants.forEach((variant, index)=> { %>
-                    
+
                             <button type="button" class="variant-color-btn <%= index === 0 ? 'active-variant' : '' %>"
                                 title="<%= variant.variantName %>" onclick='changeVariant(
                                     this,
@@ -530,9 +565,9 @@
                                 )' style="
                                     background:<%= variant.variantName.toLowerCase() %>;
                                 "></button>
-                    
+
                             <% }) %>
-                    
+
                     </div>
 
                     <button class="wishlist-btn">
@@ -643,88 +678,134 @@
 
     <<script>
 
-    function changeMainImage(src, thumbElement) {
+        function changeMainImage(src, thumbElement) {
 
         document.getElementById('mainProductImage').src = src;
 
         document.querySelectorAll('.thumb-img').forEach(thumb => {
-            thumb.classList.remove('active');
+        thumb.classList.remove('active');
         });
 
         thumbElement.classList.add('active');
-    }
+        }
 
-    function changeVariant(
-    button,
-    images,
-    salePrice,
-    regularPrice,
-    stock
-    ) {
-    
-    // ACTIVE VARIANT
-    
-    document
-    .querySelectorAll(".variant-color-btn")
-    .forEach(btn => {
-    btn.classList.remove("active-variant")
-    })
-    
-    button.classList.add("active-variant")
-    
-    images = JSON.parse(images)
-    
-    // MAIN IMAGE
-    
-    document.getElementById("mainProductImage").src =
-    images[0]
-    
-    // PRICE
-    
-    document.getElementById("salePrice").innerText =
-    "₹" + salePrice
-    
-    // REGULAR PRICE
-    
-    if(document.getElementById("regularPrice")) {
-    
-    document.getElementById("regularPrice").innerText =
-    "₹" + regularPrice
-    }
-    
-    // STOCK
-    
-    const stockStatus =
-    document.getElementById("stockStatus")
-    
-    stockStatus.innerText =
-    stock > 0 ? "In Stock" : "Out of Stock"
-    
-    stockStatus.className =
-    stock > 0
-    ? "fw-semibold mb-3 text-success"
-    : "fw-semibold mb-3 text-danger"
-    
-    // THUMBNAILS UPDATE
-    
-    const thumbnailContainer =
-    document.querySelector(".thumbnail-container")
-    
-    thumbnailContainer.innerHTML = ""
-    
-    images.forEach((img, index) => {
-    
-    thumbnailContainer.innerHTML += `
-    
-    <img src="${img}" class="thumb-img ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${img}', this)">
-    
-    `
-    })
-    }
+        function changeVariant(
+        button,
+        images,
+        salePrice,
+        regularPrice,
+        stock
+        ) {
 
-</script>
+        // ACTIVE VARIANT
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        document
+        .querySelectorAll(".variant-color-btn")
+        .forEach(btn => {
+        btn.classList.remove("active-variant")
+        })
+
+        button.classList.add("active-variant")
+
+        images = JSON.parse(images)
+
+        // MAIN IMAGE
+
+        document.getElementById("mainProductImage").src =
+        images[0]
+
+        // PRICE
+
+        document.getElementById("salePrice").innerText =
+        "₹" + salePrice
+
+        // REGULAR PRICE
+
+        if(document.getElementById("regularPrice")) {
+
+        document.getElementById("regularPrice").innerText =
+        "₹" + regularPrice
+        }
+
+        // STOCK
+
+        const stockStatus =
+        document.getElementById("stockStatus")
+
+        stockStatus.innerText =
+        stock > 0 ? "In Stock" : "Out of Stock"
+
+        stockStatus.className =
+        stock > 0
+        ? "fw-semibold mb-3 text-success"
+        : "fw-semibold mb-3 text-danger"
+
+        // THUMBNAILS UPDATE
+
+        const thumbnailContainer =
+        document.querySelector(".thumbnail-container")
+
+        thumbnailContainer.innerHTML = ""
+
+        images.forEach((img, index) => {
+
+        thumbnailContainer.innerHTML += `
+
+        <img src="${img}" class="thumb-img ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${img}', this)">
+
+        `
+        })
+        }
+
+        const image =
+        document.getElementById("mainProductImage")
+
+        const result =
+        document.getElementById("zoomResult")
+
+        const container =
+        document.getElementById("zoomContainer")
+
+        container.addEventListener("mousemove", zoomImage)
+
+        container.addEventListener("mouseleave", () => {
+
+        result.style.display = "none"
+        })
+
+        function zoomImage(e){
+
+        result.style.display = "block"
+
+        const rect =
+        image.getBoundingClientRect()
+
+        const x =
+        e.clientX - rect.left
+
+        const y =
+        e.clientY - rect.top
+
+        const xPercent =
+        (x / rect.width) * 100
+
+        const yPercent =
+        (y / rect.height) * 100
+
+        result.style.backgroundImage =
+        `url(${image.src})`
+
+        result.style.backgroundSize =
+        `${rect.width * 3}px ${rect.height * 3}px`
+
+        result.style.backgroundPosition =
+        `${xPercent}% ${yPercent}%`
+        }
+
+
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
