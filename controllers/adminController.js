@@ -855,7 +855,9 @@ export const getAddVariant = async (req, res) => {
 
     return res.render("admin/addVariants", {
       productId,
-      variant: null
+      variant: null,
+      errors: {},
+      oldData: {}
     })
 
   } catch (error) {
@@ -998,7 +1000,9 @@ export const getEditVariant = async (req, res) => {
 
     return res.render("admin/addVariants", {
       variant: variantData,
-      productId: variantData.productId
+      productId: variantData.productId,
+      errors: {},
+      oldData: {}
     })
 
   } catch (error) {
