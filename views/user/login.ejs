@@ -269,11 +269,32 @@
     <div class="card">
       <h2>Login</h2>
 
+      <% if(success){ %>
+      
+        <div style="
+          color:#28a745;
+          background:#d4edda;
+          padding:10px;
+          border-radius:8px;
+          text-align:center;
+          margin-bottom:15px;
+          font-size:13px;
+          font-weight:500;
+        ">
+      
+          <%= success %>
+      
+        </div>
+      
+        <% } %>
+
       <% if(errors.general){ %>
         <div style="color:#d93025; text-align:center; margin-bottom:15px; font-size: 13px;">
           <%= errors.general %>
         </div>
       <% } %>
+
+      
 
       <!-- FORM -->
       <form id="loginForm" action="/login" method="POST" novalidate>

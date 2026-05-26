@@ -30,3 +30,112 @@ export const findUserByEmail = async(email) =>{
         email
     })
 }
+export const loginUser = async(email, password) =>{
+
+    const user = await findUserByEmail(email)
+
+    if(!user){
+        return{
+            success: false,
+            field: "email",
+            message: "Invalid email or password"
+        }
+    }
+
+    const isMatch = await comparePassword(password, user.password)
+
+    if(!isMatch){
+        return{
+            success: false,
+            field: "password",
+            message: "Invalid email or password"
+        }
+    }
+
+    if(user.isBlocked){
+        return{
+            success: false,
+            field: "email",
+            message: "Your account is blocked"
+        }
+    }
+
+    return {
+        success: true,
+        user
+    }
+}
+
+export const sendForgotPasswordOTP = async(email) =>{
+
+    const user = await findUserByEmail(email)
+
+    if(!user){
+
+        return{
+            success: false,
+            message: "Email not registerd"
+        }
+    }
+
+    const{otp, isSent} = await sendOTP(email)
+
+    if(!isSent){
+        return{
+            success: false,
+            message: "Failed to send OTP"
+        }
+    }
+
+    user.otp = otp
+
+    user.otpExpires = Date.now()+1*60*1000
+
+    await user.save()
+
+    return{
+        success: true
+    }
+}
+
+export const resetUserPassword = async(email, password, confirmPassword) =>{
+
+    const user = await findUserByEmail(email)
+
+    if(!user){
+        return{
+            success: false,
+            message: "user not found"
+        }
+    }
+
+    if(password !== confirmPassword){
+
+        return{
+            success: false,
+            message: "Password do not match"
+        }
+    }
+
+    if(password.length < 6){
+        return{
+            success: true,
+            message: "Password must be at least 6 characters"
+        }
+    }
+
+    const hashedPassword = await hashPassword(password)
+
+    user.password = hashedPassword
+
+    user.otp = null
+
+    user.otpExpires = null
+
+    await user.save()
+
+    return{
+        success: true
+    }
+
+}

@@ -1,5 +1,5 @@
 import User from "../models/userModel.js"
-import { findUserByEmail, hashPassword, sendOTP, comparePassword } from "../services/athService.js"
+import {findUserByEmail, hashPassword, sendOTP, comparePassword, sendForgotPasswordOTP, resetUserPassword, loginUser} from "../services/athService.js"
 import {validationResult} from "express-validator"
 import crypto from "crypto"
 import {sendOtpEmail} from "../services/mailService.js"
@@ -33,7 +33,7 @@ export const postSignup = async (req, res) => {
 
     const {name, email, password, refCode} = req.body
 
-   let user =- await findUserByEmal(email)
+    let user = - await findUserByEmal(email)
 
 
     if (user && user.isVerified) {
@@ -46,11 +46,11 @@ export const postSignup = async (req, res) => {
     const hashedPassword = await hashPassword(password)
 
     const {
-      otp, 
+      otp,
       isSent
     } = await sendOTP(email)
 
-      req.session.tempUser = {
+    req.session.tempUser = {
       name,
       email,
       password: hashedPassword,
@@ -336,11 +336,18 @@ export const getLogin = (req, res) => {
 
   let errors = {}
 
+  let success = null
+
   if (req.query.error === "blocked") {
     errors.general = 'Your account is blocked by admin'
   }
+
+  if(req.query.reset === "success"){
+    success = "Password changed successfully"
+  }
   res.render("user/login", {
     errors,
+    success,
     oldData: {}
   })
 }
@@ -350,32 +357,19 @@ export const postLogin = async (req, res) => {
 
     const {email, password} = req.body
 
-    const user = await User.findOne({email})
+    const result = await loginUser(email, password)
 
-    if (!user) {
-      return res.render('user/login', {
-        errors: {email: "Invalid email or password"},
-        oldData: req.body
-      })
-    }
-
-    const isMatch = await comparePassword(password, user.password)
-
-    if (!isMatch) {
-      return res.render("user/login", {
-        errors: {password: "invalid password"},
-        oldData: req.body
-      })
-    }
-
-    if (user.isBlocked) {
+    if (!result.success) {
       return res.render("user/login", {
         errors: {
-          email: "You  account is blocked by admin"
+          [result.field]: result.message
         },
+        success:null,
         oldData: req.body
       })
     }
+
+    const user = result.user
 
     req.session.regenerate((err) => {
       if (err) {
@@ -394,6 +388,7 @@ export const postLogin = async (req, res) => {
     console.log(error)
     res.render("user/login", {
       errors: {general: 'Something went Wrong'},
+      success: null,
       oldData: req.body
     })
   }
@@ -698,29 +693,27 @@ export const getForgotPassword = (req, res) => {
 
 export const postForgotPassword = async (req, res) => {
   try {
+
     const {email} = req.body
 
-    const user = await User.findOne({email})
+    const result = await sendForgotPasswordOTP(email)
 
-    if (!user) {
+    if (!result.success) {
+
       return res.render("user/forgotPassword", {
-        error: "Email not registerd"
+        error: result.message
       })
     }
 
-    const otp = Math.floor(1000 + Math.random() * 9000).toString()
-
-    user.otp = otp
-    user.otpExpires = Date.now() + 1 * 60 * 1000
-
-    await user.save()
-
-    await sendOtpEmail(email, otp)
     res.redirect(`/verify-otp?email=${email}&type=forgot`)
-  } catch (err) {
-    return res.render("user/forgotPassword",{
-      error: "Something went wrong"
+
+  } catch (error) {
+    console.log(error)
+
+    return res.render("user/forgotPassword", {
+      error: "someting went worng"
     })
+
   }
 }
 
@@ -735,54 +728,31 @@ export const getResetPassword = (req, res) => {
 
 export const postResetPassword = async (req, res) => {
   try {
-    const {email, otp, password, confirmPassword} = req.body
 
-    const user = await User.findOne({email})
+    const{email, password, confirmPassword} = req.body
 
+    const result = await resetUserPassword(email, password, confirmPassword)
 
-    if (!user) {
-      return res.render("user/forgotPassword", {
-        error: "User not found"
-      })
-    }
+    if(!result.success){
 
-    if (password !== confirmPassword) {
-      return res.render("user/resetPassword", {
+      return res.render("user/resetPassword",{
         email,
-        error: "Passwords do not match"
+        error: result.message
       })
     }
-
-    if (password.length < 6) {
-      return res.render("user/resetPassword", {
-        email,
-        error: "Password must be at least 6 characters"
-      })
-    }
-    console.log("password checkiing");
-
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    user.password = hashedPassword
-    user.otp = null;
-    user.otpExpires = null
-
-    console.log(password);
-
-
-    await user.save()
-    console.log("Password working")
 
     req.session.resetDone = false
-
+    
     res.redirect("/login?reset=success")
-
+    
   } catch (error) {
-    return res.render("user/resetPassword",{
+    console.log(error)
+
+    return res.render("user/resetPassword", {
       email: req.body.email,
-      error: "Something went Wrong"
+      error: "Something went wrong"
     })
+    
   }
 }
 
@@ -1019,8 +989,8 @@ export const checkUserStatus = async (req, res) => {
   }
 }
 
-export const getShop = async(req, res) => {
-  try{
+export const getShop = async (req, res) => {
+  try {
 
     const shopData = await getShopProducts(req.query)
 
@@ -1028,20 +998,20 @@ export const getShop = async(req, res) => {
       ...shopData,
       query: req.query
     })
-  } catch(error){
+  } catch (error) {
     console.log(error)
 
     res.redirect('/')
   }
 }
 
-export const getProductDetails = async(req, res) =>{
-  
+export const getProductDetails = async (req, res) => {
+
   try {
-    
+
     const productData = await getProductDetailsService(req.query.id)
 
-    if(!productData){
+    if (!productData) {
       return res.redirect("/shop")
     }
 
@@ -1050,6 +1020,6 @@ export const getProductDetails = async(req, res) =>{
   } catch (error) {
     console.log(error)
 
-    res.redirect("/shop")    
+    res.redirect("/shop")
   }
 }
