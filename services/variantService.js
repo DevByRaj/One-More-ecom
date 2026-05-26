@@ -5,7 +5,7 @@ import {uploadCloudinary} from "../utils/cloudinary.js"
 export const createVariant = async (
     variantData,
     files
-) => {
+    ) => {
 
     const {
         productId,
@@ -39,6 +39,10 @@ export const createVariant = async (
     if (!salePrice || salePrice === "") {
 
         salePrice = regularPrice
+    }
+
+    if(Number(salePrice) > Number(regularPrice)){
+        errors.salePrice = "Sale price cannot be greater than regular price"
     }
 
     const imageUrls = []
@@ -149,6 +153,10 @@ export const updateVariant = async (
 
     if(!salePrice || salePrice === ""){
         salePrice = regularPrice
+    }
+
+    if(Number(salePrice) > Number(regularPrice)){
+        errors.salePrice = "Sale price cannot be greater than regular price"
     }
 
     if(Object.keys(errors).length > 0){

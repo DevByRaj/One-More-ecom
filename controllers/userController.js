@@ -1,5 +1,5 @@
 import User from "../models/userModel.js"
-import bcrypt, {compare} from "bcryptjs"
+import { findUserByEmail, hashPassword, sendOTP, comparePassword } from "../services/athService.js"
 import {validationResult} from "express-validator"
 import crypto from "crypto"
 import {sendOtpEmail} from "../services/mailService.js"
@@ -33,7 +33,7 @@ export const postSignup = async (req, res) => {
 
     const {name, email, password, refCode} = req.body
 
-    let user = await User.findOne({email})
+   let user =- await findUserByEmal(email)
 
 
     if (user && user.isVerified) {
@@ -43,14 +43,14 @@ export const postSignup = async (req, res) => {
       })
     }
 
-    const otp = Math.floor(1000 + Math.random() * 9000).toString()
+    const hashedPassword = await hashPassword(password)
 
-    console.log("Signup Otp:", otp);
+    const {
+      otp, 
+      isSent
+    } = await sendOTP(email)
 
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    req.session.tempUser = {
+      req.session.tempUser = {
       name,
       email,
       password: hashedPassword,
@@ -58,9 +58,6 @@ export const postSignup = async (req, res) => {
       otp,
       otpExpires: Date.now() + 1 * 60 * 1000
     }
-
-    const isSent = await sendOtpEmail(email, otp)
-    console.log("mail sent result:", isSent);
 
     if (!isSent) {
       return res.render("user/signup", {
@@ -362,7 +359,7 @@ export const postLogin = async (req, res) => {
       })
     }
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await comparePassword(password, user.password)
 
     if (!isMatch) {
       return res.render("user/login", {
@@ -960,7 +957,7 @@ export const postChangePassword = async (req, res) => {
 
     const user = await User.findById(userId)
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password)
+    const isMatch = await comparePassword(currentPassword, user.password)
     if (!isMatch) {
       return res.render("user/changePassword", {
         error: "Incorrect current password"
@@ -979,14 +976,14 @@ export const postChangePassword = async (req, res) => {
       })
     }
 
-    const isSame = await bcrypt.compare(newPassword, user.password)
+    const isSame = await comparePassword(newPassword, user.password)
     if (isSame) {
       return res.render("user/changePassword", {
         error: "New password cannot be same as old password"
       })
     }
 
-    user.password = await bcrypt.hash(newPassword, 10)
+    user.password = await hashPassword(newPassword)
     await user.save()
 
     req.session.success = "Password changed successfully"

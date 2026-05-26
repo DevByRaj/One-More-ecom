@@ -2,6 +2,7 @@ import Product from "../models/productModel.js"
 import Variant from "../models/variantModel.js"
 import Category from "../models/categoryModel.js"
 import Brand from "../models/brandModel.js"
+import {uploadCloudinary} from "../utils/cloudinary.js"
 
 export const getShopProducts = async (queryParams) => {
 
@@ -177,4 +178,181 @@ export const getProductDetailsService = async (productId) => {
         variants,
         similarProducts: relatedProducts
     }
-} 
+}
+
+export const createProduct = async (productData, file) => {
+
+    const {
+        productName,
+        description,
+        regularPrice,
+        salePrice,
+        playtime,
+        brand,
+        category
+    } = productData
+
+    const errors = {}
+
+    if(!productName?.trim()){
+
+        errors.productName = "Product name is required"
+    }
+
+    if(!description?.trim()){
+        errors.description = "Description is required"
+    }
+
+    let isWired = false
+
+    if(category){
+
+        const selectedCategory = await Category.findById(category)
+
+        isWired = selectedCategory?.name?.toLowerCase().includes("wired")
+    }
+
+    if(!isWired && !playtime?.trim()){
+
+        errors.playtime = "Playtime is required"
+    }
+
+    if(!brand){
+        errors.brand = "Brand is required"
+    }
+
+    if(!category){
+        errors.category = "Category i s required"
+    }
+
+    if(!file){
+
+        errors.productImage = "Product image is required"
+    }
+
+    if(Object.keys(errors).length > 0){
+
+        return {
+            success: false,
+            errors
+        }
+    }
+
+    const imageUrl = await uploadCloudinary(file.path)
+
+    if(!imageUrl){
+
+        return {
+            success: false,
+            errors: {
+                productImage: "Cloudinary  upload failed"
+            }
+        }
+    }
+
+    const product = new Product({
+
+        productName: productName.trim(),
+        description: description.trim(),
+        regularPrice,
+        salePrice,
+        playtime: playtime ? `${playtime} Hrs` : "",
+        brand,
+        category,
+        productImage: [imageUrl]
+    })
+
+    await product.save()
+
+    return {
+        success: true,
+        product
+    }
+}
+
+export const updateProduct = async(productId, productData, file) =>{
+
+    const{
+        productName,
+        description,
+        playtime,
+        brand,
+        category
+    } = productData
+
+    const errors = {}
+
+    if(!productName?.trim()){
+        errors.productName = "Product name is required"
+    }
+
+    if(!description?.trim()){
+        errors.description = "Description is required"
+    }
+
+    let isWired = false
+
+    if (category) {
+
+        const selectedCategory = await Category.findById(category)
+
+        isWired =
+            selectedCategory?.name?.toLowerCase().includes("wired")
+    }
+
+    if(!isWired && !playtime?.trim()){
+        errors.playtime = "Playtime is required"
+    }
+
+    if(!brand){
+        errors.brand = "Brans is required"
+    }
+
+    if(!category){
+        errors.category = "Category is required"
+    }
+
+    const product = await Product.findById(productId)
+
+    if(!product){
+
+        return{
+            success: true,
+            notFound: true
+        }
+    }
+
+    if(Object.keys(errors).length > 0){
+
+        return{
+            success: false,
+            errors,
+            product
+        }
+    }
+
+    const updateData = {
+
+        productName: productName.trim(),
+
+        description: description.trim(),
+
+        playtime: playtime ? `${playtime} Hrs` : "",
+        brand,
+        category
+    }
+
+    if(file){
+        const imageUrl = await uploadCloudinary(file.path)
+
+        if(imageUrl){
+            updateData.productImage = [imageUrl]
+        }
+    }
+
+    await Product.findByIdAndUpdate(productId, updateData)
+
+    return{
+        success: true
+    }
+}

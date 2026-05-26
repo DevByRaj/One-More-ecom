@@ -7,6 +7,7 @@ import Brand from "../models/brandModel.js"
 import {uploadCloudinary} from "../utils/cloudinary.js";
 import Variant from "../models/variantModel.js"
 import { createVariant, updateVariant } from "../services/variantService.js"
+import { createProduct, updateProduct } from "../services/productService.js"
 
 export const getAdminLogin = (req, res) => {
   res.render("admin/login", {error: null})
@@ -607,112 +608,43 @@ export const getAddProduct = async (req, res) => {
 
 export const postAddProduct = async (req, res) => {
   try {
+     const categories = await Category.find({
+      isListed:  true
+     })
 
-    const {
-      productName,
-      description,
-      playtime,
-      brand,
-      category} = req.body
-
-    const categories = await Category.find({
-      isListed: true
-    })
-
-    const brands = await Brand.find({
-      isListed: true
-    })
-
-    const errors = {}
-
-    if (!productName?.trim()) {
-      errors.productName = "Product name is reqquired"
-    }
-
-    if (!description?.trim()) {
-      errors.description = "Description is required"
-    }
-
-    let isWired = false
-
-    if (category) {
-
-      const selectedCategory = await Category.findById(category)
-
-      isWired = selectedCategory?.name?.toLowerCase().includes("wired")
-    }
-
-    if (!isWired && !playtime?.trim()) {
-
-      errors.playtime =
-        "Playtime is required"
-    }
-
-    if (!brand) {
-      errors.brand = "Brand is required"
-    }
-
-    if (!category) {
-      errors.category = "Category is required"
-    }
-
-    if (!req.file) {
-      errors.productImage = "Producr image is required"
-    }
-
-    if (Object.keys(errors).length > 0) {
-
-      return res.render("admin/addProduct", {
-        errors,
-        oldData: req.body,
-        categories,
-        brands,
-        isEdit: false
+    const brands =
+      await Brand.find({
+        isListed: true
       })
+
+    const result =
+      await createProduct(
+        req.body,
+        req.file
+      )
+
+    if (!result.success) {
+
+      return res.render(
+        "admin/addProduct",
+        {
+          errors: result.errors,
+          oldData: req.body,
+          categories,
+          brands,
+          isEdit: false
+        }
+      )
     }
 
-    const imageUrl =
-      await uploadCloudinary(req.file.path)
-
-
-    if (!imageUrl) {
-
-      return res.render("admin/addProduct", {
-        errors: {
-          productImage: "Cloudinary upload failed. Try again."
-        },
-        oldData: req.body,
-        categories,
-        brands,
-        isEdit: false
-      })
-    }
-
-    const product = new Product({
-
-      productName: productName.trim(),
-
-      description: description.trim(),
-
-      playtime: playtime
-        ? `${playtime} Hrs`
-        : "",
-
-      brand,
-      category,
-
-      productImage: [imageUrl]
-    })
-
-    await product.save()
-
-    return res.redirect(`/admin/variants/${product._id}`)
+    return res.redirect(`/admin/variants/${result.product._id}`
+    )
 
   } catch (error) {
-    console.log(error);
+    console.log(error)
 
     return res.redirect("/admin/add-product")
-
+    
   }
 }
 
@@ -777,84 +709,47 @@ export const getEditProduct = async (req, res) => {
   }
 }
 
-export const postEditProduct = async (req, res) => {
+export const postEditProduct = async (req, res) =>{
   try {
-
     const productId = req.params.id
-
-    const {
-      productName,
-      description,
-      playtime,
-      brand,
-      category
-    } = req.body
-
-    const errors = {}
-
-    if (!productName?.trim()) {
-    errors.productName = "Product name is required"
-  }
-
-  if (!description?.trim()) {
-
-    errors.description = "Description is required"
-  }
-
-  if (Object.keys(errors).length > 0) {
 
     const categories = await Category.find({
       isListed: true
     })
 
     const brands = await Brand.find({
-      isListed: true
+      isListed:true
     })
 
-    const product = await Product.findById(productId)
+    const result = await updateProduct(
+      productId,
+      req.body,
+      req.file
+    )
 
-    return res.render("admin/addProduct", {
-      errors,
-      oldData: req.body,
-      categories,
-      brands,
-      isEdit: true,
-      product
-    })
-  }
-  const updateData = {
-    productName: productName.trim(),
-    description: description.trim(),
-    playtime: playtime
-      ? `${playtime} Hrs`
-      : "",
-    brand,
-    category
-  }
+    if(!result.success){
 
-    if (req.file) {
-      console.log("file path", req.file.path)
-
-      const imageUrl =
-        await uploadCloudinary(req.file.path)
-
-      if (!imageUrl) {
-
-        return res.redirect("/admin/edit-product/" + productId)
+      if(result.notFound){
+        
+        return res.redirect("/admin/products")
       }
 
-      updateData.productImage = [imageUrl]
+      return res.render("admin/addProduct",{
+          errors: result.errors,
+          oldData: req.body,
+          categories,
+          brands,
+          isEdit: true,
+          product: result.product
+        })
     }
-
-    await Product.findByIdAndUpdate(productId, updateData)
-
     return res.redirect("/admin/products")
 
   } catch (error) {
     console.log(error)
 
     return res.redirect("/admin/products")
-
+    
   }
 }
 
