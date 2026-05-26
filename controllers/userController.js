@@ -1,5 +1,5 @@
 import User from "../models/userModel.js"
-import bcrypt, {compare} from "bcryptjs"
+import { findUserByEmail, hashPassword, sendOTP, comparePassword } from "../services/athService.js"
 import {validationResult} from "express-validator"
 import crypto from "crypto"
 import {sendOtpEmail} from "../services/mailService.js"
@@ -10,6 +10,7 @@ import Product from "../models/productModel.js"
 import Category from "../models/categoryModel.js"
 import Variant from "../models/variantModel.js"
 import Brand from "../models/brandModel.js"
+import {getShopProducts, getProductDetailsService} from "../services/productService.js"
 
 
 export const getSignup = (req, res) => {
@@ -32,7 +33,7 @@ export const postSignup = async (req, res) => {
 
     const {name, email, password, refCode} = req.body
 
-    let user = await User.findOne({email})
+   let user =- await findUserByEmal(email)
 
 
     if (user && user.isVerified) {
@@ -42,14 +43,14 @@ export const postSignup = async (req, res) => {
       })
     }
 
-    const otp = Math.floor(1000 + Math.random() * 9000).toString()
+    const hashedPassword = await hashPassword(password)
 
-    console.log("Signup Otp:", otp);
+    const {
+      otp, 
+      isSent
+    } = await sendOTP(email)
 
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    req.session.tempUser = {
+      req.session.tempUser = {
       name,
       email,
       password: hashedPassword,
@@ -57,9 +58,6 @@ export const postSignup = async (req, res) => {
       otp,
       otpExpires: Date.now() + 1 * 60 * 1000
     }
-
-    const isSent = await sendOtpEmail(email, otp)
-    console.log("mail sent result:", isSent);
 
     if (!isSent) {
       return res.render("user/signup", {
@@ -361,7 +359,7 @@ export const postLogin = async (req, res) => {
       })
     }
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await comparePassword(password, user.password)
 
     if (!isMatch) {
       return res.render("user/login", {
@@ -959,7 +957,7 @@ export const postChangePassword = async (req, res) => {
 
     const user = await User.findById(userId)
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password)
+    const isMatch = await comparePassword(currentPassword, user.password)
     if (!isMatch) {
       return res.render("user/changePassword", {
         error: "Incorrect current password"
@@ -978,14 +976,14 @@ export const postChangePassword = async (req, res) => {
       })
     }
 
-    const isSame = await bcrypt.compare(newPassword, user.password)
+    const isSame = await comparePassword(newPassword, user.password)
     if (isSame) {
       return res.render("user/changePassword", {
         error: "New password cannot be same as old password"
       })
     }
 
-    user.password = await bcrypt.hash(newPassword, 10)
+    user.password = await hashPassword(newPassword)
     await user.save()
 
     req.session.success = "Password changed successfully"
@@ -1021,215 +1019,37 @@ export const checkUserStatus = async (req, res) => {
   }
 }
 
-export const getShop = async(req, res) =>{
-  try {
+export const getShop = async(req, res) => {
+  try{
 
-    const{
-      search,
-      sort,
-      category,
-      brand,
-      color,
-      minPrice,
-      maxPrice,
-      page
-    } = req.query
-
-    let query = {
-      isListed: true
-    }
-
-    let filteredProductIds = null
-
-    if(search){
-      query.productName = {
-        $regex: search,
-        $options: "i"
-      }
-    }
-
-    if(category){
-      query.category = category
-    }
-
-    if(brand){
-      query.brand = brand
-    }
-
-    if (color) {
-
-      const variants = await Variant.find({
-        variantName: color
-      })
-
-      const colorProductIds =
-        variants.map(v => v.productId.toString())
-
-      filteredProductIds = colorProductIds
-    }
-
-    if (minPrice || maxPrice) {
-
-      let variantQuery = {}
-
-      if (minPrice) {
-
-        variantQuery.salePrice = {
-          ...variantQuery.salePrice,
-          $gte: Number(minPrice)
-        }
-      }
-
-      if (maxPrice) {
-
-        variantQuery.salePrice = {
-          ...variantQuery.salePrice,
-          $lte: Number(maxPrice)
-        }
-      }
-
-      const variants = await Variant.find(variantQuery)
-
-      const priceProductIds =
-        variants.map(v => v.productId.toString())
-
-      if (filteredProductIds) {
-
-        filteredProductIds =
-          filteredProductIds.filter(id =>
-            priceProductIds.includes(id)
-          )
-
-      } else {
-
-        filteredProductIds = priceProductIds
-      }
-    }
-
-    if (filteredProductIds) {
-
-      query._id = {
-        $in: filteredProductIds
-      }
-    }
-
-    let sortOption = {createdAt: -1}
-
-    switch (sort) {
-
-      case "a-z":
-        sortOption = {productName: 1}
-        break
-
-      case "z-a":
-        sortOption = {productName: -1}
-        break
-
-      case "low-high":
-        sortOption = "low-high"
-        break
-
-      case "high-low":
-        sortOption = "high-low"
-        break
-    }
-
-    const currentPage = Number(page) || 1
-
-    const limit = 3
-
-    const skip = (currentPage - 1)* limit
-
-    let products = await Product.find(query).populate("brand").sort(typeof sortOption === "object"? sortOption: {createdAt: -1}).lean()
-
-    for (let product of products) {
-
-      const firstVariant = await Variant.findOne({
-        productId: product._id
-      }).sort({createdAt: 1})
-
-      product.variant = firstVariant
-    }
-
-    if (sortOption === "low-high") {
-
-      products.sort((a, b) =>
-        (a.variant?.salePrice || 0) - (b.variant?.salePrice || 0)
-      )
-    }
-
-    if (sortOption === "high-low") {
-
-      products.sort((a, b) =>
-        (b.variant?.salePrice || 0) - (a.variant?.salePrice || 0)
-      )
-    }
-
-    const totalProduct = products.length
-    const totalPages = Math.ceil(totalProduct/limit)
-
-    const paginatedProducts = products.slice(skip, skip + limit)
-    
-
-    const categories = await Category.find({
-      isListed: true
-    })
-
-    const brands = await Brand.find({
-      isListed: true
-    })
-
-    const colors = await Variant.distinct("variantName")
+    const shopData = await getShopProducts(req.query)
 
     res.render("user/shop", {
-      products: paginatedProducts,
-      categories,
-      brands,
-      colors,
-      query: req.query,
-      currentPage,
-      totalPages
+      ...shopData,
+      query: req.query
     })
-    
-  } catch (error) {
+  } catch(error){
     console.log(error)
 
-    res.redirect("/")
-    
+    res.redirect('/')
   }
 }
 
 export const getProductDetails = async(req, res) =>{
   
   try {
-
-    const productId = req.query.id
     
-    const product = await Product.findById(productId).populate("brand").populate("category").lean()
+    const productData = await getProductDetailsService(req.query.id)
 
-    if(!product || !product.isListed){
+    if(!productData){
       return res.redirect("/shop")
     }
 
-    const variants = await Variant.find({
-      productId: product._id
-    })
+    res.render("user/productDetails", productData)
 
-    const relatedProducts = await Product.find({
-      category: product.category._id,
-      _id: {$ne: product.category._id},
-      isListed: true
-    }).limit(4)
-
-    res.render("user/productDetails", {
-      product,
-      variants,
-      similarProducts: relatedProducts
-    })
-    
   } catch (error) {
     console.log(error)
-    
-    res.redirect("/shop")
+
+    res.redirect("/shop")    
   }
 }
