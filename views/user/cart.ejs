@@ -393,6 +393,59 @@
             filter: invert(1);
         }
 
+        .breadcrumb-wrapper {
+
+    width: 100%;
+
+    background: #fff;
+
+    border-bottom: 1px solid #eee;
+
+    padding: 14px 0;
+}
+
+.breadcrumb-container {
+
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 0 50px;
+
+    font-size: 14px;
+
+    color: #777;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.breadcrumb-container a {
+
+    color: #555;
+
+    text-decoration: none;
+
+    transition: 0.2s;
+}
+
+.breadcrumb-container a:hover {
+
+    color: #000;
+}
+
+.active-breadcrumb {
+
+    color: #111;
+
+    font-weight: 600;
+}
+
         .custom-toast {
             position: fixed;
             top: 30px;
@@ -491,6 +544,24 @@
         </div>
     </nav>
 
+    <div class="breadcrumb-wrapper">
+    
+        <div class="breadcrumb-container">
+    
+            <a href="/">
+                Home
+            </a>
+    
+            <span>/</span>
+    
+            <span class="active-breadcrumb">
+                Cart
+            </span>
+    
+        </div>
+    
+    </div>
+
     <div class="cart-container">
         <h2 class="page-title">My Cart</h2>
 
@@ -519,38 +590,51 @@
 
                                         <div class="cart-item-row" data-cart-row="<%= item._id %>">
 
-                                            <div class="product-meta-block">
+                                        <div class="product-meta-block">
+                                        
+                                            <a href="/productDetails?id=<%= item.productId._id %>&variant=<%= item.variantId._id %>" style="
+                                                    text-decoration:none;
+                                                    color:inherit;
+                                                    display:flex;
+                                                    align-items:center;
+                                                    gap:20px;
+                                                ">
+                                        
                                                 <div class="cart-img-wrapper">
-                                                    <img src="<%= item.variantId.variantImage[0] %>"
-                                                        alt="<%= item.productId.productName %>">
+                                        
+                                                    <img src="<%= item.variantId.variantImage[0] %>" alt="<%= item.productId.productName %>">
+                                        
                                                 </div>
+                                        
                                                 <div class="product-details">
+                                        
                                                     <div class="product-name">
+                                        
                                                         <%= item.productId.productName %>
+                                        
                                                     </div>
-
-                                                    <div style="font-size:12px; color:#666; margin-top:4px;">
+                                        
+                                                    <div style="
+                                                        font-size:12px;
+                                                        color:#666;
+                                                        margin-top:4px;
+                                                    ">
+                                        
                                                         Color :
+                                        
                                                         <strong>
+                                        
                                                             <%= item.variantId.variantName %>
+                                        
                                                         </strong>
+                                        
                                                     </div>
-                                                    <div class="rating-stars">
-                                                        <i class="fa-solid fa-star"></i>
-                                                        <i class="fa-solid fa-star"></i>
-                                                        <i class="fa-solid fa-star"></i>
-                                                        <i class="fa-solid fa-star"></i>
-                                                        <i class="fa-solid fa-star"></i>
-                                                    </div>
-                                                    <div>
-                                                        <button class="action-remove-btn remove-cart-btn"
-                                                            data-id="<%= item._id %>">
-                                                            Remove
-                                                        </button>
-                                                    </div>
-                                                    <div class="stock-status">In Stock</div>
+                                        
                                                 </div>
-                                            </div>
+                                        
+                                            </a>
+                                        
+                                        </div>
 
                                             <div class="item-price">
                                                 ₹<%= item.variantId.salePrice %>
