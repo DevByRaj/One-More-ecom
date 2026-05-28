@@ -34,7 +34,7 @@ export const postSignup = async (req, res) => {
 
     const {name, email, password, refCode} = req.body
 
-    let user = - await findUserByEmal(email)
+    let user = - await findUserByEmail(email)
 
 
     if (user && user.isVerified) {

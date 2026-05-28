@@ -264,7 +264,7 @@
             border: none;
             background: #000;
             color: #fff;
-            padding: 12px 40px;
+            padding: 12px 35px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 500;
@@ -471,11 +471,55 @@
                     </a>
 
                     <a href="/wishlist">
-                        <i class="bi bi-heart"></i>
+                        <div style="position:relative;">
+                            <i class="bi bi-heart" style="font-size: 22px;"></i>
+                    
+                            <% if(wishlistCount> 0){ %>
+                                <span style="
+                                    position:absolute;
+                                    top:-10px;
+                                    right:-12px;
+                                    background:red;
+                                    color:white;
+                                    font-size:10px;
+                                    width:18px;
+                                    height:18px;
+                                    border-radius:50%;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    font-weight:600;
+                                ">
+                                    <%= wishlistCount %>
+                                </span>
+                                <% } %>
+                        </div>
                     </a>
-
+                    
                     <a href="/cart">
-                        <i class="bi bi-bag"></i>
+                        <div style="position:relative;">
+                            <i class="bi bi-bag" style="font-size: 22px;"></i>
+                    
+                            <% if(cartCount> 0){ %>
+                                <span style="
+                                    position:absolute;
+                                    top:-10px;
+                                    right:-12px;
+                                    background:red;
+                                    color:white;
+                                    font-size:10px;
+                                    width:18px;
+                                    height:18px;
+                                    border-radius:50%;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    font-weight:600;
+                                ">
+                                    <%= cartCount %>
+                                </span>
+                                <% } %>
+                        </div>
                     </a>
 
                 </div>
@@ -611,15 +655,19 @@
 
                     </div>
 
-                    <button class="wishlist-btn">
+                    <button class="wishlist-btn" id="wishlistBtn" data-product-id="<%= product._id %>"
+                        data-variant-id="<%= variants[0]._id %>">
+
                         Wishlist
+
                         <i class="bi bi-heart"></i>
+
                     </button>
 
                     <div class="action-btns">
                         <button>Buy Now</button>
                         <button id="addToCartBtn" data-product-id="<%= product._id %>"
-                            data-variant-id="<%= variants[0]._id %>" class="btn btn-dark w-100">
+                            data-variant-id="<%= variants[0]._id %>" class="btn btn-dark">
 
                             Add To Cart
 
@@ -753,7 +801,7 @@
                             variantButtons.forEach(
                                 btn =>
                                     btn.classList.remove(
-                                        "active-vairant"
+                                        "active-variant"
                                     )
                             )
 
@@ -762,6 +810,16 @@
                             )
 
                             selectedVariantId =
+                                button.dataset.variantId
+
+                            document.getElementById(
+                                "wishlistBtn"
+                            ).dataset.variantId =
+                                button.dataset.variantId
+
+                            document.getElementById(
+                                "addToCartBtn"
+                            ).dataset.variantId =
                                 button.dataset.variantId
 
                             addToCartBtn.dataset.variantId =
@@ -797,7 +855,6 @@
                                                 "application/json"
                                         },
 
-
                                         body: JSON.stringify({
                                             productId,
                                             variantId
@@ -805,8 +862,11 @@
                                     }
                                 )
 
-                            showToast("Product added to cart")
+                            const data =
+                                await response.json()
 
+                            showToast(data.message)
+                            
                         } catch (error) {
 
                             console.log(error)
@@ -983,6 +1043,57 @@
 
             }, 2500)
         }
+
+        const wishlistBtn =
+                document.getElementById(
+                    "wishlistBtn"
+                )
+
+            wishlistBtn.addEventListener(
+                "click",
+                async () => {
+
+                    const productId =
+                        wishlistBtn.dataset.productId
+
+                    const variantId =
+                        wishlistBtn.dataset.variantId
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/wishlist/add",
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body: JSON.stringify({
+
+                                        productId,
+                                        variantId
+
+                                    })
+                                }
+                            )
+
+                        const data =
+                            await response.json()
+
+                        showToast(
+                            data.message
+                        )
+
+                    } catch (error) {
+
+                        console.log(error)
+                    }
+                }
+            )
 
 
     </script>

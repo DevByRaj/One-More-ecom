@@ -509,8 +509,57 @@
                 </ul>
                 <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
                     <a href="/profile"><i class="fa-regular fa-user"></i></a>
-                    <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
-                    <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                    <a href="/wishlist" class="text-white me-3">
+                        <div style="position:relative;">
+                            <i class="fa-regular fa-heart"></i>
+                    
+                            <% if(wishlistCount> 0){ %>
+                                <span style="
+                                                                  position:absolute;
+                                                                  top:-10px;
+                                                                  right:-12px;
+                                                                  background:red;
+                                                                  color:white;
+                                                                  font-size:10px;
+                                                                  width:18px;
+                                                                  height:18px;
+                                                                  border-radius:50%;
+                                                                  display:flex;
+                                                                  align-items:center;
+                                                                  justify-content:center;
+                                                                  font-weight:600;
+                                                              ">
+                                    <%= wishlistCount %>
+                                </span>
+                                <% } %>
+                        </div>
+                    </a>
+                    
+                    <a href="/cart" class="text-white">
+                        <div style="position:relative;">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                    
+                            <% if(cartCount> 0){ %>
+                                <span style="
+                                                                  position:absolute;
+                                                                  top:-10px;
+                                                                  right:-12px;
+                                                                  background:red;
+                                                                  color:white;
+                                                                  font-size:10px;
+                                                                  width:18px;
+                                                                  height:18px;
+                                                                  border-radius:50%;
+                                                                  display:flex;
+                                                                  align-items:center;
+                                                                  justify-content:center;
+                                                                  font-weight:600;
+                                                              ">
+                                    <%= cartCount %>
+                                </span>
+                                <% } %>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

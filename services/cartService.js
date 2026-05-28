@@ -72,6 +72,13 @@ export const addProductToCart = async (userId, cartData) => {
 
         }else {
 
+            if(cart.items.length >= 6){
+                return{
+                    success: false,
+                    message: "Cart is full"
+                }
+            }
+
             cart.items.push({
                 productId,
                 variantId,
