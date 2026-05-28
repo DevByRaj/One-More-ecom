@@ -20,10 +20,16 @@ import {
   getShop,
   getProductDetails
 } from "../controllers/userController.js";
-import { isUserLoggedIn, isUserLoggedOut } from "../middlewares/auth.js";
-import { validateSignup } from "../middlewares/validation.js";
+import {isUserLoggedIn, isUserLoggedOut} from "../middlewares/auth.js";
+import {validateSignup} from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
 import passport from "passport";
+import {
+  addToCart,
+  getCart,
+  updateCartQuantity,
+  removeCartItem
+} from "../controllers/cartController.js"
 
 
 const router = express.Router()
@@ -58,7 +64,7 @@ router.get("/profile/edit", isUserLoggedIn, getEditProfile)
 router.post("/profile/edit", isUserLoggedIn, upload.single("profileImage"), postEditProfile)
 
 router.get("/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {scope: ["profile", "email"]})
 )
 
 router.get("/auth/google/callback",
@@ -91,7 +97,7 @@ router.post("/reset-password", postResetPassword)
 router.post("/resend-otp", resendOTP)
 
 router.get("/change-password", isUserLoggedIn, (req, res) => {
-  res.render("user/changePassword", { error: null })
+  res.render("user/changePassword", {error: null})
 })
 
 router.post("/change-password", isUserLoggedIn, postChangePassword)
@@ -101,6 +107,14 @@ router.get("/check-user-status", checkUserStatus)
 router.get("/shop", getShop)
 
 router.get("/productDetails", getProductDetails)
+
+router.post("/cart/add", isUserLoggedIn, addToCart)
+
+router.get("/cart", isUserLoggedIn, getCart)
+
+router.post("/cart/update-quantity", isUserLoggedIn, updateCartQuantity)
+
+router.post("/cart/remove/:id", isUserLoggedIn, removeCartItem)
 
 
 export default router

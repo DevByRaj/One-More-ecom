@@ -11,6 +11,7 @@ import Category from "../models/categoryModel.js"
 import Variant from "../models/variantModel.js"
 import Brand from "../models/brandModel.js"
 import {getShopProducts, getProductDetailsService} from "../services/productService.js"
+import Cart from "../models/cartModel.js"
 
 
 export const getSignup = (req, res) => {
@@ -342,7 +343,7 @@ export const getLogin = (req, res) => {
     errors.general = 'Your account is blocked by admin'
   }
 
-  if(req.query.reset === "success"){
+  if (req.query.reset === "success") {
     success = "Password changed successfully"
   }
   res.render("user/login", {
@@ -364,7 +365,7 @@ export const postLogin = async (req, res) => {
         errors: {
           [result.field]: result.message
         },
-        success:null,
+        success: null,
         oldData: req.body
       })
     }
@@ -729,22 +730,22 @@ export const getResetPassword = (req, res) => {
 export const postResetPassword = async (req, res) => {
   try {
 
-    const{email, password, confirmPassword} = req.body
+    const {email, password, confirmPassword} = req.body
 
     const result = await resetUserPassword(email, password, confirmPassword)
 
-    if(!result.success){
+    if (!result.success) {
 
-      return res.render("user/resetPassword",{
+      return res.render("user/resetPassword", {
         email,
         error: result.message
       })
     }
 
     req.session.resetDone = false
-    
+
     res.redirect("/login?reset=success")
-    
+
   } catch (error) {
     console.log(error)
 
@@ -752,7 +753,7 @@ export const postResetPassword = async (req, res) => {
       email: req.body.email,
       error: "Something went wrong"
     })
-    
+
   }
 }
 
