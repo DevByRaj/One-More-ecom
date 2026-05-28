@@ -84,7 +84,7 @@
       width: 100%;
       max-width: 380px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
     .card h2 {
@@ -270,7 +270,7 @@
       <h2>Login</h2>
 
       <% if(success){ %>
-      
+
         <div style="
           color:#28a745;
           background:#d4edda;
@@ -281,56 +281,56 @@
           font-size:13px;
           font-weight:500;
         ">
-      
+
           <%= success %>
-      
+
         </div>
-      
+
         <% } %>
 
-      <% if(errors.general){ %>
-        <div style="color:#d93025; text-align:center; margin-bottom:15px; font-size: 13px;">
-          <%= errors.general %>
-        </div>
-      <% } %>
+          <% if(errors.general){ %>
+            <div style="color:#d93025; text-align:center; margin-bottom:15px; font-size: 13px;">
+              <%= errors.general %>
+            </div>
+            <% } %>
 
-      
 
-      <!-- FORM -->
-      <form id="loginForm" action="/login" method="POST" novalidate>
 
-        <!-- EMAIL -->
-        <input type="email" id="email" name="email" placeholder="Email" value="<%= oldData?.email || '' %>">
-        <div id="emailError" class="error-msg">
-          <%= errors?.email %>
-        </div>
+              <!-- FORM -->
+              <form id="loginForm" action="/login" method="POST" novalidate>
 
-        <!-- PASSWORD -->
-        <div class="input-group">
-          <input type="password" id="password" name="password" placeholder="Password">
-          <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
-        </div>
-        <div id="passwordError" class="error-msg">
-          <%= errors?.password %>
-        </div>
+                <!-- EMAIL -->
+                <input type="email" id="email" name="email" placeholder="Email" value="<%= oldData?.email || '' %>">
+                <div id="emailError" class="error-msg">
+                  <%= errors?.email %>
+                </div>
 
-        <div class="links">
-          <a href="/signup">Signup</a>
-          <a href="/forgot-password">Forgot Password?</a>
-        </div>
+                <!-- PASSWORD -->
+                <div class="input-group">
+                  <input type="password" id="password" name="password" placeholder="Password">
+                  <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
+                </div>
+                <div id="passwordError" class="error-msg">
+                  <%= errors?.password %>
+                </div>
 
-        <button type="submit" class="btn">Login</button>
+                <div class="links">
+                  <a href="/signup">Signup</a>
+                  <a href="/forgot-password">Forgot Password?</a>
+                </div>
 
-      </form>
+                <button type="submit" class="btn">Login</button>
 
-      <!-- GOOGLE AUTH -->
-      <p class="google-text">Or continue with</p>
+              </form>
 
-      <div class="google-icon">
-        <a href="/auth/google">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" alt="Google">
-        </a>
-      </div>
+              <!-- GOOGLE AUTH -->
+              <p class="google-text">Or continue with</p>
+
+              <div class="google-icon">
+                <a href="/auth/google">
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" alt="Google">
+                </a>
+              </div>
     </div>
   </div>
 
@@ -430,4 +430,5 @@
   </script>
 
 </body>
+
 </html>
