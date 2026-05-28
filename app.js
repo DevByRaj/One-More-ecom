@@ -10,6 +10,8 @@ import passport from "passport";
 import session from "express-session";
 import { checkBlockedUser } from "./middlewares/auth.js";
 
+import navbarCounts from "./middlewares/navbarCounts.js";
+
 import "./config/passport.js";
 
 const app = express();
@@ -56,6 +58,10 @@ app.use((req, res, next) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(
+  navbarCounts
+)
 
 app.use("/", checkBlockedUser)
 
