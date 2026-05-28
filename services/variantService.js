@@ -24,10 +24,10 @@ export const createVariant = async (
             "Color is required"
     }
 
-    if (!stock || stock <= 0) {
+    if (!stock || stock < 0) {
 
         errors.stock =
-            "Stock must be greater than 0"
+            "Stock cannot be negative"
     }
 
     if (!regularPrice || regularPrice <= 0) {
@@ -133,8 +133,8 @@ export const updateVariant = async (
         errors.color = "Color is required"
     }
 
-    if (!stock || stock <= 0) {
-        errors.stock = "Stock must be greater than 0"
+    if (!stock || stock < 0) {
+        errors.stock = "Stock cannot be negative"
     }
 
     if(!regularPrice || regularPrice <= 0){

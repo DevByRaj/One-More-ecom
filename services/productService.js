@@ -104,7 +104,7 @@ export const getShopProducts = async (queryParams) => {
 
     const currentPage = Number(page) || 1
 
-    const limit = 3
+    const limit = 6
 
     const skip = (currentPage - 1) * limit
 

@@ -283,6 +283,44 @@
             padding-top: 90px;
         }
 
+        .breadcrumb-container {
+
+    font-size: 14px;
+
+    margin-bottom: 25px;
+
+    color: #777;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.breadcrumb-container a {
+
+    color: #555;
+
+    text-decoration: none;
+
+    transition: 0.2s;
+}
+
+.breadcrumb-container a:hover {
+
+    color: #000;
+}
+
+.active-breadcrumb {
+
+    color: #111;
+
+    font-weight: 600;
+}
+
         .product-card {
             position: relative;
         }
@@ -528,11 +566,42 @@
 
         </div>
 
-    </nav>
+    </nav><div class="breadcrumb-container">
+    
+        <a href="/">
+            Home
+        </a>
+    
+        <span>/</span>
+    
+        <a href="/shop">
+            Shop
+        </a>
+    
+        <span>/</span>
+    
+        <a href="/shop?category=<%= product.category._id %>">
+    
+            <%= product.category.name %>
+    
+        </a>
+    
+        <span>/</span>
+    
+        <span class="active-breadcrumb">
+    
+            <%= product.productName %>
+    
+        </span>
+    
+    </div>
+
+
 
     <div class="container product-main-container">
 
         <div class="product-wrapper">
+            
 
             <div class="row g-4">
 
