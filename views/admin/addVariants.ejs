@@ -120,7 +120,6 @@
             width: 140px;
             height: 140px;
             background-color: #f0f0f0;
-            /* Light gray from design */
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -138,7 +137,14 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
+        }.error-message{
+    color:#ff4d4d;
+    font-size:14px;
+    margin-top:10px;
+    display:none;
+}
+
+
 
         /* --- BUTTONS --- */
         .save-btn {
@@ -212,10 +218,9 @@
                 </div>
 
                 <div class="form-panel">
-                    <form id="variantForm" action="<%= variant
-                            ? '/admin/edit-variant/' + variant._id
-                            : '/admin/add-variant'
-                        %>" method="POST" enctype="multipart/form-data" novalidate>
+                    <form id="variantForm"
+                        action="<%= variant ? '/admin/edit-variant/' + variant._id : '/admin/add-variant' %>"
+                        method="POST" enctype="multipart/form-data" novalidate>
 
                         <input type="hidden" name="productId" value="<%= productId %>">
 
@@ -225,147 +230,104 @@
 
                         <div class="form-group-custom">
                             <label for="color">Color</label>
-
-                            <input type="text" name="color" class="form-control"
+                            <input type="text" id="color" name="color" class="form-control"
                                 value="<%= variant ? variant.variantName : oldData?.color || '' %>">
-                            
+
                             <% if(errors?.color){ %>
-                            
                                 <p class="text-danger mt-1">
                                     <%= errors.color %>
                                 </p>
-                            
                                 <% } %>
 
-                            <div id="colorError" class="error-message">
-                                Please enter a valid color.
-                            </div>
+                                    <div id="colorError" class="error-message">Please enter a valid color.</div>
                         </div>
 
                         <div class="form-group-custom">
                             <label for="stock">Stock</label>
-
-                            <input type="number" name="stock" min="0" class="form-control"
+                            <input type="number" id="stock" name="stock" min="0" class="form-control"
                                 value="<%= variant ? variant.stock : oldData?.stock || '' %>">
-                            
+
                             <% if(errors?.stock){ %>
-                            
                                 <p class="text-danger mt-1">
                                     <%= errors.stock %>
                                 </p>
-                            
                                 <% } %>
 
-                            <div id="stockError" class="error-message">
-                                Stock cannot be negative.
-                            </div>
+                                    <div id="stockError" class="error-message">Stock cannot be negative.</div>
                         </div>
 
                         <div class="row">
-
                             <div class="col-md-6">
-
                                 <div class="form-group-custom">
+                                    <label for="regularPrice">Regular Price</label>
+                                    <input type="number" id="regularPrice" name="regularPrice" min="0"
+                                        class="form-control"
+                                        value="<%= variant ? variant.regularPrice : oldData?.regularPrice || '' %>">
 
-                                    <label for="regularPrice">
-                                        Regular Price
-                                    </label>
-
-                                <input type="number" name="regularPrice" min="0" class="form-control"
-                                    value="<%= variant ? variant.regularPrice : oldData?.regularPrice || '' %>">
-                                
-                                <% if(errors?.regularPrice){ %>
-                                
-                                    <p class="text-danger mt-1">
-                                        <%= errors.regularPrice %>
-                                    </p>
-                                
-                                    <% } %>
-
+                                    <% if(errors?.regularPrice){ %>
+                                        <p class="text-danger mt-1">
+                                            <%= errors.regularPrice %>
+                                        </p>
+                                        <% } %>
                                 </div>
-
                             </div>
 
                             <div class="col-md-6">
-
                                 <div class="form-group-custom">
+                                    <label for="salePrice">Sale Price</label>
+                                    <input type="number" id="salePrice" name="salePrice" min="0" class="form-control"
+                                        placeholder="0.00" value="<%= variant?.salePrice || '' %>">
 
-                                    <label for="salePrice">
-                                        Sale Price
-                                    </label>
-
-                                    <input type="number" id="salePrice" name="salePrice" min="0" class="form-control" placeholder="0.00"
-                                        value="<%= variant?.salePrice || '' %>">
-
-                                        <% if(errors?.salePrice){ %>
-                                        
-                                            <p class="text-danger mt-1">
-                                                <%= errors.salePrice %>
-                                            </p>
-                                        
-                                            <% } %>
-
+                                    <% if(errors?.salePrice){ %>
+                                        <p class="text-danger mt-1">
+                                            <%= errors.salePrice %>
+                                        </p>
+                                        <% } %>
                                 </div>
-
                             </div>
-
                         </div>
 
-                        <div id="priceError" class="error-message">
-                            Price must be a positive number.
-                        </div>
+                        <div id="priceError" class="error-message">Price must be a positive number.</div>
 
                         <div class="mt-4">
-
                             <label>Variant Image</label>
-
                             <div class="image-upload-wrapper">
-
                                 <% for(let i=0; i < 3; i++) { %>
-                                
                                     <div class="img-placeholder" onclick="triggerInput(<%= i %>)">
-                                
-                                        <input type="file" id="fileInput<%= i %>" name="variantImage<%= i %>" class="d-none" accept="image/*"
+                                        <input type="file" id="fileInput<%= i %>" name="variantImage<%= i %>"
+                                            class="d-none" accept="image/jpeg, image/jpg, image/png, image/webp"
                                             onchange="previewImg(this, <%= i %>)">
-                                
+
                                         <% if( variant?.variantImage && variant.variantImage[i] ){ %>
-                                            
-                                
-                                            <img id="preview<%= i %>" src="<%= variant.variantImage[i] %>" class="existing-variant-image" alt="Preview">
-                                
+                                            <img id="preview<%= i %>" src="<%= variant.variantImage[i] %>"
+                                                class="existing-variant-image" alt="Preview">
                                             <% } else { %>
-                                
                                                 <div id="placeholderText<%= i %>">
-                                
                                                     <i class="bi bi-image"></i>
-                                
                                                 </div>
-                                
                                                 <img id="preview<%= i %>" class="d-none" alt="Preview">
-                                
                                                 <% } %>
-
-                                
                                     </div>
-                                
                                     <% } %>
-
                             </div>
 
                             <% if(errors?.variantImage){ %>
-                            
                                 <p class="text-danger mt-2">
                                     <%= errors.variantImage %>
                                 </p>
-                            
                                 <% } %>
-                            
-                            <div id="imageError" class="error-message">
-                                Please upload at least one image.
-                            </div>
 
+                                    <div id="imageError" class="error-message">Please upload at least one valid image.
+                                    </div>
                         </div>
 
+                        <div id="imageError" style="
+                                color:#ff4d4d;
+                                font-size:14px;
+                                margin-top:10px;
+                                display:none;
+                            "></div>
+                        
                     </form>
                 </div>
             </div>
@@ -382,63 +344,67 @@
         }
 
         function previewImg(input, id) {
+            const preview = document.getElementById('preview' + id);
+            const placeholder = document.getElementById('placeholderText' + id);
+            const imageError = document.getElementById('imageError');
 
-                const preview =
-                    document.getElementById(
-                        'preview' + id
-                    );
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
 
-                const placeholder =
-                    document.getElementById(
-                        'placeholderText' + id
-                    );
+                // Strict Client-Side MIME-Type checking
+                const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                if (!validImageTypes.includes(file.type)) {
 
-                if (
-                    input.files &&
-                    input.files[0]
-                ) {
+                    const imageError =
+                        document.getElementById(
+                            "imageError"
+                        )
 
-                    const reader =
-                        new FileReader();
+                    imageError.textContent =
+                        "Only JPG, JPEG, PNG and WEBP image files are allowed."
 
-                    reader.onload =
-                        function (e) {
+                    imageError.style.display =
+                        "block"
 
-                            preview.src =
-                                e.target.result;
+                    input.value = ''
 
-                            preview.classList
-                                .remove('d-none');
+                    preview.classList.add('d-none')
+                    preview.src = ''
 
-                            if (placeholder) {
+                    if (placeholder)
+                        placeholder.classList.remove('d-none')
 
-                                placeholder.classList
-                                    .add('d-none');
-                            }
-                        }
-
-                    reader.readAsDataURL(
-                        input.files[0]
-                    );
+                    return
                 }
-            }
 
-        // Field-wise Validation
+                document.getElementById(
+                    "imageError"
+                ).style.display = "none"
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                    preview.classList.add('existing-variant-image'); // Add this class to bypass validation checks smoothly
+                    if (placeholder) placeholder.classList.add('d-none');
+                    imageError.style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
         document.getElementById('variantForm').addEventListener('submit', function (e) {
             let isValid = true;
 
+            // FIX: Added explicit Element ID selections matching logic parameters flawlessly
             const color = document.getElementById('color');
             const stock = document.getElementById('stock');
-            const regularPrice =
-                document.getElementById('regularPrice');
-
-            const salePrice =
-                document.getElementById('salePrice');
+            const regularPrice = document.getElementById('regularPrice');
             const files = document.querySelectorAll('input[type="file"]');
 
             // Color check
-            if (!color.value.trim()) {
-                color.classList.add('is-invalid');
+            if (!color || !color.value.trim()) {
+                if (color) color.classList.add('is-invalid');
                 document.getElementById('colorError').style.display = 'block';
                 isValid = false;
             } else {
@@ -447,8 +413,8 @@
             }
 
             // Stock check
-            if (stock.value === '' || stock.value < 0) {
-                stock.classList.add('is-invalid');
+            if (!stock || stock.value === '' || stock.value < 0) {
+                if (stock) stock.classList.add('is-invalid');
                 document.getElementById('stockError').style.display = 'block';
                 isValid = false;
             } else {
@@ -457,51 +423,24 @@
             }
 
             // Price check
-            if (
-                regularPrice.value === '' ||
-                regularPrice.value <= 0
-            ) {
-
-                regularPrice.classList.add('is-invalid');
-
-                document.getElementById('priceError')
-                    .style.display = 'block';
-
+            if (!regularPrice || regularPrice.value === '' || regularPrice.value <= 0) {
+                if (regularPrice) regularPrice.classList.add('is-invalid');
+                document.getElementById('priceError').style.display = 'block';
                 isValid = false;
-
             } else {
-
                 regularPrice.classList.remove('is-invalid');
-
-                document.getElementById('priceError')
-                    .style.display = 'none';
+                document.getElementById('priceError').style.display = 'none';
             }
 
-            // Image check
+            // Image validation check
+            const existingImages = document.querySelectorAll('.existing-variant-image');
+            let hasImage = Array.from(files).some(f => f.files.length > 0);
 
-            const existingImages =
-                document.querySelectorAll(
-                    '.existing-variant-image'
-                );
-
-            let hasImage =
-                Array.from(files)
-                    .some(f => f.files.length > 0);
-
-            if (
-                !hasImage &&
-                existingImages.length === 0
-            ) {
-
-                document.getElementById('imageError')
-                    .style.display = 'block';
-
+            if (!hasImage && existingImages.length === 0) {
+                document.getElementById('imageError').style.display = 'block';
                 isValid = false;
-
             } else {
-
-                document.getElementById('imageError')
-                    .style.display = 'none';
+                document.getElementById('imageError').style.display = 'none';
             }
 
             if (!isValid) e.preventDefault();

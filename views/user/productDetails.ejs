@@ -118,17 +118,18 @@
 
         /* MAIN IMAGE */
 
-        .main-image-wrapper {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background: #ece9ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
+        /* UPDATE THIS IN YOUR CSS STYLES */
+.main-image-wrapper {
+    position: relative; /* This is the critical missing anchor for your absolute zoom result */
+    width: 100%;
+    height: 500px;
+    background: #ece9ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 10px;
+}
         .col-md-5 {
             position: relative;
         }
@@ -725,7 +726,7 @@
                     </div>
 
                     <button class="wishlist-btn" id="wishlistBtn" data-product-id="<%= product._id %>"
-                        data-variant-id="<%= variants[0]._id %>">
+                        data-variant-id="<%= variants?.[0]?._id || '' %>">
 
                         Wishlist
 
@@ -736,7 +737,7 @@
                     <div class="action-btns">
                         <button>Buy Now</button>
                         <button id="addToCartBtn" data-product-id="<%= product._id %>"
-                            data-variant-id="<%= variants[0]._id %>" class="btn btn-dark">
+                            data-variant-id="<%= variants?.[0]?._id || '' %>" class="btn btn-dark">
 
                             Add To Cart
 
@@ -745,7 +746,86 @@
 
                 </div>
 
+                <!-- Product Specifications Section inspired by image_4f4d7d.png -->
+                <div class="container my-5 pt-4" style="border-top: 1px solid #eee;">
+                    <h2 class="mb-5" style="font-size: 32px; font-weight: 400; color: #000000;">
+                        Product <span style="font-weight: 700;">Specifications</span>
+                    </h2>
+                
+                    <div class="row g-4">
+                        <!-- Column 1 -->
+                        <div class="col-md-4">
+                            <div class="mb-4">
+                                <label
+                                    style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Name</label>
+                                <p style="font-weight: 700; color: #000000; font-size: 15px;">
+                                    <%= product.productName %>
+                                </p>
+                            </div>
+                
+                            <div class="mb-4">
+                                <label
+                                    style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Brand</label>
+                                <p style="font-weight: 700; color: #000000; font-size: 15px;">
+                                    <%= product.brand ? product.brand.name : 'Premium' %>
+                                </p>
+                            </div>
+                
+                            <div class="mb-4">
+                                <label
+                                    style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Net
+                                    Quantity</label>
+                                <p style="font-weight: 700; color: #000000; font-size: 15px;">1 Unit</p>
+                            </div>
+                        </div>
+                
+                        <!-- Column 2 -->
+                        <div class="col-md-4">
+                            <div class="mb-4">
+                                <label
+                                    style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Category</label>
+                                <p style="font-weight: 700; color: #000000; font-size: 15px;">
+                                    <%= product.category ? product.category.name : 'Audio' %>
+                                </p>
+                            </div>
+                
+                            <% if (product.playtime) { %>
+                                <div class="mb-4">
+                                    <label
+                                        style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Playtime</label>
+                                    <p style="font-weight: 700; color: #000000; font-size: 15px;">Up to <%= product.playtime %> Hours
+                                    </p>
+                                </div>
+                                <% } %>
+                
+                                    <div class="mb-4">
+                                        <label
+                                            style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Country
+                                            Of Origin</label>
+                                        <p style="font-weight: 700; color: #000000; font-size: 15px;">India</p>
+                                    </div>
+                        </div>
+                
+                        <!-- Column 3 -->
+                        <div class="col-md-4">
+                            <div class="mb-4">
+                                <label
+                                    style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Warranty
+                                    Status</label>
+                                <p style="font-weight: 700; color: #000000; font-size: 15px;">1 Year Brand Warranty</p>
+                            </div>
+                
+                            <div class="mb-4">
+                                <label
+                                    style="color: #888888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Connectivity</label>
+                                <p style="font-weight: 700; color: #000000; font-size: 15px;">Bluetooth v5.2</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+            
 
             <!-- SIMILAR -->
 
