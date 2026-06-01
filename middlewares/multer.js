@@ -37,7 +37,9 @@ const fileFilter = (req, file, cb) => {
             ).toLowerCase()
         );
 
-    if (ext) {
+        const mime =  allowed.test(file.mimetype)
+
+    if (ext && mime) { 
 
         cb(null, true);
 
@@ -45,7 +47,7 @@ const fileFilter = (req, file, cb) => {
 
         cb(
             new Error(
-                "Only images allowed"
+                "Only JPG, JPEG, PNG and WEBP images are allowed"
             )
         );
     }
