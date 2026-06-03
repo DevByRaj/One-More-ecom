@@ -75,9 +75,7 @@ export const getCart = async (
     }
 }
 
-export const updateCartQuantity =
-    async (req, res) => {
-
+export const updateCartQuantity = async (req, res) => {
         try {
 
             const userId =
@@ -101,8 +99,7 @@ export const updateCartQuantity =
         }
     }
 
-export const removeCartItem =
-    async (req, res) => {
+export const removeCartItem = async (req, res) => {
 
         try {
 
