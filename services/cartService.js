@@ -97,6 +97,19 @@ export const getUserCart = async(userId) => {
 
         const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
+        if(cart){
+            
+            const validItems = cart.items.filter(item => item.productId && item.variantId)
+
+            if(validItems.length !== cart.items.length){
+                cart.items = validItems
+
+                await cart.save()
+
+               const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
+            }
+        }
+
         return cart
     }
 
