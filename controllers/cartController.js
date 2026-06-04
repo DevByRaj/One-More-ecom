@@ -54,11 +54,9 @@ export const getCart = async (
 
     try {
 
-        const userId =
-            req.session.user
+        const userId = req.session.user
 
-        const cart =
-            await getUserCart(userId)
+        const cart = await getUserCart(userId)
 
         return res.render(
             "user/cart",
@@ -78,11 +76,9 @@ export const getCart = async (
 export const updateCartQuantity = async (req, res) => {
         try {
 
-            const userId =
-                req.session.user
+            const userId = req.session.user
 
-            const result =
-                await updateCartItemQuantity(
+            const result = await updateCartItemQuantity(
                     userId,
                     req.body
                 )
