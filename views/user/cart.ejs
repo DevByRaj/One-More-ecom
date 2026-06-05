@@ -12,8 +12,9 @@
     <style>
         :root {
             --bg-dark: #121212;
-            --text-muted: #888;
+            --text-muted: #777;
             --border-gray: #eaeaea;
+            --accent-color: #000;
         }
 
         body {
@@ -54,7 +55,6 @@
             text-decoration: none;
             font-size: 1.1rem;
             transition: transform 0.2s, color 0.2s;
-            margin-left: 0;
         }
 
         .nav-icons a:hover {
@@ -64,17 +64,17 @@
 
         /* ── MAIN CONTENT LAYOUT ── */
         .cart-container {
-            padding: 50px;
+            padding: 60px 50px;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         .page-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             color: #111;
-            padding-left: 10px;
+            letter-spacing: -0.5px;
         }
 
         /* ── CART GRID TABLE ── */
@@ -82,20 +82,23 @@
             border: 1px solid var(--border-gray);
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
         .cart-header {
-            background-color: #d2d2d2;
-            color: #333;
-            font-weight: 500;
-            font-size: 15px;
-            padding: 15px 25px;
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 18px 25px;
             display: grid;
             grid-template-columns: 3fr 1fr 1fr 1fr;
             align-items: center;
+            border-bottom: 1px solid var(--border-gray);
         }
 
-        /* Center-align headers to match values */
         .cart-header div:nth-child(2),
         .cart-header div:nth-child(3),
         .cart-header div:nth-child(4) {
@@ -109,6 +112,11 @@
             align-items: center;
             border-bottom: 1px solid var(--border-gray);
             background-color: #fff;
+            transition: background-color 0.2s ease;
+        }
+
+        .cart-item-row:hover {
+            background-color: #fcfcfc;
         }
 
         .cart-item-row:last-child {
@@ -122,16 +130,29 @@
             gap: 20px;
         }
 
+        .product-link-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .product-link-wrapper:hover .product-name {
+            color: #555;
+        }
+
         .cart-img-wrapper {
-            width: 110px;
-            height: 110px;
-            background-color: #000;
-            border-radius: 12px;
+            width: 100px;
+            height: 100px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            border: 1px solid #f0f0f0;
         }
 
         .cart-img-wrapper img {
@@ -147,42 +168,40 @@
         }
 
         .product-details .product-name {
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 2px;
-            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #111;
+            transition: color 0.2s;
         }
 
-        .rating-stars {
-            color: #2be62b;
+        .product-variant-info {
             font-size: 13px;
+            color: #666;
             margin-bottom: 4px;
         }
 
         .action-remove-btn {
             background: none;
             border: none;
-            color: #e62b2b;
-            font-size: 12px;
+            color: #999;
+            font-size: 13px;
             font-weight: 500;
-            text-decoration: underline;
             padding: 0;
-            margin-top: 6px;
-            display: inline-block;
+            margin-top: 8px;
             cursor: pointer;
+            transition: color 0.2s;
         }
 
-        .stock-status {
-            font-size: 11px;
-            font-weight: 500;
-            color: #444;
+        .action-remove-btn:hover {
+            color: #dc3545;
         }
 
         .item-price,
         .item-total-price {
             font-weight: 600;
-            font-size: 15px;
-            color: #000;
+            font-size: 16px;
+            color: #111;
             text-align: center;
         }
 
@@ -195,77 +214,91 @@
             width: 100%;
         }
 
-        /* Interactive Dynamic Quantity Counter Box Elements */
         .qty-controls-container {
             display: inline-flex;
             align-items: center;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            padding: 2px 6px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 4px 8px;
             background-color: #fff;
         }
 
         .qty-display-box {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            padding: 0 12px;
-            min-width: 65px;
+            padding: 0 10px;
+            min-width: 45px;
             text-align: center;
         }
 
         .qty-btn-circle {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             border: none;
             background: transparent;
             color: #333;
-            font-weight: 700;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            transition: background 0.2s, color 0.2s;
         }
 
         .qty-btn-circle:hover {
-            background-color: #eee;
+            background-color: #111;
+            color: #fff;
         }
 
         .qty-btn-circle:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .qty-btn-circle:disabled:hover {
+            background: transparent;
+            color: #333;
+        }
 
         /* ── SUMMARY SIDEBAR CONTAINER ── */
+        .sticky-summary {
+            position: sticky;
+            top: 120px;
+        }
+
         .summary-card {
-            background-color: #f7f7f7;
+            background-color: #fafdff;
             border-radius: 12px;
             padding: 35px 30px;
-            border: 1px solid #eee;
+            border: 1px solid #eef2f5;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.01);
         }
 
         .summary-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            letter-spacing: 0.3px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: -0.2px;
+            color: #111;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
         }
 
         .summary-line {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
-            color: #444;
+            font-size: 14px;
+            color: #555;
             margin-bottom: 18px;
         }
 
         .summary-total-line {
             display: flex;
             justify-content: space-between;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 700;
             color: #000;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #eee;
             padding-top: 18px;
             margin-top: 18px;
             margin-bottom: 30px;
@@ -273,9 +306,9 @@
 
         /* Coupon Row Element UI */
         .coupon-dropdown-header {
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 18px;
             font-size: 13px;
             font-weight: 500;
             background: #fff;
@@ -283,7 +316,12 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            transition: border-color 0.2s;
+        }
+
+        .coupon-dropdown-header:hover {
+            border-color: #111;
         }
 
         /* ── FIGMA SPECIFIC CHECKOUT BUTTON STYLING ── */
@@ -292,20 +330,30 @@
             color: #fff;
             width: 100%;
             border: none;
-            border-radius: 25px;
-            padding: 14px;
-            font-size: 13px;
+            border-radius: 30px;
+            padding: 16px;
+            font-size: 14px;
             font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: background-color 0.2s ease, opacity 0.2s ease;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: block;
+            text-align: center;
+            text-decoration: none;
         }
 
-        .checkout-btn:disabled {
-            background: #999;
+        .checkout-btn:hover {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .checkout-btn:active {
+            transform: scale(0.99);
+        }
+
+        .checkout-btn.disabled {
+            background: #ccc !important;
             cursor: not-allowed;
-            opacity: 0.7;
+            pointer-events: none;
             box-shadow: none;
         }
 
@@ -315,10 +363,6 @@
             color: #fff;
             padding: 60px 80px 20px;
             margin-top: 120px;
-        }
-
-        .footer-logo text-center {
-            margin-bottom: 40px;
         }
 
         .footer-logo img {
@@ -362,16 +406,16 @@
             }
 
             .cart-container {
-                padding: 30px 20px;
+                padding: 40px 20px;
             }
 
             .cart-header {
-                font-size: 14px;
+                font-size: 13px;
                 padding: 12px 15px;
             }
 
             .cart-item-row {
-                padding: 15px;
+                padding: 20px 15px;
             }
         }
 
@@ -382,11 +426,12 @@
 
             .cart-item-row {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 20px;
                 text-align: center;
                 border: 1px solid var(--border-gray);
-                border-radius: 8px;
-                margin-bottom: 15px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                padding: 25px;
             }
 
             .product-meta-block {
@@ -394,7 +439,12 @@
                 align-items: center;
             }
 
-            .qty-column-wrapper {
+            .product-link-wrapper {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .product-details {
                 align-items: center;
             }
 
@@ -483,7 +533,7 @@
         .out-of-stock-row .item-price,
         .out-of-stock-row .item-total-price,
         .out-of-stock-row .qty-column-wrapper {
-            opacity: 0.65;
+            opacity: 0.5;
         }
 
         .out-of-stock-row .cart-img-wrapper img {
@@ -493,12 +543,14 @@
         .out-of-stock-badge {
             display: inline-block;
             margin-top: 6px;
-            padding: 4px 10px;
+            padding: 4px 12px;
             background: #dc3545;
             color: white;
             font-size: 11px;
             font-weight: 600;
             border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -520,11 +572,8 @@
                     <li class="nav-item"><a class="nav-link text-white" href="/about">About Us</a></li>
                 </ul>
                 <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
-                    <a href="/profile">
-                        <i class="fa-regular fa-user"></i>
-                    </a>
-
-                    <a href="/wishlist">
+                    <a href="/profile"><i class="fa-regular fa-user"></i></a>
+                    <a href="/wishlist" class="ms-3">
                         <div style="position:relative; display: inline-block;">
                             <i class="fa-regular fa-heart"></i>
                             <% if(typeof wishlistCount !=='undefined' && wishlistCount> 0){ %>
@@ -535,8 +584,7 @@
                                 <% } %>
                         </div>
                     </a>
-
-                    <a href="/cart">
+                    <a href="/cart" class="ms-3">
                         <div style="position:relative; display: inline-block;">
                             <i class="fa-solid fa-bag-shopping"></i>
                             <% if(typeof cartCount !=='undefined' && cartCount> 0){ %>
@@ -561,7 +609,7 @@
     </div>
 
     <div class="cart-container">
-        <h2 class="page-title">My Cart</h2>
+        <h2 class="page-title">Shopping Cart</h2>
 
         <% if(!cart || cart.items.length===0){ %>
             <div class="text-center py-5">
@@ -571,10 +619,8 @@
             </div>
             <% } else { %>
                 <div class="row g-4">
-
                     <div class="col-lg-8">
                         <div class="cart-table-wrapper">
-
                             <div class="cart-header">
                                 <div>Product</div>
                                 <div>Price</div>
@@ -585,42 +631,34 @@
                             <% let subtotal=0 %>
                                 <% cart.items.forEach(item=> { %>
                                     <% subtotal +=item.variantId.salePrice * item.quantity %>
-
-                                        <div class="cart-item-row
-                                        <%= item.variantId.stock === 0 ? 'out-of-stock-row' : '' %>"
+                                        <div class="cart-item-row <%= item.variantId.stock === 0 ? 'out-of-stock-row' : '' %>"
                                             data-cart-row="<%= item._id %>">
-
                                             <div class="product-meta-block">
-                                                <a href="/productDetails?id=<%= item.productId._id %>&variant=<%= item.variantId._id %>"
-                                                    style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:20px;">
+                                                <a class="product-link-wrapper"
+                                                    href="/productDetails?id=<%= item.productId._id %>&variant=<%= item.variantId._id %>">
                                                     <div class="cart-img-wrapper">
                                                         <img src="<%= item.variantId.variantImage[0] %>"
                                                             alt="<%= item.productId.productName %>">
                                                     </div>
-
                                                     <div class="product-details">
                                                         <div class="product-name">
                                                             <%= item.productId.productName %>
                                                         </div>
-
-                                                        <div style="font-size:12px; color:#666; margin-top:4px;">
-                                                            Color : <strong>
+                                                        <div class="product-variant-info">
+                                                            Color: <strong>
                                                                 <%= item.variantId.variantName %>
                                                             </strong>
                                                         </div>
-
                                                         <% if(item.variantId.stock===0){ %>
-                                                            <div class="out-of-stock-badge">
-                                                                Out of Stock
-                                                            </div>
+                                                            <div class="out-of-stock-badge">Out of Stock</div>
                                                             <% } %>
-
-                                                                <button type="button" class="action-remove-btn"
-                                                                    onclick="removeCartItem(event, '<%= item._id %>')">
-                                                                    Remove
-                                                                </button>
                                                     </div>
                                                 </a>
+                                                <!-- Button kept outside target anchor to fix unintended link capturing -->
+                                                <button type="button" class="action-remove-btn"
+                                                    onclick="removeCartItem(event, '<%= item._id %>')">
+                                                    Remove
+                                                </button>
                                             </div>
 
                                             <div class="item-price">
@@ -629,20 +667,18 @@
 
                                             <div class="qty-column-wrapper">
                                                 <div class="qty-controls-container">
-                                                    <button class="qty-btn-circle quantity-btn" data-action="decrease" data-id="<%= item._id %>" <%=item.variantId.stock===0
-                                                        ? "disabled" : "" %>>
-                                                        -
-                                                    </button>
+                                                    <button class="qty-btn-circle quantity-btn" data-action="decrease"
+                                                        data-id="<%= item._id %>" <%=item.variantId.stock===0
+                                                        ? "disabled" : "" %>>-</button>
                                                     <div class="qty-display-box quantity-value">
                                                         <%= item.quantity %>
                                                     </div>
-                                                    <button class="qty-btn-circle quantity-btn" data-action="increase" data-id="<%= item._id %>" <%=item.variantId.stock===0
-                                                        ? "disabled" : "" %>>
-                                                        +
-                                                    </button>
+                                                    <button class="qty-btn-circle quantity-btn" data-action="increase"
+                                                        data-id="<%= item._id %>" <%=item.variantId.stock===0
+                                                        ? "disabled" : "" %>>+</button>
                                                 </div>
-
-                                                <% if(item.quantity> item.variantId.stock){ %>
+                                                <% if(item.quantity> item.variantId.stock && item.variantId.stock > 0){
+                                                    %>
                                                     <p class="text-danger small mt-2 mb-0 text-center">
                                                         Only <%= item.variantId.stock %> available
                                                     </p>
@@ -652,44 +688,43 @@
                                             <div class="item-total-price">
                                                 ₹<%= item.variantId.salePrice * item.quantity %>
                                             </div>
-
                                         </div>
                                         <% }) %>
-
                         </div>
                     </div>
 
                     <div class="col-lg-4">
-                        <div class="summary-card">
-                            <div class="summary-title">Order Summary</div>
+                        <div class="sticky-summary">
+                            <div class="summary-card">
+                                <div class="summary-title">Order Summary</div>
 
-                            <div class="summary-line">
-                                <span>Item Sub Total</span>
-                                <strong id="cartSubtotal">₹<%= subtotal %></strong>
+                                <div class="summary-line">
+                                    <span>Subtotal</span>
+                                    <strong id="cartSubtotal">₹<%= subtotal %></strong>
+                                </div>
+
+                                <div class="summary-line">
+                                    <span>Shipping</span>
+                                    <span class="text-success font-weight-bold">Free</span>
+                                </div>
+
+                                <div class="summary-total-line">
+                                    <span>Total</span>
+                                    <strong id="grandTotal">₹<%= subtotal %></strong>
+                                </div>
+
+                                <div class="coupon-dropdown-header">
+                                    <span><i class="fa-solid fa-ticket me-2 opacity-75"></i> Apply Coupon</span>
+                                    <i class="fa-solid fa-chevron-down small"></i>
+                                </div>
+
+                                <a href="/checkout"
+                                    class="checkout-btn <%= cart.items.some(item => item.quantity > item.variantId.stock) ? 'disabled' : '' %>">
+                                    Proceed to Checkout
+                                </a>
                             </div>
-
-                            <div class="summary-line">
-                                <span>Shipping</span>
-                                <span class="text-muted">Free</span>
-                            </div>
-
-                            <div class="summary-total-line">
-                                <span>Total</span>
-                                <strong id="grandTotal">₹<%= subtotal %></strong>
-                            </div>
-
-                            <div class="coupon-dropdown-header">
-                                <span><i class="fa-solid fa-ticket me-2 opacity-75"></i> Coupon code</span>
-                                <i class="fa-solid fa-chevron-down small"></i>
-                            </div>
-
-                            <button class="checkout-btn" <%=cart.items.some(item=> item.quantity > item.variantId.stock)
-                                ? "disabled" : "" %>>
-                                Checkout
-                            </button>
                         </div>
                     </div>
-
                 </div>
                 <% } %>
     </div>
@@ -758,9 +793,7 @@
                 try {
                     const response = await fetch("/cart/update-quantity", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ cartItemId, action })
                     });
 
