@@ -513,10 +513,9 @@
 
                     <a href="/wishlist">
                         <div style="position:relative;">
-                            <i class="bi bi-heart" style="font-size: 22px;"></i>
-
-                            <% if(wishlistCount> 0){ %>
-                                <span style="
+                            <i class="bi bi-heart"></i>
+                    
+                            <span id="wishlistCountBadge" style="
                                     position:absolute;
                                     top:-10px;
                                     right:-12px;
@@ -526,14 +525,13 @@
                                     width:18px;
                                     height:18px;
                                     border-radius:50%;
-                                    display:flex;
+                                    display:<%= wishlistCount > 0 ? 'flex' : 'none' %>;
                                     align-items:center;
                                     justify-content:center;
                                     font-weight:600;
                                 ">
-                                    <%= wishlistCount %>
-                                </span>
-                                <% } %>
+                                <%= wishlistCount || 0 %>
+                            </span>
                         </div>
                     </a>
 
@@ -1262,6 +1260,30 @@
                     showToast(
                         data.message
                     )
+
+                    if(data.message){
+
+                         const wishlistBadge =
+                            document.getElementById(
+                                "wishlistCountBadge"
+                            )
+
+                        if (wishlistBadge) {
+
+                            let count =
+                                Number(
+                                    wishlistBadge.textContent
+                                )
+
+                            count++
+
+                            wishlistBadge.textContent =
+                                count
+
+                            wishlistBadge.style.display =
+                                "flex"
+                        }
+                    }
 
                 } catch (error) {
 
