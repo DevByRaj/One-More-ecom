@@ -728,9 +728,25 @@
             <div class="w-100 mb-5 overflow-hidden">
                 <select class="btn-sort-black"
                     onchange="const p = new URLSearchParams(window.location.search); p.set('sort', this.value); window.location.href='/shop?'+p.toString();">
+                
                     <option value="">Sort</option>
-                    <option value="low-high" <%=query.sort==='low-high' ? 'selected' : '' %>>Price: Low-High</option>
-                    <option value="high-low" <%=query.sort==='high-low' ? 'selected' : '' %>>Price: High-Low</option>
+                
+                    <option value="a-z" <%=query.sort==='a-z' ? 'selected' : '' %>>
+                        Name: A-Z
+                    </option>
+                
+                    <option value="z-a" <%=query.sort==='z-a' ? 'selected' : '' %>>
+                        Name: Z-A
+                    </option>
+                
+                    <option value="low-high" <%=query.sort==='low-high' ? 'selected' : '' %>>
+                        Price: Low-High
+                    </option>
+                
+                    <option value="high-low" <%=query.sort==='high-low' ? 'selected' : '' %>>
+                        Price: High-Low
+                    </option>
+                
                 </select>
             </div>
 
@@ -739,10 +755,7 @@
                     <% products.forEach(product=> { %>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6 mb-5">
                             <div class="product-card">
-                                <button class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">
-                                    <i class="fa-regular fa-heart"></i>
-                                </button>
-
+                                
                                 <a href="/productDetails?id=<%= product._id %>" class="text-decoration-none text-dark">
                                     <div class="product-img-wrapper">
                                         <img src="<%= product.productImage[0] %>" class="product-img"
