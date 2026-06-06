@@ -512,7 +512,7 @@
                     <a href="/wishlist" class="text-white me-3">
                         <div style="position:relative;">
                             <i class="fa-regular fa-heart"></i>
-                    
+
                             <% if(wishlistCount> 0){ %>
                                 <span style="
                                                                   position:absolute;
@@ -534,11 +534,11 @@
                                 <% } %>
                         </div>
                     </a>
-                    
+
                     <a href="/cart" class="text-white">
                         <div style="position:relative;">
                             <i class="fa-solid fa-bag-shopping"></i>
-                    
+
                             <% if(cartCount> 0){ %>
                                 <span style="
                                                                   position:absolute;
@@ -576,63 +576,65 @@
             <form action="/shop" method="GET" id="filterForm">
 
                 <div class="filter-section">
-                
+
                     <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
                         Category
                         <i class="fa-solid fa-chevron-down small"></i>
                     </div>
-                
+
                     <div class="filter-content">
-                
+
                         <% categories.forEach(category=> { %>
-                
+
                             <div class="form-check mb-2">
-                
-                                <input class="form-check-input" type="checkbox" name="category" value="<%= category._id %>" id="cat-<%= category._id %>"
-                                     <%= Array.isArray(query.category) ? query.category.includes(category._id.toString()) :
-                                        query.category===category._id.toString() ? 'checked' : '' %>
+
+                                <input class="form-check-input" type="checkbox" name="category"
+                                    value="<%= category._id %>" id="cat-<%= category._id %>"
+                                    <%=Array.isArray(query.category) ? query.category.includes(category._id.toString())
+                                    : query.category===category._id.toString() ? 'checked' : '' %>
                                 >
-                
+
                                 <label class="form-check-label small" for="cat-<%= category._id %>">
                                     <%= category.name %>
                                 </label>
-                
+
                             </div>
-                
+
                             <% }) %>
-                
+
                     </div>
-                
+
                 </div>
 
                 <div class="filter-section">
-                
+
                     <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
                         Brand
                         <i class="fa-solid fa-chevron-down small"></i>
                     </div>
-                
+
                     <div class="filter-content">
-                
+
                         <% brands.forEach(brand=> { %>
-                
+
                             <div class="form-check mb-2">
-                
-                                <input class="form-check-input" type="checkbox" name="brand" value="<%= brand._id %>" id="brand-<%= brand._id %>"
-                                    <%= Array.isArray(query.brand) ? query.brand.includes(brand._id.toString()) : query.brand===brand._id.toString()
-                                        ? 'checked' : '' %>
+
+                                <input class="form-check-input" type="checkbox" name="brand" value="<%= brand._id %>"
+                                    id="brand-<%= brand._id %>" <%=Array.isArray(query.brand) ?
+                                    query.brand.includes(brand._id.toString()) : query.brand===brand._id.toString()
+                                    ? 'checked' : '' %>
                                 >
-                
+
                                 <label class="form-check-label small" for="brand-<%= brand._id %>">
                                     <%= brand.name %>
                                 </label>
-                
+
                             </div>
-                
+
                             <% }) %>
-                
+
                     </div>
-                
+
                 </div>
 
                 <div class="filter-section">
@@ -651,32 +653,33 @@
                 </div>
 
                 <div class="filter-section">
-                
+
                     <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
                         Color
                         <i class="fa-solid fa-chevron-down small"></i>
                     </div>
-                
+
                     <div class="filter-content">
-                
+
                         <% colors.forEach(color=> { %>
-                
+
                             <div class="form-check mb-2">
-                
-                                <input class="form-check-input" type="checkbox" name="color" value="<%= color %>" id="color-<%= color %>"
-                                 <%= Array.isArray(query.color) ? query.color.includes(color) : query.color===color ? 'checked' : '' %>
+
+                                <input class="form-check-input" type="checkbox" name="color" value="<%= color %>"
+                                    id="color-<%= color %>" <%=Array.isArray(query.color) ? query.color.includes(color)
+                                    : query.color===color ? 'checked' : '' %>
                                 >
-                
+
                                 <label class="form-check-label small" for="color-<%= color %>">
                                     <%= color %>
                                 </label>
-                
+
                             </div>
-                
+
                             <% }) %>
-                
+
                     </div>
-                
+
                 </div>
 
                 <div class="filter-section collapsed">
@@ -755,7 +758,6 @@
                     <% products.forEach(product=> { %>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6 mb-5">
                             <div class="product-card">
-                                
                                 <a href="/productDetails?id=<%= product._id %>" class="text-decoration-none text-dark">
                                     <div class="product-img-wrapper">
                                         <img src="<%= product.productImage[0] %>" class="product-img"
@@ -778,7 +780,7 @@
                                                 <span class="fw-bold text-dark">₹<%= product.variant.salePrice %></span>
                                                 <% } else { %>
                                                     <span class="fw-bold text-dark">₹<%= product.variant.salePrice %>
-                                                            </span>
+                                                    </span>
                                                     <% } %>
                                                         <% } %>
                                     </div>
