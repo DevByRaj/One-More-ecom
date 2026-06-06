@@ -89,10 +89,10 @@ export const getShopProducts = async (queryParams) => {
 
     switch (sort) {
         case "a-z":
-            sortOption = {productName: 1}
+            sortOption = "brand-a-z"
             break
         case "z-a":
-            sortOption = {productName: -1}
+            sortOption = "brand-z-a"
             break
         case "low-high":
             sortOption = "low-high"
@@ -109,7 +109,7 @@ export const getShopProducts = async (queryParams) => {
     const skip = (currentPage - 1) * limit
 
 
-    let products = await Product.find(query).populate("brand").sort(typeof sortOption === "object" ? sortOption : {createdAt: -1}).lean()
+    let products = await Product.find(query).populate("brand").collation({locale: "en", strength: 2}).sort(typeof sortOption === "object" ? sortOption : {createdAt: -1}).lean()
 
     for (let product of products) {
 
@@ -118,6 +118,19 @@ export const getShopProducts = async (queryParams) => {
         }).sort({createdAt: 1})
 
         product.variant = firstVariant
+    }
+
+    if(sortOption === "brand-a-z"){
+        products.sort((a,b) =>
+            a.brand.name.localeCompare(b.brand.name)
+        )
+    }
+
+    if(sortOption === "brand-z-a"){
+
+        products.sort((a,b) =>
+            b.brand.name.localeCompare(a.brand.name)
+        )
     }
 
     if (sortOption === "low-high") {
