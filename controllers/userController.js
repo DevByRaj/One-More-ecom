@@ -999,6 +999,7 @@ export const getShop = async (req, res) => {
       ...shopData,
       query: req.query
     })
+    console.log(req.query)
   } catch (error) {
     console.log(error)
 
