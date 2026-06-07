@@ -245,6 +245,18 @@
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             z-index: 5;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .wishlist-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Highlight state for active items inside user saved wishlist layout checks */
+        .wishlist-btn.active-wishlist i {
+            color: #ff3e6c !important;
+            font-weight: 900 !important;
         }
 
         .product-info {
@@ -489,7 +501,6 @@
 
 <body>
 
-    <!-- Normalizing query objects explicitly to avoid array/string matching breakdown items -->
     <% const selectedCategories=query.category ? (Array.isArray(query.category) ? query.category : [query.category]) :
         []; const selectedBrands=query.brand ? (Array.isArray(query.brand) ? query.brand : [query.brand]) : []; const
         selectedColors=query.color ? (Array.isArray(query.color) ? query.color : [query.color]) : []; const
@@ -551,7 +562,6 @@
                 <span class="filter-label">Filter By</span>
                 <form action="/shop" method="GET" id="filterForm">
 
-                    <!-- Keep existing values for layout integrity context updates -->
                     <input type="hidden" name="search" value="<%= query.search || '' %>">
                     <input type="hidden" name="sort" value="<%= query.sort || '' %>">
 
@@ -727,42 +737,58 @@
                         <% products.forEach(product=> { %>
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6 mb-5">
                                 <div class="product-card">
-                                    <a href="/productDetails?id=<%= product._id %>"
-                                        class="text-decoration-none text-dark">
-                                        <div class="product-img-wrapper">
-                                            <img src="<%= product.productImage[0] %>" class="product-img"
-                                                alt="<%= product.productName %>">
-                                        </div>
-                                    </a>
 
-                                    <div class="product-info">
-                                        <div class="text-muted small mb-1">
-                                            <%= (product.brand && product.brand.name) ? product.brand.name : "Brand" %>
-                                        </div>
-                                        <div class="product-name">
-                                            <%= product.productName %>
-                                        </div>
-                                        <div class="product-price mt-1">
-                                            <% if(product.variant){ %>
-                                                <% if(product.variant.salePrice < product.variant.regularPrice){ %>
-                                                    <span class="text-muted text-decoration-line-through me-2 small">₹
-                                                        <%= product.variant.regularPrice %></span>
-                                                    <span class="fw-bold text-dark">₹<%= product.variant.salePrice %>
-                                                            </span>
-                                                    <% } else { %>
+                                    <% let inWishlist=false; if (typeof wishlist !=='undefined' &&
+                                        Array.isArray(wishlist)) { inWishlist=wishlist.some(item=>
+                                        (item.productId && item.productId.toString() === product._id.toString()) ||
+                                        (item.toString() === product._id.toString())
+                                        );
+                                        }
+                                        %>
+                                        <button type="button"
+                                            class="wishlist-btn <%= inWishlist ? 'active-wishlist' : '' %>"
+                                            data-product-id="<%= product._id %>" onclick="handleWishlistToggle(this)">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+
+                                        <a href="/productDetails?id=<%= product._id %>"
+                                            class="text-decoration-none text-dark">
+                                            <div class="product-img-wrapper">
+                                                <img src="<%= product.productImage[0] %>" class="product-img"
+                                                    alt="<%= product.productName %>">
+                                            </div>
+                                        </a>
+
+                                        <div class="product-info">
+                                            <div class="text-muted small mb-1">
+                                                <%= (product.brand && product.brand.name) ? product.brand.name : "Brand"
+                                                    %>
+                                            </div>
+                                            <div class="product-name">
+                                                <%= product.productName %>
+                                            </div>
+                                            <div class="product-price mt-1">
+                                                <% if(product.variant){ %>
+                                                    <% if(product.variant.salePrice < product.variant.regularPrice){ %>
+                                                        <span
+                                                            class="text-muted text-decoration-line-through me-2 small">₹
+                                                            <%= product.variant.regularPrice %></span>
                                                         <span class="fw-bold text-dark">₹<%= product.variant.salePrice
                                                                 %></span>
-                                                        <% } %>
+                                                        <% } else { %>
+                                                            <span class="fw-bold text-dark">₹<%=
+                                                                    product.variant.salePrice %></span>
                                                             <% } %>
+                                                                <% } %>
+                                            </div>
+                                            <div class="rating">
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-solid fa-star"></i>
+                                                <span class="text-muted" style="font-size: 9px;">(4.0)</span>
+                                            </div>
                                         </div>
-                                        <div class="rating">
-                                            <i class="fa-solid fa-star"></i>
-                                            <i class="fa-solid fa-star"></i>
-                                            <i class="fa-solid fa-star"></i>
-                                            <i class="fa-solid fa-star"></i>
-                                            <span class="text-muted" style="font-size: 9px;">(4.0)</span>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <% }) %>
@@ -856,6 +882,24 @@
             function toggleFilterDropdown(headerElement) {
                 const parentSection = headerElement.parentElement;
                 parentSection.classList.toggle('collapsed');
+            }
+
+            async function handleWishlistToggle(btn) {
+                const productId = btn.dataset.productId;
+                try {
+                    const response = await fetch('/wishlist/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId })
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        btn.classList.toggle('active-wishlist');
+                    }
+                } catch (err) {
+                    console.error("Wishlist handling error:", err);
+                }
             }
         </script>
 </body>
