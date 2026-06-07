@@ -109,9 +109,9 @@ export const getShopProducts = async (queryParams) => {
     const skip = (currentPage - 1) * limit
 
 
-    let products = await Product.find(query).populate({path: "brand", match:{isListed: true}}).collation({locale: "en", strength: 2}).sort(typeof sortOption === "object" ? sortOption : {createdAt: -1}).lean()
+    let products = await Product.find(query).populate({path: "brand", match:{isListed: true}}).populate({path: "category", match:{isListed: true}}).collation({locale: "en", strength: 2}).sort(typeof sortOption === "object" ? sortOption : {createdAt: -1}).lean()
 
-    products = products.filter( product => product.brand)
+    products = products.filter( product => product.brand && product.category)
 
     for (let product of products) {
 
