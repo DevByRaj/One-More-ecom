@@ -159,11 +159,11 @@
             border-bottom: 1px solid #222;
         }
 
-        .product-name{
-    font-weight: 600;
-    color: #ffffff;
-    min-width: 160px;
-}
+        .product-name {
+            font-weight: 600;
+            color: #ffffff;
+            min-width: 160px;
+        }
 
         .product-img {
             width: 80px;
@@ -213,6 +213,7 @@
             border: none;
             color: black;
             text-decoration: none;
+            cursor: pointer;
         }
 
         .btn-add {
@@ -274,6 +275,10 @@
 </head>
 
 <body>
+    <div id="page-context" data-current-page="<%= currentPage %>" data-search="<%= search || '' %>"
+        data-status="<%= status || '' %>">
+    </div>
+
     <div class="dashboard-container container-fluid">
         <div class="row">
             <div class="col-lg-2 pe-lg-4">
@@ -300,50 +305,25 @@
             <div class="col-lg-10">
                 <div class="search-container">
                     <div class="d-flex align-items-center gap-4">
-
-                        <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">
-
-                            Products
-
-                        </h4>
-
+                        <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">Products</h4>
                         <div class="filter-tabs">
-
                             <a href="/admin/products?search=<%= search || '' %>"
-                                class="filter-link <%= !status ? 'active' : '' %>">
-
-                                All
-
-                            </a>
-
+                                class="filter-link <%= !status ? 'active' : '' %>">All</a>
                             <a href="/admin/products?status=active&search=<%= search || '' %>"
-                                class="filter-link <%= status === 'active' ? 'active' : '' %>">
-
-                                Active
-
-                            </a>
-
+                                class="filter-link <%= status === 'active' ? 'active' : '' %>">Active</a>
                             <a href="/admin/products?status=blocked&search=<%= search || '' %>"
-                                class="filter-link <%= status === 'blocked' ? 'active' : '' %>">
-
-                                Blocked
-
-                            </a>
-
+                                class="filter-link <%= status === 'blocked' ? 'active' : '' %>">Blocked</a>
                         </div>
-
                     </div>
 
                     <div class="search-box">
                         <form action="/admin/products" method="GET" class="d-flex align-items-center w-100">
                             <i class="bi bi-search me-2" style="color: #000;"></i>
                             <input type="text" name="search" placeholder="Search" value="<%= search || '' %>">
+                            <input type="hidden" name="status" value="<%= status || '' %>">
                             <% if(search){ %>
-
-                                <a href="/admin/products" style="color:red; text-decoration:none; font-weight:bold;">
-                                    ×
-                                </a>
-
+                                <a href="/admin/products?status=<%= status || '' %>"
+                                    style="color:red; text-decoration:none; font-weight:bold;">×</a>
                                 <% } %>
                         </form>
                     </div>
@@ -364,132 +344,81 @@
                             </tr>
                         </thead>
                         <tbody>
-
                             <% if(products && products.length> 0){ %>
-
                                 <% products.forEach((product, index)=> { %>
-
                                     <tr>
-
                                         <td>
-                                            <%= (currentPage - 1) * 5 + (index + 1) %>
+                                            <%= (currentPage - 1) * 4 + (index + 1) %>
                                         </td>
-
                                         <td>
                                             <%= product.brand?.name || "No Brand" %>
                                         </td>
-
                                         <td class="product-name">
                                             <%= product.productName || "No Name" %>
                                         </td>
-
                                         <td>
-
-                                            <img src="<%= product.productImage && product.productImage.length > 0
-                                                    ? product.productImage[0]
-                                                    : '/images/default-product.png'
-                                                %>" class="product-img" alt="Product">
-
+                                            <img src="<%= product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/images/default-product.png' %>"
+                                                class="product-img" alt="Product">
                                         </td>
-
                                         <td>
-
                                             <div class="desc-box d-flex align-items-center justify-content-center px-2">
                                                 <small>
-                                                    <%= product.description?.slice(0, 50) || 'No Description' %>
+                                                    <%= product.description?.slice(0, 50) || 'No Description' %>...
                                                 </small>
                                             </div>
-
                                         </td>
-
                                         <td>
                                             <%= product.category?.name || 'No Category' %>
                                         </td>
-
                                         <td>
-                                            <span class="
-                                                <%= product.isListed
-                                                    ? 'text-success'
-                                                    : 'text-danger'
-                                                %>
-                                            ">
+                                            <span class="<%= product.isListed ? 'text-success' : 'text-danger' %>">
                                                 <%= product.isListed ? 'Listed' : 'Unlisted' %>
                                             </span>
                                         </td>
-
                                         <td>
+                                            <a href="/admin/variants/<%= product._id %>"
+                                                class="btn-variant me-2">Variant</a>
+                                            <a href="/admin/edit-product/<%= product._id %>"
+                                                class="btn-edit me-2">Edit</a>
 
-                                            <a href="/admin/variants/<%= product._id %>" class="btn-variant me-2">
-                                                Variant
-                                            </a>
-
-                                            <a href="/admin/edit-product/<%= product._id %>" class="btn-edit me-2">
-                                                Edit
-                                            </a>
-
-                                            <a href="/admin/toggle-product?id=<%= product._id %>" class="btn-remove">
-
+                                            <button type="button" class="btn-remove border-0"
+                                                data-product-id="<%= product._id %>"
+                                                data-action="<%= product.isListed ? 'unlist' : 'list' %>"
+                                                onclick="handleToggleClick(this)">
                                                 <%= product.isListed ? 'Unlist' : 'List' %>
-
-                                            </a>
-
+                                            </button>
                                         </td>
-
                                     </tr>
-
                                     <% }) %>
-
                                         <% } else { %>
-
                                             <tr>
-
-                                                <td colspan="5" class="text-center">
-                                                    No products found
-                                                </td>
-
+                                                <td colspan="8" class="text-center">No products found</td>
                                             </tr>
-
                                             <% } %>
-
                         </tbody>
                     </table>
 
                     <a href="/admin/add-product" class="btn-add">Add new Product</a>
 
                     <% if(totalPages> 1){ %>
-
                         <div class="custom-pagination">
-
                             <% if(currentPage> 1){ %>
-
-                                <a href="?page=<%= currentPage - 1 %>&search=<%= search || '' %>" class="page-btn">
-                                    Previous
-                                </a>
-
+                                <a href="?page=<%= currentPage - 1 %>&search=<%= search || '' %>&status=<%= status || '' %>"
+                                    class="page-btn">Previous</a>
                                 <% } %>
 
-
                                     <% for(let i=1; i <=totalPages; i++){ %>
-
-                                        <a href="?page=<%= i %>&search=<%= search || '' %>"
+                                        <a href="?page=<%= i %>&search=<%= search || '' %>&status=<%= status || '' %>"
                                             class="page-num <%= currentPage === i ? 'active' : '' %>">
                                             <%= i %>
                                         </a>
-
                                         <% } %>
 
-
                                             <% if(currentPage < totalPages){ %>
-
-                                                <a href="?page=<%= currentPage + 1 %>&search=<%= search || '' %>"
-                                                    class="page-btn">
-                                                    Next
-                                                </a>
-
+                                                <a href="?page=<%= currentPage + 1 %>&search=<%= search || '' %>&status=<%= status || '' %>"
+                                                    class="page-btn">Next</a>
                                                 <% } %>
-
                         </div>
-
                         <% } %>
                 </div>
             </div>
@@ -499,6 +428,42 @@
             © 2026 onemore. All Rights Reserved.
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function handleToggleClick(buttonElement) {
+            const productId = buttonElement.getAttribute('data-product-id');
+            const action = buttonElement.getAttribute('data-action');
+
+            // Read context safely from DOM dataset instead of printing raw strings directly into script execution lines
+            const contextEl = document.getElementById('page-context');
+            const currentPage = contextEl.getAttribute('data-current-page') || '1';
+            const search = contextEl.getAttribute('data-search') || '';
+            const status = contextEl.getAttribute('data-status') || '';
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you really want to ${action} this product?`,
+                icon: 'warning',
+                showCancelButton: true,
+                background: '#0d0d0d',
+                color: '#ffffff',
+                confirmButtonColor: action === 'unlist' ? '#e67e22' : '#2ecc71',
+                cancelButtonColor: '#444444',
+                confirmButtonText: `Yes, ${action} it!`,
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'border border-secondary'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/admin/toggle-product?id=${productId}&page=${currentPage}&search=${encodeURIComponent(search)}&status=${status}`;
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
