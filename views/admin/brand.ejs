@@ -33,7 +33,7 @@
             min-height: 90vh;
         }
 
-        /* --- SIDEBAR (Same as User) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             background-color: var(--card-bg);
             border: 2px solid var(--accent-purple);
@@ -65,7 +65,7 @@
             font-weight: 600;
         }
 
-        /* --- TOP SEARCH BAR (Same as User) --- */
+        /* --- TOP SEARCH BAR --- */
         .search-container {
             background-color: var(--card-bg);
             border: 2px solid var(--accent-purple);
@@ -151,6 +151,7 @@
             font-weight: 600;
             border: none;
             color: black;
+            cursor: pointer;
         }
 
         .btn-add {
@@ -165,7 +166,7 @@
             font-size: 13px;
         }
 
-        /* --- PAGINATION (Same as User) --- */
+        /* --- PAGINATION --- */
         .custom-pagination {
             display: flex;
             justify-content: center;
@@ -212,6 +213,9 @@
 </head>
 
 <body>
+    <div id="page-context" data-current-page="<%= currentPage %>" data-search="<%= search || '' %>">
+    </div>
+
     <div class="dashboard-container container-fluid">
         <div class="row">
             <div class="col-lg-2 pe-lg-4">
@@ -225,8 +229,7 @@
                         <a class="nav-link" href="/admin/users"><i class="bi bi-person"></i> Customers</a>
                         <a class="nav-link" href="/admin/orders"><i class="bi bi-cart"></i> Orders</a>
                         <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                        <a class="nav-link" href="/admin/category"><i class="bi bi-app-indicator"></i>
-                            Category</a>
+                        <a class="nav-link" href="/admin/category"><i class="bi bi-app-indicator"></i> Category</a>
                         <a class="nav-link active" href="/admin/brand"><i class="bi bi-bag"></i> Brand</a>
                         <a class="nav-link" href="/admin/offers"><i class="bi bi-percent"></i> Offers</a>
                         <a class="nav-link" href="/admin/banner"><i class="bi bi-image"></i> Banner</a>
@@ -245,8 +248,7 @@
                             <i class="bi bi-search me-2" style="color: #000;"></i>
                             <input type="text" name="search" placeholder="Search" value="<%= search || '' %>">
                             <% if(search){ %>
-                                <a href="/admin/brand"
-                                    style="color:red; text-decoration:none; font-weight:bold;">×</a>
+                                <a href="/admin/brand" style="color:red; text-decoration:none; font-weight:bold;">×</a>
                                 <% } %>
                         </form>
                     </div>
@@ -280,9 +282,13 @@
                                         <td>
                                             <a href="/admin/editBrand?id=<%= brand._id %>"
                                                 class="btn-edit me-2">Edit</a>
-                                            <a href="/admin/listbrand?id=<%= brand._id %>" class="btn-remove text-decoration-none">
+
+                                            <button type="button" class="btn-remove border-0 text-decoration-none"
+                                                data-brand-id="<%= brand._id %>"
+                                                data-action="<%= brand.isListed ? 'unlist' : 'list' %>"
+                                                onclick="confirmBrandToggle(this)">
                                                 <%= brand.isListed ? 'Unlist' : 'List' %>
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                     <% }) %>
@@ -324,6 +330,42 @@
             © 2026 onemore. All Rights Reserved.
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmBrandToggle(buttonElement) {
+            const brandId = buttonElement.getAttribute('data-brand-id');
+            const action = buttonElement.getAttribute('data-action');
+
+            // Extraction layer to avoid template strings conflict during server engine rendering
+            const contextEl = document.getElementById('page-context');
+            const currentPage = contextEl.getAttribute('data-current-page') || '1';
+            const search = contextEl.getAttribute('data-search') || '';
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you really want to ${action} this brand?`,
+                icon: 'warning',
+                showCancelButton: true,
+                background: '#0d0d0d',
+                color: '#ffffff',
+                confirmButtonColor: action === 'unlist' ? '#e67e22' : '#2ecc71',
+                cancelButtonColor: '#444444',
+                confirmButtonText: `Yes, ${action} it!`,
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'border border-secondary'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Routes cleanly while carrying tracking query strings down path
+                    window.location.href = `/admin/listbrand?id=${brandId}&page=${currentPage}&search=${encodeURIComponent(search)}`;
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
