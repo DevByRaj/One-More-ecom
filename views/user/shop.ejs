@@ -254,10 +254,14 @@
         }
 
         /* Highlight state for active items inside user saved wishlist layout checks */
-        .wishlist-btn.active-wishlist i {
-            color: #ff3e6c !important;
-            font-weight: 900 !important;
-        }
+        .wishlist-btn i{
+    color:#555;
+    transition:0.3s;
+}
+
+.wishlist-btn.active-wishlist i{
+    color:#ff3e6c !important;
+}
 
         .product-info {
             padding: 14px 0;
@@ -745,12 +749,7 @@
                                         );
                                         }
                                         %>
-                                        <button type="button"
-                                            class="wishlist-btn <%= inWishlist ? 'active-wishlist' : '' %>"
-                                            data-product-id="<%= product._id %>" onclick="handleWishlistToggle(this)">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </button>
-
+                                        
                                         <a href="/productDetails?id=<%= product._id %>"
                                             class="text-decoration-none text-dark">
                                             <div class="product-img-wrapper">
@@ -884,23 +883,6 @@
                 parentSection.classList.toggle('collapsed');
             }
 
-            async function handleWishlistToggle(btn) {
-                const productId = btn.dataset.productId;
-                try {
-                    const response = await fetch('/wishlist/add', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ productId })
-                    });
-                    const data = await response.json();
-
-                    if (data.success) {
-                        btn.classList.toggle('active-wishlist');
-                    }
-                } catch (err) {
-                    console.error("Wishlist handling error:", err);
-                }
-            }
         </script>
 </body>
 
