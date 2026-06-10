@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Add Variant</title>
+    <title>Admin - <%= variant ? 'Edit Variant' : 'Add Variant' %>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -137,14 +138,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }.error-message{
-    color:#ff4d4d;
-    font-size:14px;
-    margin-top:10px;
-    display:none;
-}
-
-
+        }
 
         /* --- BUTTONS --- */
         .save-btn {
@@ -169,8 +163,8 @@
         /* --- VALIDATION --- */
         .error-message {
             color: var(--error-red);
-            font-size: 11px;
-            margin-top: 4px;
+            font-size: 13px;
+            margin-top: 6px;
             display: none;
         }
 
@@ -184,15 +178,73 @@
             color: #888;
             margin-top: 40px;
         }
+
+        /* --- FULL PAGE LOADING OVERLAY --- */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loader-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner-custom {
+            width: 55px;
+            height: 55px;
+            border: 4px solid rgba(138, 125, 240, 0.15);
+            border-top: 4px solid var(--accent-purple);
+            border-radius: 50%;
+            animation: spin 0.85s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .loader-text {
+            margin-top: 22px;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.8px;
+            color: #e0e0e0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <div id="loadingOverlay" class="loader-overlay">
+        <div class="spinner-custom"></div>
+        <div class="loader-text">Saving Variant details</div>
+    </div>
+
     <div class="dashboard-container container-fluid">
         <div class="row">
             <div class="col-lg-2 pe-lg-4">
                 <div class="text-center mb-4">
-                    <img src="/images/logo.png" alt="im" style="width: 70px;">
+                    <img src="/images/logo.png" alt="logo" style="width: 70px;">
                 </div>
                 <div class="sidebar">
                     <nav class="nav flex-column">
@@ -214,7 +266,9 @@
 
             <div class="col-lg-10">
                 <div class="header-panel">
-                    <h5 class="mb-0">Add Variant</h5>
+                    <h5 class="mb-0">
+                        <%= variant ? 'Edit Variant' : 'Add Variant' %>
+                    </h5>
                 </div>
 
                 <div class="form-panel">
@@ -224,9 +278,7 @@
 
                         <input type="hidden" name="productId" value="<%= productId %>">
 
-                        <button type="submit" class="save-btn">
-                            SAVE
-                        </button>
+                        <button type="submit" class="save-btn">SAVE</button>
 
                         <div class="form-group-custom">
                             <label for="color">Color</label>
@@ -238,7 +290,6 @@
                                     <%= errors.color %>
                                 </p>
                                 <% } %>
-
                                     <div id="colorError" class="error-message">Please enter a valid color.</div>
                         </div>
 
@@ -252,7 +303,6 @@
                                     <%= errors.stock %>
                                 </p>
                                 <% } %>
-
                                     <div id="stockError" class="error-message">Stock cannot be negative.</div>
                         </div>
 
@@ -276,7 +326,8 @@
                                 <div class="form-group-custom">
                                     <label for="salePrice">Sale Price</label>
                                     <input type="number" id="salePrice" name="salePrice" min="0" class="form-control"
-                                        placeholder="0.00" value="<%= variant?.salePrice || '' %>">
+                                        placeholder="0.00"
+                                        value="<%= variant ? variant.salePrice : oldData?.salePrice || '' %>">
 
                                     <% if(errors?.salePrice){ %>
                                         <p class="text-danger mt-1">
@@ -290,7 +341,7 @@
                         <div id="priceError" class="error-message">Price must be a positive number.</div>
 
                         <div class="mt-4">
-                            <label>Variant Image</label>
+                            <label>Variant Images</label>
                             <div class="image-upload-wrapper">
                                 <% for(let i=0; i < 3; i++) { %>
                                     <div class="img-placeholder" onclick="triggerInput(<%= i %>)">
@@ -317,17 +368,9 @@
                                 </p>
                                 <% } %>
 
-                                    <div id="imageError" class="error-message">Please upload at least one valid image.
-                                    </div>
+                                    <div id="imageError" class="error-message"></div>
                         </div>
 
-                        <div id="imageError" style="
-                                color:#ff4d4d;
-                                font-size:14px;
-                                margin-top:10px;
-                                display:none;
-                            "></div>
-                        
                     </form>
                 </div>
             </div>
@@ -354,40 +397,25 @@
                 // Strict Client-Side MIME-Type checking
                 const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                 if (!validImageTypes.includes(file.type)) {
+                    imageError.textContent = "Only JPG, JPEG, PNG and WEBP image files are allowed.";
+                    imageError.style.display = "block";
+                    input.value = '';
 
-                    const imageError =
-                        document.getElementById(
-                            "imageError"
-                        )
+                    preview.classList.add('d-none');
+                    preview.src = '';
 
-                    imageError.textContent =
-                        "Only JPG, JPEG, PNG and WEBP image files are allowed."
-
-                    imageError.style.display =
-                        "block"
-
-                    input.value = ''
-
-                    preview.classList.add('d-none')
-                    preview.src = ''
-
-                    if (placeholder)
-                        placeholder.classList.remove('d-none')
-
-                    return
+                    if (placeholder) placeholder.classList.remove('d-none');
+                    return;
                 }
 
-                document.getElementById(
-                    "imageError"
-                ).style.display = "none"
+                imageError.style.display = "none";
 
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     preview.src = e.target.result;
                     preview.classList.remove('d-none');
-                    preview.classList.add('existing-variant-image'); // Add this class to bypass validation checks smoothly
+                    preview.classList.add('existing-variant-image'); // Bypass check cleanly
                     if (placeholder) placeholder.classList.add('d-none');
-                    imageError.style.display = 'none';
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -396,13 +424,14 @@
         document.getElementById('variantForm').addEventListener('submit', function (e) {
             let isValid = true;
 
-            // FIX: Added explicit Element ID selections matching logic parameters flawlessly
             const color = document.getElementById('color');
             const stock = document.getElementById('stock');
             const regularPrice = document.getElementById('regularPrice');
+            const salePrice = document.getElementById('salePrice');
             const files = document.querySelectorAll('input[type="file"]');
+            const imageError = document.getElementById('imageError');
 
-            // Color check
+            // Color validation
             if (!color || !color.value.trim()) {
                 if (color) color.classList.add('is-invalid');
                 document.getElementById('colorError').style.display = 'block';
@@ -412,7 +441,7 @@
                 document.getElementById('colorError').style.display = 'none';
             }
 
-            // Stock check
+            // Stock validation
             if (!stock || stock.value === '' || stock.value < 0) {
                 if (stock) stock.classList.add('is-invalid');
                 document.getElementById('stockError').style.display = 'block';
@@ -422,9 +451,10 @@
                 document.getElementById('stockError').style.display = 'none';
             }
 
-            // Price check
-            if (!regularPrice || regularPrice.value === '' || regularPrice.value <= 0) {
+            // Regular Price validation
+            if (!regularPrice || regularPrice.value === '' || Number(regularPrice.value) <= 0) {
                 if (regularPrice) regularPrice.classList.add('is-invalid');
+                document.getElementById('priceError').textContent = "Price must be a positive number.";
                 document.getElementById('priceError').style.display = 'block';
                 isValid = false;
             } else {
@@ -432,18 +462,37 @@
                 document.getElementById('priceError').style.display = 'none';
             }
 
-            // Image validation check
+            // Sale Price vs Regular Price validation matching service structure logic
+            if (salePrice && salePrice.value !== '' && Number(salePrice.value) > Number(regularPrice.value)) {
+                salePrice.classList.add('is-invalid');
+                document.getElementById('priceError').textContent = "Sale price cannot be greater than regular price.";
+                document.getElementById('priceError').style.display = 'block';
+                isValid = false;
+            } else if (salePrice) {
+                salePrice.classList.remove('is-invalid');
+            }
+
+            // Image verification gate
             const existingImages = document.querySelectorAll('.existing-variant-image');
             let hasImage = Array.from(files).some(f => f.files.length > 0);
 
             if (!hasImage && existingImages.length === 0) {
-                document.getElementById('imageError').style.display = 'block';
+                imageError.textContent = "Please upload at least one valid image.";
+                imageError.style.display = 'block';
                 isValid = false;
             } else {
-                document.getElementById('imageError').style.display = 'none';
+                // Ensure text is clean if validation parameters clear up
+                if (imageError.textContent === "Please upload at least one valid image.") {
+                    imageError.style.display = 'none';
+                }
             }
 
-            if (!isValid) e.preventDefault();
+            // Execute interface block overlay transitions conditionally
+            if (!isValid) {
+                e.preventDefault();
+            } else {
+                document.getElementById('loadingOverlay').classList.add('show');
+            }
         });
     </script>
 </body>
