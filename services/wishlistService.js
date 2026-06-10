@@ -3,13 +3,13 @@ import Product from "../models/productModel.js"
 import Variant from "../models/variantModel.js";
 
 
-export const addToWiishlist = async(userId, data) =>{
+export const addToWiishlist = async (userId, data) => {
 
-    const{productId, variantId} = data
+    const {productId, variantId} = data
 
     const product = await Product.findById(productId)
 
-    if(!product || !product.isListed){
+    if (!product || !product.isListed) {
         return {
             success: false,
             message: 'Product unavailable'
@@ -18,8 +18,8 @@ export const addToWiishlist = async(userId, data) =>{
 
     const variant = await Variant.findById(variantId)
 
-    if(!variant || !variant.isListed){
-        return{
+    if (!variant || !variant.isListed) {
+        return {
             success: false,
             message: "Variant unavailable"
         }
@@ -27,18 +27,18 @@ export const addToWiishlist = async(userId, data) =>{
 
     let wishlist = await Wishlist.findOne({userId})
 
-    if(!wishlist){
+    if (!wishlist) {
 
         wishlist = new Wishlist({
-            userId, 
+            userId,
             products: []
         })
     }
 
-    const existingProduct = await wishlist.products.find( item => item.variantId.toString() === variantId)
+    const existingProduct = await wishlist.products.find(item => item.variantId.toString() === variantId)
 
-    if(existingProduct){
-        return{
+    if (existingProduct) {
+        return {
             success: false,
             message: "Already in wishlist"
         }
@@ -51,23 +51,41 @@ export const addToWiishlist = async(userId, data) =>{
 
     await wishlist.save()
 
-    return{
+    return {
         success: true
     }
 }
 
-export const getWishlist = async(userId) =>{
+export const getWishlist = async (userId) => {
 
-    return await Wishlist.findOne({
+    const wishlist = await Wishlist.findOne({
         userId
-    }).populate("products.productId").populate("products.variantId")
+    })
+        .populate("products.productId")
+        .populate("products.variantId")
+
+    if (wishlist) {
+
+        const validItems = wishlist.products.filter(
+            item => item.productId && item.variantId
+        )
+
+        if (validItems.length !== wishlist.products.length) {
+
+            wishlist.products = validItems
+
+            await wishlist.save()
+        }
+    }
+
+    return wishlist
 }
 
-export const removeWishlistitem = async (userId, wishlistItemId) =>{
+export const removeWishlistitem = async (userId, wishlistItemId) => {
 
     await Wishlist.updateOne({userId}, {
-        $pull:{
-            products:{_id: wishlistItemId}
+        $pull: {
+            products: {_id: wishlistItemId}
         }
     })
 }
