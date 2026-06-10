@@ -168,6 +168,11 @@
             font-weight: 600;
             font-size: 14px;
             border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .footer-text {
@@ -197,6 +202,58 @@
             overflow: hidden;
             background-color: #1b1b1b;
             border-radius: 8px;
+        }
+
+        /* --- FULL PAGE LOADING OVERLAY (MATCHING VARIANT PAGE) --- */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loader-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner-custom {
+            width: 55px;
+            height: 55px;
+            border: 4px solid rgba(138, 125, 240, 0.15);
+            border-top: 4px solid var(--accent-purple);
+            border-radius: 50%;
+            animation: spin 0.85s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .loader-text {
+            margin-top: 22px;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.8px;
+            color: #e0e0e0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* ── RESPONSIVE ─────────────────────────────────────── */
@@ -308,6 +365,12 @@
 </head>
 
 <body>
+
+    <div id="loadingOverlay" class="loader-overlay">
+        <div class="spinner-custom"></div>
+        <div class="loader-text">Saving product details...</div>
+    </div>
+
     <div class="dashboard-container container-fluid">
         <div class="row">
             <div class="col-lg-2 pe-lg-4 mb-3 mb-lg-0">
@@ -334,7 +397,8 @@
                             <a class="nav-link" href="/admin/banner"><i class="bi bi-image"></i> Banner</a>
                             <a class="nav-link" href="/admin/sales-report"><i class="bi bi-bar-chart"></i> Sales
                                 Report</a>
-                            <a class="nav-link mt-4" href="/admin/logout"><i class="bi bi-power"></i> Logout</a>
+                            <a class="nav-link mt-4" href="/admin/logout" style="color: #ff4d4d;"><i
+                                    class="bi bi-power"></i> Logout</a>
                         </nav>
                     </div>
                 </div>
@@ -469,8 +533,10 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-3 mt-5">
-                                    <button type="submit" class="save-btn">
-                                        <%= isEdit ? 'UPDATE' : 'SAVE' %>
+                                    <button type="submit" class="save-btn" id="submitBtn">
+                                        <span id="btnText">
+                                            <%= isEdit ? 'UPDATE' : 'SAVE' %>
+                                        </span>
                                     </button>
                                 </div>
                             </div>
@@ -559,58 +625,43 @@
     const cropModal = new bootstrap.Modal(cropModalEl);
     const cropImageInstance = document.getElementById("cropImage");
     const cropBtn = document.getElementById("cropBtn");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+
     let croppedFileBlob = null;
 
     fileInput.addEventListener("change", function () {
         const file = this.files[0];
         if (file) {
-            // Strict MIME-type checking matching backend rules perfectly
-            const allowedTypes = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp'
-];
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-if (!allowedTypes.includes(file.type)) {
-
-    this.value = '';
-
-    fileName.innerText = '';
-
-    imageError.textContent =
-        'Only JPG, JPEG, PNG and WEBP images are allowed.';
-
-    imageError.style.display = 'block';
-
-    return;
-}
+            if (!allowedTypes.includes(file.type)) {
+                this.value = '';
+                fileName.innerText = '';
+                imageError.textContent = 'Only JPG, JPEG, PNG and WEBP images are allowed.';
+                imageError.style.display = 'block';
+                return;
+            }
 
             imageError.style.display = 'none';
             fileName.innerText = file.name;
             const reader = new FileReader();
             reader.onload = function (e) {
-                // Load target base64 image asset source inside modal engine
                 cropImageInstance.src = e.target.result;
-
-                // Show modal container
                 cropModal.show();
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // Initialize Cropper when modal finishes animating open
     cropModalEl.addEventListener('shown.bs.modal', function () {
         cropper = new Cropper(cropImageInstance, {
-            aspectRatio: 1, // High quality perfect 1:1 ratio block geometry layout
-            viewMode: 2,    // Contain product image fully within viewport canvas grids
+            aspectRatio: 1,
+            viewMode: 2,
             background: false,
             autoCropArea: 1
         });
     });
 
-    // Destroy cropper reference mapping on close routine cleanup
     cropModalEl.addEventListener('hidden.bs.modal', function () {
         if (cropper) {
             cropper.destroy();
@@ -618,11 +669,9 @@ if (!allowedTypes.includes(file.type)) {
         }
     });
 
-    // Execute crop slicing operation and map result block data elements
     cropBtn.addEventListener("click", function () {
         if (!cropper) return;
 
-        // Extract higher output canvas dimensions for clear product visuals
         const canvas = cropper.getCroppedCanvas({
             width: 600,
             height: 600,
@@ -632,65 +681,60 @@ if (!allowedTypes.includes(file.type)) {
 
         canvas.toBlob(function (blob) {
             croppedFileBlob = blob;
-
-            // Assign result back down into local inline preview thumbnail block
             previewImage.src = URL.createObjectURL(blob);
             previewImage.style.display = "inline-block";
-
-            // Hide the modal cleanly
             cropModal.hide();
         }, 'image/jpeg', 0.90);
     });
 
-    // Intercept form dispatch routine to append raw sliced cropped blob binary context
+    // Intercept form dispatch routine
     document.getElementById("productForm").addEventListener("submit", function (e) {
-        // Fallback file type validation gate check
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
             if (!allowedTypes.includes(file.type)) {
-
                 e.preventDefault();
-
-                imageError.textContent =
-                    'Only JPG, JPEG, PNG and WEBP images are allowed.';
-
-                imageError.style.display =
-                    'block';
-
+                imageError.textContent = 'Only JPG, JPEG, PNG and WEBP images are allowed.';
+                imageError.style.display = 'block';
                 return;
             }
         }
 
-        if (croppedFileBlob) {
-            e.preventDefault(); // Pause pipeline execution chain
-
-            const formElement = this;
-            const formData = new FormData(formElement);
-
-            // Replace uncropped 'productImage' key context payload mapping with cropped layout file structure
-            formData.delete("productImage");
-            formData.append("productImage", croppedFileBlob, fileName.innerText || "cropped-product.jpg");
-
-            // Dispatch payload context downstream to route controller destination asynchronously
-            fetch(formElement.action, {
-                method: "POST",
-                body: formData
-            })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
-                        return response.text().then(text => {
-                            // If backend triggers error rules, swap display content window to re-render errors
-                            document.open();
-                            document.write(text);
-                            document.close();
-                        });
-                    }
-                })
-                .catch(err => console.error("Dispatch multi-part boundary execution error: ", err));
+        // Trigger full page variant overlay for fallback standard post paths
+        if (!croppedFileBlob) {
+            loadingOverlay.classList.add('show');
+            return;
         }
+
+        // Handle async boundary delivery if custom cropped blob workspace is selected
+        e.preventDefault();
+        loadingOverlay.classList.add('show');
+
+        const formElement = this;
+        const formData = new FormData(formElement);
+
+        formData.delete("productImage");
+        formData.append("productImage", croppedFileBlob, fileName.innerText || "cropped-product.jpg");
+
+        fetch(formElement.action, {
+            method: "POST",
+            body: formData
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.text().then(text => {
+                        document.open();
+                        document.write(text);
+                        document.close();
+                    });
+                }
+            })
+            .catch(err => {
+                console.error("Dispatch multi-part boundary execution error: ", err);
+                loadingOverlay.classList.remove('show'); // Remove freeze layout if network stream crashes
+            });
     });
 </script>
 
