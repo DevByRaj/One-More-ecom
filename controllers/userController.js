@@ -12,6 +12,7 @@ import Variant from "../models/variantModel.js"
 import Brand from "../models/brandModel.js"
 import {getShopProducts, getProductDetailsService} from "../services/productService.js"
 import Cart from "../models/cartModel.js"
+import {getWishlist} from "../services/wishlistService.js"
 
 
 export const getSignup = (req, res) => {
@@ -995,11 +996,23 @@ export const getShop = async (req, res) => {
 
     const shopData = await getShopProducts(req.query)
 
+    let wishlist = []
+
+    if(req.session.user){
+
+      const userWishlist = await getWishlist(req.session.user)
+
+      if(userWishlist){
+
+        wishlist = userWishlist.products.map( item => item.productId?._id.toString())
+      }
+    }
+
     res.render("user/shop", {
-      ...shopData,
-      query: req.query
+      ...shopData, query: req.query, wishlist
     })
-  } catch (error) {
+  } catch(error){
+
     console.log(error)
 
     res.redirect('/')

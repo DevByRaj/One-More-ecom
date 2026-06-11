@@ -497,6 +497,8 @@
                     </div>
 
                     <% wishlist.products.forEach(item=> { %>
+                    
+                        <% if(item.productId && item.variantId){ %>
                         <div class="wishlist-item-row" data-wishlist-row="<%= item._id %>">
 
                             <div class="product-meta-block">
@@ -531,6 +533,7 @@
                             </div>
 
                         </div>
+                        <% } %>
                         <% }) %>
 
                 </div>

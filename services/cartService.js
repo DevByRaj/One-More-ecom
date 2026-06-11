@@ -95,7 +95,7 @@ export const addProductToCart = async (userId, cartData) => {
 
 export const getUserCart = async(userId) => {
 
-        const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
+        let cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
         if(cart){
             
@@ -106,7 +106,7 @@ export const getUserCart = async(userId) => {
 
                 await cart.save()
 
-               const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
+                cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
             }
         }
 
