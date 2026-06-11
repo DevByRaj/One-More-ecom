@@ -31,7 +31,7 @@ import {
   removeCartItem
 } from "../controllers/cartController.js"
 
-import { addWishlist, getWishlistPage, removeWishlistProduct } from "../controllers/wishlistController.js";
+import { addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist } from "../controllers/wishlistController.js";
 
 
 const router = express.Router()
@@ -124,5 +124,6 @@ router.get("/wishlist", isUserLoggedIn, getWishlistPage)
 
 router.post("/wishlist/remove/:id", isUserLoggedIn, removeWishlistProduct)
 
+router.post("/wishlist/toggle", isUserLoggedIn, toggleWishlist)
 
 export default router

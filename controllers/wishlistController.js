@@ -1,4 +1,4 @@
-import { addToWiishlist, getWishlist, removeWishlistitem } from "../services/wishlistService.js";
+import { addToWiishlist, getWishlist, removeWishlistitem, toggleWishlistService } from "../services/wishlistService.js";
 
 
 export const addWishlist = async(req, res) =>{
@@ -63,5 +63,24 @@ export const removeWishlistProduct = async(req, res) =>{
         return res.status(500).json({
             success: false
         })
+    }
+}
+
+export const toggleWishlist = async(req, res) =>{
+    try {
+
+        const userId = req.session.user
+
+        const result =  await toggleWishlistService(userId, req.body)
+
+        return res.json(result)
+        
+    } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+        success: false
+    })
+    
     }
 }

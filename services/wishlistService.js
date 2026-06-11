@@ -52,7 +52,9 @@ export const addToWiishlist = async (userId, data) => {
     await wishlist.save()
 
     return {
-        success: true
+        success: true,
+        action: "added",
+        message: "Product added to wishlist"
     }
 }
 
@@ -88,4 +90,49 @@ export const removeWishlistitem = async (userId, wishlistItemId) => {
             products: {_id: wishlistItemId}
         }
     })
+}
+
+export const toggleWishlistService = async (userId, data) => {
+
+    const {productId, variantId} = data
+
+    let wishlist = await Wishlist.findOne({userId})
+
+    if (!wishlist) {
+
+        wishlist = new Wishlist({
+            userId,
+            products: []
+        })
+    }
+
+    const existingItem = wishlist.products.find(
+        item => item.variantId.toString() === variantId
+    )
+
+    if (existingItem) {
+
+        wishlist.products.pull(existingItem._id)
+
+        await wishlist.save()
+
+        return {
+            success: true,
+            action: "removed",
+            message: "Product removed from wishlist"
+        }
+    }
+
+    wishlist.products.push({
+        productId,
+        variantId
+    })
+
+    await wishlist.save()
+
+    return {
+        success: true,
+        action: "added",
+        message: "Product added to wishlist"
+    }
 }
