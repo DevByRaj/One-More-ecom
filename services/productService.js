@@ -39,7 +39,8 @@ export const getShopProducts = async (queryParams) => {
     if (color) {
 
         const variants = await Variant.find({
-            variantName: color
+            variantName: color,
+            isListed: true
         })
 
         const colorProductIds = variants.map(v => v.productId.toString())
@@ -49,7 +50,9 @@ export const getShopProducts = async (queryParams) => {
 
     if (minPrice || maxPrice) {
 
-        let variantQuery = {}
+        let variantQuery = {
+            isListed: true
+        }
 
         if (minPrice) {
 
@@ -116,11 +119,13 @@ export const getShopProducts = async (queryParams) => {
     for (let product of products) {
 
         const firstVariant = await Variant.findOne({
-            productId: product._id
+            productId: product._id, isListed: true
         }).sort({createdAt: 1})
 
         product.variant = firstVariant
     }
+
+    products = products.filter(product => product.variant)
 
     if(sortOption === "brand-a-z"){
         products.sort((a,b) =>
@@ -156,7 +161,7 @@ export const getShopProducts = async (queryParams) => {
 
     const brands = await Brand.find({isListed: true})
 
-    const colors = await Variant.distinct("variantName")
+    const colors = await Variant.distinct("variantName", {isListed: true})
 
     return {
         products: paginatedProducts,
@@ -177,7 +182,8 @@ export const getProductDetailsService = async (productId) => {
     }
 
     const variants = await Variant.find({
-        productId: product._id
+        productId: product._id,
+        isListed: true
     })
 
     const relatedProducts = await Product.find({

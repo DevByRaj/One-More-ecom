@@ -22,7 +22,7 @@ export const addProductToCart = async (userId, cartData) => {
 
         const variant = await Variant.findById(variantId)
 
-        if(!variant){
+        if(!variant || !variant.isListed){
 
             return {
                 success: false,
@@ -99,7 +99,7 @@ export const getUserCart = async(userId) => {
 
         if(cart){
             
-            const validItems = cart.items.filter(item => item.productId && item.variantId)
+            const validItems = cart.items.filter(item => item.productId && item.productId.isListed && item.variantId && item.variantId.isListed)
 
             if(validItems.length !== cart.items.length){
                 cart.items = validItems
@@ -137,10 +137,11 @@ export const updateCartItemQuantity = async (userId, data) =>{
 
         const variant = await Variant.findById(item.variantId)
 
-        if(!variant){
+    if (!variant || !variant.isListed){
 
             return {
-                success: false
+                success: false,
+                message: "Variant unavailable"
             }
         }
 
