@@ -365,6 +365,11 @@
         .footer-logo {
             text-align: center;
             margin-bottom: 30px;
+            display: block;
+        }
+
+        .footer-logo img {
+            height: 50px;
         }
 
         .footer-head {
@@ -503,7 +508,6 @@
 </head>
 
 <body>
-
     <% const selectedCategories=query.category ? (Array.isArray(query.category) ? query.category : [query.category]) :
         []; const selectedBrands=query.brand ? (Array.isArray(query.brand) ? query.brand : [query.brand]) : []; const
         selectedColors=query.color ? (Array.isArray(query.color) ? query.color : [query.color]) : []; const
@@ -568,7 +572,7 @@
                     <input type="hidden" name="search" value="<%= query.search || '' %>">
                     <input type="hidden" name="sort" value="<%= query.sort || '' %>">
 
-                    <div class="filter-section">
+                    <div class="filter-section <%= selectedCategories.length > 0 ? '' : 'collapsed' %>">
                         <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
                             Category <i class="fa-solid fa-chevron-down small"></i>
                         </div>
@@ -587,7 +591,7 @@
                         </div>
                     </div>
 
-                    <div class="filter-section">
+                    <div class="filter-section <%= selectedBrands.length > 0 ? '' : 'collapsed' %>">
                         <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
                             Brand <i class="fa-solid fa-chevron-down small"></i>
                         </div>
@@ -606,7 +610,7 @@
                         </div>
                     </div>
 
-                    <div class="filter-section">
+                    <div class="filter-section <%= (query.minPrice || query.maxPrice) ? '' : 'collapsed' %>">
                         <div class="filter-header" onclick="toggleFilterDropdown(this)">
                             Price <i class="fa-solid fa-chevron-down small"></i>
                         </div>
@@ -623,7 +627,7 @@
                         </div>
                     </div>
 
-                    <div class="filter-section">
+                    <div class="filter-section <%= selectedColors.length > 0 ? '' : 'collapsed' %>">
                         <div class="filter-header mb-3" onclick="toggleFilterDropdown(this)">
                             Color <i class="fa-solid fa-chevron-down small"></i>
                         </div>
@@ -642,7 +646,7 @@
                         </div>
                     </div>
 
-                    <div class="filter-section collapsed">
+                    <div class="filter-section <%= selectedPlaytimes.length > 0 ? '' : 'collapsed' %>">
                         <div class="filter-header" onclick="toggleFilterDropdown(this)">
                             Audio Playtime <i class="fa-solid fa-chevron-down small"></i>
                         </div>
@@ -875,7 +879,6 @@
                         const result = await response.json();
 
                         if (result.success) {
-                            // 1. Toggle Heart Icon Active UI State Classes instantly
                             const isAdding = (result.action === 'added' || result.message.toLowerCase().includes('add'));
 
                             if (isAdding) {
@@ -886,14 +889,12 @@
                                 heartIcon.className = "fa-regular fa-heart";
                             }
 
-                            // 2. Dynamic counter bubble update logic with accurate mathematical fallback subtraction
                             const wishlistContainer = document.querySelector('a[href="/wishlist"] > div');
 
                             if (wishlistContainer) {
                                 let badge = wishlistContainer.querySelector('span');
                                 let newCount = result.wishlistCount !== undefined ? parseInt(result.wishlistCount) : null;
 
-                                // Fallback math protection in case backend doesn't send the updated count object back
                                 if (newCount === null && badge) {
                                     const currentCount = parseInt(badge.textContent) || 0;
                                     newCount = isAdding ? currentCount + 1 : currentCount - 1;
@@ -913,7 +914,6 @@
                                 }
                             }
 
-                            // 3. Render lightweight toast notification setup
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: 'top-end',
