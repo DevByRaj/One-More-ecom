@@ -69,7 +69,7 @@ export const getWishlist = async (userId) => {
     if (wishlist) {
 
         const validItems = wishlist.products.filter(
-            item => item.productId && item.variantId
+            item => item.productId && item.productId.isListed && item.variantId && item.variantId.isListed
         )
 
         if (validItems.length !== wishlist.products.length) {
@@ -95,6 +95,17 @@ export const removeWishlistitem = async (userId, wishlistItemId) => {
 export const toggleWishlistService = async (userId, data) => {
 
     const {productId, variantId} = data
+
+    const product = await Product.findById(productId)
+
+    const variant = await Variant.findById(variantId)
+
+    if (!product || !product.isListed || !variant || !variant.isListed) {
+        return {
+            success: false,
+            message: "Product unavailable"
+        }
+    }
 
     let wishlist = await Wishlist.findOne({userId})
 
