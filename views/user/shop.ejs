@@ -893,7 +893,7 @@
 
                             if (wishlistContainer) {
                                 let badge = wishlistContainer.querySelector('span');
-                                let newCount = result.wishlistCount !== undefined ? parseInt(result.wishlistCount) : null;
+                                let newCount = parseInt(result.wishlistCount || 0);
 
                                 if (newCount === null && badge) {
                                     const currentCount = parseInt(badge.textContent) || 0;

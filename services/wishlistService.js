@@ -127,11 +127,6 @@ export const toggleWishlistService = async (userId, data) => {
 
         await wishlist.save()
 
-        return {
-            success: true,
-            action: "removed",
-            message: "Product removed from wishlist"
-        }
     }
 
     wishlist.products.push({
@@ -144,6 +139,7 @@ export const toggleWishlistService = async (userId, data) => {
     return {
         success: true,
         action: "added",
-        message: "Product added to wishlist"
+        message: "Product added to wishlist",
+        wishlistCount: wishlist.products.length
     }
 }

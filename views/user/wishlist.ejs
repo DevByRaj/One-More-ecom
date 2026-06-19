@@ -607,6 +607,22 @@
                             showToast("Item removed from wishlist", "success");
                         }
 
+                        const badge = document.querySelector(
+                            'a[href="/wishlist"] span'
+                        );
+
+                        if (badge) {
+
+                            if (data.wishlistCount > 0) {
+
+                                badge.textContent = data.wishlistCount;
+
+                            } else {
+
+                                badge.remove();
+                            }
+                        }
+
                         // If no rows remain under view wrapper, swap UI cleanly with empty state block
                         const remainingRows = document.querySelectorAll(".wishlist-item-row");
                         if (remainingRows.length === 0) {
@@ -645,7 +661,32 @@
 
                         wishlistRow.remove();
                         // Call removal from wishlist after adding to cart
-                        await fetch(`/wishlist/remove/${wishlistId}`, { method: "POST" });
+                        const removeResponse =
+                            await fetch(
+                                `/wishlist/remove/${wishlistId}`,
+                                { method: "POST" }
+                            );
+
+                        const removeData =
+                            await removeResponse.json();
+
+                        const badge =
+                            document.querySelector(
+                                'a[href="/wishlist"] span'
+                            );
+
+                        if (badge) {
+
+                            if (removeData.wishlistCount > 0) {
+
+                                badge.textContent =
+                                    removeData.wishlistCount;
+
+                            } else {
+
+                                badge.remove();
+                            }
+                        }
 
                         showToast("Product added to Cart successfully!", "success");
 

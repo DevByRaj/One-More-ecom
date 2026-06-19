@@ -5,10 +5,7 @@ import {
     removeProductFromCart
 } from "../services/cartService.js"
 
-export const addToCart = async (
-    req,
-    res
-) => {
+export const addToCart = async (req,res) => {
 
     try {
 
@@ -47,10 +44,7 @@ export const addToCart = async (
     }
 }
 
-export const getCart = async (
-    req,
-    res
-) => {
+export const getCart = async (req,res) => {
 
     try {
 
