@@ -53,8 +53,11 @@ export const removeWishlistProduct = async(req, res) =>{
 
         await removeWishlistitem(userId, req.params.id)
 
+        const wishlist = await getWishlist(userId)
+
         return res.json({
-            success: true
+            success: true,
+            wishlistCount: wishlist ? wishlist.products.length : 0
         })
         
     } catch (error) {
