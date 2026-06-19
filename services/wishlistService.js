@@ -116,6 +116,12 @@ export const toggleWishlistService = async (userId, data) => {
 
         await wishlist.save()
 
+        return{
+            success: true,
+            action: "removed",
+            message: "Product removed from wishlist",
+            wishlistCount: wishlist.products.length
+        }
     }
 
     wishlist.products.push({
