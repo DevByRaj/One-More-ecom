@@ -95,7 +95,7 @@ export const addProductToCart = async (userId, cartData) => {
 
 export const getUserCart = async(userId) => {
 
-        let cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
+    let cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId").populate("savedItems.productId").populate("savedItems.variantId")
 
         if(cart){
             
@@ -106,7 +106,7 @@ export const getUserCart = async(userId) => {
 
                 await cart.save()
 
-                cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
+        cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId").populate("savedItems.productId").populate("savedItems.variantId")
             }
         }
 
@@ -189,3 +189,89 @@ export const removeProductFromCart = async (userId, cartItemId) => {
         {userId},
         { $pull: {items: {_id: cartItemId}}}
     )}
+
+export const saveItemForLater = async(userId, cartItemId) =>{
+
+    const cart = await Cart.findOne({userId})
+
+    if(!cart){
+        return {success: false}
+    }
+
+    const item = cart.items.id(cartItemId)
+
+    if(!item){
+        return {success: false}
+    }
+
+    cart.savedItems.push({
+        productId: item.productId,
+        variantId: item.variantId,
+        quantity: item.quantity
+    })
+
+    cart.items.pull(item._id)
+
+    await cart.save()
+
+    return {success: true}
+}
+
+export const moveToCart = async(userId, savedItemsId) =>{
+
+    const cart = await Cart.findOne({userId})
+
+    if(!cart){
+        return{ success: false,
+            message: "Cart not found"
+        }
+    }
+
+    const item = cart.savedItems.id(savedItemsId)
+
+    if(!item){
+        return{
+            success: false,
+            message: "Item not found"
+        }
+    }
+
+    const product = await Product.findById(item.productId)
+
+    const variant = await Variant.findById(item.variantId)
+
+    if(!product || !product.isListed || !variant || !variant.isListed){
+        return {
+            success: false,
+            message: "Product unavailable"
+        }
+    }
+
+    if(variant.stock <= 0){
+        return{
+            success: false,
+            message: "Currently out of stock"
+        }
+    }
+    const existingItem = cart.items.find(cartItem => cartItem.variantId.toString() === item.variantId.toString())
+
+    if(existingItem){
+        existingItem.quantity += item.quantity
+    } else{
+
+        cart.items.push({
+            productId: item.productId,
+            variantId: item.variantId,
+            quantity: item.quantity
+        })
+    }
+
+    cart.savedItems.pull(item._id)
+
+    await cart.save()
+
+    return{
+        success: true,
+        message: "Product added to cart"
+    }
+}

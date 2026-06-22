@@ -28,7 +28,9 @@ import {
   addToCart,
   getCart,
   updateCartQuantity,
-  removeCartItem
+  removeCartItem,
+  saveForLater,
+  moveSavedItemToCart
 } from "../controllers/cartController.js"
 
 import { addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist } from "../controllers/wishlistController.js";
@@ -125,5 +127,9 @@ router.get("/wishlist", isUserLoggedIn, getWishlistPage)
 router.post("/wishlist/remove/:id", isUserLoggedIn, removeWishlistProduct)
 
 router.post("/wishlist/toggle", isUserLoggedIn, toggleWishlist)
+
+router.post("/cart/save-for-later/:id", isUserLoggedIn, saveForLater)
+
+router.post("/cart/move-to-cart/:id", isUserLoggedIn,moveSavedItemToCart)
 
 export default router

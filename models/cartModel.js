@@ -25,7 +25,23 @@ const cartSchema = new mongoose.Schema({
             type: Number,
             default: 1
         }
+    }],
+
+    savedItems:[{
+        productId:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        variantId:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Variant"
+        },
+        quantity:{
+            type: Number,
+            default: 1
+        }        
     }]
+
 }, {timestamps: true})
 
 export default mongoose.model("cart", cartSchema)
