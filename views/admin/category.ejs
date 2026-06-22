@@ -70,7 +70,7 @@
             background-color: var(--card-bg);
             border: 2px solid var(--accent-purple);
             border-radius: 20px;
-            padding: 10px 25px;
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -155,15 +155,24 @@
         }
 
         .btn-add {
-            border: 1px solid white;
-            color: white;
-            background: transparent;
+            border: 1px solid var(--accent-purple);
+            color: #000;
+            background-color: var(--accent-purple);
             padding: 8px 20px;
             border-radius: 12px;
-            margin-top: 20px;
+            font-weight: 600;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
         }
 
         /* --- PAGINATION --- */
@@ -244,15 +253,21 @@
                 <div class="search-container">
                     <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">Category</h4>
 
-                    <div class="search-box">
-                        <form action="/admin/category" method="GET" class="d-flex align-items-center w-100">
-                            <i class="bi bi-search me-2" style="color: #000;"></i>
-                            <input type="text" name="search" placeholder="Search" value="<%= locals.search || '' %>">
-                            <% if(locals.search){ %>
-                                <a href="/admin/category"
-                                    style="color:red; text-decoration:none; font-weight:bold;">×</a>
-                                <% } %>
-                        </form>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-box">
+                            <form action="/admin/category" method="GET" class="d-flex align-items-center w-100">
+                                <i class="bi bi-search me-2" style="color: #000;"></i>
+                                <input type="text" name="search" placeholder="Search"
+                                    value="<%= locals.search || '' %>">
+                                <% if(locals.search){ %>
+                                    <a href="/admin/category"
+                                        style="color:red; text-decoration:none; font-weight:bold;">×</a>
+                                    <% } %>
+                            </form>
+                        </div>
+                        <a href="/admin/addCategory" class="btn-add">
+                            <i class="bi bi-plus-lg"></i> Add Category
+                        </a>
                     </div>
                 </div>
 
@@ -306,8 +321,6 @@
                         </tbody>
                     </table>
 
-                    <a href="/admin/addCategory" class="btn-add">Add new Category</a>
-
                     <% if (totalPages> 1) { %>
                         <div class="custom-pagination">
                             <% if (currentPage> 1) { %>
@@ -316,7 +329,7 @@
                                 <% } %>
 
                                     <% for(let i=1; i <=totalPages; i++) { %>
-                                        <a href="?page=<%= i %>&search=<%= locals.search || '' %>"
+                                        <a href="?page=<%= i %>&search=locals.search || '' %>"
                                             class="page-num <%= currentPage === i ? 'active' : '' %>">
                                             <%= i %>
                                         </a>
@@ -346,7 +359,6 @@
             const action = buttonElement.getAttribute('data-action');
             const targetForm = document.getElementById(`form-toggle-${categoryId}`);
 
-            // Fetch pagination state safely out of the DOM markup layout template 
             const contextEl = document.getElementById('page-context');
             const currentPage = contextEl.getAttribute('data-current-page') || '1';
             const search = contextEl.getAttribute('data-search') || '';
@@ -367,7 +379,6 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Update form action string to append page/search query state before submission
                     targetForm.action = `/admin/listCategory?id=${categoryId}&page=${currentPage}&search=${encodeURIComponent(search)}`;
                     targetForm.submit();
                 }

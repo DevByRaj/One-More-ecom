@@ -70,7 +70,7 @@
             background-color: var(--card-bg);
             border: 2px solid var(--accent-purple);
             border-radius: 20px;
-            padding: 10px 25px;
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -155,15 +155,24 @@
         }
 
         .btn-add {
-            border: 1px solid white;
-            color: white;
-            background: transparent;
+            border: 1px solid var(--accent-purple);
+            color: #000;
+            background-color: var(--accent-purple);
             padding: 8px 20px;
             border-radius: 12px;
-            margin-top: 20px;
+            font-weight: 600;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
         }
 
         /* --- PAGINATION --- */
@@ -243,14 +252,21 @@
                 <div class="search-container">
                     <h4 class="mb-0" style="font-weight: 400; letter-spacing: 1px;">Brand</h4>
 
-                    <div class="search-box">
-                        <form action="/admin/brand" method="GET" class="d-flex align-items-center w-100">
-                            <i class="bi bi-search me-2" style="color: #000;"></i>
-                            <input type="text" name="search" placeholder="Search" value="<%= search || '' %>">
-                            <% if(search){ %>
-                                <a href="/admin/brand" style="color:red; text-decoration:none; font-weight:bold;">×</a>
-                                <% } %>
-                        </form>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="search-box">
+                            <form action="/admin/brand" method="GET" class="d-flex align-items-center w-100">
+                                <i class="bi bi-search me-2" style="color: #000;"></i>
+                                <input type="text" name="search" placeholder="Search" value="<%= search || '' %>">
+                                <% if(search){ %>
+                                    <a href="/admin/brand"
+                                        style="color:red; text-decoration:none; font-weight:bold;">×</a>
+                                    <% } %>
+                            </form>
+                        </div>
+                        <!-- Relocated Add Brand Button -->
+                        <a href="/admin/addBrand" class="btn-add">
+                            <i class="bi bi-plus-lg"></i> Add Brand
+                        </a>
                     </div>
                 </div>
 
@@ -300,8 +316,6 @@
                         </tbody>
                     </table>
 
-                    <a href="/admin/addBrand" class="btn-add">Add new Brand</a>
-
                     <% if (totalPages> 1) { %>
                         <div class="custom-pagination">
                             <% if (currentPage> 1) { %>
@@ -339,7 +353,6 @@
             const brandId = buttonElement.getAttribute('data-brand-id');
             const action = buttonElement.getAttribute('data-action');
 
-            // Extraction layer to avoid template strings conflict during server engine rendering
             const contextEl = document.getElementById('page-context');
             const currentPage = contextEl.getAttribute('data-current-page') || '1';
             const search = contextEl.getAttribute('data-search') || '';
@@ -360,7 +373,6 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Routes cleanly while carrying tracking query strings down path
                     window.location.href = `/admin/listbrand?id=${brandId}&page=${currentPage}&search=${encodeURIComponent(search)}`;
                 }
             });
