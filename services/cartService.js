@@ -186,13 +186,5 @@ export const removeProductFromCart = async (userId, cartItemId) => {
     await Cart.updateOne(
 
         {userId},
-
-        {
-            $pull: {
-                items: {
-                    _id: cartItemId
-                }
-            }
-        }
-    )
-    }
+        { $pull: {items: {_id: cartItemId}}}
+    )}
