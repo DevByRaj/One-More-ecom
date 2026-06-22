@@ -118,11 +118,14 @@ export const getShopProducts = async (queryParams) => {
 
     for (let product of products) {
 
-        const firstVariant = await Variant.findOne({
-            productId: product._id, isListed: true
-        }).sort({createdAt: 1})
+        const variants = await Variant.find({
+            productId: product._id,
+            isListed: true
+        })
 
-        product.variant = firstVariant
+        product.variant = variants[0]
+
+        product.isOutOfStock = variants.every(v => v.stock <=0)
     }
 
     products = products.filter(product => product.variant)
