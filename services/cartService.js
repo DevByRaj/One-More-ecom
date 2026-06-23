@@ -95,18 +95,21 @@ export const addProductToCart = async (userId, cartData) => {
 
 export const getUserCart = async(userId) => {
 
-    let cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId").populate("savedItems.productId").populate("savedItems.variantId")
+    let cart = await Cart.findOne({userId}).populate({path: "items.productId", populate:[{path: "brand"}, {path: "category"}]}).populate("items.variantId").populate("savedItems.productId").populate("savedItems.variantId")
 
         if(cart){
             
-            const validItems = cart.items.filter(item => item.productId && item.productId.isListed && item.variantId && item.variantId.isListed)
+            const validItems = cart.items.filter(item => item.productId && item.productId.isListed && 
+                item.productId.brand && item.productId.brand.isListed &&
+                item.productId.category && item.productId.category.isListed &&
+                item.variantId && item.variantId.isListed)
 
             if(validItems.length !== cart.items.length){
                 cart.items = validItems
 
                 await cart.save()
 
-        cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId").populate("savedItems.productId").populate("savedItems.variantId")
+        cart = await Cart.findOne({userId}).populate({path:"items.productId", populate:[{path: "brand"}, {path: "category"}]}).populate("items.variantId").populate({path:"savedItems.productId", populate: [{path: "brand"}, {path: "category"}]}).populate("savedItems.variantId")
             }
         }
 
