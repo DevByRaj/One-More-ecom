@@ -600,29 +600,42 @@
             transform: translateY(0);
         }
 
-        .out-of-stock-row .product-details,
-        .out-of-stock-row .item-price,
-        .out-of-stock-row .item-total-price,
-        .out-of-stock-row .qty-column-wrapper {
-            opacity: 0.5;
-        }
+        /* ── FADE ONLY TEXT, PRICES, AND QUANTITY CONTROLS ── */
+.out-of-stock-row .product-name,
+.out-of-stock-row .product-variant-info,
+.out-of-stock-row .item-price,
+.out-of-stock-row .item-total-price,
+.out-of-stock-row .qty-column-wrapper {
+    opacity: 0.45;
+}
 
-        .out-of-stock-row .cart-img-wrapper img {
-            filter: grayscale(100%);
-        }
+/* Grayscale and dim the product image */
+.out-of-stock-row .cart-img-wrapper img {
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
 
-        .out-of-stock-badge {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 4px 12px;
-            background: #dc3545;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+/* ── KEEP ACTION BUTTONS COMPLETELY SOLID AND CRISP ── */
+.out-of-stock-row .action-button-group {
+    opacity: 1 !important;
+}
+
+/* ── HIGH VISIBILITY SOLID BADGE ── */
+.out-of-stock-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 14px;
+    background-color: #e63946 !important; 
+    color: #ffffff !important;           
+    font-size: 11px;
+    font-weight: 700;                    
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 1 !important;               
+    box-shadow: 0 2px 4px rgba(230, 57, 70, 0.2);
+    -webkit-font-smoothing: antialiased; 
+}
     </style>
 </head>
 
@@ -706,7 +719,8 @@
                                     <% subtotal +=item.variantId.salePrice * item.quantity %>
                                         <div class="cart-item-row <%= item.variantId.stock === 0 ? 'out-of-stock-row' : '' %>"
                                             data-cart-row="<%= item._id %>">
-                                            <div class="product-meta-block">
+
+                                            <div class="product-meta-block flex-column align-items-start gap-2">
                                                 <a class="product-link-wrapper"
                                                     href="/productDetails?id=<%= item.productId._id %>&variant=<%= item.variantId._id %>">
                                                     <div class="cart-img-wrapper">
@@ -728,7 +742,7 @@
                                                     </div>
                                                 </a>
 
-                                                <div class="action-button-group">
+                                                <div class="action-button-group mt-2">
                                                     <button type="button" class="action-save-btn"
                                                         onclick="saveForLater(event, '<%= item._id %>')">
                                                         Save for Later
@@ -954,7 +968,6 @@
                         const totalElement = cartRow.querySelector(".item-total-price");
 
                         if (priceElement && totalElement) {
-                            // Extract numbers properly regardless of text/spaces
                             const unitPrice = Number(priceElement.innerText.replace(/[^\d]/g, ""));
                             const newRowTotal = unitPrice * currentQuantity;
                             totalElement.innerText = `₹${newRowTotal}`;
@@ -988,7 +1001,6 @@
 
         function updateCartTotals() {
             let subtotal = 0;
-            // Target only items inside active active cart table row grid
             const targetTotalElements = document.querySelectorAll(".cart-item-row .item-total-price");
 
             targetTotalElements.forEach(item => {
@@ -1035,7 +1047,6 @@
             }
         }
 
-        /* ── DYNAMIC ACTION OPERATION ACTIONS ── */
         async function saveForLater(event, cartItemId) {
             event.preventDefault();
             event.stopPropagation();
