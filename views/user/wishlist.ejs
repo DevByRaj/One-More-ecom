@@ -522,10 +522,26 @@
                                         <%= item.variantId.variantName %>
                                     </strong>
                                 </div>
-                                <button class="add-to-cart-btn" data-product-id="<%= item.productId._id %>"
-                                    data-variant-id="<%= item.variantId._id %>">
-                                    Add To Cart
+                                
+                                <% if(item.variantId.stock <=0){ %>
+                                    <div style="color:#dc3545; font-size:13px; font-weight:600;">
+                                        Out of Stock
+                                    </div>
+                                    <% } %>
+                            <% if(item.variantId.stock <=0){ %>
+                            
+                                <button class="add-to-cart-btn" disabled style="background:#6c757d; cursor:not-allowed;">
+                                    Out of Stock
                                 </button>
+                            
+                                <% } else { %>
+                            
+                                    <button class="add-to-cart-btn" data-product-id="<%= item.productId._id %>"
+                                        data-variant-id="<%= item.variantId._id %>">
+                                        Add To Cart
+                                    </button>
+                            
+                                    <% } %>
                             </div>
 
                             <div class="item-price">
