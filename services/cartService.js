@@ -48,6 +48,12 @@ export const addProductToCart = async (userId, cartData) => {
             })
         }
 
+        let savedItem = cart.savedItems.find(item => item.variantId.toString() === variantId)
+
+        if(savedItem){
+            cart.savedItems.pull(savedItem._id)
+        }
+
         const existingItem = cart.items.find(item => item.variantId.toString() === variantId)
 
         if(existingItem){
