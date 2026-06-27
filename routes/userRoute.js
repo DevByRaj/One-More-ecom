@@ -19,7 +19,7 @@ import {
   checkUserStatus,
   getShop,
   getProductDetails
-} from "../controllers/userController.js";
+} from "../controllers/user/userController.js";
 import {isUserLoggedIn, isUserLoggedOut} from "../middlewares/auth.js";
 import {validateSignup} from "../middlewares/validation.js";
 import upload from "../middlewares/multer.js";
@@ -31,10 +31,11 @@ import {
   removeCartItem,
   saveForLater,
   moveSavedItemToCart
-} from "../controllers/cartController.js"
+} from "../controllers/user/cartController.js"
 
-import { addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist } from "../controllers/wishlistController.js";
+import {addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist} from "../controllers/user/wishlistController.js";
 
+import { getCheckout } from "../controllers/user/orederController.js";
 
 const router = express.Router()
 
@@ -130,6 +131,8 @@ router.post("/wishlist/toggle", isUserLoggedIn, toggleWishlist)
 
 router.post("/cart/save-for-later/:id", isUserLoggedIn, saveForLater)
 
-router.post("/cart/move-to-cart/:id", isUserLoggedIn,moveSavedItemToCart)
+router.post("/cart/move-to-cart/:id", isUserLoggedIn, moveSavedItemToCart)
+
+router.get("/checkout", isUserLoggedIn, getCheckout)
 
 export default router

@@ -15,7 +15,7 @@ import {
     toggleProduct,
     getVariants, getAddVariant, 
     postAddVariant, toggleVariantStatus,
-    getEditVariant, postEditVariant } from "../controllers/adminController.js"
+    getEditVariant, postEditVariant } from "../controllers/admin/adminController.js"
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
 

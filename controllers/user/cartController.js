@@ -5,9 +5,9 @@ import {
     removeProductFromCart,
     saveItemForLater,
     moveToCart
-} from "../services/cartService.js"
+} from "../../services/cartService.js"
 
-export const addToCart = async (req,res) => {
+export const addToCart = async (req, res) => {
 
     try {
 
@@ -46,7 +46,7 @@ export const addToCart = async (req,res) => {
     }
 }
 
-export const getCart = async (req,res) => {
+export const getCart = async (req, res) => {
 
     try {
 
@@ -71,70 +71,70 @@ export const getCart = async (req,res) => {
 }
 
 export const updateCartQuantity = async (req, res) => {
-        try {
-
-            const userId = req.session.user
-
-            const result = await updateCartItemQuantity(
-                    userId,
-                    req.body
-                )
-
-            return res.json(result)
-
-        } catch (error) {
-
-            console.log(error)
-
-            return res.status(500).json({
-                success: false
-            })
-        }
-    }
-
-export const removeCartItem = async (req, res) => {
-
-        try {
-
-            const userId =
-                req.session.user
-
-            await removeProductFromCart(
-                userId,
-                req.params.id
-            )
-
-            return res.redirect("/cart")
-
-        } catch (error) {
-
-            console.log(error)
-
-            return res.redirect("/cart")
-        }
-    }
- 
-export const saveForLater = async(req, res) =>{
     try {
 
         const userId = req.session.user
-        
+
+        const result = await updateCartItemQuantity(
+            userId,
+            req.body
+        )
+
+        return res.json(result)
+
+    } catch (error) {
+
+        console.log(error)
+
+        return res.status(500).json({
+            success: false
+        })
+    }
+}
+
+export const removeCartItem = async (req, res) => {
+
+    try {
+
+        const userId =
+            req.session.user
+
+        await removeProductFromCart(
+            userId,
+            req.params.id
+        )
+
+        return res.redirect("/cart")
+
+    } catch (error) {
+
+        console.log(error)
+
+        return res.redirect("/cart")
+    }
+}
+
+export const saveForLater = async (req, res) => {
+    try {
+
+        const userId = req.session.user
+
         const result = await saveItemForLater(userId, req.params.id)
 
         return res.json(result)
 
 
-        
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({
             success: false
         })
-        
-    }
-}    
 
-export const moveSavedItemToCart = async(req, res) =>{
+    }
+}
+
+export const moveSavedItemToCart = async (req, res) => {
     try {
 
         const userId = req.session.user
@@ -142,13 +142,13 @@ export const moveSavedItemToCart = async(req, res) =>{
         const result = await moveToCart(userId, req.params.id)
 
         return res.json(result)
-        
+
     } catch (error) {
-        console.log(error);   
-        
+        console.log(error);
+
         return res.status(500).json({
             success: false,
-            message:  "something went wrong"
+            message: "something went wrong"
         })
     }
 }
