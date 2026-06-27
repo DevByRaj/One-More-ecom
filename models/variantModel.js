@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const variantSchema = new mongoose.Schema({
 
     productId: {
@@ -11,7 +12,8 @@ const variantSchema = new mongoose.Schema({
     variantName: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        lowercase: true
     },
 
     regularPrice:{
@@ -48,6 +50,12 @@ const variantSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+variantSchema.index(
+    {productId: 1, variantName: 1},
+    {unique: true}
+)
+
 
 const Variant = mongoose.model("Variant", variantSchema)
 

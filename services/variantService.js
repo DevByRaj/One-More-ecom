@@ -45,6 +45,15 @@ export const createVariant = async (
         errors.salePrice = "Sale price cannot be greater than regular price"
     }
 
+    const existingVariant =  await Variant.findOne({
+        productId,
+        variantName: color.trim().toLowerCase()
+    })
+
+    if(existingVariant){
+        errors.color = "Variant already exist for this product"
+    }
+
     const imageUrls = []
 
     for (let i = 0; i < 3; i++) {
@@ -90,17 +99,11 @@ export const createVariant = async (
     const variant = new Variant({
 
         productId,
-
-        variantName: color,
-
+        variantName: color.trim(),
         regularPrice,
-
         salePrice,
-
         stock,
-
         sku: "SKU-" + Date.now(),
-
         variantImage: cleanedImages
     })
 
@@ -159,6 +162,16 @@ export const updateVariant = async (
         errors.salePrice = "Sale price cannot be greater than regular price"
     }
 
+    const existingVariant = await Variant.findOne({
+        productId: variant.productId,
+        variantName: color.trim().toLowerCase(),
+        _id: {$ne: variantId}
+    })
+
+    if(existingVariant){
+        errors.color = "Variant already exists for this product"
+    }
+
     if(Object.keys(errors).length > 0){
 
         return {
@@ -191,7 +204,7 @@ export const updateVariant = async (
     await Variant.findByIdAndUpdate(
         variantId,
         {
-            variantName: color,
+            variantName: color.trim(),
             stock,
             regularPrice,
             salePrice,
