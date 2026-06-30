@@ -35,7 +35,7 @@ import {
 
 import {addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist} from "../controllers/user/wishlistController.js";
 
-import { getCheckout } from "../controllers/user/orederController.js";
+import { getCheckout } from "../controllers/user/orderController.js";
 
 const router = express.Router()
 

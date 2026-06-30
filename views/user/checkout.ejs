@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | OneMore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --text-muted: #aaaaaa;
+            --border-gray: #cccccc;
+            --accent-yellow: #ffdc60;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        /* ── NAVBAR STYLE ── */
+        .navbar {
+            background-color: var(--bg-dark);
+            padding: 15px 50px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+            font-size: 0.85rem;
+            font-weight: 400;
+            margin: 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 15px !important;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover {
+            opacity: 0.7;
+        }
+
+        .nav-icons a {
+            color: #fff;
+            margin-left: 20px;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-icons a:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -10px;
+            right: -12px;
+            background: red;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* ── BREADCRUMBS STYLE ── */
+        .custom-breadcrumb {
+            padding: 0;
+            margin-bottom: 20px;
+            background: transparent;
+        }
+
+        .custom-breadcrumb .breadcrumb-item {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .custom-breadcrumb .breadcrumb-item a {
+            color: #777777;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .custom-breadcrumb .breadcrumb-item a:hover {
+            color: #000000;
+        }
+
+        .custom-breadcrumb .breadcrumb-item.active {
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .custom-breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+            content: "\f105";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #b5b5b5;
+            padding-right: 8px;
+        }
+
+        /* ── MAIN CONTENT LAYOUT ── */
+        .checkout-container {
+            max-width: 1300px;
+            margin: 30px auto 80px;
+            padding: 0 50px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #111;
+        }
+
+        /* ── ADDRESS SELECTION BLOCK ── */
+        .address-card {
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            background-color: #fff;
+        }
+
+        .address-card .deliver-label {
+            font-size: 13px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .address-card .user-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .address-card .address-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 0;
+            max-width: 85%;
+        }
+
+        .change-address-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background-color: transparent;
+            color: #4361ee;
+            border: 1px solid #4361ee;
+            padding: 5px 18px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 20px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .change-address-btn:hover {
+            background-color: #4361ee;
+            color: #fff;
+        }
+
+        /* ── MODAL MODERNIZATION OVERRIDES ── */
+        .address-select-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .address-select-card:hover {
+            border-color: #a0a0a0;
+            background-color: #fbfbfb;
+        }
+
+        .address-select-card.selected-active {
+            border-color: #000000;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .address-select-card .form-check-input {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .address-select-card .form-check-input:checked {
+            background-color: #000;
+            border-color: #000;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #eee;
+            padding: 20px 25px;
+        }
+
+        .modal-body {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding: 15px 25px;
+        }
+
+        /* ── PRODUCT ITEM SUMMARY BOX ── */
+        .product-summary-card {
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 30px;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .product-grid-row {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .checkout-img-wrapper {
+            width: 180px;
+            height: 180px;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkout-img-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .product-main-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .product-title-text {
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .pricing-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .discount-pct {
+            color: #2ec4b6;
+            font-weight: 600;
+        }
+
+        .original-strike-price {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .current-sale-price {
+            font-weight: 700;
+            color: #000;
+        }
+
+        .qty-select-dropdown {
+            border: 1px solid var(--border-gray);
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            background-color: #fff;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ── RIGHT ORDER SUMMARY SIDEBAR ── */
+        .summary-sidebar-box {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 35px 25px;
+            position: sticky;
+            top: 110px;
+        }
+
+        .summary-box-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        .summary-item-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 16px;
+        }
+
+        .summary-total-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            border-top: 1px dashed var(--border-gray);
+            padding-top: 16px;
+            margin-top: 16px;
+            margin-bottom: 25px;
+        }
+
+        .coupon-toggle-header {
+            border: 1px solid var(--border-gray);
+            background-color: #fff;
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+
+        .figma-checkout-btn {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            transition: background-color 0.2s;
+        }
+
+        .figma-checkout-btn:hover {
+            background-color: #222;
+        }
+
+        /* ── FOOTER STYLE ── */
+        footer {
+            background-color: var(--bg-dark);
+            color: #fff;
+            padding: 80px 80px 30px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-logo-container {
+            margin-bottom: 45px;
+        }
+
+        .footer-logo-container img {
+            height: 65px;
+            width: auto;
+        }
+
+        .footer-heading {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-yellow);
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #ffffff;
+            opacity: 0.8;
+            text-decoration: none;
+            font-size: 13px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-contact-text {
+            font-size: 13px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .social-icons a {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-right: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .social-icons a:hover {
+            opacity: 0.7;
+        }
+
+        .copyright {
+            border-top: 1px solid #222;
+            margin-top: 60px;
+            padding-top: 30px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        @media (max-width: 992px) {
+            .checkout-container {
+                padding: 0 20px;
+            }
+
+            .product-grid-row {
+                gap: 20px;
+            }
+
+            .checkout-img-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .checkout-container {
+                margin: 20px auto 50px;
+            }
+
+            .change-address-btn {
+                position: static;
+                margin-top: 15px;
+                display: inline-block;
+            }
+
+            .address-card .address-text {
+                max-width: 100%;
+            }
+
+            .product-grid-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
+            }
+
+            .product-main-details {
+                align-items: center;
+            }
+
+            .pricing-row {
+                justify-content: center;
+            }
+
+            .qty-select-dropdown {
+                margin: 0 auto;
+            }
+
+            footer {
+                padding: 60px 20px 30px;
+                text-align: center;
+            }
+
+            .social-icons a {
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <% const defaultAddress=addresses.find(address=> address.isDefault) || addresses[0] %>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/logo.png" class="logo-img" alt="OneMore Logo">
+                </a>
+                <button class="navbar-toggler navbar-dark border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto text-center mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                    </ul>
+
+                    <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
+                        <a href="/profile"><i class="fa-regular fa-user"></i></a>
+                        <a href="/wishlist">
+                            <i class="fa-regular fa-heart"></i>
+                            <% if(typeof wishlistCount !=='undefined' && wishlistCount> 0) { %>
+                                <span class="badge-count">
+                                    <%= wishlistCount %>
+                                </span>
+                                <% } %>
+                        </a>
+                        <a href="/cart">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                            <% if(typeof cartCount !=='undefined' && cartCount> 0) { %>
+                                <span class="badge-count">
+                                    <%= cartCount %>
+                                </span>
+                                <% } %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="checkout-container">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb custom-breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/cart">Cart</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                </ol>
+            </nav>
+
+            <h2 class="page-title">Checkout</h2>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+
+                    <div class="address-card">
+                        <div class="deliver-label">Deliver to:</div>
+
+                        <% if(addresses && addresses.length> 0){ %>
+                            <button type="button" class="change-address-btn" data-bs-toggle="modal"
+                                data-bs-target="#addressModal">
+                                Change
+                            </button>
+                            <% } %>
+
+                                <div id="addressContentArea">
+                                    <% if(defaultAddress){ %>
+                                        <div class="user-name" id="displayName">
+                                            <%= defaultAddress.name %>
+                                        </div>
+                                        <p class="address-text">
+                                            <span id="displayAddress">
+                                                <%= defaultAddress.houseName %>, <%= defaultAddress.street %>,
+                                                        <%= defaultAddress.city %>, <%= defaultAddress.state %> - <%=
+                                                                    defaultAddress.pincode %>
+                                            </span>
+                                            <br>
+                                            <strong id="displayPhone">Phone: <%= defaultAddress.phone %></strong>
+                                        </p>
+                                        <% } else { %>
+                                            <div class="text-danger mb-2"><i
+                                                    class="fa-solid fa-triangle-exclamation me-1"></i> No delivery
+                                                address found.</div>
+                                            <a href="/address" class="btn btn-sm btn-dark rounded-pill px-3">Add New
+                                                Address</a>
+                                            <% } %>
+                                </div>
+                    </div>
+
+                    <% if(cart && cart.items.length> 0){ %>
+                        <% cart.items.forEach(item=> { %>
+                            <div class="product-summary-card">
+                                <div class="product-grid-row">
+                                    <div class="checkout-img-wrapper">
+                                        <img src="<%= item.variantId.variantImage[0] %>" alt="Product">
+                                    </div>
+
+                                    <div class="product-main-details">
+                                        <div>
+                                            <h4 class="product-title-text">
+                                                <%= item.productId.productName %>
+                                            </h4>
+                                            <p class="text-muted mb-2">Color : <strong>
+                                                    <%= item.variantId.variantName %>
+                                                </strong></p>
+                                            <% const discount=Math.round( ( (item.variantId.regularPrice -
+                                                item.variantId.salePrice) / item.variantId.regularPrice ) * 100 ) %>
+                                                <div class="pricing-row">
+                                                    <% if(discount> 0){ %>
+                                                        <span class="discount-pct">↓<%= discount %>%</span>
+                                                        <% } %>
+                                                            <span class="original-strike-price">₹<%=
+                                                                    item.variantId.regularPrice %></span>
+                                                            <span class="current-sale-price">₹<%=
+                                                                    item.variantId.salePrice %></span>
+                                                </div>
+                                        </div>
+                                        <div class="qty-select-dropdown">
+                                            Quantity : <strong>
+                                                <%= item.quantity %>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="product-summary-card text-center py-5">
+                                        <p class="mb-0 text-muted">Your checkout list is empty.</p>
+                                    </div>
+                                    <% } %>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="summary-sidebar-box">
+                        <h3 class="summary-box-title">Order Summary</h3>
+
+                        <div class="summary-item-line">
+                            <span>Item Sub Total</span>
+                            <strong>₹<%= totals.grandTotal %></strong>
+                        </div>
+                        <div class="summary-item-line">
+                            <span>Shipping</span>
+                            <% if(totals.shipping> 0){ %>
+                                <strong>₹<%= totals.shipping %></strong>
+                                <% } else { %>
+                                    <span class="text-success fw-medium">Free</span>
+                                    <% } %>
+                        </div>
+
+                        <div class="summary-total-line">
+                            <span>Total</span>
+                            <strong>₹<%= totals.grandTotal %></strong>
+                        </div>
+
+                        <div class="coupon-toggle-header" data-bs-toggle="collapse" data-bs-target="#couponCollapse">
+                            <span><i class="fa-solid fa-ticket me-2 opacity-50"></i> Coupon code</span>
+                            <i class="fa-solid fa-chevron-down small opacity-75"></i>
+                        </div>
+                        <div class="collapse mb-3" id="couponCollapse">
+                            <form action="/checkout/apply-coupon" method="POST" class="d-flex gap-2">
+                                <input type="text" name="couponCode" class="form-control form-control-sm"
+                                    placeholder="Enter coupon">
+                                <button type="submit" class="btn btn-dark btn-sm px-3">Apply</button>
+                            </form>
+                        </div>
+
+                        <form action="/checkout/place-order" method="POST">
+                            <input type="hidden" name="addressId" id="selectedAddressId"
+                                value="<%= defaultAddress ? defaultAddress._id : '' %>">
+                            <button type="submit" class="figma-checkout-btn" <%=(!cart || cart.items.length===0 ||
+                                !defaultAddress) ? "disabled" : "" %>>
+                                Checkout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" style="font-size: 16px;">Select Shipping Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <% if(addresses && addresses.length> 0) { %>
+                            <% addresses.forEach(address=> { %>
+                                <div class="address-select-card <%= address.isDefault || (addresses[0]._id === address._id && !addresses.some(a => a.isDefault)) ? 'selected-active' : '' %>"
+                                    onclick="selectCardWrapper(this)">
+
+                                    <input class="form-check-input" type="radio" name="addressSelect"
+                                        value="<%= address._id %>" data-name="<%= address.name %>"
+                                        data-house="<%= address.houseName %>" data-street="<%= address.street %>"
+                                        data-city="<%= address.city %>" data-state="<%= address.state %>"
+                                        data-country="<%= address.country %>" data-pincode="<%= address.pincode %>"
+                                        data-phone="<%= address.phone %>" <%=address.isDefault ||
+                                        (addresses[0]._id===address._id && !addresses.some(a=> a.isDefault)) ? "checked"
+                                    : "" %>>
+
+                                    <div class="fw-bold mb-1" style="font-size: 14px; color: #111;">
+                                        <%= address.name %>
+                                    </div>
+                                    <div class="text-muted small lh-base" style="max-width: 88%;">
+                                        <%= address.houseName %>, <%= address.street %><br>
+                                                <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                                                            <div class="mt-1 text-dark">Phone: <%= address.phone %>
+                                                            </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <% } %>
+                    </div>
+
+                    <div class="modal-footer d-flex justify-content-between align-items-center">
+                        <a href="/address" class="btn btn-link text-decoration-none text-dark small fw-medium p-0">
+                            <i class="fa-solid fa-plus me-1"></i> Add New Address
+                        </a>
+                        <button type="button" class="btn btn-dark btn-sm rounded-pill px-4 py-2"
+                            style="font-size: 13px; font-weight: 500;" onclick="useSelectedAddress()">
+                            Deliver Here
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="row text-center footer-logo-container">
+                <div class="col-12">
+                    <img src="/images/logo.png" alt="OneMore Footer Logo">
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <h6 class="footer-heading">Support</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Order Status</a></li>
+                        <li><a href="#">Product Support</a></li>
+                        <li><a href="#">Shipping & Return Policy</a></li>
+                        <li><a href="#">Complaint Registration</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="footer-heading">About Us</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="/contact">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of use</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="footer-heading">Contact</h6>
+                    <div class="footer-contact-text">Email: onemore@gmail.com</div>
+                    <div class="footer-contact-text">Phone: +91 8888888888</div>
+                </div>
+                <div class="col-md-3 text-md-end social-column">
+                    <h6 class="footer-heading text-md-end">Connect with us</h6>
+                    <div class="social-icons">
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center copyright">
+                © 2026 onemore. All Rights Reserved.
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            function selectCardWrapper(cardElement) {
+                document.querySelectorAll('.address-select-card').forEach(card => {
+                    card.classList.remove('selected-active');
+                });
+
+                cardElement.classList.add('selected-active');
+                const radioInput = cardElement.querySelector('input[name="addressSelect"]');
+                if (radioInput) radioInput.checked = true;
+            }
+
+            function useSelectedAddress() {
+                const selected = document.querySelector('input[name="addressSelect"]:checked');
+                if (!selected) return;
+
+                document.getElementById("selectedAddressId").value = selected.value;
+                document.getElementById("displayName").innerText = selected.dataset.name;
+                document.getElementById("displayAddress").innerHTML = `
+                ${selected.dataset.house}, ${selected.dataset.street},
+                ${selected.dataset.city}, ${selected.dataset.state} - ${selected.dataset.pincode}
+            `;
+                document.getElementById("displayPhone").innerHTML = `Phone: ${selected.dataset.phone}`;
+
+                const modalEl = document.getElementById("addressModal");
+                bootstrap.Modal.getInstance(modalEl).hide();
+            }
+        </script>
+</body>
+
+</html>

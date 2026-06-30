@@ -4,8 +4,9 @@ import {
     updateCartItemQuantity,
     removeProductFromCart,
     saveItemForLater,
-    moveToCart
+    moveToCart, calculateCartTotals
 } from "../../services/cartService.js"
+
 
 export const addToCart = async (req, res) => {
 
@@ -54,10 +55,13 @@ export const getCart = async (req, res) => {
 
         const cart = await getUserCart(userId)
 
+        const totals = calculateCartTotals(cart)
+
         return res.render(
             "user/cart",
             {
                 cart,
+                totals,
                 savedItems: cart?.savedItems || []
             }
         )
