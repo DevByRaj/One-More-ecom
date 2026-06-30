@@ -695,7 +695,7 @@
     <div class="cart-container">
         <h2 class="page-title">Shopping Cart</h2>
 
-        <% let subtotal=0 %>
+        
 
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -716,7 +716,7 @@
                                 </div>
 
                                 <% cart.items.forEach(item=> { %>
-                                    <% subtotal +=item.variantId.salePrice * item.quantity %>
+                                    
                                         <div class="cart-item-row <%= item.variantId.stock === 0 ? 'out-of-stock-row' : '' %>"
                                             data-cart-row="<%= item._id %>">
 
@@ -850,7 +850,9 @@
 
                             <div class="summary-line">
                                 <span>Subtotal</span>
-                                <strong id="cartSubtotal">₹<%= subtotal %></strong>
+                                <strong id="cartSubtotal">
+                                    ₹<%= totals.subtotal %>
+                                </strong>
                             </div>
 
                             <div class="summary-line">
@@ -860,7 +862,9 @@
 
                             <div class="summary-total-line">
                                 <span>Total</span>
-                                <strong id="grandTotal">₹<%= subtotal %></strong>
+                                <strong id="grandTotal">
+                                    ₹<%= totals.grandTotal %>
+                                </strong>
                             </div>
 
                             <div class="coupon-dropdown-header">

@@ -284,3 +284,35 @@ export const moveToCart = async(userId, savedItemsId) =>{
         message: "Product added to cart"
     }
 }
+
+export const calculateCartTotals = (cart) =>{
+
+    let subtotal = 0
+
+    if(!cart || !cart.items){
+        return{
+            subtotal: 0,
+            shipping: 0,
+            discount: 0,
+            grandTotal: 0
+        }
+    }
+
+    cart.items.forEach(item =>{
+        if(
+            item.productId && 
+            item.variantId &&
+            item.productId.isListed &&
+            item.variantId.isListed
+        ) {
+            subtotal += item.variantId.salePrice * item.quantity
+        }
+    })
+
+    return{
+        subtotal,
+        shipping: 0,
+        discount: 0,
+        grandTotal: subtotal
+    }
+}
