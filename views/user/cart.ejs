@@ -854,10 +854,25 @@
                                     ₹<%= totals.subtotal %>
                                 </strong>
                             </div>
-
                             <div class="summary-line">
                                 <span>Shipping</span>
-                                <span class="text-success font-weight-bold">Free</span>
+                            
+                                <span id="shippingCharge">
+                                    <% if(totals.shipping> 0){ %>
+                                        ₹<%= totals.shipping %>
+                                            <% } else { %>
+                                                <span class="text-success fw-semibold">Free</span>
+                                                <% } %>
+                                </span>
+                            </div>
+
+                            <div id="freeShippingMessage" class="small text-muted mb-3">
+                                <% if(totals.shipping> 0){ %>
+                                    Spend only
+                                    <strong>₹<%= 1000 - totals.subtotal %></strong>
+                                    more to get
+                                    <span class="text-success fw-semibold">FREE Shipping</span>.
+                                    <% } %>
                             </div>
 
                             <div class="summary-total-line">
@@ -884,6 +899,7 @@
             </div>
     </div>
 
+    
     <footer class="container-fluid">
         <div class="footer-logo text-center">
             <img src="/images/logo.png" alt="Logo">
@@ -1004,20 +1020,47 @@
         }
 
         function updateCartTotals() {
-            let subtotal = 0;
-            const targetTotalElements = document.querySelectorAll(".cart-item-row .item-total-price");
 
-            targetTotalElements.forEach(item => {
-                const cleanValue = item.innerText.replace(/[^\d]/g, "");
-                subtotal += Number(cleanValue || 0);
-            });
+                let subtotal = 0;
 
-            const subtotalBox = document.getElementById("cartSubtotal");
-            const grandTotalBox = document.getElementById("grandTotal");
+                document.querySelectorAll(".cart-item-row .item-total-price").forEach(item => {
+                    subtotal += Number(item.innerText.replace(/[^\d]/g, ""));
+                });
 
-            if (subtotalBox) subtotalBox.innerText = `₹${subtotal}`;
-            if (grandTotalBox) grandTotalBox.innerText = `₹${subtotal}`;
-        }
+                let shipping = 0;
+
+                if (subtotal > 0 && subtotal < 1000) {
+                    shipping = 99;
+                }
+
+                const grandTotal = subtotal + shipping;
+
+                document.getElementById("cartSubtotal").innerText = `₹${subtotal}`;
+                document.getElementById("grandTotal").innerText = `₹${grandTotal}`;
+
+                // Update Shipping
+                const shippingElement = document.getElementById("shippingCharge");
+
+                if (shipping === 0) {
+                    shippingElement.innerHTML =
+                        '<span class="text-success fw-semibold">Free</span>';
+                } else {
+                    shippingElement.innerHTML = `₹${shipping}`;
+                }
+
+                // Update Free Shipping Message
+                const freeShippingMessage = document.getElementById("freeShippingMessage");
+
+                if (shipping > 0) {
+                    freeShippingMessage.innerHTML = `
+            Spend only <strong>₹${1000 - subtotal}</strong>
+            more to get
+            <span class="text-success fw-semibold">FREE Shipping</span>.
+        `;
+                } else {
+                    freeShippingMessage.innerHTML = "";
+                }
+            }
 
         async function removeCartItem(event, cartItemId) {
             event.preventDefault();

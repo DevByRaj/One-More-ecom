@@ -309,10 +309,17 @@ export const calculateCartTotals = (cart) =>{
         }
     })
 
+    let shipping = 0
+
+    if(subtotal < 1000 && subtotal > 0){
+        shipping = 99
+    }
+    const grandTotal = subtotal + shipping
+
     return{
         subtotal,
-        shipping: 0,
+        shipping,
         discount: 0,
-        grandTotal: subtotal
+        grandTotal
     }
 }

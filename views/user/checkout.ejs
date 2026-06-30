@@ -674,18 +674,28 @@
                     <div class="summary-sidebar-box">
                         <h3 class="summary-box-title">Order Summary</h3>
 
-                        <div class="summary-item-line">
-                            <span>Item Sub Total</span>
-                            <strong>₹<%= totals.grandTotal %></strong>
-                        </div>
+                    <div class="summary-item-line">
+                        <span>Item Sub Total</span>
+                        <strong>₹<%= totals.subtotal %></strong>
+                    </div>
                         <div class="summary-item-line">
                             <span>Shipping</span>
+                        
                             <% if(totals.shipping> 0){ %>
                                 <strong>₹<%= totals.shipping %></strong>
                                 <% } else { %>
                                     <span class="text-success fw-medium">Free</span>
                                     <% } %>
                         </div>
+                        
+                        <% if(totals.shipping> 0){ %>
+                            <div class="small text-muted mb-3">
+                                Spend only
+                                <strong>₹<%= 1000 - totals.subtotal %></strong>
+                                more to get
+                                <span class="text-success fw-semibold">FREE Shipping</span>.
+                            </div>
+                            <% } %>
 
                         <div class="summary-total-line">
                             <span>Total</span>
@@ -831,9 +841,14 @@
                 document.getElementById("selectedAddressId").value = selected.value;
                 document.getElementById("displayName").innerText = selected.dataset.name;
                 document.getElementById("displayAddress").innerHTML = `
-                ${selected.dataset.house}, ${selected.dataset.street},
-                ${selected.dataset.city}, ${selected.dataset.state} - ${selected.dataset.pincode}
-            `;
+    ${selected.dataset.house},
+    ${selected.dataset.street},
+    ${selected.dataset.city},
+    ${selected.dataset.state},
+    ${selected.dataset.country} -
+    ${selected.dataset.pincode}
+`;
+            
                 document.getElementById("displayPhone").innerHTML = `Phone: ${selected.dataset.phone}`;
 
                 const modalEl = document.getElementById("addressModal");
