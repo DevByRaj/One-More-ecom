@@ -35,7 +35,7 @@ import {
 
 import {addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist} from "../controllers/user/wishlistController.js";
 
-import { getCheckout } from "../controllers/user/orderController.js";
+import { getCheckout, placeOrder, getOrderSuccess, getOrders, getOrderDetails, cancelOrderItem } from "../controllers/user/orderController.js";
 
 const router = express.Router()
 
@@ -134,5 +134,15 @@ router.post("/cart/save-for-later/:id", isUserLoggedIn, saveForLater)
 router.post("/cart/move-to-cart/:id", isUserLoggedIn, moveSavedItemToCart)
 
 router.get("/checkout", isUserLoggedIn, getCheckout)
+
+router.post("/checkout/place-order", isUserLoggedIn, placeOrder)
+
+router.get("/order-success/:id", isUserLoggedIn, getOrderSuccess)
+
+router.get("/orders", isUserLoggedIn, getOrders)
+
+router.get("/orders/:id", isUserLoggedIn, getOrderDetails)
+
+router.post("/orders/cancel-item", isUserLoggedIn, cancelOrderItem)
 
 export default router
