@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | OneMore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --text-muted: #aaaaaa;
+            --border-gray: #cccccc;
+            --accent-yellow: #ffdc60;
+            --panel-border: #444444;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* ── NAVBAR STYLE ── */
+        .navbar {
+            background-color: var(--bg-dark);
+            padding: 15px 50px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+            font-size: 0.85rem;
+            font-weight: 400;
+            margin: 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 15px !important;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link.active-nav {
+            color: var(--accent-yellow) !important;
+        }
+
+        .nav-link:hover {
+            opacity: 0.7;
+        }
+
+        .nav-icons a {
+            color: #fff;
+            margin-left: 20px;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* ── LAYOUT CONTAINERS ── */
+        .account-container {
+            max-width: 1300px;
+            margin: 50px auto 100px;
+            padding: 0 30px;
+        }
+
+        /* ── SIDEBAR ACCOUNT BOX ── */
+        .account-sidebar {
+            border: 1px solid #111111;
+            border-radius: 16px;
+            background-color: #fcfcfc;
+            overflow: hidden;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-header {
+            border-bottom: 1px solid #111111;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px 0 0 0;
+            margin: 0;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            padding: 14px 30px;
+            color: #000000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-item i {
+            width: 25px;
+            font-size: 1.05rem;
+            margin-right: 15px;
+            text-align: center;
+        }
+
+        .sidebar-item.active a,
+        .sidebar-item a:hover {
+            background-color: #f0f0f0;
+            font-weight: 600;
+        }
+
+        /* ── ORDERS MAIN COMPONENT ── */
+        .orders-panel {
+            border: 1px solid #111111;
+            border-radius: 16px;
+            background-color: #ffffff;
+            padding: 25px 0;
+        }
+
+        .orders-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px 25px;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .filter-dropdown-btn {
+            border: 1px solid #111111;
+            background-color: #e5e5e5;
+            border-radius: 20px;
+            padding: 6px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ── TABLE / LIST STYLING ── */
+        .orders-table-header {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1.5fr 2.5fr;
+            border-top: 1px solid #111111;
+            border-bottom: 1px solid #111111;
+            padding: 12px 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            background-color: #ffffff;
+        }
+
+        .orders-table-header div:first-child,
+        .order-row div:first-child {
+            text-align: left;
+        }
+
+        .order-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1.5fr 2.5fr;
+            padding: 25px 30px;
+            border-bottom: 1px solid #cccccc;
+            align-items: center;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .orders-panel .order-row:last-child {
+            border-bottom: none;
+        }
+
+        .order-id-txt {
+            font-weight: 600;
+        }
+
+        .order-amount-txt {
+            font-weight: 600;
+        }
+
+        .status-container {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .status-indicator-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-expected,
+        .dot-delivered {
+            background-color: #2ec4b6;
+        }
+
+        .dot-cancelled {
+            background-color: #e71d36;
+        }
+
+        .status-subtitle {
+            font-size: 0.8rem;
+            color: #444444;
+            margin-bottom: 10px;
+        }
+
+        .view-order-pill {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 24px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .view-order-pill:hover {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        /* ── FOOTER STYLE ── */
+        footer {
+            background-color: var(--bg-dark);
+            color: #fff;
+            padding: 80px 80px 30px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-logo-container {
+            margin-bottom: 45px;
+        }
+
+        .footer-logo-container img {
+            height: 65px;
+            width: auto;
+        }
+
+        .footer-heading {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-yellow);
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #ffffff;
+            opacity: 0.8;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .footer-contact-text {
+            font-size: 13px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .social-icons a {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-right: 20px;
+        }
+
+        .copyright {
+            border-top: 1px solid #222;
+            margin-top: 60px;
+            padding-top: 30px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .orders-table-header {
+                display: none;
+            }
+
+            .order-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                text-align: left;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin: 0 20px 15px;
+                padding: 20px;
+            }
+
+            .order-row div:first-child {
+                text-align: left;
+            }
+
+            .status-container {
+                padding-left: 0;
+            }
+
+            .orders-panel-header {
+                padding: 0 20px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .account-container {
+                padding: 0 15px;
+                margin-top: 20px;
+            }
+
+            .account-sidebar {
+                margin-bottom: 30px;
+            }
+
+            footer {
+                padding: 60px 20px 30px;
+                text-align: center;
+            }
+
+            .footer-heading {
+                text-align: center;
+            }
+
+            .social-icons {
+                display: flex;
+                justify-content: center;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo.png" class="logo-img" alt="OneMore Logo">
+            </a>
+            <button class="navbar-toggler navbar-dark border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto text-center mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                </ul>
+
+                <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
+                    <a href="/profile"><i class="fa-regular fa-user"></i></a>
+                    <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
+                    <a href="/cart"><i class="fa-solid fa-bag-shopping"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Account/Orders Layout Grid -->
+    <div class="account-container">
+        <div class="row g-4">
+
+            <!-- Left Grid: Account Menu Side Panel -->
+            <div class="col-md-4 col-lg-3">
+                <div class="account-sidebar">
+                    <div class="sidebar-header">My Account</div>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item"><a href="/address"><i class="fa-regular fa-address-book"></i>
+                                Address</a></li>
+                        <li class="sidebar-item active"><a href="/orders"><i
+                                    class="fa-solid fa-box-archive"></i> Order</a></li>
+                        <li class="sidebar-item"><a href="/wallet"><i class="fa-regular fa-credit-card"></i>
+                                Wallet</a></li>
+                        <li class="sidebar-item"><a href="/coupons"><i class="fa-solid fa-ticket"></i>
+                                Coupon</a></li>
+                        <li class="sidebar-item"><a href="/password"><i class="fa-solid fa-user-gear"></i>
+                                Password Change</a></li>
+                        <li class="sidebar-item"><a href="/logout"><i class="fa-solid fa-power-off"></i> Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Grid: Orders Data Container -->
+            <div class="col-md-8 col-lg-9">
+                <div class="orders-panel">
+                    <div class="orders-panel-header">
+                        <h2 class="panel-title">My Orders</h2>
+
+                        <div class="dropdown">
+                            <button class="filter-dropdown-btn dropdown-toggle" type="button" id="timeframeFilter"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Last 6 months
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="timeframeFilter">
+                                <li><a class="dropdown-menu-item px-3 py-1 text-dark text-decoration-none d-block small"
+                                        href="?filter=3months">Last 3 months</a></li>
+                                <li><a class="dropdown-menu-item px-3 py-1 text-dark text-decoration-none d-block small"
+                                        href="?filter=6months">Last 6 months</a></li>
+                                <li><a class="dropdown-menu-item px-3 py-1 text-dark text-decoration-none d-block small"
+                                        href="?filter=2026">Year 2026</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Column Headers -->
+                    <div class="orders-table-header">
+                        <div>Order ID</div>
+                        <div>Items</div>
+                        <div>Total Amount</div>
+                        <div>Order Status</div>
+                    </div>
+
+                    <!-- Dynamic EJS Rows Loop Component -->
+                    <% if(typeof orders !=='undefined' && orders.length> 0) { %>
+                        <% orders.forEach(order=> { %>
+                            <div class="order-row">
+                                <div class="order-id-txt"><%= order.orderId %>
+                                </div>
+                                <div>
+                                    <%= order.items.length %>
+                                </div>
+                                <div class="order-amount-txt">₹ <%= order.grandTotal %>
+                                </div>
+                                <div class="status-container">
+                                    <div class="status-indicator-line">
+                                        <% if(order.orderStatus==='Delivered' ) { %>
+                                            <span class="status-dot dot-delivered"></span> Delivered on
+                                            <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
+                                                <% } else if(order.orderStatus==='Cancelled' ) { %>
+                                                    <span class="status-dot dot-cancelled"></span>
+                                                    Cancelled on
+                                                    <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
+                                                        <% } else { %>
+                                                            <span class="status-dot dot-expected"></span>
+                                                            Order placed on
+                                                            <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
+                                                                <% } %>
+                                    </div>
+                                    <div class="status-subtitle">
+                                        <% if(order.orderStatus==='Delivered' ) { %>
+                                            Your order has been delivered
+                                            <% } else if(order.orderStatus==='Cancelled' ) { %>
+                                                Your order has been cancelled
+                                                <% } else { %>
+                                                    Your order is being processed.
+                                                    <% } %>
+                                    </div>
+                                    <a href="/orders/<%= order._id %>" class="btn view-order-pill">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <!-- Fallback Placeholder matching layout aesthetics -->
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="fa-solid fa-box-open fa-2x mb-3 opacity-50"></i>
+                                        <p class="mb-0">You haven't placed any orders within this period.</p>
+                                    </div>
+                                    <% } %>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer Component -->
+    <footer>
+        <div class="row text-center footer-logo-container">
+            <div class="col-12">
+                <img src="/images/logo.png" alt="OneMore Footer Logo">
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <h6 class="footer-heading">Support</h6>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Order Status</a></li>
+                    <li><a href="#">Product Support</a></li>
+                    <li><a href="#">Shipping & Return Policy</a></li>
+                    <li><a href="#">Complaint Registration</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="footer-heading">About Us</h6>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of use</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="footer-heading">Contact</h6>
+                <div class="footer-contact-text">Email: onemore@gmail.com</div>
+                <div class="footer-contact-text">Phone: +91 8888888888</div>
+            </div>
+            <div class="col-md-3 text-md-end">
+                <h6 class="footer-heading text-md-end">Connect with us</h6>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center copyright">
+            © 2026 onemore. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
