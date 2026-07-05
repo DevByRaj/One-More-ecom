@@ -230,8 +230,8 @@
         }
 
         .cancel-item-btn {
-            background-color: var(--btn-red);
-            color: #ffffff;
+            background-color: var(--btn-red) !important;
+            color: #ffffff !important;
             border: none;
             border-radius: 20px;
             padding: 6px 30px;
@@ -239,12 +239,13 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             box-shadow: 0 4px 10px rgba(230, 31, 38, 0.2);
-            transition: opacity 0.2s;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
         }
 
         .cancel-item-btn:hover {
-            opacity: 0.9;
-            color: #ffffff;
+            background-color: #b31419 !important; /* Slightly darker rich red on hover */
+            color: #ffffff !important;
+            opacity: 1;
         }
 
         /* ── PAGINATION STYLE ── */
@@ -562,11 +563,6 @@
                                         <input type="hidden" name="itemId" value="<%= item._id %>">
                                         <input type="hidden" name="page" value="<%= currentPage %>">
                                         <button type="submit" class="btn cancel-item-btn">Cancel</button>
-                                        <input
-    type="hidden"
-    name="page"
-    value="<%= currentPage %>"
->
                                     </form>
                                     <% } %>
                             </div>
