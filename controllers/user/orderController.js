@@ -125,12 +125,13 @@ export const cancelOrderItem = async(req, res) =>{
 
         const userId = req.session.user
 
-        const {orderId, itemId, page} = req.body
+        const {orderId, itemId, page, cancelReason} = req.body
 
         const result = await cancelOrderItemService(
             userId,
             orderId,
-            itemId
+            itemId,
+            cancelReason
         )
 
         if(!result.success){
@@ -143,6 +144,21 @@ export const cancelOrderItem = async(req, res) =>{
         console.log(error);
 
         return res.redirect("/orders")
+        
+    }
+}
+
+export const returnOrderItem = async(req, res) =>{
+    try {
+
+        console.log(req.body);
+
+        return res.redirect(`/orders/${req.body.orderId}?page=${req.body.page}`)
+        
+    } catch (error) {
+        console.log(error);
+        
+        return res.redirect("orders")
         
     }
 }

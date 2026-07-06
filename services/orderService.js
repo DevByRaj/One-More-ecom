@@ -172,7 +172,25 @@ export const getOrderDetailsService = async (userId, orderId) => {
     }
 }
 
-export const cancelOrderItemService = async(userId, orderId, itemId) =>{
+const recalculateOrderTotals = (order)=>{
+
+    const activeItems = order.items.filter(item => item.status !== "Cancelled")
+
+    const subtotal = activeItems.reduce((total, item) => total + item.totalPrice, 0)
+
+    let discount = 0
+
+    const shipping = subtotal >= 1000 || subtotal === 0?0:50
+
+    const grandTotal = subtotal - discount + shipping
+
+    order.subtotal = subtotal
+    order.discount = discount
+    order.shipping = shipping
+    order.grandTotal = grandTotal
+}
+
+export const cancelOrderItemService = async(userId, orderId, itemId, cancelReason) =>{
 
     const order = await Order.findOne({
         _id: orderId,
@@ -210,6 +228,12 @@ export const cancelOrderItemService = async(userId, orderId, itemId) =>{
 
     item.status = "Cancelled"
 
+    item.cancelledAt = new Date()
+
+    item.cancelReason = cancelReason
+
+    recalculateOrderTotals(order)
+
     const allCancelled = order.items.every(
         product => product.status === "Cancelled"
     )
@@ -223,4 +247,11 @@ export const cancelOrderItemService = async(userId, orderId, itemId) =>{
     return{
         success: true
     }
+}
+
+export const getAllOrders = async() =>{
+
+    const orders = (await Order.find().populate("userId")).toSorted({createdAt: -1})
+
+    return orders
 }

@@ -243,7 +243,8 @@
         }
 
         .cancel-item-btn:hover {
-            background-color: #b31419 !important; /* Slightly darker rich red on hover */
+            background-color: #b31419 !important;
+            /* Slightly darker rich red on hover */
             color: #ffffff !important;
             opacity: 1;
         }
@@ -536,8 +537,8 @@
                             <div class="item-status-block">
                                 <div class="status-header-line">
                                     <% if(item.status==='Cancelled' ) { %>
-                                        <span class="status-dot dot-danger"></span> Cancelled on <%= new
-                                            Date(order.createdAt).toLocaleDateString("en-IN") %>
+                                        <span class="status-dot dot-danger"></span> Cancelled on
+                                        <%= new Date(item.cancelledAt).toLocaleDateString("en-IN") %>
                                             <% } else if(item.status==='Delivered' ) { %>
                                                 <span class="status-dot dot-active"></span> Delivered on <%= new
                                                     Date(order.createdAt).toLocaleDateString("en-IN") %>
@@ -555,16 +556,60 @@
                                                 Your order is being processed.
                                                 <% } %>
                                 </div>
+                                <% if(item.status==="Cancelled" && item.cancelReason){ %>
+                                
+                                    <div class="text-danger small mt-2">
+                                
+                                        <strong>Reason :</strong>
+                                
+                                        <%= item.cancelReason %>
+                                
+                                    </div>
+                                
+                                    <% } %>
 
                                 <!-- Display Cancel Action Only for Active/Processing Items -->
-                                <% if(item.status !=='Cancelled' && item.status !=='Delivered' ) { %>
-                                <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
+                                <!-- Pending Products -->
+                                <% if(item.status==="Pending" ){ %>
+                                
+                                    <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
+                                
                                         <input type="hidden" name="orderId" value="<%= order._id %>">
+                                
                                         <input type="hidden" name="itemId" value="<%= item._id %>">
+                                
                                         <input type="hidden" name="page" value="<%= currentPage %>">
-                                        <button type="submit" class="btn cancel-item-btn">Cancel</button>
+                                
+                                        <button type="submit" class="btn cancel-item-btn">
+                                
+                                            Cancel
+                                
+                                        </button>
+                                
                                     </form>
+                                
                                     <% } %>
+                                
+                                        <!-- Delivered Products -->
+                                        <% if(item.status==="Delivered" ){ %>
+                                
+                                            <form action="/orders/return-item" method="POST" class="returnOrderForm">
+                                
+                                                <input type="hidden" name="orderId" value="<%= order._id %>">
+                                
+                                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                
+                                                <input type="hidden" name="page" value="<%= currentPage %>">
+                                
+                                                <button type="submit" class="btn btn-outline-danger">
+                                
+                                                    Return Product
+                                
+                                                </button>
+                                
+                                            </form>
+                                
+                                            <% } %>
                             </div>
                         </div>
                         <% }) %>
@@ -669,9 +714,19 @@
 
                 title: "Cancel Product?",
 
-                text: "This product will be cancelled and cannot be processed further.",
+                text: "Please provide a reason for cancelling this product:",
 
                 icon: "warning",
+
+                input: "textarea",
+
+                inputPlaceholder: "Type your reason here...",
+
+                inputAttributes: {
+
+                    'aria-label': 'Type your cancellation reason here'
+
+                },
 
                 showCancelButton: true,
 
@@ -681,11 +736,35 @@
 
                 confirmButtonText: "Yes, Cancel",
 
-                cancelButtonText: "Keep Product"
+                cancelButtonText: "Keep Product",
+
+                preConfirm: (reason) => {
+
+                    if (!reason || reason.trim() === "") {
+
+                        Swal.showValidationMessage("A cancellation reason is required");
+
+                    }
+
+                    return reason;
+
+                }
 
             }).then((result) => {
 
                 if (result.isConfirmed) {
+
+                    // Dynamically attach the cancellation reason text as a hidden field inside the form
+
+                    const reasonInput = document.createElement("input");
+
+                    reasonInput.type = "hidden";
+
+                    reasonInput.name = "cancelReason";
+
+                    reasonInput.value = result.value;
+
+                    form.appendChild(reasonInput);
 
                     form.submit()
 

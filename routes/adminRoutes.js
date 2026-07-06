@@ -18,6 +18,7 @@ import {
     getEditVariant, postEditVariant } from "../controllers/admin/adminController.js"
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
+import {getOrders} from "../controllers/admin/orderController.js"
 
 
 const router = express.Router()
@@ -81,5 +82,7 @@ router.post("/edit-variant/:id", isAdminLoggedIn, upload.fields([
     {name: "variantImage1", maxCount: 1},
     {name: "variantImage2", maxCount: 1}
 ]), postEditVariant)
+
+router.get("/orders", isAdminLoggedIn, getOrders)
 
 export default router
