@@ -1,4 +1,4 @@
-import { getAllOrders, getAdminOrderDetails, updateOrderItemStatusService } from "../../services/orderService.js";
+import { getAllOrders, getAdminOrderDetails, updateOrderItemStatusService, allowedStatusTransitions } from "../../services/orderService.js";
 
 export const getOrders = async(req, res)=>{
     try {
@@ -29,7 +29,8 @@ export const getOrderDetails = async(req, res) =>{
         }
 
         return res.render("admin/orderDetails",{
-            order: result.order
+            order: result.order,
+            allowedStatusTransitions: result.allowedStatusTransitions
         })
         
     } catch (error) {

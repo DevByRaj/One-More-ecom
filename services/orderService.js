@@ -6,6 +6,47 @@ import Cart from "../models/cartModel.js"
 import Variant from "../models/variantModel.js";
 import User from "../models/userModel.js"
 
+export const allowedStatusTransitions = {
+    Pending: [
+        "Pending",
+        "Processing",
+        "Cancelled"
+    ],
+
+    Processing: [
+        "Processing",
+        "Shipped",
+        "Cancelled"
+    ],
+
+    Shipped: [
+        "Shipped",
+        "Out For Delivery",
+        "Cancelled"
+    ],
+
+    "Out For Delivery": [
+        "Out For Delivery",
+        "Delivered"
+    ],
+
+    Delivered: [
+        "Delivered"
+    ],
+
+    "Return Requested": [
+        "Return Requested",
+        "Returned"
+    ],
+
+    Returned: [
+        "Returned"
+    ],
+
+    Cancelled: [
+        "Cancelled"
+    ]
+}
 
 export const getCheckoutData = async (userId) => {
 
@@ -194,6 +235,8 @@ const recalculateOrderTotals = (order)=>{
 
 const calculateOverallOrderStatus = (items) =>{
 
+    const activeItems = items.filter(item => !["Cancelled", "Returned"].includes(item.status))
+
     if(items.every(item => item.status === "Cancelled")){
         return "Cancelled"
     }
@@ -202,28 +245,28 @@ const calculateOverallOrderStatus = (items) =>{
         return "Returned"
     }
 
-    if(items.every(item => item.status === "Delivered")){
+    if(activeItems.length === 0){
         return "Delivered"
     }
 
-    if (items.some(item => item.status === "Pending")) {
+    if (activeItems.some(item => item.status === "Pending")) {
         return "Pending";
     }
 
-    if(items.some(item => item.status === "Processing")){
+    if(activeItems.some(item => item.status === "Processing")){
         return "Processing"
     }
 
-    if (items.some(item => item.status === "Shipped")) {
+    if (activeItems.some(item => item.status === "Shipped")) {
         return "Shipped";
     }
 
-    if (items.some(item => item.status === "Out For Delivery")) {
+    if (activeItems.some(item => item.status === "Out For Delivery")) {
         return "Out For Delivery";
     }
 
-    if(items.some(item => item.status === "Delivered") && !items.every(item => item.status === "Delivered")){
-        return "Partially Delivered"
+    if (activeItems.every(item => item.status === "Delivered")) {
+        return "Delivered";
     }
 
     return "Pending"
@@ -302,7 +345,8 @@ export const getAdminOrderDetails = async (orderId) =>{
 
     return{
         success: true,
-        order
+        order,
+        allowedStatusTransitions
     }
 }
 
@@ -317,9 +361,14 @@ export const updateOrderItemStatusService = async(orderId, formData) =>{
     for(const item of order.items){
         const newStatus = formData[`status_${item._id}`]
 
-        if(newStatus){
-            item.status = newStatus
+        if(!newStatus) continue
+
+        const allowedStatusTransitions = allowedStatusTransitions[item.status]
+
+        if(!allowedStatusTransitions.includes(newStatus)){
+            throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
+        item.status = newStatus
     }
     recalculateOrderTotals(order)
 
