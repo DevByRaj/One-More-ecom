@@ -4,6 +4,8 @@ import {getUserCart, calculateCartTotals} from "./cartService.js"
 import Order from "../models/orderModel.js"
 import Cart from "../models/cartModel.js"
 import Variant from "../models/variantModel.js";
+import User from "../models/userModel.js"
+
 
 export const getCheckoutData = async (userId) => {
 
@@ -116,7 +118,7 @@ export const placeOrderService = async (userId, orderData) => {
         paymentMethod,
         paymentStatus: "Pending",
         orderStatus: "Pending",
-        subtotal: totals.subtotal,
+        subTotal: totals.subtotal,
         shipping: totals.shipping,
         discount: totals.discount,
         grandTotal: totals.grandTotal
@@ -184,10 +186,48 @@ const recalculateOrderTotals = (order)=>{
 
     const grandTotal = subtotal - discount + shipping
 
-    order.subtotal = subtotal
+    order.subTotal = subtotal
     order.discount = discount
     order.shipping = shipping
     order.grandTotal = grandTotal
+}
+
+const calculateOverallOrderStatus = (items) =>{
+
+    if(items.every(item => item.status === "Cancelled")){
+        return "Cancelled"
+    }
+
+    if(items.every(item => item.status === "Returned")){
+        return "Returned"
+    }
+
+    if(items.every(item => item.status === "Delivered")){
+        return "Delivered"
+    }
+
+    if (items.some(item => item.status === "Pending")) {
+        return "Pending";
+    }
+
+    if(items.some(item => item.status === "Processing")){
+        return "Processing"
+    }
+
+    if (items.some(item => item.status === "Shipped")) {
+        return "Shipped";
+    }
+
+    if (items.some(item => item.status === "Out For Delivery")) {
+        return "Out For Delivery";
+    }
+
+    if(items.some(item => item.status === "Delivered") && !items.every(item => item.status === "Delivered")){
+        return "Partially Delivered"
+    }
+
+    return "Pending"
+
 }
 
 export const cancelOrderItemService = async(userId, orderId, itemId, cancelReason) =>{
@@ -234,13 +274,7 @@ export const cancelOrderItemService = async(userId, orderId, itemId, cancelReaso
 
     recalculateOrderTotals(order)
 
-    const allCancelled = order.items.every(
-        product => product.status === "Cancelled"
-    )
-
-    if(allCancelled){
-        order.orderStatus = "Cancelled"
-    }
+    order.orderStatus = calculateOverallOrderStatus(order.items)
 
     await order.save()
 
@@ -251,7 +285,47 @@ export const cancelOrderItemService = async(userId, orderId, itemId, cancelReaso
 
 export const getAllOrders = async() =>{
 
-    const orders = (await Order.find().populate("userId")).toSorted({createdAt: -1})
+    const orders = await Order.find().populate("userId").sort({createdAt: -1})
 
     return orders
+}
+
+export const getAdminOrderDetails = async (orderId) =>{
+
+    const order = await Order.findById(orderId).populate("userId")
+
+    if(!order){
+        return{
+            success: false
+        }        
+    }
+
+    return{
+        success: true,
+        order
+    }
+}
+
+export const updateOrderItemStatusService = async(orderId, formData) =>{
+
+    const order = await Order.findById(orderId)
+
+    if(!order){
+        throw new Error("Order not found")
+    }
+
+    for(const item of order.items){
+        const newStatus = formData[`status_${item._id}`]
+
+        if(newStatus){
+            item.status = newStatus
+        }
+    }
+    recalculateOrderTotals(order)
+
+    order.orderStatus = calculateOverallOrderStatus(order.items)
+
+    await order.save()
+
+    return order
 }
