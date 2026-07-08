@@ -392,35 +392,15 @@
                                     <div class="status-update-row">                                           
 
                                             <label>Order Status :</label>
-                                            <select name="status_<%= item._id %>" class="admin-select-dropdown"
-                                                <%=["Delivered","Cancelled","Returned"].includes(item.status) ? "disabled" : "" %>>
-                                                <option value="Pending" <%=item.status==="Pending" ? "selected" : "" %>>
-                                                    Pending
-                                                </option>
+                                            <select name="status_<%= item._id %>" class="admin-select-dropdown">
                                             
-                                                <option value="Processing" <%=item.status==="Processing" ? "selected" : "" %>>
-                                                    Processing
-                                                </option>
-                                                
-                                                <option value="Shipped" <%=item.status==="Shipped" ? "selected" : "" %>>
-                                                    Shipped
-                                                </option>
+                                                <% allowedStatusTransitions[item.status].forEach(status=> { %>
                                             
-                                                <option value="Out For Delivery" <%=item.status==="Out For Delivery" ? "selected" : "" %>>
-                                                    Out For Delivery
-                                                </option>
+                                                    <option value="<%= status %>" <%=item.status===status ? "selected" : "" %>>
+                                                        <%= status %>
+                                                    </option>
                                             
-                                                <option value="Delivered" <%=item.status==="Delivered" ? "selected" : "" %>>
-                                                    Delivered
-                                                </option>
-                                            
-                                                <option value="Cancelled" <%=item.status==="Cancelled" ? "selected" : "" %>>
-                                                    Cancelled
-                                                </option>
-
-                                                <option value="Returned" <%=item.status==="Returned" ? "selected" : "" %>>
-                                                    Returned
-                                                </option>
+                                                    <% }) %>
                                             
                                             </select>
                                         
