@@ -14,9 +14,12 @@ export const addWishlist = async(req, res) =>{
                 message: result.message
             })
         }
+        const wishlist = await getWishlist(userId)
+
         return res.json({
             success: true,
-            message: "Added to wishllist"
+            message: "Added to wishlist",
+            wishlistCount: wishlist ? wishlist.products.length : 0
         })
         
     } catch (error) {

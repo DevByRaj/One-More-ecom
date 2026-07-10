@@ -25,44 +25,6 @@
             color: #000000;
         }
 
-        /* ── NAVBAR STYLE ── */
-        .navbar {
-            background-color: var(--bg-dark);
-            padding: 15px 50px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo-img {
-            height: 60px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .nav-link {
-            color: #ffffff !important;
-            font-size: 0.85rem;
-            font-weight: 400;
-            margin: 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 0 15px !important;
-            transition: opacity 0.3s ease;
-        }
-
-        .nav-icons a {
-            color: #fff;
-            margin-left: 20px;
-            font-size: 1.1rem;
-        }
-
-        /* ── DETAILS PANEL LAYOUT ── */
-        .details-container {
-            max-width: 1300px;
-            margin: 50px auto 100px;
-            padding: 0 30px;
-        }
 
         .main-details-box {
             border: 1px solid #111111;
@@ -416,32 +378,7 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <img src="/images/logo.png" class="logo-img" alt="OneMore Logo">
-            </a>
-            <button class="navbar-toggler navbar-dark border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto text-center mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
-                </ul>
-
-                <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
-                    <a href="/profile"><i class="fa-regular fa-user"></i></a>
-                    <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
-                    <a href="/cart"><i class="fa-solid fa-bag-shopping"></i></a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <%- include("../partials/navbar") %>
 
     <!-- Main Order Details Component Box -->
     <div class="details-container">
@@ -481,7 +418,7 @@
                     <h6>Order Summary</h6>
                     <div class="summary-row">
                         <span>Subtotal :</span>
-                        <span>₹ <%= order.subtotal %></span>
+                        <span>₹ <%= order.subTotal %></span>
                     </div>
 
                     <div class="summary-row">
@@ -510,7 +447,7 @@
 
                 <!-- Dynamic Itemized Loop Block -->
                 <% if(order.items && order.items.length> 0) { %>
-                    <% items.forEach(item=> { %>
+                    <% order.items.forEach(item=> { %>
                         <div class="order-item-row">
                             <div class="item-img-wrapper">
                                 <img src="<%= item.productImage %>" alt="<%= item.productName %>">
@@ -548,68 +485,87 @@
                                                             <% } %>
                                 </div>
                                 <div class="status-desc">
-                                    <% if(item.status==='Cancelled' ) { %>
-                                        Your order has been cancelled
-                                        <% } else if(item.status==='Delivered' ) { %>
-                                            Your order has been delivered
-                                            <% } else { %>
-                                                Your order is being processed.
-                                                <% } %>
+
+                                    <% if(item.status==="Pending" ){ %>
+                                        Waiting for confirmation.
+
+                                        <% } else if(item.status==="Processing" ){ %>
+                                            Your order is being prepared.
+
+                                            <% } else if(item.status==="Shipped" ){ %>
+                                                Your package has been shipped.
+
+                                                <% } else if(item.status==="Out For Delivery" ){ %>
+                                                    Your package is out for delivery.
+
+                                                    <% } else if(item.status==="Delivered" ){ %>
+                                                        Delivered successfully.
+
+                                                        <% } else if(item.status==="Cancelled" ){ %>
+                                                            Product cancelled.
+
+                                                            <% } else if(item.status==="Return Requested" ){ %>
+                                                                Return request submitted.
+
+                                                                <% } else if(item.status==="Returned" ){ %>
+                                                                    Product returned successfully.
+
+                                                                    <% } %>
+
                                 </div>
                                 <% if(item.status==="Cancelled" && item.cancelReason){ %>
-                                
+
                                     <div class="text-danger small mt-2">
-                                
+
                                         <strong>Reason :</strong>
-                                
+
                                         <%= item.cancelReason %>
-                                
+
                                     </div>
-                                
+
                                     <% } %>
 
-                                <!-- Display Cancel Action Only for Active/Processing Items -->
-                                <!-- Pending Products -->
-                                <% if(item.status==="Pending" ){ %>
-                                
-                                    <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
-                                
-                                        <input type="hidden" name="orderId" value="<%= order._id %>">
-                                
-                                        <input type="hidden" name="itemId" value="<%= item._id %>">
-                                
-                                        <input type="hidden" name="page" value="<%= currentPage %>">
-                                
-                                        <button type="submit" class="btn cancel-item-btn">
-                                
-                                            Cancel
-                                
-                                        </button>
-                                
-                                    </form>
-                                
-                                    <% } %>
-                                
-                                        <!-- Delivered Products -->
-                                        <% if(item.status==="Delivered" ){ %>
-                                
-                                            <form action="/orders/return-item" method="POST" class="returnOrderForm">
-                                
+                                        <!-- Display Cancel Action Only for Active/Processing Items -->
+                                        <!-- Pending Products -->
+                                        <% if( ["Pending","Processing","Shipped"].includes(item.status) ){ %>
+
+                                            <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
+
                                                 <input type="hidden" name="orderId" value="<%= order._id %>">
-                                
+
                                                 <input type="hidden" name="itemId" value="<%= item._id %>">
-                                
+
                                                 <input type="hidden" name="page" value="<%= currentPage %>">
-                                
-                                                <button type="submit" class="btn btn-outline-danger">
-                                
-                                                    Return Product
-                                
+
+                                                <button class="btn cancel-item-btn">
+                                                    Cancel Product
                                                 </button>
-                                
+
                                             </form>
-                                
+
                                             <% } %>
+
+                                                <!-- Delivered Products -->
+                                                <% if(item.status==="Delivered" ){ %>
+
+                                                    <form action="/orders/return-item" method="POST"
+                                                        class="returnOrderForm">
+
+                                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+
+                                                        <input type="hidden" name="itemId" value="<%= item._id %>">
+
+                                                        <input type="hidden" name="page" value="<%= currentPage %>">
+
+                                                        <button type="submit" class="btn btn-outline-danger">
+
+                                                            Return Product
+
+                                                        </button>
+
+                                                    </form>
+
+                                                    <% } %>
                             </div>
                         </div>
                         <% }) %>
@@ -776,6 +732,75 @@
 
     })
 
-</script>
+
+            document.querySelectorAll(".returnOrderForm").forEach(form => {
+
+                form.addEventListener("submit", function (e) {
+
+                    e.preventDefault()
+
+                    Swal.fire({
+
+                        title: "Return Product?",
+
+                        text: "Please provide a reason for returning this product:",
+
+                        icon: "question",
+
+                        input: "textarea",
+
+                        inputPlaceholder: "Type your return reason here...",
+
+                        inputAttributes: {
+                            'aria-label': 'Type your return reason here'
+                        },
+
+                        showCancelButton: true,
+
+                        confirmButtonColor: "#e61f26",
+
+                        cancelButtonColor: "#6c757d",
+
+                        confirmButtonText: "Request Return",
+
+                        cancelButtonText: "Keep Product",
+
+                        preConfirm: (reason) => {
+
+                            if (!reason || reason.trim() === "") {
+                                Swal.showValidationMessage(
+                                    "A return reason is required."
+                                )
+                            }
+
+                            return reason
+                        }
+
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+
+                            const reasonInput = document.createElement("input")
+
+                            reasonInput.type = "hidden"
+
+                            reasonInput.name = "returnReason"
+
+                            reasonInput.value = result.value
+
+                            form.appendChild(reasonInput)
+
+                            form.submit()
+
+                        }
+
+                    })
+
+                })
+
+            })
+
+
+    </script>
 
 </html>

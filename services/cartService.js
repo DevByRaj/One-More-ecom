@@ -1,6 +1,7 @@
 import Cart from "../models/cartModel.js"
 import Product from "../models/productModel.js"
 import Variant from "../models/variantModel.js"
+import Wishlist from "../models/wishlistModel.js"
 
 export const addProductToCart = async (userId, cartData) => {
 
@@ -94,9 +95,25 @@ export const addProductToCart = async (userId, cartData) => {
 
         await cart.save()
 
-        return {
-            success: true
+    const result = await Wishlist.updateOne(
+        {userId},
+        {
+            $pull: {
+                products: {
+                    productId,
+                    variantId
+                }
+            }
         }
+    );
+    
+    const wishlist = await Wishlist.findOne({userId});
+
+    return {
+        success: true,
+        cartCount: cart.items.length,
+        wishlistCount: wishlist ? wishlist.products.length : 0
+    };
     }
 
 export const getUserCart = async(userId) => {

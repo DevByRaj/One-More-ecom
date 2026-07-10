@@ -1,484 +1,1137 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
+
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Edit Order | OneMore Admin</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
 
     <style>
         :root {
+
             --bg-black: #000000;
+
             --panel-bg: #0b0b0c;
+
             --neon-purple: #7a56f5;
+
             --text-gray: #a0a0a5;
+
             --border-dark: #1f1f22;
+
             --accent-state: #ffbe1a;
+
         }
+
+
 
         body {
+
             font-family: 'Poppins', sans-serif;
+
             background-color: var(--bg-black);
+
             color: #ffffff;
+
             margin: 0;
+
             padding: 20px;
+
         }
+
+
 
         .admin-container {
+
             max-width: 1400px;
+
             margin: 0 auto;
+
         }
+
+
 
         /* ── LOGO HEADER ── */
+
         .admin-header {
+
             padding: 10px 20px;
+
             margin-bottom: 20px;
+
         }
+
+
 
         .admin-logo {
+
             height: 70px;
+
             width: auto;
+
             object-fit: contain;
+
         }
+
+
 
         /* ── MAIN GRID LAYOUT ── */
+
         .admin-layout-grid {
+
             display: grid;
+
             grid-template-columns: 260px 1fr;
+
             gap: 30px;
+
             align-items: start;
+
         }
+
+
 
         /* ── SIDEBAR STYLE ── */
+
         .admin-sidebar {
+
             background-color: var(--panel-bg);
+
             border: 2px solid var(--neon-purple);
+
             border-radius: 15px;
+
             padding: 25px 15px;
+
             display: flex;
+
             flex-direction: column;
+
             gap: 8px;
+
         }
+
+
 
         .sidebar-menu-item {
+
             display: flex;
+
             align-items: center;
+
             gap: 15px;
+
             padding: 12px 20px;
+
             color: #ffffff;
+
             text-decoration: none;
+
             font-size: 0.9rem;
+
             font-weight: 500;
+
             border-radius: 8px;
+
             transition: all 0.2s ease;
+
         }
+
+
 
         .sidebar-menu-item i {
+
             width: 20px;
+
             font-size: 1.1rem;
+
             text-align: center;
+
             color: var(--text-gray);
+
         }
+
+
 
         .sidebar-menu-item:hover,
+
         .sidebar-menu-item.active {
+
             background-color: rgba(122, 86, 245, 0.15);
+
             color: #ffffff;
+
         }
+
+
 
         .sidebar-menu-item:hover i,
+
         .sidebar-menu-item.active i {
+
             color: var(--neon-purple);
+
         }
+
+
 
         /* ── MAIN CONTENT AREA ── */
+
         .main-content-area {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 25px;
+
         }
+
+
 
         /* Top Title Banner Box */
+
         .top-control-banner {
+
             background-color: var(--panel-bg);
+
             border: 1px solid var(--neon-purple);
+
             border-radius: 12px;
+
             padding: 15px 30px;
+
         }
+
+
 
         .top-control-banner h4 {
+
             margin: 0;
+
             font-weight: 600;
+
             font-size: 1.3rem;
+
             letter-spacing: 0.5px;
+
         }
+
+
 
         /* ── WORKSPACE DASH PANELS ── */
+
         .edit-panels-row-grid {
+
             display: grid;
+
             grid-template-columns: 2.2fr 1fr;
+
             gap: 25px;
+
         }
+
+
 
         .order-full-width-box {
+
             grid-column: span 2;
+
         }
+
+
 
         .data-card-panel {
+
             background-color: var(--panel-bg);
+
             border: 1px solid var(--neon-purple);
+
             border-radius: 15px;
+
             padding: 25px;
+
             overflow: hidden;
+
         }
+
+
 
         /* ── PRODUCT UPDATES LAYOUT GRID ── */
+
         .products-table-header {
+
             display: grid;
+
             grid-template-columns: 2.5fr 1fr 1fr 2fr;
+
             background-color: #1a1a1c;
+
             padding: 12px 20px;
+
             border-radius: 8px;
+
             font-weight: 600;
+
             font-size: 0.85rem;
+
             color: var(--text-gray);
+
             margin-bottom: 15px;
+
             text-align: center;
+
         }
+
+
 
         .products-table-header div:first-child {
+
             text-align: left;
+
         }
+
+
 
         .product-edit-row {
+
             display: grid;
+
             grid-template-columns: 2.5fr 1fr 1fr 2fr;
+
             align-items: center;
+
             padding: 20px 20px;
+
             border-bottom: 1px solid var(--border-dark);
+
             font-size: 0.9rem;
+
             text-align: center;
+
         }
+
+
 
         .product-edit-row div:first-child {
+
             text-align: left;
+
             font-weight: 500;
+
         }
+
+
 
         .data-card-panel .product-edit-row:last-of-type {
+
             border-bottom: none;
+
         }
+
+
 
         /* Center Box Quantities Box */
+
         .qty-box-mock {
+
             border: 1px solid var(--text-gray);
+
             background: transparent;
+
             color: #ffffff;
+
             border-radius: 6px;
+
             width: 45px;
+
             height: 35px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             margin: 0 auto;
+
             font-weight: 500;
+
         }
+
+
 
         /* Form Updates Elements */
+
         .status-update-row {
+
             display: flex;
+
             align-items: center;
+
             justify-content: flex-end;
+
             gap: 12px;
+
         }
+
+
 
         .status-update-row label {
+
             font-size: 0.85rem;
+
             color: var(--text-gray);
+
             white-space: nowrap;
+
         }
+
+
+
+        .status-container {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            width: 100%;
+
+        }
+
+
+
+        .status-update-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-start;
+
+            gap: 10px;
+
+        }
+
+
+
+        .status-reason {
+
+            margin-left: 95px;
+
+            margin-top: 8px;
+
+            max-width: 180px;
+
+            font-size: 12px;
+
+            line-height: 1.4;
+
+        }
+
+
+
+        .status-reason strong {
+
+            display: block;
+
+            margin-bottom: 3px;
+
+        }
+
+
 
         .admin-select-dropdown {
+
             background-color: #333336;
+
             color: #ffffff;
+
             border: 1px solid var(--text-gray);
+
             border-radius: 8px;
+
             padding: 6px 16px;
+
             font-size: 0.85rem;
+
             min-width: 150px;
+
             outline: none;
+
             cursor: pointer;
+
         }
+
+
 
         /* ── CUSTOMER DETAILS LIST SECTION ── */
+
         .card-header-banner {
+
             background-color: #1a1a1c;
+
             padding: 12px 20px;
+
             border-radius: 8px;
+
             font-weight: 600;
+
             font-size: 0.85rem;
+
             color: #ffffff;
+
             text-align: center;
+
             margin-bottom: 20px;
+
             letter-spacing: 0.5px;
+
         }
+
+
 
         .customer-meta-table-list {
+
             display: flex;
+
             flex-direction: column;
+
         }
+
+
 
         .meta-list-item {
+
             display: grid;
+
             grid-template-columns: 1.2fr 2fr;
+
             padding: 15px 10px;
+
             border-bottom: 1px solid var(--border-dark);
+
             font-size: 0.85rem;
+
         }
+
+
 
         .customer-meta-table-list .meta-list-item:last-of-type {
+
             border-bottom: none;
+
         }
+
+
 
         .meta-label {
+
             font-weight: 500;
+
             color: #ffffff;
+
         }
+
+
 
         .meta-value {
+
             color: var(--text-gray);
+
             line-height: 1.5;
+
         }
+
+
 
         /* ── SUMMARY STATS TIMEBOX PANEL ── */
+
         .state-timeline-box {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 40px;
+
             padding: 30px 20px;
+
         }
+
+
 
         .timeline-text-line {
+
             font-size: 0.9rem;
+
             font-weight: 500;
+
         }
+
+
 
         .timeline-text-line span {
+
             color: var(--text-gray);
+
             margin-left: 10px;
+
             font-weight: 400;
+
         }
+
+
 
         .current-state-highlight {
+
             font-weight: 500;
+
             font-size: 0.9rem;
+
         }
+
+
 
         .current-state-highlight span {
+
             color: var(--accent-state);
+
             font-weight: 600;
+
             margin-left: 5px;
+
         }
+
+
 
         .admin-footer {
+
             text-align: center;
+
             color: var(--text-gray);
+
             font-size: 0.8rem;
+
             margin-top: 40px;
+
             padding-bottom: 20px;
+
         }
+
+
 
         /* Responsive Breakpoints UI Layout */
+
         @media (max-width: 1200px) {
+
             .edit-panels-row-grid {
+
                 grid-template-columns: 1fr;
+
             }
 
+
+
             .order-full-width-box {
+
                 grid-column: span 1;
+
             }
+
         }
+
+
 
         @media (max-width: 768px) {
 
+
+
             .products-table-header,
+
             .product-edit-row {
+
                 grid-template-columns: 1fr;
+
                 gap: 12px;
+
                 text-align: left;
+
             }
+
+
 
             .products-table-header {
+
                 display: none;
+
             }
+
+
 
             .qty-box-mock {
+
                 margin: 0;
+
             }
 
+
+
             .status-update-row {
+
                 justify-content: flex-start;
+
             }
+
         }
     </style>
+
 </head>
+
+
 
 <body>
 
+
+
     <div class="admin-container">
+
         <!-- Logo Branding Header Area -->
+
         <div class="admin-header">
+
             <img src="/images/logo.png" class="admin-logo" alt="OneMore Logo">
+
         </div>
+
+
 
         <div class="admin-layout-grid">
+
             <!-- Sidebar Left Navigation Column Box Component -->
+
             <aside class="admin-sidebar">
+
                 <a href="/admin/dashboard" class="sidebar-menu-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+
                 <a href="/admin/products" class="sidebar-menu-item"><i class="fa-solid fa-cubes"></i> Products</a>
+
                 <a href="/admin/customers" class="sidebar-menu-item"><i class="fa-solid fa-users"></i> Customers</a>
+
                 <a href="/admin/orders" class="sidebar-menu-item active"><i class="fa-solid fa-cart-shopping"></i>
+
                     Orders</a>
+
                 <a href="/admin/coupons" class="sidebar-menu-item"><i class="fa-solid fa-ticket"></i> Coupons</a>
+
                 <a href="/admin/category" class="sidebar-menu-item"><i class="fa-solid fa-folder-tree"></i> Category</a>
+
                 <a href="/admin/brand" class="sidebar-menu-item"><i class="fa-solid fa-copyright"></i> Brand</a>
+
                 <a href="/admin/offers" class="sidebar-menu-item"><i class="fa-solid fa-percent"></i> Offers</a>
+
                 <a href="/admin/banner" class="sidebar-menu-item"><i class="fa-solid fa-image"></i> Banner</a>
+
                 <a href="/admin/sales-report" class="sidebar-menu-item"><i class="fa-solid fa-chart-line"></i> Sales
+
                     Report</a>
+
                 <a href="/admin/logout" class="sidebar-menu-item mt-4"><i class="fa-solid fa-power-off"></i> Logout</a>
+
             </aside>
 
+
+
             <!-- Main Interactive Display Workspace Context -->
+
             <main class="main-content-area">
+
                 <!-- Title Header Banner Box Section -->
+
                 <div class="top-control-banner">
+
                     <h4>Edit Orders</h4>
+
                 </div>
 
-                <form action="/admin/orders/update-item-status" method="POST">
-                
+
+
+                <form id="orderUpdateForm" action="/admin/orders/update-item-status" method="POST">
+
+
+
                     <input type="hidden" name="orderId" value="<%= order._id %>">
 
-                <div class="edit-panels-row-grid">
 
-                    <!-- TOP PANEL CARD: Ordered Products List -->
-                    <div class="data-card-panel order-full-width-box">
-                        <div class="products-table-header">
-                            <div>Product</div>
-                            <div>Quantity</div>
-                            <div>Price</div>
-                            <div>Order Update</div>
-                        </div>
 
-                        <!-- Dynamic Backend Mapping of Order Items -->
-                        <% if(order.items && order.items.length> 0) { %>
-                            <% order.items.forEach(item=> { %>
-                                <div class="product-edit-row">
-                                    <div>
-                                        <%= item.productName %>
-                                    </div>
-                                    <div>
-                                        <div class="qty-box-mock">
-                                            <%= item.quantity %>
+                    <div class="edit-panels-row-grid">
+
+
+
+                        <!-- TOP PANEL CARD: Ordered Products List -->
+
+                        <div class="data-card-panel order-full-width-box">
+
+                            <div class="products-table-header">
+
+                                <div>Product</div>
+
+                                <div>Quantity</div>
+
+                                <div>Price</div>
+                                <div>Order Update</div>
+
+                            </div>
+
+
+
+                            <!-- Dynamic Backend Mapping of Order Items -->
+
+                            <% if(order.items && order.items.length> 0) { %>
+
+                                <% order.items.forEach(item=> { %>
+
+                                    <div class="product-edit-row">
+
+                                        <div>
+
+                                            <%= item.productName %>
+
                                         </div>
-                                    </div>
-                                    <div>₹<%= item.totalPrice.toFixed(2) %>
-                                    </div>
-                                    <div class="status-update-row">                                           
 
-                                            <label>Order Status :</label>
-                                            <select name="status_<%= item._id %>" class="admin-select-dropdown">
-                                            
-                                                <% allowedStatusTransitions[item.status].forEach(status=> { %>
-                                            
-                                                    <option value="<%= status %>" <%=item.status===status ? "selected" : "" %>>
-                                                        <%= status %>
-                                                    </option>
-                                            
-                                                    <% }) %>
-                                            
-                                            </select>
-                                        
+                                        <div>
+
+                                            <div class="qty-box-mock">
+
+                                                <%= item.quantity %>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div>₹<%= item.totalPrice.toFixed(2) %>
+
+                                        </div>
+
+                                        <div>
+
+
+
+                                            <div class="status-container">
+
+
+
+                                                <div class="status-update-row">
+
+
+
+                                                    <label>Order Status :</label>
+
+
+
+                                                    <select name="status_<%= item._id %>" class="admin-select-dropdown">
+
+
+
+                                                        <% allowedStatusTransitions[item.status].forEach(status=> { %>
+
+
+
+                                                            <option value="<%= status %>" <%=item.status===status
+                                                                ? "selected" : "" %>>
+
+                                                                <%= status %>
+
+                                                            </option>
+
+
+
+                                                            <% }) %>
+
+
+
+                                                    </select>
+
+
+
+                                                </div>
+
+
+
+                                                <% if(item.status==="Cancelled" && item.cancelReason){ %>
+
+
+
+                                                    <div class="status-reason text-danger">
+
+                                                        <strong>Cancel Reason:</strong>
+
+                                                        <div>
+
+                                                            <%= item.cancelReason %>
+
+                                                        </div>
+
+                                                    </div>
+
+
+
+                                                    <% } %>
+
+
+
+                                                        <% if(item.status==="Return Requested" && item.returnReason){ %>
+
+
+                                                            <div class="status-reason text-warning">
+
+                                                                <strong>Return Reason:</strong>
+
+                                                                <div>
+
+                                                                    <%= item.returnReason %>
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                            <% } %>
+
+
+
+                                            </div>
+
+
+
+                                        </div>
+
                                     </div>
+
+                                    <% }) %>
+
+                                        <% } %>
+
+                        </div>
+
+
+
+                        <!-- BOTTOM LEFT CARD: Customer Profile & Contact Details -->
+
+                        <div class="data-card-panel">
+
+                            <div class="card-header-banner">
+
+                                Customer Details
+
+                            </div>
+
+                            <div class="customer-meta-table-list">
+
+                                <div class="meta-list-item">
+
+                                    <span class="meta-label">Customer Name</span>
+
+                                    <span class="meta-value">
+
+                                        <%= order.address.name %>
+
+                                    </span>
+
                                 </div>
-                                <% }) %>
-                                    <% } %>
+
+                                <div class="meta-list-item">
+
+                                    <span class="meta-label">Mobile Number</span>
+
+                                    <span class="meta-value">
+
+                                        <%= order.address.phone || '8888888888' %>
+
+                                    </span>
+
+                                </div>
+
+                                <div class="meta-list-item">
+
+                                    <span class="meta-label">Type of Payment</span>
+
+                                    <span class="meta-value">
+
+                                        <%= order.paymentMethod %>
+
+                                    </span>
+
+                                </div>
+
+                                <div class="meta-list-item">
+
+                                    <span class="meta-label">Address</span>
+
+                                    <span class="meta-value">
+
+                                        <%= order.address.houseName %>,<br>
+
+                                            <%= order.address.pincode %>,<br>
+
+                                                <%= order.address.city %>
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- BOTTOM RIGHT CARD: Tracking Logs & Timeline Details -->
+
+                        <div class="data-card-panel state-timeline-box">
+
+                            <div class="timeline-text-line">
+
+                                Ordered On : <span>
+
+                                    <%= new Date(order.createdAt).toLocaleDateString("en-GB") %>
+
+                                </span>
+
+                            </div>
+
+                            <div class="current-state-highlight">
+
+                                Current State : <span>
+
+                                    <%= order.orderStatus %>
+
+                                </span>
+
+                            </div>
+
+
+
+                            <div class="mt-4">
+
+                                <button type="submit" class="btn btn-light w-100 fw-semibold">
+
+
+
+                                    Update
+
+
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+
                     </div>
 
-                    <!-- BOTTOM LEFT CARD: Customer Profile & Contact Details -->
-                    <div class="data-card-panel">
-                        <div class="card-header-banner">
-                            Customer Details
-                        </div>
-                        <div class="customer-meta-table-list">
-                            <div class="meta-list-item">
-                                <span class="meta-label">Customer Name</span>
-                                <span class="meta-value">
-                                    <%= order.address.name %>
-                                </span>
-                            </div>
-                            <div class="meta-list-item">
-                                <span class="meta-label">Mobile Number</span>
-                                <span class="meta-value">
-                                    <%= order.address.phone || '8888888888' %>
-                                </span>
-                            </div>
-                            <div class="meta-list-item">
-                                <span class="meta-label">Type of Payment</span>
-                                <span class="meta-value">
-                                    <%= order.paymentMethod %>
-                                </span>
-                            </div>
-                            <div class="meta-list-item">
-                                <span class="meta-label">Address</span>
-                                <span class="meta-value">
-                                    <%= order.address.houseName %>,<br>
-                                        <%= order.address.pincode %>,<br>
-                                            <%= order.address.city %>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- BOTTOM RIGHT CARD: Tracking Logs & Timeline Details -->
-                    <div class="data-card-panel state-timeline-box">
-                        <div class="timeline-text-line">
-                            Ordered On : <span>
-                                <%= new Date(order.createdAt).toLocaleDateString("en-GB") %>
-                            </span>
-                        </div>
-                        <div class="current-state-highlight">
-                            Current State : <span>
-                                <%= order.orderStatus %>
-                            </span>
-                        </div>
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-light w-100 fw-semibold">
-                        
-                                Update
-                        
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
 
                 </form>
+
             </main>
+
         </div>
 
+
+
         <footer class="admin-footer">
+
             © 2026 onemore. All Rights Reserved.
+
         </footer>
+
     </div>
 
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.getElementById('orderUpdateForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = this;
+
+           fetch(form.action, {
+                method: form.method,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(new FormData(form))
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Update failed");
+                    }
+
+                    return Swal.fire({
+                        background: '#ffffff',
+                        color: '#1a1a1a',
+                        width: 380,
+                        padding: '40px 32px',
+                        icon: 'success',
+                        iconColor: '#22c55e',
+                        title: '<span style="font-family:Poppins,sans-serif;font-size:1.15rem;font-weight:600;color:#1a1a1a;">Order Status Changed</span>',
+                        html: '<span style="font-family:Poppins,sans-serif;font-size:0.875rem;color:#6b7280;">The order status has been successfully changed.</span>',
+                        confirmButtonText: 'View Orders',
+                        confirmButtonColor: '#1a1a1a',
+                        showCloseButton: false,
+                        allowOutsideClick: false,
+                        customClass: {
+                            confirmButton: 'px-5 py-2 rounded-3',
+                            popup: 'rounded-4'
+                        }
+                    });
+                })
+                .then(result => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/admin/orders";
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        background: '#ffffff',
+                        color: '#1a1a1a',
+                        icon: 'error',
+                        iconColor: '#ef4444',
+                        title: '<span style="font-family:Poppins,sans-serif;font-size:1.1rem;font-weight:600;color:#1a1a1a;">Update Failed</span>',
+                        html: '<span style="font-family:Poppins,sans-serif;font-size:0.875rem;color:#6b7280;">Something went wrong. Please try again.</span>',
+                        confirmButtonText: 'Try Again',
+                        confirmButtonColor: '#1a1a1a'
+                    });
+                });
+        });
+    </script>
+
 </body>
+
+
 
 </html>
