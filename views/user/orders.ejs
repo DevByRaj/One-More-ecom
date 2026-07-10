@@ -227,6 +227,30 @@
             color: #ffffff;
         }
 
+        .pagination .page-link{
+    color:#000;
+    border:1px solid #ddd;
+    border-radius:8px;
+    margin:0 4px;
+    min-width:40px;
+    text-align:center;
+}
+
+.pagination .page-item.active .page-link{
+    background:#000;
+    border-color:#000;
+    color:#fff;
+}
+
+.pagination .page-link:hover{
+    background:#f2f2f2;
+    color:#000;
+}
+
+.pagination .page-item.disabled .page-link{
+    color:#999;
+}
+
         /* ── FOOTER STYLE ── */
         footer {
             background-color: var(--bg-dark);
@@ -461,6 +485,60 @@
                                         <p class="mb-0">You haven't placed any orders within this period.</p>
                                     </div>
                                     <% } %>
+
+                                    <% if (totalPages> 1) { %>
+                                    
+                                        <div class="d-flex justify-content-center my-4">
+                                    
+                                            <nav>
+                                                <ul class="pagination">
+                                    
+                                                    <!-- Previous -->
+                                    
+                                                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                    
+                                                        <a class="page-link" href="/orders?page=<%= currentPage - 1 %>">
+                                    
+                                                            <i class="fa-solid fa-angle-left"></i>
+                                    
+                                                        </a>
+                                    
+                                                    </li>
+                                    
+                                                    <!-- Page Numbers -->
+                                    
+                                                    <% for(let i=1; i <=totalPages; i++) { %>
+                                    
+                                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    
+                                                            <a class="page-link" href="/orders?page=<%= i %>">
+                                    
+                                                                <%= i %>
+                                    
+                                                            </a>
+                                    
+                                                        </li>
+                                    
+                                                        <% } %>
+                                    
+                                                            <!-- Next -->
+                                    
+                                                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                    
+                                                                <a class="page-link" href="/orders?page=<%= currentPage + 1 %>">
+                                    
+                                                                    <i class="fa-solid fa-angle-right"></i>
+                                    
+                                                                </a>
+                                    
+                                                            </li>
+                                    
+                                                </ul>
+                                            </nav>
+                                    
+                                        </div>
+                                    
+                                        <% } %>
 
                 </div>
             </div>

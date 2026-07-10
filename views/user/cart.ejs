@@ -792,7 +792,7 @@
                             <div id="freeShippingMessage" class="small text-muted mb-3">
                                 <% if(totals.shipping> 0){ %>
                                     Spend only
-                                    <strong>₹<%= 1000 - totals.subtotal %></strong>
+                                    <strong>₹<%= freeShippingLimit - totals.subtotal %></strong>
                                     more to get
                                     <span class="text-success fw-semibold">FREE Shipping</span>.
                                     <% } %>
@@ -865,6 +865,9 @@
         </div>
     </footer>
 
+    <script>
+        const FREE_SHIPPING_LIMIT = <%= freeShippingLimit %>;
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -952,7 +955,7 @@
 
                 let shipping = 0;
 
-                if (subtotal > 0 && subtotal < 1000) {
+                if (subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT) {
                     shipping = 99;
                 }
 
@@ -976,7 +979,7 @@
 
                 if (shipping > 0) {
                     freeShippingMessage.innerHTML = `
-            Spend only <strong>₹${1000 - subtotal}</strong>
+            Spend only <strong>₹${FREE_SHIPPING_LIMIT - subtotal}</strong>
             more to get
             <span class="text-success fw-semibold">FREE Shipping</span>.
         `;

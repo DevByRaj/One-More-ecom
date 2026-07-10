@@ -68,14 +68,18 @@ export const getOrders = async (req, res) => {
 
         const userId = req.session.user
 
-        const orders = await getUserOrders(userId)
+        const page = Number(req.query.page) || 1
 
-        orders.forEach(order =>{
+        const result = await getUserOrders(userId, page, 5)
+
+        result.orders.forEach(order =>{
             order.statusInfo = getOrderStatusInfo(order)
         })
 
         return res.render("user/orders", {
-            orders
+            orders: result.orders,
+            currentPage: result.currentPage,
+            totalPages: result.totalPages
         })
 
     } catch (error) {

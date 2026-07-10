@@ -265,11 +265,19 @@ export const placeOrderService = async (userId, orderData) => {
 
 }
 
-export const getUserOrders = async (userId) => {
+export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
-    const orders = await Order.find({userId}).sort({createdAt: -1})
+    const skip = (page -1)*limit
 
-    return orders
+    const totalOrders = await Order.countDocuments({userId})
+
+    const orders = await Order.find({userId}).sort({createdAt: -1}).skip(skip).limit(limit)
+
+    return{
+        orders,
+        totalPages: Math.ceil(totalOrders / limit),
+        currentPage: page
+    }
 }
 
 export const getOrderDetailsService = async (userId, orderId) => {
