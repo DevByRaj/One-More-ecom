@@ -8,6 +8,8 @@ import {
     getOrderStatusInfo
 } from "../../services/orderService.js"
 
+import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
+
 export const getCheckout = async (req, res) => {
     try {
 
@@ -22,7 +24,8 @@ export const getCheckout = async (req, res) => {
         return res.render("user/checkout", {
             addresses: result.addresses,
             cart: result.cart,
-            totals: result.totals
+            totals: result.totals,
+            freeShippingLimit: FREE_SHIPPING_LIMIT
         })
 
     } catch (error) {
