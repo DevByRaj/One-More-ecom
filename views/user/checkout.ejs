@@ -688,14 +688,14 @@
                                     <% } %>
                         </div>
                         
-                        <% if(totals.shipping> 0){ %>
-                            <div class="small text-muted mb-3">
-                                Spend only
-                                <strong>₹<%= 1000 - totals.subtotal %></strong>
-                                more to get
-                                <span class="text-success fw-semibold">FREE Shipping</span>.
-                            </div>
-                            <% } %>
+                    <% if (totals.shipping> 0) { %>
+                        <div class="small text-muted mb-3">
+                            Spend only
+                            <strong>₹<%= freeShippingLimit - totals.subtotal %></strong>
+                            more to get
+                            <span class="text-success fw-semibold">FREE Shipping</span>.
+                        </div>
+                        <% } %>
 
                         <div class="summary-total-line">
                             <span>Total</span>
