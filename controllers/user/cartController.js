@@ -7,6 +7,7 @@ import {
     moveToCart, calculateCartTotals
 } from "../../services/cartService.js"
 
+import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
 
 export const addToCart = async (req, res) => {
 
@@ -63,7 +64,8 @@ export const getCart = async (req, res) => {
             {
                 cart,
                 totals,
-                savedItems: cart?.savedItems || []
+                savedItems: cart?.savedItems || [],
+                freeShippingLimit: FREE_SHIPPING_LIMIT
             }
         )
 

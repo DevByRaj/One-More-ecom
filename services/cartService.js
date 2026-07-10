@@ -2,6 +2,7 @@ import Cart from "../models/cartModel.js"
 import Product from "../models/productModel.js"
 import Variant from "../models/variantModel.js"
 import Wishlist from "../models/wishlistModel.js"
+import { FREE_SHIPPING_LIMIT, SHIPPING_CHARGE } from "../config/appConfig.js"
 
 export const addProductToCart = async (userId, cartData) => {
 
@@ -328,9 +329,10 @@ export const calculateCartTotals = (cart) =>{
 
     let shipping = 0
 
-    if(subtotal < 1000 && subtotal > 0){
-        shipping = 99
+    if(subtotal  > 0 && subtotal < FREE_SHIPPING_LIMIT){
+        shipping = SHIPPING_CHARGE
     }
+    
     const grandTotal = subtotal + shipping
 
     return{
