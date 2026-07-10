@@ -137,7 +137,7 @@ export const toggleWishlistService = async (userId, data) => {
         return{
             success: true,
             action: "removed",
-            message: "Product removed from wishlist",
+            message: "Product removed from wishlist.,
             wishlistCount: wishlist.products.length
         }
     }
@@ -148,6 +148,7 @@ export const toggleWishlistService = async (userId, data) => {
             message: "Wishlist can contain a maximum of 6 products."
         }
     }
+
 
     wishlist.products.push({
         productId,
