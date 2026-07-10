@@ -25,48 +25,23 @@
             color: #000000;
         }
 
-        /* ── NAVBAR STYLE ── */
-        .navbar {
-            background-color: var(--bg-dark);
-            padding: 15px 50px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+        .breadcrumb{
+    font-size:14px;
+}
 
-        .logo-img {
-            height: 60px;
-            width: auto;
-            object-fit: contain;
-        }
+.breadcrumb-item a{
+    color:#6c757d;
+    transition:.2s;
+}
 
-        .nav-link {
-            color: #ffffff !important;
-            font-size: 0.85rem;
-            font-weight: 400;
-            margin: 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 0 15px !important;
-            transition: opacity 0.3s ease;
-        }
+.breadcrumb-item a:hover{
+    color:#000;
+}
 
-        .nav-link.active-nav {
-            color: var(--accent-yellow) !important;
-        }
-
-        .nav-link:hover {
-            opacity: 0.7;
-        }
-
-        .nav-icons a {
-            color: #fff;
-            margin-left: 20px;
-            font-size: 1.1rem;
-            transition: transform 0.2s;
-            position: relative;
-            display: inline-block;
-        }
+.breadcrumb-item.active{
+    color:#000;
+    font-weight:500;
+}
 
         /* ── LAYOUT CONTAINERS ── */
         .account-container {
@@ -368,33 +343,23 @@
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <img src="/images/logo.png" class="logo-img" alt="OneMore Logo">
-            </a>
-            <button class="navbar-toggler navbar-dark border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <%- include("../partials/navbar") %>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto text-center mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
-                </ul>
-
-                <div class="nav-icons d-flex align-items-center justify-content-center mt-3 mt-lg-0">
-                    <a href="/profile"><i class="fa-regular fa-user"></i></a>
-                    <a href="/wishlist"><i class="fa-regular fa-heart"></i></a>
-                    <a href="/cart"><i class="fa-solid fa-bag-shopping"></i></a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/" class="text-decoration-none text-dark">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/profile" class="text-decoration-none text-dark">My Account</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    My Orders
+                </li>
+            </ol>
+        </nav>
+    </div>
 
     <!-- Main Account/Orders Layout Grid -->
     <div class="account-container">
@@ -407,8 +372,8 @@
                     <ul class="sidebar-menu">
                         <li class="sidebar-item"><a href="/address"><i class="fa-regular fa-address-book"></i>
                                 Address</a></li>
-                        <li class="sidebar-item active"><a href="/orders"><i
-                                    class="fa-solid fa-box-archive"></i> Order</a></li>
+                        <li class="sidebar-item active"><a href="/orders"><i class="fa-solid fa-box-archive"></i>
+                                Order</a></li>
                         <li class="sidebar-item"><a href="/wallet"><i class="fa-regular fa-credit-card"></i>
                                 Wallet</a></li>
                         <li class="sidebar-item"><a href="/coupons"><i class="fa-solid fa-ticket"></i>
@@ -455,7 +420,8 @@
                     <% if(typeof orders !=='undefined' && orders.length> 0) { %>
                         <% orders.forEach(order=> { %>
                             <div class="order-row">
-                                <div class="order-id-txt"><%= order.orderId %>
+                                <div class="order-id-txt">
+                                    <%= order.orderId %>
                                 </div>
                                 <div>
                                     <%= order.items.length %>
@@ -463,29 +429,25 @@
                                 <div class="order-amount-txt">₹ <%= order.grandTotal %>
                                 </div>
                                 <div class="status-container">
+
                                     <div class="status-indicator-line">
-                                        <% if(order.orderStatus==='Delivered' ) { %>
-                                            <span class="status-dot dot-delivered"></span> Delivered on
-                                            <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
-                                                <% } else if(order.orderStatus==='Cancelled' ) { %>
-                                                    <span class="status-dot dot-cancelled"></span>
-                                                    Cancelled on
-                                                    <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
-                                                        <% } else { %>
-                                                            <span class="status-dot dot-expected"></span>
-                                                            Order placed on
-                                                            <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
-                                                                <% } %>
+
+                                        <span class="status-dot dot-<%= order.statusInfo.dot %>"></span>
+
+                                        <%= order.statusInfo.title %>
+
+                                            on
+
+                                            <%= new Date(order.statusInfo.date).toLocaleDateString("en-IN") %>
+
                                     </div>
+
                                     <div class="status-subtitle">
-                                        <% if(order.orderStatus==='Delivered' ) { %>
-                                            Your order has been delivered
-                                            <% } else if(order.orderStatus==='Cancelled' ) { %>
-                                                Your order has been cancelled
-                                                <% } else { %>
-                                                    Your order is being processed.
-                                                    <% } %>
+
+                                        <%= order.statusInfo.message %>
+
                                     </div>
+
                                     <a href="/orders/<%= order._id %>" class="btn view-order-pill">
                                         View Details
                                     </a>

@@ -48,6 +48,82 @@ export const allowedStatusTransitions = {
     ]
 }
 
+export const getOrderStatusInfo = (order) =>{
+    switch(order.orderStatus){
+        case "Pending":
+            return{
+                title: "Order placed",
+                message: "Your order has been placed.",
+                dot: "expected",
+                date: order.createdAt
+            }
+
+        case "Processing":
+            return {
+                title: "Processing",
+                message: "Your order is being processed.",
+                dot: "expected",
+                date: order.updatedAt
+            }
+
+        case "Shipped":
+            return {
+                title: "Shipped",
+                message: "Your order has been shipped.",
+                dot: "expected",
+                date: order.updatedAt
+            }
+
+        case "Out For Delivery":
+            return {
+                title: "Out For Delivery",
+                message: "Your order is out for delivery.",
+                dot: "expected",
+                date: order.updatedAt
+            }
+
+        case "Delivered":
+            return {
+                title: "Delivered",
+                message: "Your order has been delivered.",
+                dot: "delivered",
+                date: order.updatedAt
+            }
+
+        case "Cancelled":
+            return {
+                title: "Cancelled",
+                message: "Your order has been cancelled.",
+                dot: "cancelled",
+                date: order.updatedAt
+            }
+
+        case "Return Requested":
+            return {
+                title: "Return Requested",
+                message: "Your return request is under review.",
+                dot: "expected",
+                date: order.updatedAt
+            }
+
+        case "Returned":
+            return {
+                title: "Returned",
+                message: "Your order has been returned successfully.",
+                dot: "delivered",
+                date: order.updatedAt
+            }
+
+        default:
+            return {
+                title: order.orderStatus,
+                message: "",
+                dot: "expected",
+                date: order.updatedAt
+            }
+    }
+}
+
 export const getCheckoutData = async (userId) => {
 
     const addresses = await Address.find({userId})
@@ -215,15 +291,15 @@ export const getOrderDetailsService = async (userId, orderId) => {
     }
 }
 
-const recalculateOrderTotals = (order)=>{
+const recalculateOrderTotals = (order) => {
 
-    const activeItems = order.items.filter(item => item.status !== "Cancelled")
+    const activeItems = order.items.filter(item => item.status !== "Cancelled" && item.status !== "Returned")
 
     const subtotal = activeItems.reduce((total, item) => total + item.totalPrice, 0)
 
     let discount = 0
 
-    const shipping = subtotal >= 1000 || subtotal === 0?0:50
+    const shipping = subtotal >= 1000 || subtotal === 0 ? 0 : 50
 
     const grandTotal = subtotal - discount + shipping
 
@@ -233,19 +309,23 @@ const recalculateOrderTotals = (order)=>{
     order.grandTotal = grandTotal
 }
 
-const calculateOverallOrderStatus = (items) =>{
+const calculateOverallOrderStatus = (items) => {
 
     const activeItems = items.filter(item => !["Cancelled", "Returned"].includes(item.status))
 
-    if(items.every(item => item.status === "Cancelled")){
+    if (items.every(item => item.status === "Cancelled")) {
         return "Cancelled"
     }
 
-    if(items.every(item => item.status === "Returned")){
+    if (activeItems.some(item => item.status === "Return Requested")) {
+        return "Return Requested";
+    }
+
+    if (items.every(item => item.status === "Returned")) {
         return "Returned"
     }
 
-    if(activeItems.length === 0){
+    if (activeItems.length === 0) {
         return "Delivered"
     }
 
@@ -253,7 +333,7 @@ const calculateOverallOrderStatus = (items) =>{
         return "Pending";
     }
 
-    if(activeItems.some(item => item.status === "Processing")){
+    if (activeItems.some(item => item.status === "Processing")) {
         return "Processing"
     }
 
@@ -273,15 +353,15 @@ const calculateOverallOrderStatus = (items) =>{
 
 }
 
-export const cancelOrderItemService = async(userId, orderId, itemId, cancelReason) =>{
+export const cancelOrderItemService = async (userId, orderId, itemId, cancelReason) => {
 
     const order = await Order.findOne({
         _id: orderId,
         userId
     })
 
-    if(!order){
-        return{
+    if (!order) {
+        return {
             success: false,
             message: "Order not Found"
         }
@@ -289,22 +369,22 @@ export const cancelOrderItemService = async(userId, orderId, itemId, cancelReaso
 
     const item = order.items.id(itemId)
 
-    if(!item){
-        return{
+    if (!item) {
+        return {
             success: false,
             message: "Product not found"
         }
     }
 
-    if(item.status === "Cancelled"){
-        return{
+    if (item.status === "Cancelled") {
+        return {
             success: false,
             message: "Product is already cancelled"
         }
     }
 
-    await Variant.findByIdAndUpdate(item.variantId,{
-        $inc:{
+    await Variant.findByIdAndUpdate(item.variantId, {
+        $inc: {
             stock: item.quantity
         }
     })
@@ -321,53 +401,65 @@ export const cancelOrderItemService = async(userId, orderId, itemId, cancelReaso
 
     await order.save()
 
-    return{
+    return {
         success: true
     }
 }
 
-export const getAllOrders = async() =>{
+export const getAllOrders = async () => {
 
     const orders = await Order.find().populate("userId").sort({createdAt: -1})
 
     return orders
 }
 
-export const getAdminOrderDetails = async (orderId) =>{
+export const getAdminOrderDetails = async (orderId) => {
 
     const order = await Order.findById(orderId).populate("userId")
 
-    if(!order){
-        return{
+    if (!order) {
+        return {
             success: false
-        }        
+        }
     }
 
-    return{
+    return {
         success: true,
         order,
         allowedStatusTransitions
     }
 }
 
-export const updateOrderItemStatusService = async(orderId, formData) =>{
+export const updateOrderItemStatusService = async (orderId, formData) => {
 
     const order = await Order.findById(orderId)
 
-    if(!order){
+    if (!order) {
         throw new Error("Order not found")
     }
 
-    for(const item of order.items){
+    for (const item of order.items) {
         const newStatus = formData[`status_${item._id}`]
 
-        if(!newStatus) continue
+        if (!newStatus) continue
 
-        const allowedStatusTransitions = allowedStatusTransitions[item.status]
+        const allowedStatuses = allowedStatusTransitions[item.status]
 
-        if(!allowedStatusTransitions.includes(newStatus)){
+        if (!allowedStatuses.includes(newStatus)) {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
+        
+        if(item.status === "Return Requested" && newStatus === "Returned"){
+
+            await Variant.findByIdAndUpdate(item.variantId,{
+                $inc:{
+                    stock: item.quantity
+                }
+            })
+
+            item.returnedAt = new Date()
+        }
+
         item.status = newStatus
     }
     recalculateOrderTotals(order)
@@ -377,4 +469,47 @@ export const updateOrderItemStatusService = async(orderId, formData) =>{
     await order.save()
 
     return order
+}
+
+export const returnOrderItemService = async (userId, orderId, itemId, returnReason) => {
+
+    const order = await Order.findOne({
+        _id: orderId, userId
+    })
+
+    if (!order) {
+        return {
+            success: false,
+            message: "Order not Found"
+        }
+    }
+
+    const item = order.items.id(itemId)
+
+    if (!item) {
+        return {
+            success: false,
+            message: "Product not found"
+        }
+    }
+
+    if (item.status !== "Delivered") {
+        return {
+            success: false,
+            message: "Only delivered Product can be Returned"
+        }
+    }
+
+    item.status = "Return Requested"
+    item.returnReason = returnReason
+    item.returnedAt = new Date()
+
+    order.orderStatus = calculateOverallOrderStatus(order.items)
+
+    await order.save()
+
+    return {
+        success: true
+    }
+
 }

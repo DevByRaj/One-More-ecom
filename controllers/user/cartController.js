@@ -31,9 +31,10 @@ export const addToCart = async (req, res) => {
 
         return res.json({
             success: true,
-            message:
-                "Product added to cart"
-        })
+            message: "Product added to cart",
+            cartCount: result.cartCount,
+            wishlistCount: result.wishlistCount
+        });
 
     } catch (error) {
 

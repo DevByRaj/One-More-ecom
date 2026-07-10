@@ -442,8 +442,20 @@
                         <div style="position:relative;">
                             <i class="bi bi-bag" style="font-size: 22px;"></i>
                             <% if(typeof cartCount !=='undefined' && cartCount> 0){ %>
-                                <span id="cartCountBadge"
-                                    style="position:absolute; top:-10px; right:-12px; background:red; color:white; font-size:10px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600;">
+                                <span id="cartCountBadge" style="
+                                        position:absolute;
+                                        top:-10px;
+                                        right:-12px;
+                                        background:red;
+                                        color:white;
+                                        font-size:10px;
+                                        width:18px;
+                                        height:18px;
+                                        border-radius:50%;
+                                        display:<%= cartCount > 0 ? 'flex' : 'none' %>;
+                                        align-items:center;
+                                        justify-content:center;
+                                        font-weight:600;">
                                     <%= cartCount || 0 %>
                                 </span>
                                 <% } %>
@@ -739,12 +751,21 @@
                     showToast(data.message);
 
                     if (data.success) {
+
                         const cartCountBadge = document.getElementById("cartCountBadge");
+
                         if (cartCountBadge) {
-                            let currentCount = Number(cartCountBadge.textContent) || 0;
-                            currentCount++;
-                            cartCountBadge.textContent = currentCount;
-                            cartCountBadge.style.display = "flex";
+                            cartCountBadge.textContent = data.cartCount;
+                            cartCountBadge.style.display =
+                                data.cartCount > 0 ? "flex" : "none";
+                        }
+
+                        const wishlistBadge = document.getElementById("wishlistCountBadge");
+
+                        if (wishlistBadge) {
+                            wishlistBadge.textContent = data.wishlistCount;
+                            wishlistBadge.style.display =
+                                data.wishlistCount > 0 ? "flex" : "none";
                         }
                     }
                 } catch (error) {
@@ -768,13 +789,14 @@
                     const data = await response.json();
                     showToast(data.message);
 
-                    if (data.success || data.message) {
+                    if (data.success) {
+
                         const wishlistBadge = document.getElementById("wishlistCountBadge");
+
                         if (wishlistBadge) {
-                            let count = Number(wishlistBadge.textContent) || 0;
-                            count++;
-                            wishlistBadge.textContent = count;
-                            wishlistBadge.style.display = "flex";
+                            wishlistBadge.textContent = data.wishlistCount;
+                            wishlistBadge.style.display =
+                                data.wishlistCount > 0 ? "flex" : "none";
                         }
                     }
                 } catch (error) {

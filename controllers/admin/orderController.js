@@ -51,12 +51,18 @@ export const updateOrderItemStatus = async(req, res) =>{
             req.body
         )
 
-        res.redirect("/admin/orders")
+        return res.status(200).json({
+            success: true,
+            messaage: "Order status updated successfully"
+        })
         
     } catch (error) {
         console.log(error);
 
-        res.redirect("/admin/orders")
+        return res.status(500).json({
+            success: false,
+            message: error.messaage
+        })
         
     }
 }
