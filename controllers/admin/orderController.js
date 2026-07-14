@@ -3,10 +3,15 @@ import { getAllOrders, getAdminOrderDetails, updateOrderItemStatusService, allow
 export const getOrders = async(req, res)=>{
     try {
 
-        const orders = await getAllOrders()
+        const page = Number(req.query.page) || 1
 
-        return res.render("admin/orders", {
-            orders
+        const result = await getAllOrders(page, 5)
+
+        return res.render("admin/orders",{
+            orders: result.orders,
+            currentPage: result.currentPage,
+            totalPages: result.totalPages,
+            limit: 5
         })
         
     } catch (error) {

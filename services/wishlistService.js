@@ -44,6 +44,13 @@ export const addToWiishlist = async (userId, data) => {
         }
     }
 
+    if (wishlist.products.length >= 6) {
+        return {
+            success: false,
+            message: "Wishlist can contain a maximum of 6 products."
+        }
+    }
+
     wishlist.products.push({
         productId,
         variantId
@@ -134,6 +141,14 @@ export const toggleWishlistService = async (userId, data) => {
             wishlistCount: wishlist.products.length
         }
     }
+
+    if (wishlist.products.length >= 6) {
+        return {
+            success: false,
+            message: "Wishlist can contain a maximum of 6 products."
+        }
+    }
+
 
     wishlist.products.push({
         productId,
