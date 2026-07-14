@@ -414,11 +414,19 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
     }
 }
 
-export const getAllOrders = async () => {
+export const getAllOrders = async (page = 1, limit = 5) => {
 
-    const orders = await Order.find().populate("userId").sort({createdAt: -1})
+    const skip = (page - 1)* limit
 
-    return orders
+    const totalOrders = await Order.countDocuments()
+
+    const orders = await Order.find().populate("userId").sort({createdAt: -1}).skip(skip).limit(limit)
+
+    return {
+        orders,
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders/limit)
+    }
 }
 
 export const getAdminOrderDetails = async (orderId) => {

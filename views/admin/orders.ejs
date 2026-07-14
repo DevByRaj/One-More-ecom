@@ -339,7 +339,7 @@
                     <% if(orders && orders.length> 0) { %>
                         <% orders.forEach((item, index)=> { %>
                             <div class="order-item-row order-table-row">
-                                <div>#<%= index + 1 %>
+                                <div>#<%= (currentPage - 1) * limit + index + 1 %>
                                 </div>
                                 <div>
                                     <%= item.userId.name %>
@@ -368,6 +368,35 @@
                                     <% } %>
 
                 </div>
+
+            <% if (totalPages> 1) { %>
+            
+                <div class="admin-pagination-box">
+            
+                    <% if(currentPage> 1){ %>
+                        <a href="/admin/orders?page=<%= currentPage - 1 %>" class="admin-page-nav">
+                            Previous
+                        </a>
+                        <% } %>
+            
+                            <% for(let i=1; i <=totalPages; i++){ %>
+            
+                                <a href="/admin/orders?page=<%= i %>"
+                                    class="admin-page-circle <%= currentPage === i ? 'active' : '' %>">
+                                    <%= i %>
+                                </a>
+            
+                                <% } %>
+            
+                                    <% if(currentPage < totalPages){ %>
+                                        <a href="/admin/orders?page=<%= currentPage + 1 %>" class="admin-page-nav">
+                                            Next
+                                        </a>
+                                        <% } %>
+            
+                </div>
+            
+                <% } %>
             </main>
         </div>
 
