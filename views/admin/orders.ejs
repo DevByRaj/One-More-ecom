@@ -158,7 +158,7 @@
         /* Responsive Custom Grid Table Row layout */
         .order-table-header {
             display: grid;
-            grid-template-columns: 0.6fr 1.8fr 2fr 1.5fr 1.5fr 1.5fr;
+            grid-template-columns: 1.5fr 1.4fr 1.4fr 1.3fr 1fr 1.3fr;
             background-color: #1a1a1c;
             padding: 12px 20px;
             border-radius: 8px;
@@ -170,7 +170,7 @@
 
         .order-table-row {
             display: grid;
-            grid-template-columns: 0.6fr 1.8fr 2fr 1.5fr 1.5fr 1.5fr;
+            grid-template-columns: 1.5fr 1.4fr 1.4fr 1.3fr 1fr 1.3fr;
             align-items: center;
             padding: 25px 20px;
             border-bottom: 1px solid #1f1f22;
@@ -318,9 +318,63 @@
                 <!-- Search Control Header Section Block -->
                 <div class="top-control-banner">
                     <h4>Orders</h4>
-                    <div class="search-wrapper-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search">
+                
+                    <div class="d-flex align-items-center gap-2">
+                
+                        <form action="/admin/orders" method="GET" class="search-wrapper-box">
+                
+                            <input type="hidden" name="status" value="<%= status %>">
+                
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                
+                            <input type="text" name="search" value="<%= search %>" placeholder="Search Order ID / Customer">
+                
+                        </form>
+                
+                        <form action="/admin/orders" method="GET">
+                
+                            <input type="hidden" name="search" value="<%= search %>">
+                
+                            <select name="status" onchange="this.form.submit()" class="form-select form-select-sm">
+                
+                                <option value="">All Status</option>
+                
+                                <option value="Pending" <%=status==="Pending" ? "selected" : "" %>>
+                                    Pending
+                                </option>
+                
+                                <option value="Processing" <%=status==="Processing" ? "selected" : "" %>>
+                                    Processing
+                                </option>
+                
+                                <option value="Shipped" <%=status==="Shipped" ? "selected" : "" %>>
+                                    Shipped
+                                </option>
+                
+                                <option value="Out For Delivery" <%=status==="Out For Delivery" ? "selected" : "" %>>
+                                    Out For Delivery
+                                </option>
+                
+                                <option value="Delivered" <%=status==="Delivered" ? "selected" : "" %>>
+                                    Delivered
+                                </option>
+                
+                                <option value="Cancelled" <%=status==="Cancelled" ? "selected" : "" %>>
+                                    Cancelled
+                                </option>
+                
+                                <option value="Return Requested" <%=status==="Return Requested" ? "selected" : "" %>>
+                                    Return Requested
+                                </option>
+                
+                                <option value="Returned" <%=status==="Returned" ? "selected" : "" %>>
+                                    Returned
+                                </option>
+                
+                            </select>
+                
+                        </form>
+                
                     </div>
                 </div>
 
@@ -339,7 +393,8 @@
                     <% if(orders && orders.length> 0) { %>
                         <% orders.forEach((item, index)=> { %>
                             <div class="order-item-row order-table-row">
-                                <div>#<%= (currentPage - 1) * limit + index + 1 %>
+                                <div title="<%= item.orderId %>">
+                                    <%= item.orderId %>
                                 </div>
                                 <div>
                                     <%= item.userId.name %>
@@ -374,14 +429,14 @@
                 <div class="admin-pagination-box">
             
                     <% if(currentPage> 1){ %>
-                        <a href="/admin/orders?page=<%= currentPage - 1 %>" class="admin-page-nav">
+                        <a href="/admin/orders?page=<%= currentPage - 1 %>&search=<%= search %>" class="admin-page-nav">
                             Previous
                         </a>
                         <% } %>
             
                             <% for(let i=1; i <=totalPages; i++){ %>
             
-                                <a href="/admin/orders?page=<%= i %>"
+                                <a href="/admin/orders?page=<%= i %>&search=<%= search %>&status=<%= status %>"
                                     class="admin-page-circle <%= currentPage === i ? 'active' : '' %>">
                                     <%= i %>
                                 </a>
@@ -389,7 +444,7 @@
                                 <% } %>
             
                                     <% if(currentPage < totalPages){ %>
-                                        <a href="/admin/orders?page=<%= currentPage + 1 %>" class="admin-page-nav">
+                                        <a href="/admin/orders?page=<%= currentPage + 1 %>&search=<%= search %>" class="admin-page-nav">
                                             Next
                                         </a>
                                         <% } %>
