@@ -48,10 +48,10 @@ export const allowedStatusTransitions = {
     ]
 }
 
-export const getOrderStatusInfo = (order) =>{
-    switch(order.orderStatus){
+export const getOrderStatusInfo = (order) => {
+    switch (order.orderStatus) {
         case "Pending":
-            return{
+            return {
                 title: "Order placed",
                 message: "Your order has been placed.",
                 dot: "expected",
@@ -267,13 +267,13 @@ export const placeOrderService = async (userId, orderData) => {
 
 export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
-    const skip = (page -1)*limit
+    const skip = (page - 1) * limit
 
     const totalOrders = await Order.countDocuments({userId})
 
     const orders = await Order.find({userId}).sort({createdAt: -1}).skip(skip).limit(limit)
 
-    return{
+    return {
         orders,
         totalPages: Math.ceil(totalOrders / limit),
         currentPage: page
@@ -414,18 +414,53 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
     }
 }
 
-export const getAllOrders = async (page = 1, limit = 5) => {
+export const getAllOrders = async (page = 1, limit = 5, search = "", status = "") => {
 
-    const skip = (page - 1)* limit
+    const skip = (page - 1) * limit
 
-    const totalOrders = await Order.countDocuments()
+    let query = {}
 
-    const orders = await Order.find().populate("userId").sort({createdAt: -1}).skip(skip).limit(limit)
+    if (status) {
+        query.orderStatus = status
+    }
+
+    if (search.trim()) {
+
+        const users = await User.find({
+            name: {
+                $regex: search,
+                $options: "i"
+            }
+        })
+
+        const userIds = users.map(user => user._id)
+
+        query.$or = [
+            {
+                orderId: {
+                    $regex: search,
+                    $options: "i"
+                }
+            },
+            {
+                userId: {
+                    $in: userIds
+                }
+            }
+        ]
+    }
+
+    const totalOrders = await Order.countDocuments(query)
+
+    const orders = await Order.find(query).populate("userId").sort({createdAt: -1}).skip(skip).limit(limit)
+
+
 
     return {
         orders,
         currentPage: page,
-        totalPages: Math.ceil(totalOrders/limit)
+        totalPages: Math.ceil(totalOrders / limit),
+        search
     }
 }
 
@@ -464,11 +499,11 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
         if (!allowedStatuses.includes(newStatus)) {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
-        
-        if(item.status === "Return Requested" && newStatus === "Returned"){
 
-            await Variant.findByIdAndUpdate(item.variantId,{
-                $inc:{
+        if (item.status === "Return Requested" && newStatus === "Returned") {
+
+            await Variant.findByIdAndUpdate(item.variantId, {
+                $inc: {
                     stock: item.quantity
                 }
             })

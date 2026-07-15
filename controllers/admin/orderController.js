@@ -5,13 +5,19 @@ export const getOrders = async(req, res)=>{
 
         const page = Number(req.query.page) || 1
 
-        const result = await getAllOrders(page, 5)
+        const search = req.query.search || ""
+
+        const status = req.query.status || ""
+
+        const result = await getAllOrders(page, 5, search, status)
 
         return res.render("admin/orders",{
             orders: result.orders,
             currentPage: result.currentPage,
             totalPages: result.totalPages,
-            limit: 5
+            limit: 5,
+            search,
+            status
         })
         
     } catch (error) {
