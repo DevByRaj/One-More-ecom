@@ -414,7 +414,7 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
     }
 }
 
-export const getAllOrders = async (page = 1, limit = 5, search = "", status = "") => {
+export const getAllOrders = async (page = 1, limit = 5, search = "", status = "", sort = "newest") => {
 
     const skip = (page - 1) * limit
 
@@ -450,9 +450,15 @@ export const getAllOrders = async (page = 1, limit = 5, search = "", status = ""
         ]
     }
 
+    let sortOption = {createdAt: -1}
+
+    if(sort === "oldest"){
+        sortOption = {createdAt: 1}
+    }
+
     const totalOrders = await Order.countDocuments(query)
 
-    const orders = await Order.find(query).populate("userId").sort({createdAt: -1}).skip(skip).limit(limit)
+    const orders = await Order.find(query).populate("userId").sort(sortOption).skip(skip).limit(limit)
 
 
 
