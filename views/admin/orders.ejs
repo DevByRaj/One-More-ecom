@@ -284,6 +284,24 @@
                 /* Hide transient parameters on tablets */
             }
         }
+
+        /* Custom Clear Button Styling Rules */
+        .btn-clear-custom {
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            font-size: 0.85rem;
+            font-weight: 500;
+            height: 31px;
+            padding: 0 15px;
+            border-radius: 6px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-clear-custom:hover {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: #ffffff !important;
+        }
     </style>
 </head>
 
@@ -318,63 +336,91 @@
                 <!-- Search Control Header Section Block -->
                 <div class="top-control-banner">
                     <h4>Orders</h4>
-                
+
                     <div class="d-flex align-items-center gap-2">
-                
+
                         <form action="/admin/orders" method="GET" class="search-wrapper-box">
-                
+
                             <input type="hidden" name="status" value="<%= status %>">
-                
+                            <input type="hidden" name="sort" value="<%= sort %>">
+
                             <i class="fa-solid fa-magnifying-glass"></i>
-                
-                            <input type="text" name="search" value="<%= search %>" placeholder="Search Order ID / Customer">
-                
+
+                            <input type="text" name="search" value="<%= search %>"
+                                placeholder="Search Order ID / Customer">
+
                         </form>
-                
+
                         <form action="/admin/orders" method="GET">
-                
+
                             <input type="hidden" name="search" value="<%= search %>">
-                
+                            <input type="hidden" name="sort" value="<%= sort %>">
+
                             <select name="status" onchange="this.form.submit()" class="form-select form-select-sm">
-                
+
                                 <option value="">All Status</option>
-                
+
                                 <option value="Pending" <%=status==="Pending" ? "selected" : "" %>>
                                     Pending
                                 </option>
-                
+
                                 <option value="Processing" <%=status==="Processing" ? "selected" : "" %>>
                                     Processing
                                 </option>
-                
+
                                 <option value="Shipped" <%=status==="Shipped" ? "selected" : "" %>>
                                     Shipped
                                 </option>
-                
+
                                 <option value="Out For Delivery" <%=status==="Out For Delivery" ? "selected" : "" %>>
                                     Out For Delivery
                                 </option>
-                
+
                                 <option value="Delivered" <%=status==="Delivered" ? "selected" : "" %>>
                                     Delivered
                                 </option>
-                
+
                                 <option value="Cancelled" <%=status==="Cancelled" ? "selected" : "" %>>
                                     Cancelled
                                 </option>
-                
+
                                 <option value="Return Requested" <%=status==="Return Requested" ? "selected" : "" %>>
                                     Return Requested
                                 </option>
-                
+
                                 <option value="Returned" <%=status==="Returned" ? "selected" : "" %>>
                                     Returned
                                 </option>
-                
+
                             </select>
-                
+
                         </form>
-                
+
+
+                        <form action="/admin/orders" method="GET">
+
+                            <input type="hidden" name="search" value="<%= search %>">
+                            <input type="hidden" name="status" value="<%= status %>">
+
+                            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+
+                                <option value="newest" <%=sort==="newest" ? "selected" : "" %>>
+                                    Newest First
+                                </option>
+
+                                <option value="oldest" <%=sort==="oldest" ? "selected" : "" %>>
+                                    Oldest First
+                                </option>
+
+                            </select>
+
+                        </form>
+
+                        <a href="/admin/orders"
+                            class="btn btn-sm btn-clear-custom d-flex align-items-center justify-content-center">
+                            Clear
+                        </a>
+
                     </div>
                 </div>
 
@@ -403,7 +449,8 @@
                                     <%= item.paymentMethod %>
                                 </div>
                                 <div>
-                                    <span class="status-txt-field <%= (item.orderStatus || '').toLowerCase().replace(/\s+/g, '-') %>">
+                                    <span
+                                        class="status-txt-field <%= (item.orderStatus || '').toLowerCase().replace(/\s+/g, '-') %>">
                                         <%= item.orderStatus %>
                                     </span>
                                 </div>
@@ -411,9 +458,9 @@
                                 </div>
                                 <div>
                                     <a href="/admin/orders/<%= item._id %>" class="more-details-btn">
-                                    
+
                                         More Details
-                                    
+
                                     </a>
                                 </div>
                             </div>
@@ -424,34 +471,36 @@
 
                 </div>
 
-            <% if (totalPages> 1) { %>
-            
-                <div class="admin-pagination-box">
-            
-                    <% if(currentPage> 1){ %>
-                        <a href="/admin/orders?page=<%= currentPage - 1 %>&search=<%= search %>" class="admin-page-nav">
-                            Previous
-                        </a>
-                        <% } %>
-            
-                            <% for(let i=1; i <=totalPages; i++){ %>
-            
-                                <a href="/admin/orders?page=<%= i %>&search=<%= search %>&status=<%= status %>"
-                                    class="admin-page-circle <%= currentPage === i ? 'active' : '' %>">
-                                    <%= i %>
-                                </a>
-            
-                                <% } %>
-            
-                                    <% if(currentPage < totalPages){ %>
-                                        <a href="/admin/orders?page=<%= currentPage + 1 %>&search=<%= search %>" class="admin-page-nav">
-                                            Next
-                                        </a>
-                                        <% } %>
-            
-                </div>
-            
-                <% } %>
+                <% if (totalPages> 1) { %>
+
+                    <div class="admin-pagination-box">
+
+                        <% if(currentPage> 1){ %>
+                            <a href="/admin/orders?page=<%= currentPage - 1 %>&search=<%= search %>&status=<%= status %>&sort=<%= sort %>"
+                                class="admin-page-nav">
+                                Previous
+                            </a>
+                            <% } %>
+
+                                <% for(let i=1; i <=totalPages; i++){ %>
+
+                                    <a href="/admin/orders?page=<%= i %>&search=<%= search %>&status=<%= status %>&sort=<%= sort %>"
+                                        class="admin-page-circle <%= currentPage === i ? 'active' : '' %>">
+                                        <%= i %>
+                                    </a>
+
+                                    <% } %>
+
+                                        <% if(currentPage < totalPages){ %>
+                                            <a href="/admin/orders?page=<%= currentPage + 1 %>&search=<%= search %>&status=<%= status %>&sort=<%= sort %>"
+                                                class="admin-page-nav">
+                                                Next
+                                            </a>
+                                            <% } %>
+
+                    </div>
+
+                    <% } %>
             </main>
         </div>
 

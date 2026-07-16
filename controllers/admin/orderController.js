@@ -9,7 +9,9 @@ export const getOrders = async(req, res)=>{
 
         const status = req.query.status || ""
 
-        const result = await getAllOrders(page, 5, search, status)
+        const sort = req.query.sort || "newest"
+
+        const result = await getAllOrders(page, 5, search, status, sort)
 
         return res.render("admin/orders",{
             orders: result.orders,
@@ -17,7 +19,8 @@ export const getOrders = async(req, res)=>{
             totalPages: result.totalPages,
             limit: 5,
             search,
-            status
+            status,
+            sort
         })
         
     } catch (error) {
