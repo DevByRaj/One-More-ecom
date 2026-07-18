@@ -465,8 +465,8 @@
                 <hr class="items-divider">
 
                 <!-- Dynamic Itemized Loop Block -->
-                <% if(order.items && order.items.length> 0) { %>
-                    <% order.items.forEach(item=> { %>
+                <% if(items && items.length> 0) { %>
+                    <% items.forEach(item=> { %>
                         <div class="order-item-row">
                             <div class="item-img-wrapper">
                                 <img src="<%= item.productImage %>" alt="<%= item.productName %>">
@@ -592,14 +592,15 @@
                                 <% if(totalPages> 1){ %>
                                     <div class="pagination-wrapper">
                                         <ul class="custom-pagination">
+                                
                                             <% if(currentPage> 1){ %>
                                                 <li>
-                                                    <a href="?page=<%= currentPage-1 %>" class="page-btn-nav">
+                                                    <a href="?page=<%= currentPage - 1 %>" class="page-btn-nav">
                                                         Previous
                                                     </a>
                                                 </li>
                                                 <% } %>
-
+                                
                                                     <% for(let i=1; i <=totalPages; i++){ %>
                                                         <li>
                                                             <a href="?page=<%= i %>"
@@ -608,15 +609,15 @@
                                                             </a>
                                                         </li>
                                                         <% } %>
-
+                                
                                                             <% if(currentPage < totalPages){ %>
                                                                 <li>
-                                                                    <a href="?page=<%= currentPage+1 %>"
-                                                                        class="page-btn-nav">
+                                                                    <a href="?page=<%= currentPage + 1 %>" class="page-btn-nav">
                                                                         Next
                                                                     </a>
                                                                 </li>
                                                                 <% } %>
+                                
                                         </ul>
                                     </div>
                                     <% } %>
