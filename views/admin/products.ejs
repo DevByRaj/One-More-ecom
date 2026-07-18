@@ -353,6 +353,8 @@
                                 <th>Image</th>
                                 <th>Description</th>
                                 <th>Category</th>
+                                <th>Stock</th>
+                                <th>stock Status</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -385,6 +387,32 @@
                                             <%= product.category?.name || 'No Category' %>
                                         </td>
                                         <td>
+                                            <%= product.totalStock %>
+                                        </td>
+                                        
+                                        <td>
+                                            <% if(product.stockStatus==="In Stock" ){ %>
+                                        
+                                                <span class="badge bg-success">
+                                                    In Stock
+                                                </span>
+                                        
+                                                <% } else if(product.stockStatus==="Low Stock" ){ %>
+                                        
+                                                    <span class="badge bg-warning text-dark">
+                                                        Low Stock
+                                                    </span>
+                                        
+                                                    <% } else { %>
+                                        
+                                                        <span class="badge bg-danger">
+                                                            Out of Stock
+                                                        </span>
+                                        
+                                                        <% } %>
+                                        </td>
+                                        
+                                        <td>
                                             <span class="<%= product.isListed ? 'text-success' : 'text-danger' %>">
                                                 <%= product.isListed ? 'Listed' : 'Unlisted' %>
                                             </span>
@@ -406,7 +434,7 @@
                                     <% }) %>
                                         <% } else { %>
                                             <tr>
-                                                <td colspan="8" class="text-center">No products found</td>
+                                                <td colspan="10" class="text-center">No products found</td>
                                             </tr>
                                             <% } %>
                         </tbody>

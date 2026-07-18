@@ -554,6 +554,28 @@ export const getProducts = async (req, res) => {
 
     const products = await Product.find(query).populate("category").populate("brand").sort({createdAt: -1}).skip(skip).limit(limit).lean()
 
+    for(const product of products){
+
+      const variants = await Variant.find({
+        productId: product._id
+      })
+            
+
+      const totalStock = variants.reduce(
+        (total, variant) => total + variant.stock, 0
+      )
+
+      product.totalStock = totalStock
+
+      if(totalStock === 0){
+        product.stockStatus = "Out of Stock"
+      } else if(totalStock <= 5){
+        product.stockStatus = "Low Stock"
+      } else{
+        product.stockStatus = "In Stock"
+      }
+    }
+
     const totalPages = Math.ceil(totalProducts / limit)
 
     return res.render("admin/products", {

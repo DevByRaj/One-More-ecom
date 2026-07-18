@@ -10,6 +10,10 @@ import {
 
 import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
 
+import Order from "../../models/orderModel.js"
+
+import {generateInvoice} from "../../utils/invoiceGenerator.js"
+
 export const getCheckout = async (req, res) => {
     try {
 
@@ -189,5 +193,56 @@ export const returnOrderItem = async (req, res) => {
 
         res.redirect("/orders")
 
+    }
+}
+
+export const downloadInvoice = async(req,res) =>{
+    try{
+        
+        const userId = req.session.user
+        const orderId = req.params.id
+        
+        const order = await Order.findOne({
+            _id: orderId,
+            userId
+        })
+
+        const deliveredItems = order.items.filter(item => item.status === "Delivered")
+
+        if(deliveredItems.length === 0){
+            return res.redirect(`/ordeers/${orderId}`)
+        }
+
+        if(!order){
+            return res.redirect("/orders")
+        }
+
+        const invoiceOrder = {
+            ...order.toObject(),
+            items: deliveredItems
+        }
+
+        invoiceOrder.subTotal = deliveredItems.reduce((total, item) => total+ item.totalPrice, 0)
+
+        invoiceOrder.discount = 0
+
+        invoiceOrder.shipping = invoiceOrder.subTotal >= 1000 || invoiceOrder.subTotal === 0 ? 0 : 50
+
+        invoiceOrder.grandTotal = invoiceOrder.subTotal - invoiceOrder.discount + invoiceOrder.shipping
+
+        res.setHeader("Content-Type", "application/pdf")
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename=${order.orderId}.pdf`
+        )
+
+        generateInvoice(invoiceOrder, res)
+
+    } catch(error){
+        console.log(error);
+
+        return res.redirect("/orders")
+        
     }
 }

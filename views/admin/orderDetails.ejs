@@ -1100,7 +1100,7 @@
                         iconColor: '#22c55e',
                         title: '<span style="font-family:Poppins,sans-serif;font-size:1.15rem;font-weight:600;color:#1a1a1a;">Order Status Changed</span>',
                         html: '<span style="font-family:Poppins,sans-serif;font-size:0.875rem;color:#6b7280;">The order status has been successfully changed.</span>',
-                        confirmButtonText: 'View Orders',
+                        confirmButtonText: 'Continue',
                         confirmButtonColor: '#1a1a1a',
                         showCloseButton: false,
                         allowOutsideClick: false,
@@ -1112,7 +1112,7 @@
                 })
                 .then(result => {
                     if (result.isConfirmed) {
-                        window.location.href = "/admin/orders";
+                        window.location.reload()
                     }
                 })
                 .catch(() => {
