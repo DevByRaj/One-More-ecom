@@ -158,7 +158,7 @@ export const generateInvoice = (order, res) => {
 
         // Total
         doc.text(
-            `INR ${Number(item.totalPrice).toFixed(2)}`,
+            `INR ${Number(item.salePrice * item.quantity).toFixed(2)}`,
             440,
             currentY + 10,
             {width: 95, align: "right"}

@@ -207,19 +207,29 @@ export const downloadInvoice = async(req,res) =>{
             userId
         })
 
+        if(!order){
+            return res.redirect("/orders")
+        }
+
         const deliveredItems = order.items.filter(item => item.status === "Delivered")
 
         if(deliveredItems.length === 0){
-            return res.redirect(`/ordeers/${orderId}`)
-        }
-
-        if(!order){
-            return res.redirect("/orders")
+            return res.redirect(`/orders/${orderId}`)
         }
 
         const invoiceOrder = {
             ...order.toObject(),
             items: deliveredItems
+        }
+
+        for (const item of deliveredItems) {
+            console.log({
+                productName: item.productName,
+                status: item.status,
+                quantity: item.quantity,
+                salePrice: item.salePrice,
+                totalPrice: item.totalPrice
+            });
         }
 
         invoiceOrder.subTotal = deliveredItems.reduce((total, item) => total+ item.totalPrice, 0)
