@@ -438,6 +438,25 @@
                         <span>₹ <%= order.grandTotal %></span>
                     </div>
                 </div>
+                <% const hasDeliveredItems=order.items.some( item=> item.status === "Delivered"
+                    );
+                    %>
+                
+                    <div class="info-section text-center mt-4">
+                
+                        <% if(hasDeliveredItems){ %>
+                
+                            <a href="/orders/<%= order._id %>/invoice" class="btn btn-dark w-100">
+                
+                                <i class="fa-solid fa-file-pdf me-2"></i>
+                
+                                Download Invoice
+                
+                            </a>
+                
+                            <% } %>
+                
+                    </div>
             </div>
 
             <!-- Right Tracked Items List Column -->
@@ -527,22 +546,20 @@
 
                                         <!-- Display Cancel Action Only for Active/Processing Items -->
                                         <!-- Pending Products -->
-                                        <% if( ["Pending","Processing","Shipped"].includes(item.status) ){ %>
-
+                                        <% if(["Pending", "Processing" ].includes(item.status)){ %>
+                                        
                                             <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
-
+                                        
                                                 <input type="hidden" name="orderId" value="<%= order._id %>">
-
                                                 <input type="hidden" name="itemId" value="<%= item._id %>">
-
                                                 <input type="hidden" name="page" value="<%= currentPage %>">
-
+                                        
                                                 <button class="btn cancel-item-btn">
                                                     Cancel Product
                                                 </button>
-
+                                        
                                             </form>
-
+                                        
                                             <% } %>
 
                                                 <!-- Delivered Products -->

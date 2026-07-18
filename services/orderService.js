@@ -391,6 +391,16 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
         }
     }
 
+    if(item.status === "Shipped" ||
+        item.status === "Out For Delivery" ||
+        item.status === "Delivered"
+    ){
+        return{
+            success: false,
+            message: "This product can no longer be cancelled"
+        }
+    }
+
     await Variant.findByIdAndUpdate(item.variantId, {
         $inc: {
             stock: item.quantity
