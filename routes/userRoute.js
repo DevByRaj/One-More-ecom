@@ -39,6 +39,8 @@ import { getCheckout, placeOrder, getOrderSuccess, getOrders, getOrderDetails, c
 
 import { downloadInvoice } from "../controllers/user/orderController.js";
 
+import { createRazorpayOrder, verifyPayment } from "../controllers/user/paymentController.js";
+
 const router = express.Router()
 
 router.get("/", (req, res) => {
@@ -138,6 +140,10 @@ router.post("/cart/move-to-cart/:id", isUserLoggedIn, moveSavedItemToCart)
 router.get("/checkout", isUserLoggedIn, getCheckout)
 
 router.post("/checkout/place-order", isUserLoggedIn, placeOrder)
+
+router.post("/payment/create-order", isUserLoggedIn, createRazorpayOrder)
+
+router.post("/payment/verify", isUserLoggedIn, verifyPayment)
 
 router.get("/order-success/:id", isUserLoggedIn, getOrderSuccess)
 

@@ -43,6 +43,8 @@ export const getCheckout = async (req, res) => {
 export const placeOrder = async (req, res) => {
     try {
 
+        console.log(req.body);
+
         const userId = req.session.user
 
         const result = await placeOrderService(userId, req.body)

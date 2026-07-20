@@ -83,7 +83,9 @@ const orderSchema = new mongoose.Schema({
 
     paymentMethod:{
         type: String,
-        enum: ["COD"],
+        enum: ["COD",
+            "RAZORPAY", 
+            "WALLET"],
         default: "COD"
     },
 
@@ -91,7 +93,8 @@ const orderSchema = new mongoose.Schema({
         type: String,
         enum: ["Pending", 
              "Paid", 
-             "Failed"],
+             "Failed",
+             "Refunded"],
         default: "Pending"
     },
 

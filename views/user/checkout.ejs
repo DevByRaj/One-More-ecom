@@ -576,6 +576,7 @@
                 </div>
             </div>
         </nav>
+        
 
         <div class="checkout-container">
 
@@ -714,13 +715,42 @@
                             </form>
                         </div>
 
-                        <form action="/checkout/place-order" method="POST">
+                        <form id="checkoutForm" action="/checkout/place-order" method="POST">
+                        
                             <input type="hidden" name="addressId" id="selectedAddressId"
                                 value="<%= defaultAddress ? defaultAddress._id : '' %>">
-                            <button type="submit" class="figma-checkout-btn" <%=(!cart || cart.items.length===0 ||
-                                !defaultAddress) ? "disabled" : "" %>>
+                        
+                            <!-- Payment Method -->
+                        
+                            <h6 class="fw-semibold mb-3">
+                                Payment Method
+                            </h6>
+                        
+                            <div class="border rounded p-3 mb-4">
+                        
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+                        
+                                    <label class="form-check-label" for="cod">
+                                        Cash on Delivery
+                                    </label>
+                                </div>
+                        
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY">
+                        
+                                    <label class="form-check-label" for="razorpay">
+                                        Razorpay
+                                    </label>
+                                </div>
+                        
+                            </div>
+                        
+                            <button type="submit" class="figma-checkout-btn" <%=(!cart || cart.items.length===0 || !defaultAddress) ? "disabled"
+                                : "" %>>
                                 Checkout
                             </button>
+                        
                         </form>
                     </div>
                 </div>
@@ -855,6 +885,104 @@
                 bootstrap.Modal.getInstance(modalEl).hide();
             }
         </script>
+
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+        <script>
+
+            const checkoutForm = document.getElementById("checkoutForm");
+
+            checkoutForm.addEventListener("submit", async function (e) {
+
+                const paymentMethod =
+                    document.querySelector('input[name="paymentMethod"]:checked').value;
+
+                if (paymentMethod === "COD") {
+                    return;
+                }
+
+                e.preventDefault();
+
+                try {
+
+                    const response = await fetch("/payment/create-order", {
+                        method: "POST"
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        alert("Unable to create Razorpay Order");
+                        return;
+                    }
+
+                    const options = {
+                        key: data.key,
+                        amount: data.order.amount,
+                        currency: data.order.currency,
+                        name: "OneMore",
+                        description: "Order Payment",
+                        order_id: data.order.id,
+
+                        handler: async function (response) {
+
+                            const addressId =
+                                document.getElementById("selectedAddressId").value;
+
+                            const verifyResponse = await fetch("/payment/verify", {
+
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    addressId
+
+                                })
+
+                            });
+
+                            const verifyData = await verifyResponse.json();
+
+                            if (verifyData.success) {
+
+                                window.location.href =
+                                    `/order-success/${verifyData.orderId}`;
+
+                            } else {
+
+                                alert("Payment verification failed");
+
+                            }
+
+                        },
+
+                        theme: {
+                            color: "#000000"
+                        }
+                    };
+
+                    const rzp = new Razorpay(options);
+
+                    rzp.open();
+
+                } catch (err) {
+
+                    console.log(err);
+
+                }
+
+            });
+
+        </script>
+
+        
 </body>
 
 </html>
