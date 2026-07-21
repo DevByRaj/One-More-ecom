@@ -408,9 +408,41 @@
                 </div>
 
                 <div class="info-section">
-                    <h6>Payment Method</h6>
-                    <p>
+                    <h6>Payment</h6>
+                
+                    <p class="mb-1">
+                        <strong>Method :</strong>
                         <%= order.paymentMethod %>
+                    </p>
+                
+                    <p class="mb-0">
+                        <strong>Status :</strong>
+                
+                        <% if(order.paymentStatus==="Paid" ){ %>
+                
+                            <span class="text-success fw-semibold">
+                                Paid
+                            </span>
+                
+                            <% } else if(order.paymentStatus==="Pending" ){ %>
+                
+                                <span class="text-warning fw-semibold">
+                                    Pending
+                                </span>
+                
+                                <% } else if(order.paymentStatus==="Failed" ){ %>
+                
+                                    <span class="text-danger fw-semibold">
+                                        Failed
+                                    </span>
+                
+                                    <% } else if(order.paymentStatus==="Refunded" ){ %>
+                
+                                        <span class="text-primary fw-semibold">
+                                            Refunded
+                                        </span>
+                
+                                        <% } %>
                     </p>
                 </div>
 

@@ -5,6 +5,7 @@ import Order from "../models/orderModel.js"
 import Cart from "../models/cartModel.js"
 import Variant from "../models/variantModel.js";
 import User from "../models/userModel.js"
+import {userInfo} from "os"
 
 export const allowedStatusTransitions = {
     Pending: [
@@ -159,7 +160,11 @@ const generateOrderId = () => {
 
 export const placeOrderService = async (userId, orderData) => {
 
-    const {addressId, paymentMethod} = orderData
+    const {addressId,
+         paymentMethod,
+         paymentStatus = "Pending",
+        razorpayOrderId = null,
+        razorpayPaymentId = null } = orderData
 
     const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
@@ -218,6 +223,7 @@ export const placeOrderService = async (userId, orderData) => {
 
     }))
 
+
     const order = await Order.create({
         orderId: generateOrderId(),
         userId,
@@ -233,7 +239,9 @@ export const placeOrderService = async (userId, orderData) => {
             pincode: address.pincode
         },
         paymentMethod,
-        paymentStatus: "Pending",
+        paymentStatus,
+        razorpayOrderId,
+        razorpayPaymentId,
         orderStatus: "Pending",
         subTotal: totals.subtotal,
         shipping: totals.shipping,
@@ -263,6 +271,165 @@ export const placeOrderService = async (userId, orderData) => {
         orderId: order._id
     }
 
+}
+export const createPendingOrderService = async (userId, orderData) => {
+
+    const {addressId,
+        paymentMethod,
+        razorpayOrderId = null,
+        } = orderData
+
+    const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
+
+    if (!cart || cart.items.length === 0) {
+        return {
+            success: false,
+            message: "Cart is empty"
+        }
+    }
+
+    const address = await Address.findOne({
+        _id: addressId,
+        userId
+    })
+
+    if (!address) {
+        return {
+            success: false,
+            message: "Address not found"
+        }
+    }
+
+    const totals = calculateCartTotals(cart)
+
+    for (const item of cart.items) {
+
+        if (item.variantId.stock < item.quantity) {
+            return {
+                success: false,
+                message: `${item.productId.productName} is out of stock`
+            }
+        }
+    }
+
+    const orderItems = cart.items.map(item => ({
+
+        productId: item.productId._id,
+
+        variantId: item.variantId._id,
+
+        productName: item.productId.productName,
+
+        variantName: item.variantId.variantName,
+
+        productImage: item.variantId.variantImage[0],
+
+        quantity: item.quantity,
+
+        regularPrice: item.variantId.regularPrice,
+
+        salePrice: item.variantId.salePrice,
+
+        totalPrice: item.variantId.salePrice * item.quantity,
+
+        status: "Pending"
+
+    }))
+
+
+    const order = await Order.create({
+        orderId: generateOrderId(),
+        userId,
+        items: orderItems,
+        address: {
+            name: address.name,
+            houseName: address.houseName,
+            street: address.street,
+            city: address.city,
+            state: address.state,
+            country: address.country,
+            phone: address.phone,
+            pincode: address.pincode
+        },
+        paymentMethod,
+        paymentStatus: "Pending",
+        razorpayOrderId,
+        razorpayPaymentId,
+        orderStatus: "Pending",
+        subTotal: totals.subtotal,
+        shipping: totals.shipping,
+        discount: totals.discount,
+        grandTotal: totals.grandTotal
+
+
+    })
+
+
+   
+    return {
+        success: true,
+        order
+    }
+
+}
+
+export const completePendingOrderService = async(orderId, userId, paymentData) =>{
+
+    const{
+        razorpayPaymentId,
+        razorpaySignature
+    } = paymentData
+
+    const order = await Order.findOne({
+        _id: orderId,
+        userId
+    })
+
+    if(!order){
+        return{
+            success: false,
+            message: "Order not found"
+        }
+    }
+
+    const cart = await Cart.findOne({userId}).populate("items.variantId")
+
+    if(!cart || cart.items.length === 0){
+        return{
+            success: false,
+            message: "Cart is empty"
+        }
+    }
+
+    for(const item of cart.items){
+
+        if(item.variantId.stock < item.quantity){
+            return{
+                success: false,
+                message: `${item.variantId.variantName} is out of stock`
+            }
+        }
+
+        await Variant.findByIdAndUpdate(item.variantId._id,{
+            $inc:{
+                stock: -item.quantity
+            }
+        })
+    }
+
+    order.paymentStatus = "Paid"
+    order.razorpayPaymentId = razorpayPaymentId
+
+    cart.items = []
+
+    await cart.save()
+
+    await order.save()
+
+    return{
+        success: true,
+        orderId: order._id
+    }
 }
 
 export const getUserOrders = async (userId, page = 1, limit = 5) => {

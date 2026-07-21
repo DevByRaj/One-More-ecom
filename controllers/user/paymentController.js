@@ -61,7 +61,9 @@ export const verifyPayment = async(req, res) =>{
                 req.session.user,
                 {
                     addressId,
-                    paymentMethod: "RAZORPAY"
+                    paymentMethod: "RAZORPAY",
+                    razorpayOrderId: razorpay_order_id,
+                    razorpayPaymentid: razorpay_payment_id
                 }
             )
 
