@@ -354,7 +354,7 @@ export const createPendingOrderService = async (userId, orderData) => {
         paymentMethod,
         paymentStatus: "Pending",
         razorpayOrderId,
-        razorpayPaymentId,
+        razorpayPaymentId: null,
         orderStatus: "Pending",
         subTotal: totals.subtotal,
         shipping: totals.shipping,
@@ -373,16 +373,10 @@ export const createPendingOrderService = async (userId, orderData) => {
 
 }
 
-export const completePendingOrderService = async(orderId, userId, paymentData) =>{
-
-    const{
-        razorpayPaymentId,
-        razorpaySignature
-    } = paymentData
+export const completePendingOrderService = async(razorpayOrderId, razorpayPaymentId) =>{
 
     const order = await Order.findOne({
-        _id: orderId,
-        userId
+        razorpayOrderId
     })
 
     if(!order){
@@ -392,7 +386,14 @@ export const completePendingOrderService = async(orderId, userId, paymentData) =
         }
     }
 
-    const cart = await Cart.findOne({userId}).populate("items.variantId")
+    if(order.paymentStatus === "Paid"){
+        return{
+            success: true,
+            orderId: order._id
+        }
+    }
+
+    const cart = await Cart.findOne({userId: order.userId}).populate("items.variantId")
 
     if(!cart || cart.items.length === 0){
         return{
@@ -419,6 +420,7 @@ export const completePendingOrderService = async(orderId, userId, paymentData) =
 
     order.paymentStatus = "Paid"
     order.razorpayPaymentId = razorpayPaymentId
+    order.orderStatus = "Pending"
 
     cart.items = []
 

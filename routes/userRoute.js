@@ -39,7 +39,7 @@ import { getCheckout, placeOrder, getOrderSuccess, getOrders, getOrderDetails, c
 
 import { downloadInvoice } from "../controllers/user/orderController.js";
 
-import { createRazorpayOrder, verifyPayment } from "../controllers/user/paymentController.js";
+import { createRazorpayOrder, verifyPayment, getPaymentFailed, retryPayment } from "../controllers/user/paymentController.js";
 
 const router = express.Router()
 
@@ -144,6 +144,10 @@ router.post("/checkout/place-order", isUserLoggedIn, placeOrder)
 router.post("/payment/create-order", isUserLoggedIn, createRazorpayOrder)
 
 router.post("/payment/verify", isUserLoggedIn, verifyPayment)
+
+router.get("/payment-failed/:id", isUserLoggedIn, getPaymentFailed)
+
+router.get("/payment/retry/:id", isUserLoggedIn, retryPayment)
 
 router.get("/order-success/:id", isUserLoggedIn, getOrderSuccess)
 

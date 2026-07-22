@@ -905,11 +905,26 @@
 
                 try {
 
+                   const addressId =
+                        document.getElementById("selectedAddressId").value;
+
                     const response = await fetch("/payment/create-order", {
-                        method: "POST"
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            addressId
+                        })
+
                     });
 
                     const data = await response.json();
+
+                    const pendingOrderId = data.pendingOrderId
 
                     if (!data.success) {
                         alert("Unable to create Razorpay Order");
@@ -963,12 +978,33 @@
 
                         },
 
+                        modal: {
+                            ondismiss: function () {
+
+                                console.log("Razorpay popup dismissed");
+                                console.log("Pending Order ID:", pendingOrderId);
+
+                                window.location.href = `/payment-failed/${pendingOrderId}`;
+                            }
+                        },
+
                         theme: {
                             color: "#000000"
                         }
                     };
 
                     const rzp = new Razorpay(options);
+
+                    rzp.on("payment.failed", function () {
+
+                        console.log("Payment Failed Event");
+                        console.log("Pending Order ID:", pendingOrderId);
+
+                        window.location.href = `/payment-failed/${pendingOrderId}`;
+
+                    });
+
+                    rzp.open();
 
                     rzp.open();
 
