@@ -408,41 +408,9 @@
                 </div>
 
                 <div class="info-section">
-                    <h6>Payment</h6>
-                
-                    <p class="mb-1">
-                        <strong>Method :</strong>
+                    <h6>Payment Method</h6>
+                    <p>
                         <%= order.paymentMethod %>
-                    </p>
-                
-                    <p class="mb-0">
-                        <strong>Status :</strong>
-                
-                        <% if(order.paymentStatus==="Paid" ){ %>
-                
-                            <span class="text-success fw-semibold">
-                                Paid
-                            </span>
-                
-                            <% } else if(order.paymentStatus==="Pending" ){ %>
-                
-                                <span class="text-warning fw-semibold">
-                                    Pending
-                                </span>
-                
-                                <% } else if(order.paymentStatus==="Failed" ){ %>
-                
-                                    <span class="text-danger fw-semibold">
-                                        Failed
-                                    </span>
-                
-                                    <% } else if(order.paymentStatus==="Refunded" ){ %>
-                
-                                        <span class="text-primary fw-semibold">
-                                            Refunded
-                                        </span>
-                
-                                        <% } %>
                     </p>
                 </div>
 
@@ -724,9 +692,17 @@
 
                 icon: "warning",
 
-                input: "textarea",
+                input: "select",
 
-                inputPlaceholder: "Type your reason here...",
+                inputOptions: {
+                    "Ordered by mistake": "Ordered by mistake",
+                    "Found a better price": "Found a better price",
+                    "Delivery is taking too long": "Delivery is taking too long",
+                    "Want to change variant": "Want to change variant",
+                    "Other": "Other"
+                },
+
+                inputPlaceholder: "Select a cancellation reason",
 
                 inputAttributes: {
 
@@ -744,11 +720,13 @@
 
                 cancelButtonText: "Keep Product",
 
-                preConfirm: (reason) => {
+                ppreConfirm: (reason) => {
 
-                    if (!reason || reason.trim() === "") {
+                    if (!reason) {
 
-                        Swal.showValidationMessage("A cancellation reason is required");
+                        Swal.showValidationMessage(
+                            "Please select a cancellation reason."
+                        );
 
                     }
 
@@ -756,27 +734,69 @@
 
                 }
 
-            }).then((result) => {
+            }).then(async (result) => {
 
-                if (result.isConfirmed) {
+                if (!result.isConfirmed) return;
 
-                    // Dynamically attach the cancellation reason text as a hidden field inside the form
+                let reason = result.value;
 
-                    const reasonInput = document.createElement("input");
+                if (reason === "Other") {
 
-                    reasonInput.type = "hidden";
+                    const otherReason = await Swal.fire({
 
-                    reasonInput.name = "cancelReason";
+                        title: "Please specify",
 
-                    reasonInput.value = result.value;
+                        input: "textarea",
 
-                    form.appendChild(reasonInput);
+                        inputPlaceholder: "Enter your cancellation reason...",
 
-                    form.submit()
+                        inputAttributes: {
+                            "aria-label": "Enter cancellation reason"
+                        },
+
+                        showCancelButton: true,
+
+                        confirmButtonText: "Submit",
+
+                        cancelButtonText: "Back",
+
+                        confirmButtonColor: "#e61f26",
+
+                        preConfirm: (value) => {
+
+                            if (!value || value.trim() === "") {
+
+                                Swal.showValidationMessage(
+                                    "Please enter a reason."
+                                );
+
+                            }
+
+                            return value;
+
+                        }
+
+                    });
+
+                    if (!otherReason.isConfirmed) return;
+
+                    reason = otherReason.value;
 
                 }
 
-            })
+                const reasonInput = document.createElement("input");
+
+                reasonInput.type = "hidden";
+
+                reasonInput.name = "cancelReason";
+
+                reasonInput.value = reason;
+
+                form.appendChild(reasonInput);
+
+                form.submit();
+
+            });
 
         })
 
