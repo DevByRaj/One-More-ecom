@@ -41,6 +41,8 @@ import { downloadInvoice } from "../controllers/user/orderController.js";
 
 import { createRazorpayOrder, verifyPayment, getPaymentFailed, retryPayment } from "../controllers/user/paymentController.js";
 
+import { getWallet } from "../controllers/user/walletController.js"
+
 const router = express.Router()
 
 router.get("/", (req, res) => {
@@ -160,5 +162,7 @@ router.post("/orders/cancel-item", isUserLoggedIn, cancelOrderItem)
 router.post("/orders/return-item", isUserLoggedIn, returnOrderItem)
 
 router.get("/orders/:id/invoice", isUserLoggedIn, downloadInvoice)
+
+router.get("/wallet", isUserLoggedIn, getWallet)
 
 export default router

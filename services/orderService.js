@@ -6,6 +6,7 @@ import Cart from "../models/cartModel.js"
 import Variant from "../models/variantModel.js";
 import User from "../models/userModel.js"
 import {userInfo} from "os"
+import {creditWallet} from "./walletService.js"
 
 export const allowedStatusTransitions = {
     Pending: [
@@ -532,6 +533,8 @@ const calculateOverallOrderStatus = (items) => {
 
 export const cancelOrderItemService = async (userId, orderId, itemId, cancelReason) => {
 
+    console.log("cancelOrderItemService called");
+
     const order = await Order.findOne({
         _id: orderId,
         userId
@@ -585,6 +588,25 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
     recalculateOrderTotals(order)
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
+
+    console.log("Payment Method:", order.paymentMethod);
+    console.log("Payment Status:", order.paymentStatus);
+
+    if(order.paymentMethod === "RAZORPAY" && 
+        order.paymentStatus === "Paid"){
+
+        console.log("Refund condition matched");
+
+        await creditWallet(
+            order.userId,
+            item.totalPrice,
+            `Refund for cancelled product - ${item.productName}`,
+            order._id
+        )
+
+        console.log('CreditWallet finished');
+        
+    }
 
     await order.save()
 

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Wallet</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between text-gray-800">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-black text-white px-6 py-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl font-extrabold tracking-tighter text-white">iM</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/shop" class="hover:text-white transition">Shop</a>
+                <a href="/contact" class="hover:text-white transition">Contact Us</a>
+                <a href="/about" class="hover:text-white transition">About Us</a>
+            </nav>
+
+            <!-- Icons -->
+            <div class="flex items-center space-x-6">
+                <a href="/account" class="hover:text-gray-300"><i class="fa-regular fa-user text-lg"></i></a>
+                <a href="/wishlist" class="hover:text-gray-300"><i class="fa-regular fa-heart text-lg"></i></a>
+                <a href="/cart" class="hover:text-gray-300"><i class="fa-solid fa-cart-shopping text-lg"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto my-8 px-4 w-full flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+            <!-- LEFT SIDEBAR: MY ACCOUNT MENU -->
+            <aside class="lg:col-span-1">
+                <div class="border border-gray-400 rounded-2xl overflow-hidden bg-gray-50 shadow-sm">
+                    <div class="border-b border-gray-400 py-3 text-center bg-gray-100 font-medium text-gray-700">
+                        My Account
+                    </div>
+                    <ul class="divide-y divide-gray-200 text-sm font-medium text-gray-700">
+                        <li>
+                            <a href="/profile"
+                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
+                                <i class="fa-regular fa-user w-5 text-center"></i>
+                                <span>Personal Information</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/address"
+                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-address-book w-5 text-center"></i>
+                                <span>Address</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/orders"
+                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-box-archive w-5 text-center"></i>
+                                <span>Order</span>
+                            </a>
+                        </li>
+                        <li>
+                            <!-- Active tab state -->
+                            <a href="/wallet"
+                                class="flex items-center space-x-3 px-5 py-3 bg-gray-200 font-semibold text-black">
+                                <i class="fa-regular fa-wallet w-5 text-center"></i>
+                                <span>Wallet</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/coupons"
+                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-ticket w-5 text-center"></i>
+                                <span>Coupon</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/change-password"
+                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
+                                <i class="fa-solid fa-lock w-5 text-center"></i>
+                                <span>Password Change</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/logout"
+                                class="flex items-center space-x-3 px-5 py-3 text-red-600 hover:bg-red-50 transition">
+                                <i class="fa-solid fa-power-off w-5 text-center"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- RIGHT PANEL: WALLET CONTENT -->
+            <section class="lg:col-span-3">
+                <div class="border border-gray-400 rounded-2xl bg-gray-50 shadow-sm overflow-hidden p-6 md:p-8">
+
+                    <h2 class="text-center font-medium text-gray-800 text-lg mb-6">My Wallet</h2>
+
+                    <!-- Balance Card -->
+                    <div
+                        class="border border-gray-400 rounded-xl p-6 bg-white flex justify-between items-center shadow-sm max-w-2xl mx-auto mb-6">
+                        <span class="text-lg font-semibold text-gray-800">Total balance</span>
+                        <span class="text-3xl font-bold text-indigo-900">
+                            ₹<%= wallet ? wallet.balance.toFixed(2) : '0.00' %>
+                        </span>
+                    </div>
+
+                    <!-- Add Money Button Container -->
+                    <div class="flex justify-end max-w-2xl mx-auto mb-8">
+                        <button
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg flex items-center space-x-2 text-sm shadow transition">
+                            <span>Add your money to wallet</span>
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Transactions Table Section -->
+                    <div class="max-w-2xl mx-auto">
+                        <h3 class="text-md font-medium text-gray-800 mb-4">Transactions</h3>
+
+                        <div class="border border-gray-400 rounded-xl overflow-hidden bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm border-collapse">
+                                    <thead>
+                                        <tr
+                                            class="border-b border-gray-300 bg-gray-50 text-gray-600 font-semibold uppercase text-xs">
+                                            <th class="py-3 px-4 border-r border-gray-300">Amount</th>
+                                            <th class="py-3 px-4 border-r border-gray-300">Transaction ID</th>
+                                            <th class="py-3 px-4 border-r border-gray-300">Order ID</th>
+                                            <th class="py-3 px-4 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-300 text-gray-700">
+                                        <% if (wallet && wallet.transactions.length> 0) { %>-
+                                            <% wallet.transactions.forEach(txn=> { %>
+                                                <tr>
+                                                    <td class="py-3 px-4 border-r border-gray-300 font-medium">
+                                                    
+                                                        <% if(txn.type==="Credit" ){ %>
+                                                    
+                                                            <span class="text-green-600">
+                                                                +₹<%= txn.amount.toFixed(2) %>
+                                                            </span>
+                                                    
+                                                            <% }else{ %>
+                                                    
+                                                                <span class="text-red-600">
+                                                                    -₹<%= txn.amount.toFixed(2) %>
+                                                                </span>
+                                                    
+                                                                <% } %>
+                                                    
+                                                    </td>
+                                                    <td class="py-3 px-4 border-r border-gray-300 uppercase">
+                                                        <%= txn._id.toString().slice(-8).toUpperCase() %>
+                                                    </td>
+                                                    <td class="py-3 px-4 border-r border-gray-300 uppercase">
+                                                        <%= txn.orderId ? txn.orderId.orderId : "-" %>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center font-medium">
+                                                    
+                                                        <% if(txn.type==="Credit" ){ %>
+                                                    
+                                                            <span class="text-green-600">
+                                                                Credit
+                                                            </span>
+                                                    
+                                                            <% }else{ %>
+                                                    
+                                                                <span class="text-red-600">
+                                                                    Debit
+                                                                </span>
+                                                    
+                                                                <% } %>
+                                                    
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="4" class="py-6 text-center text-gray-500">No
+                                                                transactions found.</td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-zinc-900 text-white pt-12 pb-6 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <!-- Logo Span -->
+            <div class="md:col-span-4 flex justify-center mb-4">
+                <span class="text-5xl font-extrabold tracking-tighter">iM</span>
+            </div>
+
+            <!-- Support Links -->
+            <div>
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">SUPPORT</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><a href="/order-status" class="hover:text-white">Order Status</a></li>
+                    <li><a href="/product-support" class="hover:text-white">Product Support</a></li>
+                    <li><a href="/shipping-policy" class="hover:text-white">Shipping & Return Policy</a></li>
+                    <li><a href="/complaints" class="hover:text-white">Complaint Registration</a></li>
+                </ul>
+            </div>
+
+            <!-- About Links -->
+            <div>
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">About Us</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><a href="/contact" class="hover:text-white">Contact Us</a></li>
+                    <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="/terms" class="hover:text-white">Terms of use</a></li>
+                    <li><a href="/faq" class="hover:text-white">FAQ</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div>
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">Contact</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><span class="font-semibold text-white">Email :</span> onemore@gmail.com</li>
+                    <li><span class="font-semibold text-white">Phone :</span> +91 8888888888</li>
+                </ul>
+            </div>
+
+            <!-- Social Links -->
+            <div>
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">Connect with us</h4>
+                <div class="flex space-x-4 text-xl">
+                    <a href="#" class="hover:text-gray-400"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-gray-400"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-gray-400"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto border-t border-zinc-800 pt-6 text-center text-xs text-gray-500">
+            &copy; 2025 onemore . All Rights Reserved.
+        </div>
+    </footer>
+
+</body>
+
+</html>

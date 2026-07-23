@@ -4,7 +4,7 @@ const walletTransactionSchema = new mongoose.Schema({
     type: {
         type: String,
         enum: ["Credit", "Debit"],
-        requred: true
+        required: true
     },
     amount:{
         type: Number,
@@ -15,7 +15,7 @@ const walletTransactionSchema = new mongoose.Schema({
         required: true
     },
     orderId:{
-        type: mongoose.Schema.Types,ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref:"Order",
         default: null
     }
@@ -34,11 +34,11 @@ const walletSchema = new mongoose.Schema({
 
     balance: {
         type: Number,
-        dafault: 0
+        default: 0
     },
     transactions: [walletTransactionSchema]
 },{
     timestamps: true
 })
 
-export default mongoose.model("wallet", walletSchema)
+export default mongoose.model("Wallet", walletSchema)
