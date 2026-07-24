@@ -49,16 +49,25 @@ export const placeOrder = async (req, res) => {
 
         const result = await placeOrderService(userId, req.body)
 
-        if (!result.success) {
-            return res.redirect("checkout")
+        if(!result.success){
+            return res.json({
+                success: false,
+                message: result.message
+            })
         }
 
-        return res.redirect(`/order-success/${result.orderId}`)
+        return res.json({
+            success: true,
+            redirectUrl: `/order-success/${result.orderId}`
+        })
 
     } catch (error) {
         console.log(error);
 
-        return res.redirect("/checkout")
+        return res.json({
+            success: false,
+            message: "Unable to place order"
+        })
     }
 
 }
@@ -255,6 +264,46 @@ export const downloadInvoice = async(req,res) =>{
         console.log(error);
 
         return res.redirect("/orders")
+        
+    }
+}
+
+export const getPaymentPage = async(req, res) =>{
+    try {
+
+        const userId = req.session.user
+
+        const {addressId} = req.query
+
+        const result = await getCheckoutData(userId)
+
+        if(!result.success){
+            return res.redirect("/cart")
+        }
+
+        const selectedAddress = result.addresses.find(
+            address => address._id.toString() === addressId
+        )
+
+        if(!selectedAddress){
+            return res.redirect("/checkout")
+        }
+
+        return res.render("user/payment",{
+            address: selectedAddress,
+            orderSummary: {
+                subtotal: result.totals.subtotal,
+                discount: result.totals.discount,
+                shipping: result.totals.shipping,
+                total: result.totals.grandTotal
+            }
+        })
+            
+    } catch (error) {
+
+        console.log(error);
+        
+        return res.redirect("/checkout")
         
     }
 }

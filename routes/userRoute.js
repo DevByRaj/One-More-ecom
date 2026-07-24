@@ -35,11 +35,13 @@ import {
 
 import {addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist} from "../controllers/user/wishlistController.js";
 
-import { getCheckout, placeOrder, getOrderSuccess, getOrders, getOrderDetails, cancelOrderItem, returnOrderItem } from "../controllers/user/orderController.js";
+import { getCheckout, getPaymentPage, placeOrder, getOrderSuccess, getOrders, getOrderDetails, cancelOrderItem, returnOrderItem } from "../controllers/user/orderController.js";
 
 import { downloadInvoice } from "../controllers/user/orderController.js";
 
 import { createRazorpayOrder, verifyPayment, getPaymentFailed, retryPayment } from "../controllers/user/paymentController.js";
+
+import { getWallet, payWithWallet } from "../controllers/user/walletController.js"
 
 const router = express.Router()
 
@@ -139,6 +141,8 @@ router.post("/cart/move-to-cart/:id", isUserLoggedIn, moveSavedItemToCart)
 
 router.get("/checkout", isUserLoggedIn, getCheckout)
 
+router.get("/payment", isUserLoggedIn, getPaymentPage)
+
 router.post("/checkout/place-order", isUserLoggedIn, placeOrder)
 
 router.post("/payment/create-order", isUserLoggedIn, createRazorpayOrder)
@@ -160,5 +164,10 @@ router.post("/orders/cancel-item", isUserLoggedIn, cancelOrderItem)
 router.post("/orders/return-item", isUserLoggedIn, returnOrderItem)
 
 router.get("/orders/:id/invoice", isUserLoggedIn, downloadInvoice)
+
+router.get("/wallet", isUserLoggedIn, getWallet)
+
+router.post("/wallet/pay", isUserLoggedIn, payWithWallet)
+
 
 export default router

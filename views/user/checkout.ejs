@@ -715,36 +715,12 @@
                             </form>
                         </div>
 
-                        <form id="checkoutForm" action="/checkout/place-order" method="POST">
+                        <form action="/payment" method="GET">
                         
                             <input type="hidden" name="addressId" id="selectedAddressId"
                                 value="<%= defaultAddress ? defaultAddress._id : '' %>">
                         
-                            <!-- Payment Method -->
-                        
-                            <h6 class="fw-semibold mb-3">
-                                Payment Method
-                            </h6>
-                        
-                            <div class="border rounded p-3 mb-4">
-                        
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
-                        
-                                    <label class="form-check-label" for="cod">
-                                        Cash on Delivery
-                                    </label>
-                                </div>
-                        
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY">
-                        
-                                    <label class="form-check-label" for="razorpay">
-                                        Razorpay
-                                    </label>
-                                </div>
-                        
-                            </div>
+                            
                         
                             <button type="submit" class="figma-checkout-btn" <%=(!cart || cart.items.length===0 || !defaultAddress) ? "disabled"
                                 : "" %>>
@@ -885,8 +861,6 @@
                 bootstrap.Modal.getInstance(modalEl).hide();
             }
         </script>
-
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
         <script>
 
