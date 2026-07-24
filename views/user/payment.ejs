@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Payment Page</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+        }
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: #181818;
+            padding: 15px 0;
+        }
+
+        .navbar-custom .nav-link {
+            color: #d1d1d1;
+            font-size: 0.9rem;
+            margin: 0 12px;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        /* Address Card Styling */
+        .address-box {
+            background-color: #f2f2f2;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 0.88rem;
+            color: #444;
+            position: relative;
+        }
+
+        /* Custom Radio Payment Option Styling */
+        .payment-option {
+            background-color: #e5e5e5;
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-option input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #000000;
+            width: 18px;
+            height: 18px;
+        }
+
+        .payment-option span {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #222;
+        }
+
+        /* Pay Now Button */
+        .btn-pay-now {
+            background-color: #000000;
+            color: #ffffff;
+            border-radius: 30px;
+            padding: 12px 45px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border: none;
+        }
+
+        .btn-pay-now:hover {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        /* Order Summary Card */
+        .summary-card {
+            background-color: #f5f5f5;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .summary-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .summary-total {
+            font-weight: 700;
+            color: #000;
+            font-size: 0.95rem;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #181818;
+            color: #ffffff;
+            padding-top: 40px;
+            padding-bottom: 20px;
+            margin-top: 60px;
+        }
+
+        footer h6 {
+            color: #d8c27a;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer ul li {
+            margin-bottom: 8px;
+        }
+
+        footer ul li a {
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        footer ul li a:hover {
+            color: #ffffff;
+        }
+
+        .footer-socials a {
+            color: #ffffff;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .footer-bottom {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand brand-logo" href="/">1M</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center gap-3 text-white">
+                <a href="/profile" class="text-white"><i class="bi bi-person fs-5"></i></a>
+                <a href="/wishlist" class="text-white"><i class="bi bi-suit-heart fs-5"></i></a>
+                <a href="/cart" class="text-white"><i class="bi bi-cart3 fs-5"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container my-5">
+        <form id="paymentForm">
+            <input type="hidden" name="addressId" value="<%= address._id %>">
+            <div class="row g-5">
+
+                <!-- Left Column: Shipping & Payment -->
+                <div class="col-lg-7 col-md-12">
+
+                    <!-- Shipping Address Section -->
+                    <h5 class="fw-bold mb-3" style="font-size: 1.1rem;">Shipping Address</h5>
+
+                    <div class="address-box mb-4">
+                        <p class="mb-1 fw-bold">
+                            <%= address.name %>
+                        </p>
+                        <p class="mb-1">
+                            <%= address.houseName %>
+                        </p>
+                        <p class="mb-1">
+                            <%= address.street %>
+                        </p>
+                        <p class="mb-1">
+                            <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                        </p>
+                        <p class="mb-0">Phone: <%= address.phone %>
+                        </p>
+                    </div>
+
+                    <hr class="my-4 text-muted">
+
+                    <!-- Payment Mode Section -->
+                    <h5 class="fw-bold mb-3" style="font-size: 1.1rem;">Payment Mode</h5>
+
+                    <div class="payment-options mb-4">
+                        <label class="payment-option d-block">
+                            <input type="radio" id="razorpay" name="paymentMethod" value="razorpay" required>
+                            <span>Razorpay</span>
+                        </label>
+
+                        <label class="payment-option d-block">
+                            <input type="radio" id="wallet" name="paymentMethod" value="wallet">
+                            <span>Wallet</span>
+                        </label>
+
+                        <label class="payment-option d-block">
+                            <input type="radio" id="cod" name="paymentMethod" value="cod" checked>
+                            <span>Cash On Delivery</span>
+                        </label>
+                    </div>
+
+                    <!-- Pay Now Submit Button -->
+                    <div class="mt-4">
+                        <button type="submit" id="placeOrderBtn" class="btn btn-pay-now">
+                            PLACE ORDER
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Order Summary -->
+                <div class="col-lg-5 col-md-12">
+                    <div class="summary-card">
+                        <h6 class="summary-title">Order Summary</h6>
+
+                        <div class="summary-row">
+                            <span>Item Sub Total</span>
+                            <span>₹ <%= orderSummary.subtotal.toFixed(2) %></span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Discount</span>
+                            <span>- ₹ <%= (orderSummary.discount || 0).toFixed(2) %></span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <span>
+                                <%= orderSummary.shipping===0 ? 'Free' : '₹ ' + orderSummary.shipping %>
+                            </span>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <div class="summary-row summary-total">
+                            <span>Total</span>
+                            <span>₹ <%= orderSummary.total.toFixed(2) %></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center text-md-start">
+
+            <div class="text-center mb-4">
+                <div class="brand-logo d-inline-block">1M</div>
+            </div>
+
+            <div class="row gy-4">
+                <!-- Support -->
+                <div class="col-6 col-md-3">
+                    <h6>SUPPORT</h6>
+                    <ul>
+                        <li><a href="#">Order Status</a></li>
+                        <li><a href="#">Product Support</a></li>
+                        <li><a href="#">Shipping & Return Policy</a></li>
+                        <li><a href="#">Complaint Registration</a></li>
+                    </ul>
+                </div>
+
+                <!-- About Us -->
+                <div class="col-6 col-md-3">
+                    <h6>About Us</h6>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of use</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-12 col-md-3">
+                    <h6>Contact</h6>
+                    <p class="mb-1 text-muted" style="font-size: 0.8rem;">
+                        <strong class="text-white">Email :</strong>
+                        onemore@gmail.com
+                    </p>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <strong class="text-white">Phone :</strong>
+                        +91 8888888888
+                    </p>
+                </div>
+
+                <!-- Connect with us -->
+                <div class="col-12 col-md-3">
+                    <h6>Connect with us</h6>
+                    <div class="footer-socials d-flex mt-2">
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom text-center">
+                &copy; <%= new Date().getFullYear() %> onemore . All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+  <script>
+    const paymentForm = document.getElementById("paymentForm");
+
+    paymentForm.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        const paymentMethod = document.querySelector(
+            'input[name="paymentMethod"]:checked'
+        ).value;
+
+        const addressId = document.querySelector(
+            'input[name="addressId"]'
+        ).value;
+
+        if (paymentMethod === "cod") {
+
+            const response = await fetch("/checkout/place-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    addressId,
+                    paymentMethod: "COD"
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.href = data.redirectUrl;
+            } else {
+                alert(data.message);
+            }
+
+            return;
+        }
+
+        if (paymentMethod === "razorpay") {
+
+            const response = await fetch("/payment/create-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    addressId
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                alert("Unable to create Razorpay order");
+                return;
+            }
+
+            const options = {
+                key: data.key,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: "OneMore",
+                description: "Order Payment",
+                order_id: data.order.id,
+
+                handler: async function (response) {
+
+                    const verifyResponse = await fetch("/payment/verify", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(response)
+                    });
+
+                    const verifyData = await verifyResponse.json();
+
+                    if (verifyData.success) {
+
+                        window.location.href =
+                            `/order-success/${verifyData.orderId}`;
+
+                    } else {
+
+                        alert(verifyData.message);
+
+                    }
+
+                }
+
+            };
+
+            const rzp = new Razorpay(options);
+
+            rzp.open();
+
+            return;
+        }
+
+        if (paymentMethod === "wallet") {
+
+            const response = await fetch("/wallet/pay", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    addressId
+                })
+            });
+
+            const data = await response.json();
+
+            console.log(data)
+
+            if (data.success) {
+                window.location.href = `/order-success/${data.orderId}`;
+            } else {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Insufficient Wallet Balance",
+                    text: data.message,
+                    confirmButtonColor: "#000",
+                    confirmButtonText: "OK"
+                });
+            }
+
+            return;
+        }
+
+    });
+</script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+</html>

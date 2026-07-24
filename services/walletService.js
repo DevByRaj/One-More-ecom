@@ -11,8 +11,6 @@ export const getOrCreateWallet = async (userId) =>{
             balance: 0,
             transactions: []
         })
-
-        console.log("Wallet created:", wallet);
         
     }
 
@@ -26,10 +24,6 @@ export const creditWallet = async(
     orderId = null
 ) =>{
 
-    console.log("===== CREDIT WALLET CALLED =====");
-    console.log(userId, amount, description);
-
-
      const wallet = await getOrCreateWallet(userId)
 
      wallet.balance += amount
@@ -42,12 +36,46 @@ export const creditWallet = async(
 
      await wallet.save()
 
-    console.log("Wallet after save:", wallet);
-
      return wallet
+}
+
+export const debitWallet = async(
+    userId,
+    amount,
+    description,
+    orderId = null
+) =>{
+    const wallet = await getOrCreateWallet(userId)
+
+    if(wallet.balance < amount){
+        return{
+            success: false,
+            message: "Insufficient wallet balance"
+        }
+    }
+
+    wallet.balance -= amount;
+
+    wallet.transactions.unshift({
+        type: "Debit",
+        amount,
+        description,
+        orderId
+    })
+
+    await wallet.save()
+
+    return{
+        success: true,
+        wallet
+    }
 }
 
 export const getWalletService = async (userId) =>{
 
-    return await getOrCreateWallet(userId).populate("transactions.orderId")
+    const wallet = await getOrCreateWallet(userId)
+
+    await wallet.populate("transactions.orderId")
+
+    return wallet
 }

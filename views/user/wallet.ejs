@@ -78,9 +78,8 @@
                             </a>
                         </li>
                         <li>
-                            <!-- Active tab state -->
                             <a href="/wallet"
-                                class="flex items-center space-x-3 px-5 py-3 bg-gray-200 font-semibold text-black">
+                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition bg-gray-200">
                                 <i class="fa-regular fa-wallet w-5 text-center"></i>
                                 <span>Wallet</span>
                             </a>
@@ -151,25 +150,19 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-300 text-gray-700">
-                                        <% if (wallet && wallet.transactions.length> 0) { %>-
+                                        <% if (wallet && wallet.transactions.length> 0) { %>
                                             <% wallet.transactions.forEach(txn=> { %>
                                                 <tr>
                                                     <td class="py-3 px-4 border-r border-gray-300 font-medium">
-                                                    
-                                                        <% if(txn.type==="Credit" ){ %>
-                                                    
+                                                        <% if(txn.type==="Credit" ) { %>
                                                             <span class="text-green-600">
                                                                 +₹<%= txn.amount.toFixed(2) %>
                                                             </span>
-                                                    
-                                                            <% }else{ %>
-                                                    
+                                                            <% } else { %>
                                                                 <span class="text-red-600">
                                                                     -₹<%= txn.amount.toFixed(2) %>
                                                                 </span>
-                                                    
                                                                 <% } %>
-                                                    
                                                     </td>
                                                     <td class="py-3 px-4 border-r border-gray-300 uppercase">
                                                         <%= txn._id.toString().slice(-8).toUpperCase() %>
@@ -178,21 +171,15 @@
                                                         <%= txn.orderId ? txn.orderId.orderId : "-" %>
                                                     </td>
                                                     <td class="py-3 px-4 text-center font-medium">
-                                                    
-                                                        <% if(txn.type==="Credit" ){ %>
-                                                    
+                                                        <% if(txn.type==="Credit" ) { %>
                                                             <span class="text-green-600">
                                                                 Credit
                                                             </span>
-                                                    
-                                                            <% }else{ %>
-                                                    
+                                                            <% } else { %>
                                                                 <span class="text-red-600">
                                                                     Debit
                                                                 </span>
-                                                    
                                                                 <% } %>
-                                                    
                                                     </td>
                                                 </tr>
                                                 <% }) %>

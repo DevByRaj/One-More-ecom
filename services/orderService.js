@@ -7,6 +7,7 @@ import Variant from "../models/variantModel.js";
 import User from "../models/userModel.js"
 import {userInfo} from "os"
 import {creditWallet} from "./walletService.js"
+import { debitWallet } from "./walletService.js"
 
 export const allowedStatusTransitions = {
     Pending: [
@@ -592,20 +593,15 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
     console.log("Payment Method:", order.paymentMethod);
     console.log("Payment Status:", order.paymentStatus);
 
-    if(order.paymentMethod === "RAZORPAY" && 
-        order.paymentStatus === "Paid"){
-
-        console.log("Refund condition matched");
+    if (order.paymentStatus === "Paid") {
 
         await creditWallet(
             order.userId,
             item.totalPrice,
             `Refund for cancelled product - ${item.productName}`,
             order._id
-        )
+        );
 
-        console.log('CreditWallet finished');
-        
     }
 
     await order.save()
@@ -770,4 +766,34 @@ export const returnOrderItemService = async (userId, orderId, itemId, returnReas
         success: true
     }
 
+}
+
+export const payWithWalletService = async(userId, orderData) =>{
+    
+    const checkout = await getCheckoutData(userId)
+
+    if(!checkout.success){
+        return{
+            success: false,
+            message: "Cart is empty"
+        }
+    }
+
+    const debitResult = await debitWallet(
+        userId,
+        checkout.totals.grandTotal,
+        "Wallet payment"
+    )
+
+    if(!debitResult.success){
+        return debitResult
+    }
+
+    const result = await placeOrderService(userId,{
+        ...orderData,
+        paymentMethod: "WALLET",
+        paymentStatus: "Paid"
+    })
+
+    return result
 }
