@@ -75,7 +75,7 @@ export const updateOrderItemStatus = async(req, res) =>{
 
         return res.status(500).json({
             success: false,
-            message: error.messaage
+            message: error.message
         })
         
     }

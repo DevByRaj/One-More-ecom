@@ -427,7 +427,10 @@
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify(response)
+                        body: JSON.stringify({
+                            ...response,
+                            addressId
+                        })
                     });
 
                     const verifyData = await verifyResponse.json();

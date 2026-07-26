@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const walletTransactionSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ["Credit", "Debit", "Refund"],
+        enum: ["Credit", "Debit", "Refund", "Topup"],
         required: true
     },
     amount:{

@@ -165,7 +165,7 @@
                                             <% wallet.transactions.forEach(txn=> { %>
                                                 <tr>
                                                     <td class="py-3 px-4 border-r border-gray-300 font-medium">
-                                                    <% if (txn.type==="Credit" || txn.type==="Refund" ) { %>
+                                                    <% if (txn.type==="Credit" || txn.type==="Refund" || txn.type === "Topup" ) { %>
                                                         <span class="text-green-600">
                                                             +₹<%= txn.amount.toFixed(2) %>
                                                         </span>
@@ -182,25 +182,33 @@
                                                         <%= txn.orderId ? txn.orderId.orderId : "-" %>
                                                     </td>
                                                     <td class="py-3 px-4 text-center font-medium">
-                                                        <% if (txn.type==="Credit" ) { %>
-                                                        
-                                                            <span class="text-green-600">
-                                                                Credit
+                                                    
+                                                        <% if (txn.type==="Topup" ) { %>
+                                                    
+                                                            <span class="text-blue-600">
+                                                                Top-up
                                                             </span>
-                                                        
-                                                            <% } else if (txn.type==="Refund" ) { %>
-                                                        
-                                                                <span class="text-blue-600">
-                                                                    Refund
+                                                    
+                                                            <% } else if (txn.type==="Credit" ) { %>
+                                                    
+                                                                <span class="text-green-600">
+                                                                    Credit
                                                                 </span>
-                                                        
-                                                                <% } else { %>
-                                                        
-                                                                    <span class="text-red-600">
-                                                                        Debit
+                                                    
+                                                                <% } else if (txn.type==="Refund" ) { %>
+                                                    
+                                                                    <span class="text-indigo-600">
+                                                                        Refund
                                                                     </span>
-                                                        
-                                                                    <% } %>
+                                                    
+                                                                    <% } else { %>
+                                                    
+                                                                        <span class="text-red-600">
+                                                                            Debit
+                                                                        </span>
+                                                    
+                                                                        <% } %>
+                                                    
                                                     </td>
                                                 </tr>
                                                 <% }) %>

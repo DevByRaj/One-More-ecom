@@ -151,7 +151,9 @@ export  const verifyWalletTopupService = async(data) =>{
     await creditWallet(
         topup.userId,
         topup.amount,
-        "Wallet Top-up"
+        "Wallet Top-up",
+        null,
+        "Topup"
     )
 
     return {

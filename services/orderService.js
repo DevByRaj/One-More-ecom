@@ -7,7 +7,8 @@ import Variant from "../models/variantModel.js";
 import User from "../models/userModel.js"
 import {userInfo} from "os"
 import {creditWallet} from "./walletService.js"
-import { debitWallet } from "./walletService.js"
+import {debitWallet} from "./walletService.js"
+import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
 
 export const allowedStatusTransitions = {
     Pending: [
@@ -163,10 +164,10 @@ const generateOrderId = () => {
 export const placeOrderService = async (userId, orderData) => {
 
     const {addressId,
-         paymentMethod,
-         paymentStatus = "Pending",
+        paymentMethod,
+        paymentStatus = "Pending",
         razorpayOrderId = null,
-        razorpayPaymentId = null } = orderData
+        razorpayPaymentId = null} = orderData
 
     const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
@@ -274,12 +275,13 @@ export const placeOrderService = async (userId, orderData) => {
     }
 
 }
+
 export const createPendingOrderService = async (userId, orderData) => {
 
     const {addressId,
         paymentMethod,
         razorpayOrderId = null,
-        } = orderData
+    } = orderData
 
     const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
@@ -367,7 +369,7 @@ export const createPendingOrderService = async (userId, orderData) => {
     })
 
 
-   
+
     return {
         success: true,
         order
@@ -375,21 +377,21 @@ export const createPendingOrderService = async (userId, orderData) => {
 
 }
 
-export const completePendingOrderService = async(razorpayOrderId, razorpayPaymentId) =>{
+export const completePendingOrderService = async (razorpayOrderId, razorpayPaymentId) => {
 
     const order = await Order.findOne({
         razorpayOrderId
     })
 
-    if(!order){
-        return{
+    if (!order) {
+        return {
             success: false,
             message: "Order not found"
         }
     }
 
-    if(order.paymentStatus === "Paid"){
-        return{
+    if (order.paymentStatus === "Paid") {
+        return {
             success: true,
             orderId: order._id
         }
@@ -397,24 +399,24 @@ export const completePendingOrderService = async(razorpayOrderId, razorpayPaymen
 
     const cart = await Cart.findOne({userId: order.userId}).populate("items.variantId")
 
-    if(!cart || cart.items.length === 0){
-        return{
+    if (!cart || cart.items.length === 0) {
+        return {
             success: false,
             message: "Cart is empty"
         }
     }
 
-    for(const item of cart.items){
+    for (const item of cart.items) {
 
-        if(item.variantId.stock < item.quantity){
-            return{
+        if (item.variantId.stock < item.quantity) {
+            return {
                 success: false,
                 message: `${item.variantId.variantName} is out of stock`
             }
         }
 
-        await Variant.findByIdAndUpdate(item.variantId._id,{
-            $inc:{
+        await Variant.findByIdAndUpdate(item.variantId._id, {
+            $inc: {
                 stock: -item.quantity
             }
         })
@@ -430,7 +432,7 @@ export const completePendingOrderService = async(razorpayOrderId, razorpayPaymen
 
     await order.save()
 
-    return{
+    return {
         success: true,
         orderId: order._id
     }
@@ -478,13 +480,10 @@ const recalculateOrderTotals = (order) => {
 
     let discount = 0
 
-    const shipping = subtotal >= 1000 || subtotal === 0 ? 0 : 50
-
-    const grandTotal = subtotal - discount + shipping
+    const grandTotal = subtotal - discount + order.shipping
 
     order.subTotal = subtotal
     order.discount = discount
-    order.shipping = shipping
     order.grandTotal = grandTotal
 }
 
@@ -564,11 +563,11 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
         }
     }
 
-    if(item.status === "Shipped" ||
+    if (item.status === "Shipped" ||
         item.status === "Out For Delivery" ||
         item.status === "Delivered"
-    ){
-        return{
+    ) {
+        return {
             success: false,
             message: "This product can no longer be cancelled"
         }
@@ -586,8 +585,6 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     item.cancelReason = cancelReason
 
-    recalculateOrderTotals(order)
-
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
     console.log("Payment Method:", order.paymentMethod);
@@ -595,14 +592,37 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     if (order.paymentStatus === "Paid") {
 
+        let refundAmount = item.totalPrice
+
+        const remainingActiveItems = order.items.filter(orderItem => {
+            if (orderItem._id.toString() === item._id.toString()) {
+                return false
+            }
+            return !["Cancelled", "Returned"].includes(orderItem.status)
+        })
+
+        // if (remainingActiveItems.length === 0) {
+        //     refundAmount += order.shipping
+        // }
+
+        const isLastActiveItem = remainingActiveItems.length === 0
+
+        if (isLastActiveItem) {
+            refundAmount += order.shipping
+        }
+
+        console.log("Refund Amount:", refundAmount);
+        console.log("Shipping:", order.shipping);
+        console.log("Remaining Active Items:", remainingActiveItems.length);
+
+
         await creditWallet(
             order.userId,
-            item.totalPrice,
+            refundAmount,
             `Refund for cancelled product - ${item.productName}`,
             order._id,
             "Refund"
-        );
-
+        )
     }
 
     await order.save()
@@ -650,15 +670,13 @@ export const getAllOrders = async (page = 1, limit = 5, search = "", status = ""
 
     let sortOption = {createdAt: -1}
 
-    if(sort === "oldest"){
+    if (sort === "oldest") {
         sortOption = {createdAt: 1}
     }
 
     const totalOrders = await Order.countDocuments(query)
 
     const orders = await Order.find(query).populate("userId").sort(sortOption).skip(skip).limit(limit)
-
-
 
     return {
         orders,
@@ -712,7 +730,7 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                 }
             })
 
-            if(order.paymentStatus === "Paid"){
+            if (order.paymentStatus === "Paid") {
 
                 await creditWallet(
                     order.userId,
@@ -726,9 +744,47 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
             item.returnedAt = new Date()
         }
 
+        if (newStatus === "Cancelled") {
+
+            await Variant.findByIdAndUpdate(item.variantId, {
+                $inc: {
+                    stock: item.quantity
+                }
+            })
+
+            if (order.paymentStatus === "Paid") {
+
+                let refundAmount = item.totalPrice
+
+                const remainingActiveItems = order.items.filter(orderItem => {
+                    if (orderItem._id.toString() === item._id.toString()) {
+                        return false;
+                    }
+
+                    const status = formData[`status_${orderItem._id}`] || orderItem.status;
+
+                    return !["Cancelled", "Returned"].includes(status);
+                })
+
+                if (remainingActiveItems.length === 0) {
+                    refundAmount += order.shipping
+
+                }
+
+                await creditWallet(
+                    order.userId,
+                    refundAmount,
+                    `Refund for cancelled product - ${item.productName}`,
+                    order._id,
+                    "Refund"
+                )
+            }
+
+            item.cancelledAt = new Date()
+        }
+
         item.status = newStatus
     }
-    recalculateOrderTotals(order)
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
@@ -780,12 +836,12 @@ export const returnOrderItemService = async (userId, orderId, itemId, returnReas
 
 }
 
-export const payWithWalletService = async(userId, orderData) =>{
-    
+export const payWithWalletService = async (userId, orderData) => {
+
     const checkout = await getCheckoutData(userId)
 
-    if(!checkout.success){
-        return{
+    if (!checkout.success) {
+        return {
             success: false,
             message: "Cart is empty"
         }
@@ -797,11 +853,11 @@ export const payWithWalletService = async(userId, orderData) =>{
         "Wallet payment"
     )
 
-    if(!debitResult.success){
+    if (!debitResult.success) {
         return debitResult
     }
 
-    const result = await placeOrderService(userId,{
+    const result = await placeOrderService(userId, {
         ...orderData,
         paymentMethod: "WALLET",
         paymentStatus: "Paid"
