@@ -1,5 +1,6 @@
 import { getWalletService } from "../../services/walletService.js"
 import { payWithWalletService } from "../../services/orderService.js"
+import { createWalletTopupOrderService, verifyWalletTopupService } from "../../services/walletService.js"
 
 export const getWallet = async(req, res) =>{
 
@@ -39,3 +40,46 @@ export const payWithWallet = async(req, res) =>{
         
     }
 }
+
+export const createWalletTopupOrder = async(req, res) =>{
+    try {
+
+        const userId = req.session.user
+        
+        const {amount} = req.body
+        
+        const result = await createWalletTopupOrderService(
+            userId,
+            Number(amount)
+        )
+
+        res.json(result)
+        
+    } catch (error) {
+
+        console.log(error)
+        
+        res.json({
+            success: false
+        })
+    }
+}
+
+export const verifyWalletTopupPayment = async(req, res) =>{
+    try {
+
+        const result = await verifyWalletTopupService(req.body)
+
+        res.json(result)
+        
+    } catch (error) {
+
+        console.log(error)
+
+        res.json({
+            success: false
+        })
+        
+    }
+}
+

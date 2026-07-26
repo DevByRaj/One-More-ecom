@@ -126,11 +126,22 @@
 
                     <!-- Add Money Button Container -->
                     <div class="flex justify-end max-w-2xl mx-auto mb-8">
-                        <button
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg flex items-center space-x-2 text-sm shadow transition">
-                            <span>Add your money to wallet</span>
-                            <i class="fa-solid fa-caret-down"></i>
-                        </button>
+                    
+                        <div class="flex gap-3">
+                    
+                            <input type="number" id="walletAmount"
+                                class="border border-gray-300 rounded-lg px-4 py-2 w-44 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="₹100 - ₹3000" min="100" max="3000">
+                    
+                            <button id="addMoneyBtn"
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-5 py-2 rounded-lg shadow">
+                    
+                                Add Money
+                    
+                            </button>
+                    
+                        </div>
+                    
                     </div>
 
                     <!-- Transactions Table Section -->
@@ -154,15 +165,15 @@
                                             <% wallet.transactions.forEach(txn=> { %>
                                                 <tr>
                                                     <td class="py-3 px-4 border-r border-gray-300 font-medium">
-                                                        <% if(txn.type==="Credit" ) { %>
-                                                            <span class="text-green-600">
-                                                                +₹<%= txn.amount.toFixed(2) %>
+                                                    <% if (txn.type==="Credit" || txn.type==="Refund" ) { %>
+                                                        <span class="text-green-600">
+                                                            +₹<%= txn.amount.toFixed(2) %>
+                                                        </span>
+                                                        <% } else { %>
+                                                            <span class="text-red-600">
+                                                                -₹<%= txn.amount.toFixed(2) %>
                                                             </span>
-                                                            <% } else { %>
-                                                                <span class="text-red-600">
-                                                                    -₹<%= txn.amount.toFixed(2) %>
-                                                                </span>
-                                                                <% } %>
+                                                            <% } %>
                                                     </td>
                                                     <td class="py-3 px-4 border-r border-gray-300 uppercase">
                                                         <%= txn._id.toString().slice(-8).toUpperCase() %>
@@ -171,15 +182,25 @@
                                                         <%= txn.orderId ? txn.orderId.orderId : "-" %>
                                                     </td>
                                                     <td class="py-3 px-4 text-center font-medium">
-                                                        <% if(txn.type==="Credit" ) { %>
+                                                        <% if (txn.type==="Credit" ) { %>
+                                                        
                                                             <span class="text-green-600">
                                                                 Credit
                                                             </span>
-                                                            <% } else { %>
-                                                                <span class="text-red-600">
-                                                                    Debit
+                                                        
+                                                            <% } else if (txn.type==="Refund" ) { %>
+                                                        
+                                                                <span class="text-blue-600">
+                                                                    Refund
                                                                 </span>
-                                                                <% } %>
+                                                        
+                                                                <% } else { %>
+                                                        
+                                                                    <span class="text-red-600">
+                                                                        Debit
+                                                                    </span>
+                                                        
+                                                                    <% } %>
                                                     </td>
                                                 </tr>
                                                 <% }) %>
@@ -255,6 +276,107 @@
             &copy; 2025 onemore . All Rights Reserved.
         </div>
     </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        document.getElementById("addMoneyBtn").addEventListener("click", async () => {
+
+                const amount = Number(document.getElementById("walletAmount").value);
+
+                if (!amount) {
+                    return Swal.fire({
+                        icon: "warning",
+                        title: "Enter an amount"
+                    });
+                }
+
+                if (amount < 100) {
+                    return Swal.fire({
+                        icon: "warning",
+                        title: "Minimum amount is ₹100"
+                    });
+                }
+
+                if (amount > 3000) {
+                    return Swal.fire({
+                        icon: "warning",
+                        title: "Maximum amount is ₹3000"
+                    });
+                }
+
+                const response = await fetch("/wallet/create-order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ amount })
+                });
+
+                const data = await response.json();
+
+               if (!data.success) {
+                return Swal.fire({
+                    icon: "error",
+                    title: data.message || "Something went wrong"
+                });
+            }
+
+            const options = {
+                key: data.key,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: "OneMore",
+                description: "Wallet Top-up",
+                order_id: data.order.id,
+
+                handler: async function (response) {
+
+                    const verify = await fetch("/wallet/verify", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(response)
+                    });
+
+                    const result = await verify.json();
+
+                    if (result.success) {
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Money Added Successfully"
+                        }).then(() => {
+                            location.reload();
+                        });
+
+                    } else {
+
+                        Swal.fire({
+                            icon: "error",
+                            title: result.message
+                        });
+
+                    }
+
+                },
+
+                theme: {
+                    color: "#2563eb"
+                }
+            };
+
+            const razorpay = new Razorpay(options);
+
+            razorpay.open();
+
+            });
+
+    </script>
 
 </body>
 

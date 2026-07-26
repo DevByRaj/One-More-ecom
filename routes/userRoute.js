@@ -41,7 +41,7 @@ import { downloadInvoice } from "../controllers/user/orderController.js";
 
 import { createRazorpayOrder, verifyPayment, getPaymentFailed, retryPayment } from "../controllers/user/paymentController.js";
 
-import { getWallet, payWithWallet } from "../controllers/user/walletController.js"
+import { getWallet, payWithWallet, createWalletTopupOrder, verifyWalletTopupPayment } from "../controllers/user/walletController.js"
 
 const router = express.Router()
 
@@ -168,6 +168,10 @@ router.get("/orders/:id/invoice", isUserLoggedIn, downloadInvoice)
 router.get("/wallet", isUserLoggedIn, getWallet)
 
 router.post("/wallet/pay", isUserLoggedIn, payWithWallet)
+
+router.post("/wallet/create-order", createWalletTopupOrder)
+
+router.post("/wallet/verify", verifyWalletTopupPayment)
 
 
 export default router

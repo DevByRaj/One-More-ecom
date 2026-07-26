@@ -599,7 +599,8 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
             order.userId,
             item.totalPrice,
             `Refund for cancelled product - ${item.productName}`,
-            order._id
+            order._id,
+            "Refund"
         );
 
     }
@@ -710,6 +711,17 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                     stock: item.quantity
                 }
             })
+
+            if(order.paymentStatus === "Paid"){
+
+                await creditWallet(
+                    order.userId,
+                    item.totalPrice,
+                    `Refund for returned product - ${item.productName}`,
+                    order._id,
+                    "Refund"
+                )
+            }
 
             item.returnedAt = new Date()
         }
