@@ -4,7 +4,7 @@ import Order from "../../models/orderModel.js";
 
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
 
-import {getCheckoutData, createPendingOrderService, completePendingOrderService} from "../../services/orderService.js";
+import {getCheckoutData, createPendingOrderService, placeOrderService} from "../../services/orderService.js";
 
 export const createRazorpayOrder = async (req, res) => {
     try {
@@ -21,26 +21,12 @@ export const createRazorpayOrder = async (req, res) => {
             })
         }
 
-        const pendingOrder = await createPendingOrderService(userId, {
-            addressId,
-            paymentMethod: "RAZORPAY"
-        })
-
-        if (!pendingOrder.success) {
-            return res.json(pendingOrder)
-        }
-
         const razorpayOrder = await createRazorpayOrderService(checkout.totals.grandTotal)
-
-        pendingOrder.order.razorpayOrderId = razorpayOrder.id
-
-        await pendingOrder.order.save()
 
         res.json({
             success: true,
             order: razorpayOrder,
             key: process.env.RAZORPAY_KEY_ID,
-            pendingOrderId: pendingOrder.order._id
         })
 
     } catch (error) {
@@ -60,7 +46,8 @@ export const verifyPayment = async (req, res) => {
         const {
             razorpay_order_id,
             razorpay_payment_id,
-            razorpay_signature
+            razorpay_signature,
+            addressId
         } = req.body
 
         const generatedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -74,11 +61,17 @@ export const verifyPayment = async (req, res) => {
             })
         }
 
-        const result = await completePendingOrderService(
-            razorpay_order_id,
-            razorpay_payment_id
+        const result = await placeOrderService(req.session.user,
+            {
+                addressId,
+                paymentMethod: "RAZORPAY",
+                paymentStatus: "Paid",
+                razorpayOrderId: razorpay_order_id,
+                razorpayPaymentId: razorpay_payment_id,
+                razorpaySignature: razorpay_signature
+            }
         )
-
+        
         return res.json(result)
 
     } catch (error) {
