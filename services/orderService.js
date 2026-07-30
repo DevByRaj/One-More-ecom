@@ -722,19 +722,40 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
 
-        if (item.status === "Return Requested" && newStatus === "Returned") {
+        if(newStatus === "Delivered" && order.paymentMethod === "COD"){
+            order.paymentStatus = "Paid"
+        }
+
+        if(item.status === "Return Requested" && newStatus === "Returned"){
 
             await Variant.findByIdAndUpdate(item.variantId, {
-                $inc: {
+                $inc:{
                     stock: item.quantity
                 }
             })
 
-            if (order.paymentStatus === "Paid") {
+            if(order.paymentStatus === "Paid"){
+
+                let refundAmount = item.totalPrice
+
+                const remainingActiveItems = order.items.filter(orderItem =>{
+
+                    if(orderItem._id.toString() === item._id.toString()){
+                        return false
+                    }
+
+                    const status = formData[`status_${orderItem._id}`] || orderItem.status
+
+                    return !["Cancelled", "Returned"].includes(status)
+                })
+
+                if(remainingActiveItems.length === 0){
+                    refundAmount += order.shipping
+                }
 
                 await creditWallet(
                     order.userId,
-                    item.totalPrice,
+                    refundAmount,
                     `Refund for returned product - ${item.productName}`,
                     order._id,
                     "Refund"
@@ -743,7 +764,7 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
 
             item.returnedAt = new Date()
         }
-
+        
         if (newStatus === "Cancelled") {
 
             await Variant.findByIdAndUpdate(item.variantId, {
