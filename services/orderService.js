@@ -728,6 +728,13 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
 
         if(item.status === "Return Requested" && newStatus === "Returned"){
 
+            console.log("----- Return approval------");
+            console.log("payment method..", order.paymentMethod);
+            console.log("payment status..", order.paymentStatus);
+            console.log("Old status..", item.status);                   
+            console.log("New status..", newStatus);
+            
+
             await Variant.findByIdAndUpdate(item.variantId, {
                 $inc:{
                     stock: item.quantity
@@ -760,6 +767,11 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                     order._id,
                     "Refund"
                 )
+
+                console.log("refund amount..", refundAmount);
+                console.log("calling credit wallet..");
+                
+                
             }
 
             item.returnedAt = new Date()
