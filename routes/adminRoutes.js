@@ -19,6 +19,14 @@ import {
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
 import {getOrders, getOrderDetails, updateOrderItemStatus} from "../controllers/admin/orderController.js"
+import {updateProduct} from "../services/productService.js"
+
+ import{ getProductOfferList,
+     getAddProductOffer, 
+     addProductOffer, 
+     getEditProductOffer, 
+     updateProductOffer, 
+     deleteProductOffer} from "../controllers/admin/offerController.js"
 
 
 const router = express.Router()
@@ -88,5 +96,16 @@ router.get("/orders", isAdminLoggedIn, getOrders)
 router.get("/orders/:id", isAdminLoggedIn, getOrderDetails)
 
 router.post("/orders/update-item-status", isAdminLoggedIn, updateOrderItemStatus)
+
+router.get("/offers/products",isAdminLoggedIn, getProductOfferList)
+
+router.get("/offers/products/add",isAdminLoggedIn, getAddProductOffer)
+router.post("/offers/products/add",isAdminLoggedIn, addProductOffer)
+
+router.get("/offers/products/edit/:id", isAdminLoggedIn, getEditProductOffer)
+router.post("/offer/products/edit/:id", isAdminLoggedIn, updateProductOffer)
+
+router.post("/offers/product/delete/:id", isAdminLoggedIn, deleteProductOffer)
+
 
 export default router
