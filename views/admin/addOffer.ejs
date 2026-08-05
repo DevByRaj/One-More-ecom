@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= isEdit ? 'Edit Offer' : 'Add Offer' %>
+    </title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            gap: 30px;
+        }
+
+        /* Sidebar Styling */
+        .sidebar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 220px;
+        }
+
+        .logo-box {
+            margin-bottom: 25px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .sidebar {
+            width: 100%;
+            background-color: #121212;
+            border: 1.5px solid #6c38cc;
+            border-radius: 16px;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 0 15px rgba(108, 56, 204, 0.15);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 24px;
+            color: #a0a0a0;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #ffffff;
+        }
+
+        .nav-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .page-title-card {
+            border: 1.5px solid #6c38cc;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #121212;
+            box-shadow: 0 0 15px rgba(108, 56, 204, 0.1);
+        }
+
+        .form-container {
+            border: 1.5px solid #6c38cc;
+            border-radius: 16px;
+            padding: 35px;
+            background-color: #121212;
+            box-shadow: 0 0 15px rgba(108, 56, 204, 0.1);
+        }
+
+        /* Form Layout Grid */
+        .offer-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px 40px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 12px;
+            color: #cccccc;
+        }
+
+        input,
+        select,
+        textarea {
+            background-color: #262626;
+            border: 1px solid #333333;
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: #ffffff;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #6c38cc;
+        }
+
+        .submit-btn-wrapper {
+            grid-column: 2;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 10px 36px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #e0e0e0;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: #666666;
+            font-size: 11px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Component -->
+        <div class="sidebar-wrapper">
+            <div class="logo-box">
+                iM
+            </div>
+            <aside class="sidebar">
+                <a href="/admin/dashboard" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="/admin/products" class="nav-item"><i class="fa-solid fa-border-all"></i> Products</a>
+                <a href="/admin/customers" class="nav-item"><i class="fa-solid fa-user-group"></i> Customers</a>
+                <a href="/admin/orders" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+                <a href="/admin/coupons" class="nav-item"><i class="fa-solid fa-ticket"></i> Coupons</a>
+                <a href="/admin/category" class="nav-item"><i class="fa-solid fa-shapes"></i> Category</a>
+                <a href="/admin/brand" class="nav-item"><i class="fa-solid fa-box"></i> Brand</a>
+                <a href="/admin/offers" class="nav-item active"><i class="fa-solid fa-percent"></i> Offers</a>
+                <a href="/admin/banner" class="nav-item"><i class="fa-solid fa-mobile-screen"></i> Banner</a>
+                <a href="/admin/sales-report" class="nav-item"><i class="fa-solid fa-chart-line"></i> Sales Report</a>
+                <a href="/admin/logout" class="nav-item"><i class="fa-solid fa-power-off"></i> Logout</a>
+            </aside>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="page-title-card">
+                <%= isEdit ? 'Edit Offers' : 'Add Offers' %>
+            </div>
+
+            <div class="form-container">
+                <% if (error) { %>
+                    <div style="
+                        background:#ff4d4f;
+                        color:white;
+                        padding:12px 16px;
+                        border-radius:8px;
+                        margin-bottom:20px;
+                        font-size:14px;
+                    ">
+                        <%= error %>
+                    </div>
+                    <% } %>
+                <form action="<%= isEdit ? '/admin/offers/edit/' + offer._id : '/admin/offers/add' %>" method="POST"
+                    class="offer-form">
+
+                    <!-- Offer Name & Applies To -->
+                    <div class="form-group">
+                        <label for="offerName">Offer Name</label>
+                        <input type="text" id="offerName" name="offerName" value="<%= offer ? offer.offerName : '' %>"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appliesTo">Applies To</label>
+                        <select id="appliesTo" name="appliesTo" onchange="toggleAppliesToFields()" required>
+                            <option value="" disabled <%=!offer ? 'selected' : '' %>>Select Target</option>
+                            <option value="PRODUCT" <%=offer && offer.appliesTo==='PRODUCT' ? 'selected' : '' %>>Product
+                            </option>
+                            <option value="CATEGORY" <%=offer && offer.appliesTo==='CATEGORY' ? 'selected' : '' %>
+                                >Category</option>
+                        </select>
+                    </div>
+
+                    <!-- Target Selection Dropdowns -->
+                    <div class="form-group" id="productGroup"
+                        style="display: <%= offer && offer.appliesTo === 'PRODUCT' ? 'flex' : 'none' %>;">
+                        <label for="productId">Select Product</label>
+                        <select id="productId" name="productId">
+                            <option value="" disabled <%=!offer || !offer.productId ? 'selected' : '' %>>Select Product
+                            </option>
+                            <% products.forEach(product=> { %>
+                                <option value="<%= product._id %>" <%=offer && offer.productId &&
+                                    offer.productId.toString()===product._id.toString() ? 'selected' : '' %>
+                                    >
+                                    <%= product.productName %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="categoryGroup"
+                        style="display: <%= offer && offer.appliesTo === 'CATEGORY' ? 'flex' : 'none' %>;">
+                        <label for="categoryId">Select Category</label>
+                        <select id="categoryId" name="categoryId">
+                            <option value="" disabled <%=!offer || !offer.categoryId ? 'selected' : '' %>>Select
+                                Category</option>
+                            <% categories.forEach(category=> { %>
+                                <option value="<%= category._id %>" <%=offer && offer.categoryId &&
+                                    offer.categoryId.toString()===category._id.toString() ? 'selected' : '' %>
+                                    >
+                                    <%= category.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+
+                    <!-- Discount Type & Discount Value -->
+                    <div class="form-group">
+                        <label for="offerType">Discount Type</label>
+                        <select id="offerType" name="offerType" required>
+                            <option value="" disabled <%=!offer ? 'selected' : '' %>>Select Discount Type</option>
+                            <option value="PERCENTAGE" <%=offer && offer.offerType==='PERCENTAGE' ? 'selected' : '' %>
+                                >Percentage</option>
+                            <option value="FLAT" <%=offer && offer.offerType==='FLAT' ? 'selected' : '' %>>Flat</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="discountValue">Discount Value</label>
+                        <input type="number" id="discountValue" name="discountValue" min="0.01" step="0.01"
+                            value="<%= offer ? offer.discountValue : '' %>" required>
+                    </div>
+
+                    <!-- Start Date & End Date -->
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" min="<%= new Date().toISOString().split('T')[0] %>"
+                            value="<%= offer && offer.startDate ? new Date(offer.startDate).toISOString().split('T')[0] : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate" name="endDate" min="<%= new Date().toISOString().split('T')[0] %>"
+                            value="<%= offer && offer.endDate ? new Date(offer.endDate).toISOString().split('T')[0] : '' %>" required>
+                    </div>
+
+                    <!-- Active Status Checkbox -->
+                    <div class="form-group full-width" style="flex-direction: row; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="isActive" name="isActive" style="width: auto; cursor: pointer;" <%=(!offer || offer.isActive)
+                            ? 'checked' : '' %>
+                        >
+                        <label for="isActive" style="cursor: pointer; margin: 0;">Active</label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="submit-btn-wrapper">
+                        <button type="submit" class="btn-submit">
+                            <%= isEdit ? 'Update Offer' : 'Create Offer' %>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="footer-text">
+                © 2026 onesmers. All Rights Reserved.
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleAppliesToFields() {
+
+                const appliesTo = document.getElementById("appliesTo").value;
+
+                const productGroup = document.getElementById("productGroup");
+                const categoryGroup = document.getElementById("categoryGroup");
+
+                const productSelect = document.getElementById("productId");
+                const categorySelect = document.getElementById("categoryId");
+
+                if (appliesTo === "PRODUCT") {
+
+                    productGroup.style.display = "flex";
+                    categoryGroup.style.display = "none";
+
+                    productSelect.required = true;
+                    categorySelect.required = false;
+
+                    categorySelect.value = "";
+
+                } else if (appliesTo === "CATEGORY") {
+
+                    categoryGroup.style.display = "flex";
+                    productGroup.style.display = "none";
+
+                    categorySelect.required = true;
+                    productSelect.required = false;
+
+                    productSelect.value = "";
+
+                } else {
+
+                    productGroup.style.display = "none";
+                    categoryGroup.style.display = "none";
+
+                    productSelect.required = false;
+                    categorySelect.required = false;
+
+                    productSelect.value = "";
+                    categorySelect.value = "";
+                }
+            }
+            document.addEventListener("DOMContentLoaded", () => {
+                    toggleAppliesToFields();
+                });
+    </script>
+</body>
+
+</html>
