@@ -722,19 +722,60 @@
                                             <!-- ROW 3: Prices on Left, Dynamic Availability Badges on Right -->
                                             <div class="d-flex justify-content-between align-items-center mt-2">
                                                 <div class="product-price">
+                                                
                                                     <% if(product.variant){ %>
-                                                        <% if(product.variant.salePrice < product.variant.regularPrice){
-                                                            %>
-                                                            <span
-                                                                class="text-muted text-decoration-line-through me-2 small">₹
-                                                                <%= product.variant.regularPrice %></span>
-                                                            <span class="fw-bold text-dark">₹<%=
-                                                                    product.variant.salePrice %></span>
+                                                
+                                                        <% if(product.offer && product.offer.appliedOffer){ %>
+                                                        
+                                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                        
+                                                                <span class="fw-bold text-dark fs-5">
+                                                                    ₹<%= product.offer.finalPrice.toFixed(2) %>
+                                                                </span>
+                                                        
+                                                                <span class="text-muted text-decoration-line-through small">
+                                                                    ₹<%= product.offer.originalPrice.toFixed(2) %>
+                                                                </span>
+                                                        
+                                                                <div class="d-flex align-items-center gap-2 mt-1">
+                                                                
+                                                                <span class="badge bg-success">
+                                                                    <%= product.offer.appliedOffer.offerName %>
+                                                                        -
+                                                                        <% if(product.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+                                                                            <%= product.offer.appliedOffer.discountValue %>% OFF
+                                                                                <% } else { %>
+                                                                                    ₹<%= product.offer.appliedOffer.discountValue %> OFF
+                                                                                        <% } %>
+                                                                </span>                                                              
+                                                                </div>
+                                                        
+                                                            </div>
+                                                        
                                                             <% } else { %>
-                                                                <span class="fw-bold text-dark">₹<%=
-                                                                        product.variant.salePrice %></span>
-                                                                <% } %>
-                                                                    <% } %>
+                                                
+                                                                <% if(product.variant.salePrice < product.variant.regularPrice){ %>
+                                                
+                                                                    <span class="text-muted text-decoration-line-through me-2 small">
+                                                                        ₹<%= product.variant.regularPrice %>
+                                                                    </span>
+                                                
+                                                                    <span class="fw-bold text-dark">
+                                                                        ₹<%= product.variant.salePrice %>
+                                                                    </span>
+                                                
+                                                                    <% } else { %>
+                                                
+                                                                        <span class="fw-bold text-dark">
+                                                                            ₹<%= product.variant.salePrice %>
+                                                                        </span>
+                                                
+                                                                        <% } %>
+                                                
+                                                                            <% } %>
+                                                
+                                                                                <% } %>
+                                                
                                                 </div>
 
                                                 <div>

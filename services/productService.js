@@ -3,6 +3,7 @@ import Variant from "../models/variantModel.js"
 import Category from "../models/categoryModel.js"
 import Brand from "../models/brandModel.js"
 import {uploadCloudinary} from "../utils/cloudinary.js"
+import { calculateBestOffer } from "./offerCalulationService.js"
 
 export const getShopProducts = async (queryParams) => {
 
@@ -124,6 +125,14 @@ export const getShopProducts = async (queryParams) => {
         })
 
         product.variant = variants[0]
+
+           if(product.variant){
+
+            product.offer = await calculateBestOffer(
+                product,
+                product.variant
+            )            
+           }
 
         product.isOutOfStock = variants.every(v => v.stock <=0)
     }
