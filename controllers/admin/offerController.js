@@ -139,6 +139,15 @@ export const updateOffer = async(req, res) =>{
 
 export const deleteOffer = async(req, res) =>{
     try {
+
+        const {id} = req.params
+        const result = await deleteOfferService(id)
+
+        if(!result.success){
+            return res.redirect("/admin/offers")
+        }
+
+        return res.redirect("/admin/offers")
         
     } catch (error) {
         console.log(error);

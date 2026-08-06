@@ -318,6 +318,33 @@ export const updateOfferService = async (offerId, formData) => {
 
 }
 
-export const deleteOfferService = async () => {
+export const deleteOfferService = async (offerId) => {
+    try {
+
+        const offer = await Offer.findById(offerId)
+
+        if(!offer){
+            return{
+                success: false,
+                message: "Offer not found"
+            }
+        }
+
+        await Offer.findByIdAndDelete(offerId)
+
+        return{
+            success: true,
+            message: "Offer deleted successfully"
+        }
+        
+    } catch (error) {
+        console.log(error);
+        
+         return{
+            success: false,
+             message: "Failed to delete Offer"
+         }
+        
+    }
 
 }
