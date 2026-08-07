@@ -198,6 +198,13 @@ export const getProductDetailsService = async (productId) => {
         isListed: true
     })
 
+    for(const variant of variants){
+
+        variant.offer = await calculateBestOffer(
+            product, variant
+        )
+    }
+
     const relatedProducts = await Product.find({
 
         category: product.category._id,

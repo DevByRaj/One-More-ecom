@@ -3,6 +3,7 @@ import Product from "../models/productModel.js"
 import Variant from "../models/variantModel.js"
 import Wishlist from "../models/wishlistModel.js"
 import { FREE_SHIPPING_LIMIT, SHIPPING_CHARGE } from "../config/appConfig.js"
+import { calculateBestOffer } from "./offerCalulationService.js"
 
 export const addProductToCart = async (userId, cartData) => {
 
@@ -134,6 +135,15 @@ export const getUserCart = async(userId) => {
                 await cart.save()
 
         cart = await Cart.findOne({userId}).populate({path:"items.productId", populate:[{path: "brand"}, {path: "category"}]}).populate("items.variantId").populate({path:"savedItems.productId", populate: [{path: "brand"}, {path: "category"}]}).populate("savedItems.variantId")
+            }
+
+            for(const item of cart.items){
+
+                item.offer = await calculateBestOffer( item.productId, item.variantId)
+            }
+
+            for(const item of cart.savedItems){
+                item.offer = await calculateBestOffer( item.productId, item.variantId)
             }
         }
 
@@ -323,7 +333,9 @@ export const calculateCartTotals = (cart) =>{
             item.productId.isListed &&
             item.variantId.isListed
         ) {
-            subtotal += item.variantId.salePrice * item.quantity
+            const price = item.offer ? item.offer.finalPrice : item.variantId.salePrice
+
+            subtotal += price * item.quantity
         }
     })
 

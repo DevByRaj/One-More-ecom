@@ -59,9 +59,13 @@ export const calculateBestOffer = async(product, variant) =>{
 
         const originalPrice = variant.regularPrice
 
-        const finalPrice = Math.max(
-            originalPrice - highestDiscount, 0
-        )
+        let finalPrice = variant.salePrice
+
+        if(bestOffer){
+            finalPrice = Math.max(
+                originalPrice - highestDiscount, 0
+            )
+        }
 
         const discountAmount = originalPrice - finalPrice
 

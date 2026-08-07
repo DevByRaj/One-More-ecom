@@ -1,6 +1,7 @@
 import Wishlist from "../models/wishlistModel.js";
 import Product from "../models/productModel.js"
 import Variant from "../models/variantModel.js";
+import { calculateBestOffer } from "./offerCalulationService.js";
 
 
 export const addToWiishlist = async (userId, data) => {
@@ -84,6 +85,12 @@ export const getWishlist = async (userId) => {
             wishlist.products = validItems
 
             await wishlist.save()
+        }
+
+        for(const item of wishlist.products){
+            item.offer = await calculateBestOffer(
+                item.productId, item.variantId
+            )
         }
     }
 

@@ -677,10 +677,45 @@
                                                 </div>
                                             </div>
 
-                                            <div class="item-price">
-                                                ₹<%= item.variantId.salePrice %>
-                                            </div>
-
+                                        <div class="item-price">
+                                        
+                                            <% if(item.offer && item.offer.appliedOffer){ %>
+                                        
+                                                <div class="fw-bold">
+                                                    ₹<%= item.offer.finalPrice.toFixed(2) %>
+                                                </div>
+                                        
+                                                <small class="text-muted text-decoration-line-through">
+                                                    ₹<%= item.offer.originalPrice.toFixed(2) %>
+                                                </small>
+                                        
+                                                <br>
+                                        
+                                                <small class="text-success fw-semibold">
+                                        
+                                                    <%= item.offer.appliedOffer.offerName %>
+                                        
+                                                        -
+                                        
+                                                        <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+                                        
+                                                            <%= item.offer.appliedOffer.discountValue %>% OFF
+                                        
+                                                                <% } else { %>
+                                        
+                                                                    ₹<%= item.offer.appliedOffer.discountValue %> OFF
+                                        
+                                                                        <% } %>
+                                        
+                                                </small>
+                                        
+                                                <% } else { %>
+                                        
+                                                    ₹<%= item.variantId.salePrice %>
+                                        
+                                                        <% } %>
+                                        
+                                        </div>
                                             <div class="qty-column-wrapper">
                                                 <div class="qty-controls-container">
                                                     <button class="qty-btn-circle quantity-btn" data-action="decrease"
@@ -701,7 +736,9 @@
                                             </div>
 
                                             <div class="item-total-price">
-                                                ₹<%= item.variantId.salePrice * item.quantity %>
+                                            
+                                                ₹<%= ( item.offer ? item.offer.finalPrice : item.variantId.salePrice ) * item.quantity %>
+                                            
                                             </div>
                                         </div>
                                         <% }) %>
@@ -756,7 +793,43 @@
                                                         </div>
 
                                                         <div class="item-price">
-                                                            ₹<%= item.variantId.salePrice %>
+                                                        
+                                                            <% if(item.offer && item.offer.appliedOffer){ %>
+                                                        
+                                                                <div class="fw-bold">
+                                                                    ₹<%= item.offer.finalPrice.toFixed(2) %>
+                                                                </div>
+                                                        
+                                                                <small class="text-muted text-decoration-line-through">
+                                                                    ₹<%= item.offer.originalPrice.toFixed(2) %>
+                                                                </small>
+                                                        
+                                                                <br>
+                                                        
+                                                                <small class="text-success fw-semibold">
+                                                        
+                                                                    <%= item.offer.appliedOffer.offerName %>
+                                                        
+                                                                        -
+                                                        
+                                                                        <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+                                                        
+                                                                            <%= item.offer.appliedOffer.discountValue %>% OFF
+                                                        
+                                                                                <% } else { %>
+                                                        
+                                                                                    ₹<%= item.offer.appliedOffer.discountValue %> OFF
+                                                        
+                                                                                        <% } %>
+                                                        
+                                                                </small>
+                                                        
+                                                                <% } else { %>
+                                                        
+                                                                    ₹<%= item.variantId.salePrice %>
+                                                        
+                                                                        <% } %>
+                                                        
                                                         </div>
                                                     </div>
                                                     <% }) %>
@@ -914,9 +987,23 @@
                         const totalElement = cartRow.querySelector(".item-total-price");
 
                         if (priceElement && totalElement) {
-                            const unitPrice = Number(priceElement.innerText.replace(/[^\d]/g, ""));
+                            let unitPrice = 0;
+
+                            const finalPriceElement = priceElement.querySelector(".fw-bold");
+
+                            if (finalPriceElement) {
+                                unitPrice = parseFloat(
+                                    finalPriceElement.innerText.replace(/[^\d.]/g, "")
+                                );
+                            } else {
+                                unitPrice = parseFloat(
+                                    priceElement.innerText.replace(/[^\d.]/g, "")
+                                );
+                            }
+
                             const newRowTotal = unitPrice * currentQuantity;
-                            totalElement.innerText = `₹${newRowTotal}`;
+
+                            totalElement.innerText = `₹${newRowTotal.toFixed(2)}`;
                         }
                     }
 

@@ -9,6 +9,7 @@ import {userInfo} from "os"
 import {creditWallet} from "./walletService.js"
 import {debitWallet} from "./walletService.js"
 import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
+import { calculateBestOffer } from "./offerCalulationService.js"
 
 export const allowedStatusTransitions = {
     Pending: [
@@ -189,6 +190,12 @@ export const placeOrderService = async (userId, orderData) => {
             message: "Address not found"
         }
     }
+    for (const item of cart.items) {
+        item.offer = await calculateBestOffer(
+            item.productId,
+            item.variantId
+        );
+    }
 
     const totals = calculateCartTotals(cart)
 
@@ -202,29 +209,36 @@ export const placeOrderService = async (userId, orderData) => {
         }
     }
 
-    const orderItems = cart.items.map(item => ({
+    const orderItems = await Promise.all(
+        cart.items.map(async(item) =>{
 
-        productId: item.productId._id,
+            const offer = await calculateBestOffer(
+                item.productId, item.variantId
+            )
 
-        variantId: item.variantId._id,
+            return{
+                productId: item.productId._id,
 
-        productName: item.productId.productName,
+                variantId: item.variantId._id,
+                
+                productName: item.productId.productName,
 
-        variantName: item.variantId.variantName,
+                variantName: item.variantId.variantName,
 
-        productImage: item.variantId.variantImage[0],
+                productImage: item.variantId.variantImage[0],
 
-        quantity: item.quantity,
+                quantity: item.quantity,
 
-        regularPrice: item.variantId.regularPrice,
+                regularPrice: item.variantId.regularPrice,
 
-        salePrice: item.variantId.salePrice,
+                salePrice: offer.finalPrice,
 
-        totalPrice: item.variantId.salePrice * item.quantity,
+                totalPrice: offer.finalPrice * item.quantity,
 
-        status: "Pending"
-
-    }))
+                status: "Pending"
+            }
+        })
+    )
 
 
     const order = await Order.create({
@@ -304,6 +318,13 @@ export const createPendingOrderService = async (userId, orderData) => {
         }
     }
 
+    for (const item of cart.items) {
+        item.offer = await calculateBestOffer(
+            item.productId,
+            item.variantId
+        );
+    }
+
     const totals = calculateCartTotals(cart)
 
     for (const item of cart.items) {
@@ -316,7 +337,15 @@ export const createPendingOrderService = async (userId, orderData) => {
         }
     }
 
-    const orderItems = cart.items.map(item => ({
+    const orderItems = await Promise.all(
+        cart.items.map(async (item) => {
+
+            const offer = await calculateBestOffer(
+                item.productId,
+                item.variantId
+            );
+
+            return {
 
         productId: item.productId._id,
 
@@ -332,13 +361,15 @@ export const createPendingOrderService = async (userId, orderData) => {
 
         regularPrice: item.variantId.regularPrice,
 
-        salePrice: item.variantId.salePrice,
+        salePrice: offer.finalPrice,
 
-        totalPrice: item.variantId.salePrice * item.quantity,
+        totalPrice: offer.finalPrice * item.quantity,
 
         status: "Pending"
 
-    }))
+            }
+    })
+)
 
 
     const order = await Order.create({
@@ -533,8 +564,6 @@ const calculateOverallOrderStatus = (items) => {
 
 export const cancelOrderItemService = async (userId, orderId, itemId, cancelReason) => {
 
-    console.log("cancelOrderItemService called");
-
     const order = await Order.findOne({
         _id: orderId,
         userId
@@ -587,9 +616,6 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
-    console.log("Payment Method:", order.paymentMethod);
-    console.log("Payment Status:", order.paymentStatus);
-
     if (order.paymentStatus === "Paid") {
 
         let refundAmount = item.totalPrice
@@ -601,20 +627,11 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
             return !["Cancelled", "Returned"].includes(orderItem.status)
         })
 
-        // if (remainingActiveItems.length === 0) {
-        //     refundAmount += order.shipping
-        // }
-
         const isLastActiveItem = remainingActiveItems.length === 0
 
         if (isLastActiveItem) {
             refundAmount += order.shipping
         }
-
-        console.log("Refund Amount:", refundAmount);
-        console.log("Shipping:", order.shipping);
-        console.log("Remaining Active Items:", remainingActiveItems.length);
-
 
         await creditWallet(
             order.userId,
@@ -728,13 +745,6 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
 
         if(item.status === "Return Requested" && newStatus === "Returned"){
 
-            console.log("----- Return approval------");
-            console.log("payment method..", order.paymentMethod);
-            console.log("payment status..", order.paymentStatus);
-            console.log("Old status..", item.status);                   
-            console.log("New status..", newStatus);
-            
-
             await Variant.findByIdAndUpdate(item.variantId, {
                 $inc:{
                     stock: item.quantity
@@ -766,11 +776,7 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                     `Refund for returned product - ${item.productName}`,
                     order._id,
                     "Refund"
-                )
-
-                console.log("refund amount..", refundAmount);
-                console.log("calling credit wallet..");
-                
+                )                
                 
             }
 

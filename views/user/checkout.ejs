@@ -643,17 +643,53 @@
                                             <p class="text-muted mb-2">Color : <strong>
                                                     <%= item.variantId.variantName %>
                                                 </strong></p>
-                                            <% const discount=Math.round( ( (item.variantId.regularPrice -
-                                                item.variantId.salePrice) / item.variantId.regularPrice ) * 100 ) %>
-                                                <div class="pricing-row">
-                                                    <% if(discount> 0){ %>
-                                                        <span class="discount-pct">↓<%= discount %>%</span>
-                                                        <% } %>
-                                                            <span class="original-strike-price">₹<%=
-                                                                    item.variantId.regularPrice %></span>
-                                                            <span class="current-sale-price">₹<%=
-                                                                    item.variantId.salePrice %></span>
-                                                </div>
+                                            <div class="pricing-row">
+                                            
+                                                <% if(item.offer && item.offer.appliedOffer){ %>
+                                            
+                                                    <span class="current-sale-price">
+                                                        ₹<%= item.offer.finalPrice.toFixed(2) %>
+                                                    </span>
+                                            
+                                                    <span class="original-strike-price">
+                                                        ₹<%= item.offer.originalPrice.toFixed(2) %>
+                                                    </span>
+                                            
+                                                    <span class="discount-pct">
+                                            
+                                                        <%= item.offer.appliedOffer.offerName %>
+                                            
+                                                            -
+                                            
+                                                            <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+                                            
+                                                                <%= item.offer.appliedOffer.discountValue %>% OFF
+                                            
+                                                                    <% } else { %>
+                                            
+                                                                        ₹<%= item.offer.appliedOffer.discountValue %> OFF
+                                            
+                                                                            <% } %>
+                                            
+                                                    </span>
+                                            
+                                                    <% } else { %>
+                                            
+                                                        <span class="current-sale-price">
+                                                            ₹<%= item.variantId.salePrice %>
+                                                        </span>
+                                            
+                                                        <% if(item.variantId.regularPrice> item.variantId.salePrice){ %>
+                                            
+                                                            <span class="original-strike-price">
+                                                                ₹<%= item.variantId.regularPrice %>
+                                                            </span>
+                                            
+                                                            <% } %>
+                                            
+                                                                <% } %>
+                                            
+                                            </div>
                                         </div>
                                         <div class="qty-select-dropdown">
                                             Quantity : <strong>
