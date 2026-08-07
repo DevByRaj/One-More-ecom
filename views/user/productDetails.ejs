@@ -518,14 +518,51 @@
                     </h1>
 
                     <div class="price-section">
-                        <span class="current-price" id="salePrice">₹<%= variants[0]?.salePrice %></span>
-                        <% if(variants[0]?.regularPrice> variants[0]?.salePrice){ %>
-                            <span class="original-price" id="regularPrice">₹<%= variants[0]?.regularPrice %></span>
-                            <span class="discount-badge" id="discountBadge">
-                                <%= Math.round( ((variants[0].regularPrice - variants[0].salePrice) /
-                                    variants[0].regularPrice) * 100 ) %>% off
+                    
+                        <% if(variants[0]?.offer?.appliedOffer){ %>
+                    
+                            <span class="current-price" id="salePrice">
+                                ₹<%= variants[0].offer.finalPrice.toFixed(2) %>
                             </span>
-                            <% } %>
+                    
+                            <span class="original-price" id="regularPrice">
+                                ₹<%= variants[0].offer.originalPrice.toFixed(2) %>
+                            </span>
+                    
+                            <span class="discount-badge" id="discountBadge">
+                    
+                                <%= variants[0].offer.appliedOffer.offerName %>
+                    
+                                    -
+                    
+                                    <% if(variants[0].offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+                    
+                                        <%= variants[0].offer.appliedOffer.discountValue %>% OFF
+                    
+                                            <% }else{ %>
+                    
+                                                ₹<%= variants[0].offer.appliedOffer.discountValue %> OFF
+                    
+                                                    <% } %>
+                    
+                            </span>
+                    
+                            <% } else { %>
+                    
+                                <span class="current-price" id="salePrice">
+                                    ₹<%= variants[0].salePrice %>
+                                </span>
+                    
+                                <% if(variants[0].regularPrice> variants[0].salePrice){ %>
+                    
+                                    <span class="original-price" id="regularPrice">
+                                        ₹<%= variants[0].regularPrice %>
+                                    </span>
+                    
+                                    <% } %>
+                    
+                                        <% } %>
+                    
                     </div>
 
                     <div class="fw-semibold mb-3 <%= variants[0]?.stock > 0 ? 'text-success' : 'text-danger' %>"
@@ -551,7 +588,12 @@
                             <button type="button" class="variant-color-btn <%= index === 0 ? 'active-variant' : '' %>"
                                 data-variant-id="<%= variant._id %>" data-stock="<%= variant.stock %>"
                                 title="<%= variant.variantName %>"
-                                onclick='changeVariant(this, `<%- JSON.stringify(variant.variantImage).replace(/"/g, "&quot;") %>`, `<%= variant.salePrice %>`, `<%= variant.regularPrice %>`, `<%= variant.stock %>`)'
+                                onclick='changeVariant(
+                                this,
+                                `<%- JSON.stringify(variant.variantImage).replace(/"/g, "&quot;" ) %>`,
+                                    `<%- JSON.stringify(variant.offer).replace(/"/g, "&quot;" ) %>`,
+                                        `<%= variant.stock %>`
+                                            )'
                                 style="background: <%= variant.variantName.toLowerCase() %>;">
                             </button>
                             <% }) %>
@@ -815,7 +857,7 @@
         }
 
         // VARIANT SELECTION CONFIGURATOR
-        function changeVariant(button, images, salePrice, regularPrice, stock) {
+        function changeVariant(button, images, offer, stock) {
             document.querySelectorAll(".variant-color-btn").forEach(btn => {
                 btn.classList.remove("active-variant");
             });
@@ -823,25 +865,41 @@
 
             const parsedImages = JSON.parse(images);
 
+            const offerData = JSON.parse(offer);
+
             document.getElementById("mainProductImage").src = parsedImages[0];
-            document.getElementById("salePrice").innerText = "₹" + salePrice;
+            document.getElementById("salePrice").innerText =
+                "₹" + offerData.finalPrice.toFixed(2);
 
             const regPriceElem = document.getElementById("regularPrice");
             const discountBadge = document.getElementById("discountBadge");
 
-            if (regPriceElem && Number(regularPrice) > Number(salePrice)) {
-                regPriceElem.innerText = "₹" + regularPrice;
-                regPriceElem.style.display = "inline";
-                if (discountBadge) {
-                    const pct = Math.round(((Number(regularPrice) - Number(salePrice)) / Number(regularPrice)) * 100);
-                    discountBadge.innerText = pct + "% off";
-                    discountBadge.style.display = "inline";
-                }
-            } else if (regPriceElem) {
-                regPriceElem.style.display = "none";
-                if (discountBadge) discountBadge.style.display = "none";
-            }
+            regPriceElem.innerText =
+                "₹" + offerData.originalPrice.toFixed(2);
 
+            regPriceElem.style.display = "inline";
+
+            if (offerData.appliedOffer) {
+
+                if (offerData.appliedOffer.offerType === "PERCENTAGE") {
+
+                    discountBadge.innerText =
+                        `${offerData.appliedOffer.offerName} - ${offerData.appliedOffer.discountValue}% OFF`;
+
+                } else {
+
+                    discountBadge.innerText =
+                        `${offerData.appliedOffer.offerName} - ₹${offerData.appliedOffer.discountValue} OFF`;
+
+                }
+
+                discountBadge.style.display = "inline";
+
+            } else {
+
+                discountBadge.style.display = "none";
+
+            } 
             const vId = button.dataset.variantId;
             document.getElementById("wishlistBtn").dataset.variantId = vId;
             document.getElementById("addToCartBtn").dataset.variantId = vId;

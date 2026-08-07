@@ -436,7 +436,41 @@
                             </div>
 
                             <div class="item-price">
-                                ₹<%= item.variantId.salePrice %>
+                            
+                                <% if(item.offer && item.offer.appliedOffer){ %>
+                            
+                                    <div>
+                                        <strong>
+                                            ₹<%= item.offer.finalPrice.toFixed(2) %>
+                                        </strong>
+                            
+                                        <span style="text-decoration: line-through; color:#777; margin-left:6px;">
+                                            ₹<%= item.offer.originalPrice.toFixed(2) %>
+                                        </span>
+                                    </div>
+                            
+                                    <div style="font-size:12px;color:#198754;font-weight:600;">
+                            
+                                        <%= item.offer.appliedOffer.offerName %> -
+                            
+                                            <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+                            
+                                                <%= item.offer.appliedOffer.discountValue %>% OFF
+                            
+                                                    <% } else { %>
+                            
+                                                        ₹<%= item.offer.appliedOffer.discountValue %> OFF
+                            
+                                                            <% } %>
+                            
+                                    </div>
+                            
+                                    <% } else { %>
+                            
+                                        ₹<%= item.variantId.salePrice %>
+                            
+                                            <% } %>
+                            
                             </div>
 
                         </div>
