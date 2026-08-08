@@ -19,10 +19,8 @@ import {
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
 import {getOrders, getOrderDetails, updateOrderItemStatus} from "../controllers/admin/orderController.js"
-// import {updateProduct} from "../services/productService.js"
-
- import{ getOfferList, getAddOffer, addOffer, getEditOffer, updateOffer, deleteOffer} from "../controllers/admin/offerController.js"
-
+import{ getOfferList, getAddOffer, addOffer, getEditOffer, updateOffer, deleteOffer} from "../controllers/admin/offerController.js"
+import { getCouponList, getAddCoupon, createCoupon } from "../controllers/admin/couponcontroller.js"
 
 const router = express.Router()
 
@@ -101,5 +99,10 @@ router.get("/offers/edit/:id", isAdminLoggedIn, getEditOffer);
 router.post("/offers/edit/:id", isAdminLoggedIn, updateOffer);
 
 router.post("/offers/delete/:id", isAdminLoggedIn, deleteOffer);
+
+router.get("/coupons", isAdminLoggedIn, getCouponList)
+
+router.get("/coupons/add", isAdminLoggedIn,  getAddCoupon)
+router.post("/coupons/add", isAdminLoggedIn, createCoupon)
 
 export default router
