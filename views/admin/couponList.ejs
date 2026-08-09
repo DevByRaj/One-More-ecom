@@ -155,10 +155,13 @@
 
         /* Custom Table Styling */
         .custom-table {
-            color: #151212;
-            vertical-align: middle;
-        }
-
+    color: #ffffff;
+    background-color: transparent;
+    --bs-table-bg: transparent;
+    --bs-table-color: #ffffff;
+    --bs-table-border-color: #2a2a2c;
+    vertical-align: middle;
+}
         .custom-table thead th {
             background-color: #1a1a1c;
             color: var(--text-gray);
@@ -179,10 +182,20 @@
         }
 
         .custom-table tbody td {
-            padding: 20px 16px;
-            border-bottom: 1px solid #ffffff;
-            font-size: 0.9rem;
+    padding: 20px 16px;
+    border-bottom: 1px solid #2a2a2c;
+    background-color: transparent;
+    color: #ffffff;
+    font-size: 0.9rem;
         }
+
+    .custom-table tbody tr {
+    background-color: transparent;
+}
+
+.custom-table tbody tr:hover {
+    background-color: rgba(122, 86, 245, 0.08);
+}
 
         /* Action Buttons */
         .btn-action-edit {
@@ -351,12 +364,11 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center gap-2">
-                                                        <a href="/coupons/edit/<%= coupon._id %>"
-                                                            class="btn btn-action-edit">Edit</a>
-                                                        <form action="/coupons/delete/<%= coupon._id %>?_method=DELETE"
-                                                            method="POST" class="d-inline">
-                                                            <button type="submit" class="btn btn-action-remove"
-                                                                onclick="return confirm('Are you sure?')">Remove</button>
+                                                        <a href="/admin/coupons/edit/<%= coupon._id %>" class="btn btn-action-edit">
+                                                            Edit
+                                                        </a>
+                                                        <form action="/admin/coupons/delete/<%= coupon._id %>" method="POST" onsubmit="return confirmDelete(event, this)">
+                                                            <button type="submit" class="btn-action-remove">Remove</button>
                                                         </form>
                                                     </div>
                                                 </td>
@@ -383,20 +395,20 @@
                         <% if (typeof totalPages !=='undefined' && totalPages> 1) { %>
                             <div class="d-flex justify-content-center align-items-center gap-2 custom-pagination">
                                 <% if (currentPage> 1) { %>
-                                    <a href="/coupons?page=<%= currentPage - 1 %>" class="btn-nav">Previous</a>
+                                    <a href="/admin/coupons?page=<%= currentPage - 1 %>" class="btn-nav">Previous</a>
                                     <% } else { %>
                                         <button class="btn-nav opacity-50" disabled>Previous</button>
                                         <% } %>
 
                                             <% for(let i=1; i <=totalPages; i++) { %>
-                                                <a href="/coupons?page=<%= i %>"
+                                                <a href="admin/coupons?page=<%= i %>"
                                                     class="page-btn <%= currentPage === i ? 'active' : '' %>">
                                                     <%= i %>
                                                 </a>
                                                 <% } %>
 
                                                     <% if (currentPage < totalPages) { %>
-                                                        <a href="/coupons?page=<%= currentPage + 1 %>"
+                                                        <a href="/admin/coupons?page=<%= currentPage + 1 %>"
                                                             class="btn-nav">Next</a>
                                                         <% } else { %>
                                                             <button class="btn-nav opacity-50" disabled>Next</button>
@@ -416,6 +428,32 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function confirmDelete(event, form) {
+
+            event.preventDefault()
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This coupon will be permanently deleted.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+
+            })
+
+            return false
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

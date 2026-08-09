@@ -72,3 +72,111 @@ export const createCouponService = async (couponData) =>{
         coupon
     }
 }
+
+export const getCouponByIdService = async (couponid) =>{
+
+    const coupon = await Coupon.findById(couponid)
+
+    if(!coupon){
+        return{
+            success: false,
+            message: "Coupon not found"
+        }
+    }
+    return{
+        success: true,
+        coupon
+    }
+}
+
+export const updateCouponService = async(couponId, couponData) =>{
+
+    const{
+        couponCode,
+        description,
+        discountType,
+        discountValue,
+        minimumPurchase,
+        maximumDiscount,
+        startDate,
+        endDate,
+        usageLimit,
+        isActive
+    } = couponData
+
+    const existingCoupon = await Coupon.findOne({
+        couponCode: couponCode.trim().toUpperCase(),
+        _id: {$ne: couponId}
+    })
+
+    if(existingCoupon){
+        return{
+            success: false,
+            message: "Coupon code already exists"
+        }
+    }
+
+    const coupon = await Coupon.findByIdAndUpdate(
+        couponId,
+        {
+            couponCode: couponCode.trim().toUpperCase(),
+            description: description?.trim() || "",
+            discountType,
+            discountValue: Number(discountValue),
+            minimumPurchase: Number(minimumPurchase) || 0,
+            maximumDiscount:
+                maximumDiscount !== ""
+                    ? Number(maximumDiscount)
+                    : null,
+            startDate,
+            endDate,
+            usageLimit:
+                usageLimit !== ""
+                    ? Number(usageLimit)
+                    : null,
+            isActive: isActive === "on" || isActive === true
+        },
+        {
+            returnDocument: "after",
+            runValidators: true
+        }
+    )
+
+    if(!coupon){
+        return{
+            success: false,
+            message: "coupon not found"
+        }
+    }
+
+    return{
+        success: true,
+        coupon
+    }
+}
+
+export const deleteCouponService = async(id) =>{
+    try {
+
+        const coupon = await Coupon.findOneAndDelete(id)
+
+        if(!coupon){
+            return{
+                success: false,
+                message: "Coupon not found"
+            }
+        }
+
+        return{
+            success: true
+        }
+        
+    } catch (error) {
+        console.log(error);
+        
+        return{
+            success: false,
+            message: "Somthing went wrong"
+        }
+    }
+}
