@@ -24,7 +24,7 @@
         }
 
         /* ── NAVBAR STYLE ── */
-      
+
 
         /* ── MAIN CONTENT LAYOUT ── */
         .cart-container {
@@ -565,60 +565,60 @@
         }
 
         /* ── FADE ONLY TEXT, PRICES, AND QUANTITY CONTROLS ── */
-.out-of-stock-row .product-name,
-.out-of-stock-row .product-variant-info,
-.out-of-stock-row .item-price,
-.out-of-stock-row .item-total-price,
-.out-of-stock-row .qty-column-wrapper {
-    opacity: 0.45;
-}
+        .out-of-stock-row .product-name,
+        .out-of-stock-row .product-variant-info,
+        .out-of-stock-row .item-price,
+        .out-of-stock-row .item-total-price,
+        .out-of-stock-row .qty-column-wrapper {
+            opacity: 0.45;
+        }
 
-/* Grayscale and dim the product image */
-.out-of-stock-row .cart-img-wrapper img {
-    filter: grayscale(100%);
-    opacity: 0.5;
-}
+        /* Grayscale and dim the product image */
+        .out-of-stock-row .cart-img-wrapper img {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
 
-/* ── KEEP ACTION BUTTONS COMPLETELY SOLID AND CRISP ── */
-.out-of-stock-row .action-button-group {
-    opacity: 1 !important;
-}
+        /* ── KEEP ACTION BUTTONS COMPLETELY SOLID AND CRISP ── */
+        .out-of-stock-row .action-button-group {
+            opacity: 1 !important;
+        }
 
-/* ── HIGH VISIBILITY SOLID BADGE ── */
-.out-of-stock-badge {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 6px 14px;
-    background-color: #e63946 !important; 
-    color: #ffffff !important;           
-    font-size: 11px;
-    font-weight: 700;                    
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    opacity: 1 !important;               
-    box-shadow: 0 2px 4px rgba(230, 57, 70, 0.2);
-    -webkit-font-smoothing: antialiased; 
-}
+        /* ── HIGH VISIBILITY SOLID BADGE ── */
+        .out-of-stock-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 14px;
+            background-color: #e63946 !important;
+            color: #ffffff !important;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 1 !important;
+            box-shadow: 0 2px 4px rgba(230, 57, 70, 0.2);
+            -webkit-font-smoothing: antialiased;
+        }
     </style>
 </head>
 
 <body>
-<!-- Navbar -->
-<%- include("../partials/navbar") %>
+    <!-- Navbar -->
+    <%- include("../partials/navbar") %>
 
-    <div class="breadcrumb-wrapper">
-        <div class="breadcrumb-container">
-            <a href="/">Home</a>
-            <span>/</span>
-            <span class="active-breadcrumb">Cart</span>
+        <div class="breadcrumb-wrapper">
+            <div class="breadcrumb-container">
+                <a href="/">Home</a>
+                <span>/</span>
+                <span class="active-breadcrumb">Cart</span>
+            </div>
         </div>
-    </div>
 
-    <div class="cart-container">
-        <h2 class="page-title">Shopping Cart</h2>
+        <div class="cart-container">
+            <h2 class="page-title">Shopping Cart</h2>
 
-        
+
 
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -639,109 +639,110 @@
                                 </div>
 
                                 <% cart.items.forEach(item=> { %>
-                                    
-                                        <div class="cart-item-row <%= item.variantId.stock === 0 ? 'out-of-stock-row' : '' %>"
-                                            data-cart-row="<%= item._id %>">
 
-                                            <div class="product-meta-block flex-column align-items-start gap-2">
-                                                <a class="product-link-wrapper"
-                                                    href="/productDetails?id=<%= item.productId._id %>&variant=<%= item.variantId._id %>">
-                                                    <div class="cart-img-wrapper">
-                                                        <img src="<%= item.variantId.variantImage[0] %>"
-                                                            alt="<%= item.productId.productName %>">
-                                                    </div>
-                                                    <div class="product-details">
-                                                        <div class="product-name">
-                                                            <%= item.productId.productName %>
-                                                        </div>
-                                                        <div class="product-variant-info">
-                                                            Color: <strong>
-                                                                <%= item.variantId.variantName %>
-                                                            </strong>
-                                                        </div>
-                                                        <% if(item.variantId.stock===0){ %>
-                                                            <div class="out-of-stock-badge">Out of Stock</div>
-                                                            <% } %>
-                                                    </div>
-                                                </a>
+                                    <div class="cart-item-row <%= item.variantId.stock === 0 ? 'out-of-stock-row' : '' %>"
+                                        data-cart-row="<%= item._id %>">
 
-                                                <div class="action-button-group mt-2">
-                                                    <button type="button" class="action-save-btn"
-                                                        onclick="saveForLater(event, '<%= item._id %>')">
-                                                        Save for Later
-                                                    </button>
-                                                    <button type="button" class="action-remove-btn"
-                                                        onclick="removeCartItem(event, '<%= item._id %>')">
-                                                        Remove
-                                                    </button>
+                                        <div class="product-meta-block flex-column align-items-start gap-2">
+                                            <a class="product-link-wrapper"
+                                                href="/productDetails?id=<%= item.productId._id %>&variant=<%= item.variantId._id %>">
+                                                <div class="cart-img-wrapper">
+                                                    <img src="<%= item.variantId.variantImage[0] %>"
+                                                        alt="<%= item.productId.productName %>">
                                                 </div>
+                                                <div class="product-details">
+                                                    <div class="product-name">
+                                                        <%= item.productId.productName %>
+                                                    </div>
+                                                    <div class="product-variant-info">
+                                                        Color: <strong>
+                                                            <%= item.variantId.variantName %>
+                                                        </strong>
+                                                    </div>
+                                                    <% if(item.variantId.stock===0){ %>
+                                                        <div class="out-of-stock-badge">Out of Stock</div>
+                                                        <% } %>
+                                                </div>
+                                            </a>
+
+                                            <div class="action-button-group mt-2">
+                                                <button type="button" class="action-save-btn"
+                                                    onclick="saveForLater(event, '<%= item._id %>')">
+                                                    Save for Later
+                                                </button>
+                                                <button type="button" class="action-remove-btn"
+                                                    onclick="removeCartItem(event, '<%= item._id %>')">
+                                                    Remove
+                                                </button>
                                             </div>
+                                        </div>
 
                                         <div class="item-price">
-                                        
+
                                             <% if(item.offer && item.offer.appliedOffer){ %>
-                                        
+
                                                 <div class="fw-bold">
                                                     ₹<%= item.offer.finalPrice.toFixed(2) %>
                                                 </div>
-                                        
+
                                                 <small class="text-muted text-decoration-line-through">
                                                     ₹<%= item.offer.originalPrice.toFixed(2) %>
                                                 </small>
-                                        
-                                                <br>
-                                        
-                                                <small class="text-success fw-semibold">
-                                        
-                                                    <%= item.offer.appliedOffer.offerName %>
-                                        
-                                                        -
-                                        
-                                                        <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
-                                        
-                                                            <%= item.offer.appliedOffer.discountValue %>% OFF
-                                        
-                                                                <% } else { %>
-                                        
-                                                                    ₹<%= item.offer.appliedOffer.discountValue %> OFF
-                                        
-                                                                        <% } %>
-                                        
-                                                </small>
-                                        
-                                                <% } else { %>
-                                        
-                                                    ₹<%= item.variantId.salePrice %>
-                                        
-                                                        <% } %>
-                                        
-                                        </div>
-                                            <div class="qty-column-wrapper">
-                                                <div class="qty-controls-container">
-                                                    <button class="qty-btn-circle quantity-btn" data-action="decrease"
-                                                        data-id="<%= item._id %>" <%=item.variantId.stock===0
-                                                        ? "disabled" : "" %>>-</button>
-                                                    <div class="qty-display-box quantity-value">
-                                                        <%= item.quantity %>
-                                                    </div>
-                                                    <button class="qty-btn-circle quantity-btn" data-action="increase"
-                                                        data-id="<%= item._id %>" <%=item.variantId.stock===0
-                                                        ? "disabled" : "" %>>+</button>
-                                                </div>
-                                                <% if(item.quantity> item.variantId.stock && item.variantId.stock > 0){
-                                                    %>
-                                                    <p class="text-danger small mt-2 mb-0 text-center">Only <%=
-                                                            item.variantId.stock %> available</p>
-                                                    <% } %>
-                                            </div>
 
-                                            <div class="item-total-price">
-                                            
-                                                ₹<%= ( item.offer ? item.offer.finalPrice : item.variantId.salePrice ) * item.quantity %>
-                                            
-                                            </div>
+                                                <br>
+
+                                                <small class="text-success fw-semibold">
+
+                                                    <%= item.offer.appliedOffer.offerName %>
+
+                                                        -
+
+                                                        <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
+
+                                                            <%= item.offer.appliedOffer.discountValue %>% OFF
+
+                                                                <% } else { %>
+
+                                                                    ₹<%= item.offer.appliedOffer.discountValue %> OFF
+
+                                                                        <% } %>
+
+                                                </small>
+
+                                                <% } else { %>
+
+                                                    ₹<%= item.variantId.salePrice %>
+
+                                                        <% } %>
+
                                         </div>
-                                        <% }) %>
+                                        <div class="qty-column-wrapper">
+                                            <div class="qty-controls-container">
+                                                <button class="qty-btn-circle quantity-btn" data-action="decrease"
+                                                    data-id="<%= item._id %>" <%=item.variantId.stock===0 ? "disabled"
+                                                    : "" %>>-</button>
+                                                <div class="qty-display-box quantity-value">
+                                                    <%= item.quantity %>
+                                                </div>
+                                                <button class="qty-btn-circle quantity-btn" data-action="increase"
+                                                    data-id="<%= item._id %>" <%=item.variantId.stock===0 ? "disabled"
+                                                    : "" %>>+</button>
+                                            </div>
+                                            <% if(item.quantity> item.variantId.stock && item.variantId.stock > 0){
+                                                %>
+                                                <p class="text-danger small mt-2 mb-0 text-center">Only <%=
+                                                        item.variantId.stock %> available</p>
+                                                <% } %>
+                                        </div>
+
+                                        <div class="item-total-price">
+
+                                            ₹<%= ( item.offer ? item.offer.finalPrice : item.variantId.salePrice ) *
+                                                item.quantity %>
+
+                                        </div>
+                                    </div>
+                                    <% }) %>
                             </div>
                             <% } %>
 
@@ -793,43 +794,46 @@
                                                         </div>
 
                                                         <div class="item-price">
-                                                        
+
                                                             <% if(item.offer && item.offer.appliedOffer){ %>
-                                                        
+
                                                                 <div class="fw-bold">
                                                                     ₹<%= item.offer.finalPrice.toFixed(2) %>
                                                                 </div>
-                                                        
+
                                                                 <small class="text-muted text-decoration-line-through">
                                                                     ₹<%= item.offer.originalPrice.toFixed(2) %>
                                                                 </small>
-                                                        
+
                                                                 <br>
-                                                        
+
                                                                 <small class="text-success fw-semibold">
-                                                        
+
                                                                     <%= item.offer.appliedOffer.offerName %>
-                                                        
+
                                                                         -
-                                                        
-                                                                        <% if(item.offer.appliedOffer.offerType==="PERCENTAGE" ){ %>
-                                                        
-                                                                            <%= item.offer.appliedOffer.discountValue %>% OFF
-                                                        
+
+                                                                        <% if(item.offer.appliedOffer.offerType==="PERCENTAGE"
+                                                                            ){ %>
+
+                                                                            <%= item.offer.appliedOffer.discountValue %>
+                                                                                % OFF
+
                                                                                 <% } else { %>
-                                                        
-                                                                                    ₹<%= item.offer.appliedOffer.discountValue %> OFF
-                                                        
+
+                                                                                    ₹<%= item.offer.appliedOffer.discountValue
+                                                                                        %> OFF
+
                                                                                         <% } %>
-                                                        
+
                                                                 </small>
-                                                        
+
                                                                 <% } else { %>
-                                                        
+
                                                                     ₹<%= item.variantId.salePrice %>
-                                                        
+
                                                                         <% } %>
-                                                        
+
                                                         </div>
                                                     </div>
                                                     <% }) %>
@@ -852,7 +856,7 @@
                             </div>
                             <div class="summary-line">
                                 <span>Shipping</span>
-                            
+
                                 <span id="shippingCharge">
                                     <% if(totals.shipping> 0){ %>
                                         ₹<%= totals.shipping %>
@@ -878,11 +882,6 @@
                                 </strong>
                             </div>
 
-                            <div class="coupon-dropdown-header">
-                                <span><i class="fa-solid fa-ticket me-2 opacity-75"></i> Apply Coupon</span>
-                                <i class="fa-solid fa-chevron-down small"></i>
-                            </div>
-
                             <% let holdsOverstock=cart && cart.items.some(item=> item.quantity > item.variantId.stock);
                                 %>
                                 <a href="/checkout"
@@ -893,146 +892,146 @@
                     </div>
                 </div>
             </div>
-    </div>
-
-    
-    <footer class="container-fluid">
-        <div class="footer-logo text-center">
-            <img src="/images/logo.png" alt="Logo">
         </div>
-        <div class="row px-md-5">
-            <div class="col-md-3 col-6 mb-4">
-                <div class="footer-head">Support</div>
-                <div class="footer-links">
-                    <a href="#">Order Status</a>
-                    <a href="#">Product Support</a>
-                    <a href="#">Shipping & Return Policy</a>
-                    <a href="#">Complaint Registration</a>
+
+
+        <footer class="container-fluid">
+            <div class="footer-logo text-center">
+                <img src="/images/logo.png" alt="Logo">
+            </div>
+            <div class="row px-md-5">
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="footer-head">Support</div>
+                    <div class="footer-links">
+                        <a href="#">Order Status</a>
+                        <a href="#">Product Support</a>
+                        <a href="#">Shipping & Return Policy</a>
+                        <a href="#">Complaint Registration</a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="footer-head">About Us</div>
+                    <div class="footer-links">
+                        <a href="#">Contact Us</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of use</a>
+                        <a href="#">FAQ</a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="footer-head">Contact</div>
+                    <p class="small mb-2">Email : onemore@gmail.com</p>
+                    <p class="small">Phone : +91 8888888888</p>
+                </div>
+                <div class="col-md-3 col-6 mb-4 text-md-end">
+                    <div class="footer-head">Connect with us</div>
+                    <div class="social-icons">
+                        <i class="fa-brands fa-instagram"></i>
+                        <i class="fa-brands fa-facebook"></i>
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3 col-6 mb-4">
-                <div class="footer-head">About Us</div>
-                <div class="footer-links">
-                    <a href="#">Contact Us</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of use</a>
-                    <a href="#">FAQ</a>
-                </div>
+            <div class="text-center mt-5 pt-4 border-top border-secondary small opacity-50">
+                © 2026 onemore. All Rights Reserved.
             </div>
-            <div class="col-md-3 col-6 mb-4">
-                <div class="footer-head">Contact</div>
-                <p class="small mb-2">Email : onemore@gmail.com</p>
-                <p class="small">Phone : +91 8888888888</p>
-            </div>
-            <div class="col-md-3 col-6 mb-4 text-md-end">
-                <div class="footer-head">Connect with us</div>
-                <div class="social-icons">
-                    <i class="fa-brands fa-instagram"></i>
-                    <i class="fa-brands fa-facebook"></i>
-                    <i class="fa-brands fa-x-twitter"></i>
-                </div>
-            </div>
-        </div>
-        <div class="text-center mt-5 pt-4 border-top border-secondary small opacity-50">
-            © 2026 onemore. All Rights Reserved.
-        </div>
-    </footer>
+        </footer>
 
-    <script>
-        const FREE_SHIPPING_LIMIT = <%= freeShippingLimit %>;
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            const FREE_SHIPPING_LIMIT = <%= freeShippingLimit %>;
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        const quantityButtons = document.querySelectorAll(".quantity-btn");
+        <script>
+            const quantityButtons = document.querySelectorAll(".quantity-btn");
 
-        quantityButtons.forEach(button => {
-            button.addEventListener("click", async () => {
-                const cartItemId = button.dataset.id;
-                const action = button.dataset.action;
+            quantityButtons.forEach(button => {
+                button.addEventListener("click", async () => {
+                    const cartItemId = button.dataset.id;
+                    const action = button.dataset.action;
 
-                const quantityElement = button.parentElement.querySelector(".quantity-value");
-                let currentQuantity = Number(quantityElement.innerText);
+                    const quantityElement = button.parentElement.querySelector(".quantity-value");
+                    let currentQuantity = Number(quantityElement.innerText);
 
-                if (action === "decrease" && currentQuantity <= 1) {
-                    showToast("Quantity cannot be less than 1");
-                    return;
-                }
-
-                try {
-                    const response = await fetch("/cart/update-quantity", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ cartItemId, action })
-                    });
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        showToast(data.message);
+                    if (action === "decrease" && currentQuantity <= 1) {
+                        showToast("Quantity cannot be less than 1");
                         return;
                     }
 
-                    if (action === "increase") {
-                        currentQuantity += 1;
-                    } else {
-                        currentQuantity -= 1;
-                    }
-                    quantityElement.innerText = currentQuantity;
+                    try {
+                        const response = await fetch("/cart/update-quantity", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ cartItemId, action })
+                        });
 
-                    const cartRow = button.closest(".cart-item-row");
-                    if (cartRow) {
-                        const priceElement = cartRow.querySelector(".item-price");
-                        const totalElement = cartRow.querySelector(".item-total-price");
+                        const data = await response.json();
 
-                        if (priceElement && totalElement) {
-                            let unitPrice = 0;
-
-                            const finalPriceElement = priceElement.querySelector(".fw-bold");
-
-                            if (finalPriceElement) {
-                                unitPrice = parseFloat(
-                                    finalPriceElement.innerText.replace(/[^\d.]/g, "")
-                                );
-                            } else {
-                                unitPrice = parseFloat(
-                                    priceElement.innerText.replace(/[^\d.]/g, "")
-                                );
-                            }
-
-                            const newRowTotal = unitPrice * currentQuantity;
-
-                            totalElement.innerText = `₹${newRowTotal.toFixed(2)}`;
+                        if (!data.success) {
+                            showToast(data.message);
+                            return;
                         }
+
+                        if (action === "increase") {
+                            currentQuantity += 1;
+                        } else {
+                            currentQuantity -= 1;
+                        }
+                        quantityElement.innerText = currentQuantity;
+
+                        const cartRow = button.closest(".cart-item-row");
+                        if (cartRow) {
+                            const priceElement = cartRow.querySelector(".item-price");
+                            const totalElement = cartRow.querySelector(".item-total-price");
+
+                            if (priceElement && totalElement) {
+                                let unitPrice = 0;
+
+                                const finalPriceElement = priceElement.querySelector(".fw-bold");
+
+                                if (finalPriceElement) {
+                                    unitPrice = parseFloat(
+                                        finalPriceElement.innerText.replace(/[^\d.]/g, "")
+                                    );
+                                } else {
+                                    unitPrice = parseFloat(
+                                        priceElement.innerText.replace(/[^\d.]/g, "")
+                                    );
+                                }
+
+                                const newRowTotal = unitPrice * currentQuantity;
+
+                                totalElement.innerText = `₹${newRowTotal.toFixed(2)}`;
+                            }
+                        }
+
+                        updateCartTotals();
+
+                    } catch (error) {
+                        console.error("Error updating quantity:", error);
                     }
-
-                    updateCartTotals();
-
-                } catch (error) {
-                    console.error("Error updating quantity:", error);
-                }
+                });
             });
-        });
 
-        function showToast(message) {
-            const existingToast = document.querySelector(".custom-toast");
-            if (existingToast) { existingToast.remove(); }
+            function showToast(message) {
+                const existingToast = document.querySelector(".custom-toast");
+                if (existingToast) { existingToast.remove(); }
 
-            const toast = document.createElement("div");
-            toast.className = "custom-toast";
-            toast.innerText = message;
-            document.body.appendChild(toast);
+                const toast = document.createElement("div");
+                toast.className = "custom-toast";
+                toast.innerText = message;
+                document.body.appendChild(toast);
 
-            setTimeout(() => { toast.classList.add("show"); }, 100);
+                setTimeout(() => { toast.classList.add("show"); }, 100);
 
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => { toast.remove(); }, 300);
-            }, 2500);
-        }
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    setTimeout(() => { toast.remove(); }, 300);
+                }, 2500);
+            }
 
-        function updateCartTotals() {
+            function updateCartTotals() {
 
                 let subtotal = 0;
 
@@ -1075,109 +1074,109 @@
                 }
             }
 
-        async function removeCartItem(event, cartItemId) {
-            event.preventDefault();
-            event.stopPropagation();
+            async function removeCartItem(event, cartItemId) {
+                event.preventDefault();
+                event.stopPropagation();
 
-            const result = await Swal.fire({
-                title: "Remove Product?",
-                text: "Are you sure you want to remove this item from your cart?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Remove",
-                cancelButtonText: "Cancel",
-                confirmButtonColor: "#dc3545"
-            });
-
-            if (!result.isConfirmed) return;
-
-            const response = await fetch("/cart/remove/" + cartItemId, {
-                method: "POST"
-            });
-
-            if (response.ok) {
-                await Swal.fire({
-                    icon: "success",
-                    title: "Removed",
-                    text: "Product removed from cart",
-                    timer: 1500,
-                    showConfirmButton: false
+                const result = await Swal.fire({
+                    title: "Remove Product?",
+                    text: "Are you sure you want to remove this item from your cart?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Remove",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#dc3545"
                 });
-                location.reload();
-            }
-        }
 
-        async function saveForLater(event, cartItemId) {
-            event.preventDefault();
-            event.stopPropagation();
+                if (!result.isConfirmed) return;
 
-            try {
-                const response = await fetch(`/cart/save-for-later/${cartItemId}`, {
+                const response = await fetch("/cart/remove/" + cartItemId, {
                     method: "POST"
                 });
-                const data = await response.json();
 
-                if (data.success) {
-                    showToast("Item saved for later successfully");
-                    setTimeout(() => location.reload(), 800);
-                } else {
-                    showToast(data.message || "Failed to save item");
-                }
-            } catch (error) {
-                console.error("Error saving for later:", error);
-            }
-        }
-
-        async function moveToCart(event, savedItemId) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            try {
-                const response = await fetch(`/cart/move-to-cart/${savedItemId}`, {
-                    method: "POST"
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    showToast("Item moved back to cart");
-                    setTimeout(() => location.reload(), 800);
-                } else {
-                    showToast(data.message || "Failed to move item");
-                }
-            } catch (error) {
-                console.error("Error moving back to cart:", error);
-            }
-        }
-
-        async function removeSavedItem(event, savedItemId) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const result = await Swal.fire({
-                title: "Delete Item?",
-                text: "Remove this saved item permanently?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Delete",
-                cancelButtonText: "Cancel",
-                confirmButtonColor: "#dc3545"
-            });
-
-            if (!result.isConfirmed) return;
-
-            try {
-                const response = await fetch(`/cart/remove-saved/${savedItemId}`, {
-                    method: "POST"
-                });
                 if (response.ok) {
-                    showToast("Saved item deleted");
-                    setTimeout(() => location.reload(), 800);
+                    await Swal.fire({
+                        icon: "success",
+                        title: "Removed",
+                        text: "Product removed from cart",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    location.reload();
                 }
-            } catch (error) {
-                console.error("Error deleting saved item:", error);
             }
-        }
-    </script>
+
+            async function saveForLater(event, cartItemId) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                try {
+                    const response = await fetch(`/cart/save-for-later/${cartItemId}`, {
+                        method: "POST"
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast("Item saved for later successfully");
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        showToast(data.message || "Failed to save item");
+                    }
+                } catch (error) {
+                    console.error("Error saving for later:", error);
+                }
+            }
+
+            async function moveToCart(event, savedItemId) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                try {
+                    const response = await fetch(`/cart/move-to-cart/${savedItemId}`, {
+                        method: "POST"
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast("Item moved back to cart");
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        showToast(data.message || "Failed to move item");
+                    }
+                } catch (error) {
+                    console.error("Error moving back to cart:", error);
+                }
+            }
+
+            async function removeSavedItem(event, savedItemId) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const result = await Swal.fire({
+                    title: "Delete Item?",
+                    text: "Remove this saved item permanently?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Delete",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#dc3545"
+                });
+
+                if (!result.isConfirmed) return;
+
+                try {
+                    const response = await fetch(`/cart/remove-saved/${savedItemId}`, {
+                        method: "POST"
+                    });
+                    if (response.ok) {
+                        showToast("Saved item deleted");
+                        setTimeout(() => location.reload(), 800);
+                    }
+                } catch (error) {
+                    console.error("Error deleting saved item:", error);
+                }
+            }
+        </script>
 </body>
 
 </html>

@@ -13,7 +13,7 @@ export const createRazorpayOrder = async (req, res) => {
 
         const {addressId} = req.body
 
-        const checkout = await getCheckoutData(userId)
+        const checkout = await getCheckoutData(userId, req.session.appliedCoupon)
 
         if (!checkout.success) {
             return res.json({

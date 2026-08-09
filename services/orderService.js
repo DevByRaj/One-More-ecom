@@ -10,7 +10,7 @@ import {creditWallet} from "./walletService.js"
 import {debitWallet} from "./walletService.js"
 import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
 import { calculateBestOffer } from "./offerCalulationService.js"
-
+import { applyCouponService } from "./couponService.js"
 export const allowedStatusTransitions = {
     Pending: [
         "Pending",
@@ -129,7 +129,7 @@ export const getOrderStatusInfo = (order) => {
     }
 }
 
-export const getCheckoutData = async (userId) => {
+export const getCheckoutData = async (userId, appliedCoupon = null) => {
 
     const addresses = await Address.find({userId})
         .sort({isDefault: -1, createdAt: -1});
@@ -142,8 +142,23 @@ export const getCheckoutData = async (userId) => {
         }
     }
 
-    const totals = calculateCartTotals(cart)
+    let couponDiscount = 0
 
+    if (appliedCoupon?.couponCode) {
+
+        const couponResult = await applyCouponService(
+            userId,
+            appliedCoupon.couponCode,
+            calculateCartTotals(cart).subtotal
+        )
+
+        if (couponResult.success) {
+            couponDiscount = couponResult.couponDiscount
+        }
+    }
+
+    const totals = calculateCartTotals(cart, couponDiscount)
+    
     const wishlist = await Wishlist.findOne({userId})
 
     const wishlistCount = wishlist ? wishlist.products.length : 0
@@ -168,7 +183,8 @@ export const placeOrderService = async (userId, orderData) => {
         paymentMethod,
         paymentStatus = "Pending",
         razorpayOrderId = null,
-        razorpayPaymentId = null} = orderData
+        razorpayPaymentId = null,
+        coupon = null } = orderData
 
     const cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
@@ -197,7 +213,9 @@ export const placeOrderService = async (userId, orderData) => {
         );
     }
 
-    const totals = calculateCartTotals(cart)
+    const couponDiscount = coupon?.discount || 0
+
+    const totals = calculateCartTotals(cart, couponDiscount)
 
     for (const item of cart.items) {
 
@@ -260,6 +278,13 @@ export const placeOrderService = async (userId, orderData) => {
         razorpayOrderId,
         razorpayPaymentId,
         orderStatus: "Pending",
+        coupon: coupon
+            ? {
+                couponId: coupon.couponId,
+                couponCode: coupon.couponCode
+            }
+            : null,
+
         subTotal: totals.subtotal,
         shipping: totals.shipping,
         discount: totals.discount,

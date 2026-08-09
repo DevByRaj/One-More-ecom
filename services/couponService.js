@@ -1,4 +1,5 @@
 import Coupon from "../models/couponModel.js";
+import Order from "../models/orderModel.js"
 
 export const getCouponListService = async(page, limit, search) =>{
 
@@ -177,6 +178,139 @@ export const deleteCouponService = async(id) =>{
         return{
             success: false,
             message: "Somthing went wrong"
+        }
+    }
+}
+
+export const applyCouponService = async(userId,couponCode, subtotal) =>{
+
+    const coupon = await Coupon.findOne({
+        couponCode: couponCode.trim().toUpperCase()
+    })
+
+    if(!coupon){
+        return{
+            success: false,
+            message: "Invalid coupon code"
+        }
+    }
+
+    const alreadyUsed = await Order.findOne({
+        userId,
+        "coupon.couponId": coupon._id,
+        orderStatus: {$ne: "Cancelled"},
+        paymentStatus: {$ne: "Failed"}
+    })
+
+    if (alreadyUsed) {
+        return {
+            success: false,
+            message: "You have already used this coupon"
+        }
+    }
+
+    if(!coupon.isActive){
+        return{
+            success: false,
+            message: "Coupon inactive"
+        }
+    }
+
+    const currentDate = new Date()
+
+    if(currentDate < new Date(coupon.startDate)){
+        return{
+            success: false,
+            message: "Coupon is not active yet"
+        }
+    }
+
+    if(currentDate > new Date(coupon.endDate)){
+        return{
+            success: false,
+            message: "Coupon Expired"
+        }
+    }
+
+    if(coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit){
+        return{
+            success: false,
+            message: "Coupon usage limit reached"
+        }
+    }
+
+    if(subtotal < coupon.minimumPurchase){
+        return{
+            success: false,
+            message: `Minimum purchase amount is ₹${coupon.minimumPurchase}`
+        }
+    }
+
+    let couponDiscount = 0
+
+    if(coupon.discountType === "PERCENTAGE"){
+        
+        couponDiscount = subtotal * coupon.discountValue / 100
+
+        if (coupon.maximumDiscount !== null && couponDiscount > coupon.maximumDiscount) {
+            couponDiscount = coupon.maximumDiscount
+        }
+    } else if(coupon.discountType === "FLAT"){
+
+        couponDiscount = coupon.discountValue
+
+        if(couponDiscount > subtotal){
+            couponDiscount = subtotal
+        }
+    }    
+    return{
+        success: true,
+        coupon,
+        couponDiscount
+    }
+}
+
+
+export const getAvailableCouponsService = async(userId) =>{
+    try {
+
+        const currentDate = new Date()
+
+        const usedOrders = await Order.find({
+            userId,
+            "coupon.couponId": {$ne: null},
+            orderStatus: {$ne: "Cancelled"},
+            paymentStatus: {$ne: "Failed"}
+        }).select("coupon.couponId")
+
+        const usedCouponIds = usedOrders.map(
+            order => order.coupon.couponId
+        )
+
+        const coupons = await Coupon.find({
+            isActive: true,
+            startDate: {$lte: currentDate},
+            endDate: {$gte: currentDate},
+            $or: [
+                {usageLimit: null},
+                {$expr: {$lt: ["$usedCount", "$usageLimit"]}}
+            ],
+            _id: {
+                $nin: usedCouponIds
+            } 
+        }).sort({createdAt: -1})
+
+        return {
+            success: true,
+            coupons
+        }
+        
+    } catch (error) {
+        console.log(error);
+        
+        return {
+            success: false,
+            coupon: []
         }
     }
 }

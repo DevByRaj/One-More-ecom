@@ -313,7 +313,7 @@ export const moveToCart = async(userId, savedItemsId) =>{
     }
 }
 
-export const calculateCartTotals = (cart) =>{
+export const calculateCartTotals = (cart, couponDiscount = 0) =>{
 
     let subtotal = 0
 
@@ -345,12 +345,14 @@ export const calculateCartTotals = (cart) =>{
         shipping = SHIPPING_CHARGE
     }
     
-    const grandTotal = subtotal + shipping
+    const discount = Math.min(couponDiscount, subtotal)
 
-    return{
+    const grandTotal = subtotal - discount + shipping
+
+    return {
         subtotal,
         shipping,
-        discount: 0,
+        discount,
         grandTotal
     }
 }
