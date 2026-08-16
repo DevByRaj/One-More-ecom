@@ -13,12 +13,21 @@ export const createRazorpayOrder = async (req, res) => {
 
         const {addressId} = req.body
 
-        const checkout = await getCheckoutData(userId)
+        const checkout = await getCheckoutData(userId, req.session.appliedCoupon)
 
         if (!checkout.success) {
             return res.json({
                 success: false
             })
+        }
+
+        for(const item of checkout.cart.items){
+            if(item.variantId.stock < item.quantity){
+                return res.json({
+                    success: false,
+                    message: `${item.productId.productName} is out of stock`
+                })
+            }
         }
 
         const razorpayOrder = await createRazorpayOrderService(checkout.totals.grandTotal)

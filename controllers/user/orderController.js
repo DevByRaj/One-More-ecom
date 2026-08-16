@@ -8,6 +8,8 @@ import {
     getOrderStatusInfo
 } from "../../services/orderService.js"
 
+import { applyCouponService, getAvailableCouponsService } from "../../services/couponService.js"
+
 import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
 
 import Order from "../../models/orderModel.js"
@@ -19,17 +21,20 @@ export const getCheckout = async (req, res) => {
 
         const userId = req.session.user
 
-        const result = await getCheckoutData(userId)
+        const result = await getCheckoutData(userId, req.session.appliedCoupon)
 
         if (!result.success) {
             return res.redirect("/cart")
         }
 
+        const couponResult = await getAvailableCouponsService(userId)
+
         return res.render("user/checkout", {
             addresses: result.addresses,
             cart: result.cart,
             totals: result.totals,
-            freeShippingLimit: FREE_SHIPPING_LIMIT
+            freeShippingLimit: FREE_SHIPPING_LIMIT,
+            coupons: couponResult.coupons
         })
 
     } catch (error) {
@@ -40,14 +45,65 @@ export const getCheckout = async (req, res) => {
     }
 }
 
+export const applyCoupon = async(req, res) =>{
+    try {
+
+        const userId = req.session.user
+        const {couponCode} = req.body
+
+        const checkout = await getCheckoutData(userId)
+
+        if(!checkout.success){
+            return res.json({
+                success: false,
+                message: "your cart is empty"
+            })
+        }
+
+        const result = await applyCouponService(
+            userId,
+            couponCode,
+            checkout.totals.subtotal
+        )
+
+        if(!result.success){
+            return res.json({
+                success: false,
+                message: result.message
+            })
+        }
+
+        req.session.appliedCoupon ={
+            couponId: result.coupon._id,
+            couponCode: result.coupon.couponCode,
+            discount: result.couponDiscount
+        }
+        return res.json({
+            success: true,
+            message: "Coupon successfully applied",
+            couponCode: result.coupon.couponCode,
+            discount: result.couponDiscount
+        })
+        
+    } catch (error) {
+
+        console.log(error);
+        
+        return res.json({
+            success: false,
+            message: "Unable to apply coupon"
+        })
+    }
+}
+
 export const placeOrder = async (req, res) => {
     try {
 
-        console.log(req.body);
-
         const userId = req.session.user
 
-        const result = await placeOrderService(userId, req.body)
+        const appliedCoupon = req.session.appliedCoupon || null
+
+        const result = await placeOrderService(userId, {...req.body, coupon:appliedCoupon})
 
         if(!result.success){
             return res.json({
@@ -275,7 +331,7 @@ export const getPaymentPage = async(req, res) =>{
 
         const {addressId} = req.query
 
-        const result = await getCheckoutData(userId)
+        const result = await getCheckoutData(userId, req.session.appliedCoupon)
 
         if(!result.success){
             return res.redirect("/cart")

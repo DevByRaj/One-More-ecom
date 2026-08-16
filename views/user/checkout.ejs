@@ -383,6 +383,36 @@
             border-radius: 4px;
         }
 
+        .available-coupons {
+    margin-top: 10px;
+}
+
+.coupon-card {
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    padding: 12px;
+    background-color: #ffffff;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    transition: all 0.2s ease;
+}
+
+.coupon-card:hover {
+    border-color: #000000;
+}
+
+.coupon-card strong {
+    font-size: 13px;
+    color: #111111;
+}
+
+.coupon-card .small {
+    font-size: 11px;
+}
+
         .figma-checkout-btn {
             background-color: #000;
             color: #fff;
@@ -713,17 +743,41 @@
 
                     <div class="summary-item-line">
                         <span>Item Sub Total</span>
-                        <strong>₹<%= totals.subtotal %></strong>
+                        <strong>
+                            ₹<span id="checkoutSubtotal">
+                                <%= totals.subtotal.toFixed(2) %>
+                            </span>
+                        </strong>
                     </div>
-                        <div class="summary-item-line">
-                            <span>Shipping</span>
-                        
-                            <% if(totals.shipping> 0){ %>
-                                <strong>₹<%= totals.shipping %></strong>
-                                <% } else { %>
-                                    <span class="text-success fw-medium">Free</span>
-                                    <% } %>
-                        </div>
+                    
+                    <div class="summary-item-line">
+                        <span>Discount</span>
+                        <strong class="text-success">
+                            - ₹<span id="checkoutDiscount">
+                                <%= (totals.discount || 0).toFixed(2) %>
+                            </span>
+                        </strong>
+                    </div>
+                    
+                    <div class="summary-item-line">
+                        <span>Shipping</span>
+                    
+                        <% if(totals.shipping> 0){ %>
+                    
+                            <strong>
+                                ₹<span id="checkoutShipping">
+                                    <%= totals.shipping.toFixed(2) %>
+                                </span>
+                            </strong>
+                    
+                            <% } else { %>
+                    
+                                <span class="text-success fw-medium" id="checkoutShipping">
+                                    Free
+                                </span>
+                    
+                                <% } %>
+                    </div>
                         
                     <% if (totals.shipping> 0) { %>
                         <div class="small text-muted mb-3">
@@ -736,19 +790,112 @@
 
                         <div class="summary-total-line">
                             <span>Total</span>
-                            <strong>₹<%= totals.grandTotal %></strong>
+                            <strong>
+                                ₹<span id="checkoutGrandTotal">
+                                    <%= totals.grandTotal.toFixed(2) %>
+                                </span>
+                            </strong>
                         </div>
 
                         <div class="coupon-toggle-header" data-bs-toggle="collapse" data-bs-target="#couponCollapse">
-                            <span><i class="fa-solid fa-ticket me-2 opacity-50"></i> Coupon code</span>
+                        
+                            <span>
+                                <i class="fa-solid fa-ticket me-2 opacity-50"></i>
+                                Coupon code
+                            </span>
+                        
                             <i class="fa-solid fa-chevron-down small opacity-75"></i>
                         </div>
+                        
                         <div class="collapse mb-3" id="couponCollapse">
-                            <form action="/checkout/apply-coupon" method="POST" class="d-flex gap-2">
-                                <input type="text" name="couponCode" class="form-control form-control-sm"
-                                    placeholder="Enter coupon">
-                                <button type="submit" class="btn btn-dark btn-sm px-3">Apply</button>
+                        
+                            <!-- Manual coupon code -->
+                            <form id="couponForm" class="d-flex gap-2 mb-3">
+                            
+                                <input type="text" id="couponCode" name="couponCode" class="form-control form-control-sm"
+                                    placeholder="Enter coupon code">
+                            
+                                <button type="submit" class="btn btn-dark btn-sm px-3">
+                                    Apply
+                                </button>
+                            
                             </form>
+                            
+                            <div id="couponMessage" class="small mt-2"></div>
+                        
+                        
+                            <!-- Available Coupons -->
+                        
+                            <div class="available-coupons">
+                        
+                                <h6 class="mb-3 fw-semibold">
+                                    Available Coupons
+                                </h6>
+                        
+                                <% if (coupons && coupons.length> 0) { %>
+                        
+                                    <% coupons.forEach(coupon=> { %>
+                        
+                                    <div class="coupon-card mb-2" data-coupon-code="<%= coupon.couponCode %>">
+                                    
+                                    <div>
+                                        <strong>
+                                            <%= coupon.couponCode %>
+                                        </strong>
+                        
+                                                <div class="small text-muted">
+                        
+                                                    <% if (coupon.discountType==="PERCENTAGE" ) { %>
+                        
+                                                        <%= coupon.discountValue %>% OFF
+                        
+                                                            <% if (coupon.maximumDiscount !==null) { %>
+                                                                up to ₹<%= coupon.maximumDiscount %>
+                                                                    <% } %>
+                        
+                                                                        <% } else { %>
+                        
+                                                                            ₹<%= coupon.discountValue %> OFF
+                        
+                                                                                <% } %>
+                        
+                                                </div>
+                        
+                                                <% if (coupon.minimumPurchase> 0) { %>
+                        
+                                                    <div class="small text-muted">
+                                                        Minimum purchase:
+                                                        ₹<%= coupon.minimumPurchase %>
+                                                    </div>
+                        
+                                                    <% } %>
+                        
+                                            </div>
+                        
+                                            <button type="button" class="btn btn-sm btn-dark apply-coupon-btn" data-code="<%= coupon.couponCode %>">
+                                                Apply
+                                            </button>
+                        
+                                        </div>
+                        
+                                        <% }) %>
+                        
+                                            <% } else { %>
+                        
+                                                <div class="text-center text-muted py-3">
+                        
+                                                    <i class="fa-solid fa-ticket mb-2"></i>
+                        
+                                                    <p class="mb-0">
+                                                        No coupons available at the moment.
+                                                    </p>
+                        
+                                                </div>
+                        
+                                                <% } %>
+                        
+                            </div>
+                        
                         </div>
 
                         <form action="/payment" method="GET">
@@ -1016,8 +1163,6 @@
 
                     rzp.open();
 
-                    rzp.open();
-
                 } catch (err) {
 
                     console.log(err);
@@ -1028,6 +1173,154 @@
 
         </script>
 
+        <script>
+
+        async function applyCoupon(couponCode) {
+
+                if (!couponCode || couponCode.trim() === "") {
+
+                    showCouponMessage(
+                        "Please enter a coupon code.",
+                        false
+                    );
+
+                    return;
+                }
+
+                try {
+
+                    const response = await fetch("/checkout/apply-coupon", {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            couponCode: couponCode.trim()
+                        })
+
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+
+                        showCouponMessage(
+                            data.message,
+                            false
+                        );
+
+                        return;
+                    }
+
+                    // Update discount immediately
+                    document.getElementById("checkoutDiscount").textContent =
+                        Number(data.discount).toFixed(2);
+
+                    // Get current subtotal
+                    const subtotal =
+                        Number(document.getElementById("checkoutSubtotal").textContent);
+
+                    // Get shipping
+                    const shippingElement =
+                        document.getElementById("checkoutShipping");
+
+                    let shipping = 0;
+
+                    if (shippingElement && !shippingElement.innerText.includes("Free")) {
+                        shipping =
+                            Number(shippingElement.textContent);
+                    }
+
+                    // Calculate new total
+                    const grandTotal =
+                        subtotal - Number(data.discount) + shipping;
+
+                    // Update total immediately
+                    document.getElementById("checkoutGrandTotal").textContent =
+                        grandTotal.toFixed(2);
+
+                        document
+                        .querySelectorAll(".coupon-card")
+                        .forEach(card => {
+
+                            const cardCode =
+                                card.dataset.couponCode.toUpperCase();
+
+                            const appliedCode =
+                                couponCode.trim().toUpperCase();
+
+                            if (cardCode === appliedCode) {
+                                card.style.display = "none";
+                            } else {
+                                card.style.display = "flex";
+                            }
+
+                        });
+
+                    showCouponMessage(
+                        `Coupon applied successfully. You saved ₹${Number(data.discount).toFixed(2)}`,
+                        true
+                    );
+
+                } catch (error) {
+
+                    console.log(error);
+
+                    showCouponMessage(
+                        "Unable to apply coupon.",
+                        false
+                    );
+                }
+            }
+
+
+            function showCouponMessage(message, success) {
+
+                const messageElement =
+                    document.getElementById("couponMessage");
+
+                messageElement.innerText = message;
+
+                messageElement.className =
+                    success
+                        ? "small mt-2 text-success"
+                        : "small mt-2 text-danger";
+            }
+
+
+            // Manual coupon
+            document.getElementById("couponForm")
+                ?.addEventListener("submit", function (event) {
+
+                    event.preventDefault();
+
+                    const couponCode =
+                        document.getElementById("couponCode").value;
+
+                    applyCoupon(couponCode);
+
+                });
+
+
+            // Available coupon buttons
+            document.querySelectorAll(".apply-coupon-btn")
+                .forEach(button => {
+
+                    button.addEventListener("click", function () {
+
+                        const couponCode =
+                            this.dataset.code;
+
+                        applyCoupon(couponCode);
+
+                    });
+
+                });
+
+        </script>
         
 </body>
 

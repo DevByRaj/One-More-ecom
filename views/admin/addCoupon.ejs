@@ -311,7 +311,7 @@
                                         <div>
                                             <label for="discountValue" class="form-label">Discount Value</label>
                                         <input type="number" class="form-control" id="discountValue" name="discountValue"
-                                            value="<%= coupon ? coupon.discountValue : '' %>" required min="0" placeholder="20">
+                                            value="<%= coupon ? coupon.discountValue : '' %>" required min="0.01" step="0.01" placeholder="20">
                                         </div>
 
                                         <div>
@@ -323,7 +323,7 @@
                                         <div>
                                             <label for="minAmount" class="form-label">Min Amount</label>
                                             <input type="number" class="form-control" id="minAmount" name="minimumPurchase"
-                                                value="<%= coupon ? coupon.minimumPurchase : '' %>" required min="0" placeholder="100">
+                                                value="<%= coupon ? coupon.minimumPurchase : '' %>" required min="0" step="0.01" placeholder="100">
                                         </div>
 
                                         <div>
@@ -362,6 +362,65 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const discountType = document.getElementById("discountType")
+        const discountValue = document.getElementById("discountValue")
+        const minAmount = document.getElementById("minAmount")
+
+        discountType.addEventListener("change", () => {
+
+            if (discountType.value === "PERCENTAGE") {
+                discountValue.max = 100
+                discountValue.placeholder = "20"
+            } else {
+                discountValue.removeAttribute("max")
+                discountValue.placeholder = "500"
+            }
+
+        })
+
+        discountValue.addEventListener("input", () => {
+
+            if (discountType.value === "PERCENTAGE" &&
+                Number(discountValue.value) > 100) {
+
+                discountValue.setCustomValidity(
+                    "Percentage discount cannot be more than 100%"
+                )
+
+            } else if (Number(discountValue.value) <= 0) {
+
+                discountValue.setCustomValidity(
+                    "Discount value must be greater than 0"
+                )
+
+            } else {
+
+                discountValue.setCustomValidity("")
+            }
+        })
+
+        minAmount.addEventListener("input", () => {
+
+            if (Number(minAmount.value) < 0) {
+
+                minAmount.setCustomValidity(
+                    "Minimum purchase cannot be negative"
+                )
+
+            } else {
+
+                minAmount.setCustomValidity("")
+            }
+            
+        })
+
+        if (discountType.value === "PERCENTAGE") {
+                discountValue.max = 100
+            }
+    </script>
+
 </body>
 
 </html>

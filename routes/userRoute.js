@@ -35,7 +35,7 @@ import {
 
 import {addWishlist, getWishlistPage, removeWishlistProduct, toggleWishlist} from "../controllers/user/wishlistController.js";
 
-import { getCheckout, getPaymentPage, placeOrder, getOrderSuccess, getOrders, getOrderDetails, cancelOrderItem, returnOrderItem } from "../controllers/user/orderController.js";
+import { getCheckout, getPaymentPage, placeOrder, getOrderSuccess, getOrders, getOrderDetails, cancelOrderItem, returnOrderItem, applyCoupon } from "../controllers/user/orderController.js";
 
 import { downloadInvoice } from "../controllers/user/orderController.js";
 
@@ -144,6 +144,8 @@ router.get("/checkout", isUserLoggedIn, getCheckout)
 router.get("/payment", isUserLoggedIn, getPaymentPage)
 
 router.post("/checkout/place-order", isUserLoggedIn, placeOrder)
+
+router.post("/checkout/apply-coupon", isUserLoggedIn, applyCoupon)
 
 router.post("/payment/create-order", isUserLoggedIn, createRazorpayOrder)
 

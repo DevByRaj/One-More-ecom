@@ -129,6 +129,17 @@ const orderSchema = new mongoose.Schema({
     subTotal: Number,
     shipping: Number,
     discount: Number,
+    coupon: {
+        couponId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Coupon",
+            default: null
+        },
+        couponCode: {
+            type: String,
+            default: null
+        }
+    },
     grandTotal: Number
 },{
     timestamps: true

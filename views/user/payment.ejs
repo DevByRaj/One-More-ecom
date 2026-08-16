@@ -245,6 +245,8 @@
                         </label>
                     </div>
 
+                    <div id="paymentError" class="alert alert-danger d-none mt-3" role="alert"></div>
+
                     <!-- Pay Now Submit Button -->
                     <div class="mt-4">
                         <button type="submit" id="placeOrderBtn" class="btn btn-pay-now">
@@ -357,9 +359,23 @@
   <script>
     const paymentForm = document.getElementById("paymentForm");
 
+    const paymentError = document.getElementById("paymentError");
+
+        function showPaymentError(message) {
+            paymentError.textContent = message;
+            paymentError.classList.remove("d-none");
+        }
+
+        function clearPaymentError() {
+            paymentError.textContent = "";
+            paymentError.classList.add("d-none");
+        }
+
     paymentForm.addEventListener("submit", async (e) => {
 
-        e.preventDefault();
+            e.preventDefault();
+
+            clearPaymentError();
 
         const paymentMethod = document.querySelector(
             'input[name="paymentMethod"]:checked'
@@ -387,7 +403,7 @@
             if (data.success) {
                 window.location.href = data.redirectUrl;
             } else {
-                alert(data.message);
+                showPaymentError(data.message);
             }
 
             return;
@@ -408,10 +424,9 @@
             const data = await response.json();
 
             if (!data.success) {
-                alert("Unable to create Razorpay order");
+                showPaymentError(data.message || "Unable to create Razorpay order");
                 return;
             }
-
             const options = {
                 key: data.key,
                 amount: data.order.amount,
@@ -441,9 +456,7 @@
                             `/order-success/${verifyData.orderId}`;
 
                     } else {
-
-                        alert(verifyData.message);
-
+                        showPaymentError(verifyData.message);
                     }
 
                 }
@@ -476,13 +489,7 @@
             if (data.success) {
                 window.location.href = `/order-success/${data.orderId}`;
             } else {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Insufficient Wallet Balance",
-                    text: data.message,
-                    confirmButtonColor: "#000",
-                    confirmButtonText: "OK"
-                });
+                showPaymentError(data.message);
             }
 
             return;
