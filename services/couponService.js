@@ -41,6 +41,31 @@ export const createCouponService = async (couponData) =>{
         isActive
     } = couponData
 
+    const discount = Number(discountValue)
+
+    const minimum = Number(minimumPurchase)
+
+    if (discount <= 0) {
+        return {
+            success: false,
+            message: "Discount value must be greater than 0"
+        }
+    }
+
+    if (minimum < 0) {
+        return {
+            success: false,
+            message: "Minimum purchase cannot be negative"
+        }
+    }
+
+    if (discountType === "PERCENTAGE" && discount > 100) {
+        return {
+            success: false,
+            message: "Percentage discount cannot be more than 100%"
+        }
+    }
+
     const existingCoupon = await Coupon.findOne({
         couponCode: couponCode.trim().toUpperCase()
     })
@@ -56,8 +81,8 @@ export const createCouponService = async (couponData) =>{
         couponCode: couponCode.trim().toUpperCase(),
         description: description?.trim() || "",
         discountType,
-        discountValue: Number(discountValue),
-        minimumPurchase: Number(minimumPurchase) || 0,
+        discountValue: discount,
+        minimumPurchase: minimum,
 
         maximumDiscount: maximumDiscount !== "" ? Number(maximumDiscount) : null,
 
@@ -105,6 +130,30 @@ export const updateCouponService = async(couponId, couponData) =>{
         isActive
     } = couponData
 
+    const discount = Number(discountValue)
+    const minimum = Number(minimumPurchase)
+
+    if (discount <= 0) {
+        return {
+            success: false,
+            message: "Discount value must be greater than 0"
+        }
+    }
+
+    if (minimum < 0) {
+        return {
+            success: false,
+            message: "Minimum purchase cannot be negative"
+        }
+    }
+
+    if (discountType === "PERCENTAGE" && discount > 100) {
+        return {
+            success: false,
+            message: "Percentage discount cannot be more than 100%"
+        }
+    }
+
     const existingCoupon = await Coupon.findOne({
         couponCode: couponCode.trim().toUpperCase(),
         _id: {$ne: couponId}
@@ -123,8 +172,8 @@ export const updateCouponService = async(couponId, couponData) =>{
             couponCode: couponCode.trim().toUpperCase(),
             description: description?.trim() || "",
             discountType,
-            discountValue: Number(discountValue),
-            minimumPurchase: Number(minimumPurchase) || 0,
+            discountValue: discount,
+            minimumPurchase: minimum,
             maximumDiscount:
                 maximumDiscount !== ""
                     ? Number(maximumDiscount)

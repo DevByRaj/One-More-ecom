@@ -836,12 +836,12 @@
                         
                                     <% coupons.forEach(coupon=> { %>
                         
-                                        <div class="coupon-card mb-2">
-                        
-                                            <div>
-                                                <strong>
-                                                    <%= coupon.couponCode %>
-                                                </strong>
+                                    <div class="coupon-card mb-2" data-coupon-code="<%= coupon.couponCode %>">
+                                    
+                                    <div>
+                                        <strong>
+                                            <%= coupon.couponCode %>
+                                        </strong>
                         
                                                 <div class="small text-muted">
                         
@@ -1163,8 +1163,6 @@
 
                     rzp.open();
 
-                    rzp.open();
-
                 } catch (err) {
 
                     console.log(err);
@@ -1243,6 +1241,24 @@
                     // Update total immediately
                     document.getElementById("checkoutGrandTotal").textContent =
                         grandTotal.toFixed(2);
+
+                        document
+                        .querySelectorAll(".coupon-card")
+                        .forEach(card => {
+
+                            const cardCode =
+                                card.dataset.couponCode.toUpperCase();
+
+                            const appliedCode =
+                                couponCode.trim().toUpperCase();
+
+                            if (cardCode === appliedCode) {
+                                card.style.display = "none";
+                            } else {
+                                card.style.display = "flex";
+                            }
+
+                        });
 
                     showCouponMessage(
                         `Coupon applied successfully. You saved ₹${Number(data.discount).toFixed(2)}`,

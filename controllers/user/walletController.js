@@ -25,7 +25,7 @@ export const payWithWallet = async(req, res) =>{
 
         const userId = req.session.user
 
-        const result = await payWithWalletService(userId, req.body)
+        const result = await payWithWalletService(userId, req.body, req.session.appliedCoupon)
 
         res.json(result)
         

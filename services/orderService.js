@@ -900,14 +900,23 @@ export const returnOrderItemService = async (userId, orderId, itemId, returnReas
 
 }
 
-export const payWithWalletService = async (userId, orderData) => {
+export const payWithWalletService = async (userId, orderData, appliedCoupon = null) => {
 
-    const checkout = await getCheckoutData(userId)
+    const checkout = await getCheckoutData(userId, appliedCoupon)
 
     if (!checkout.success) {
         return {
             success: false,
             message: "Cart is empty"
+        }
+    }
+
+    for(const item of checkout.cart.items){
+        if(item.variantId.stock < item.quantity){
+            return{
+                success: false,
+                message: `${item.productId.productName} is out of stock`
+            }
         }
     }
 
@@ -924,7 +933,8 @@ export const payWithWalletService = async (userId, orderData) => {
     const result = await placeOrderService(userId, {
         ...orderData,
         paymentMethod: "WALLET",
-        paymentStatus: "Paid"
+        paymentStatus: "Paid",
+        coupon: appliedCoupon
     })
 
     return result
