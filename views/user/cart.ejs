@@ -1036,7 +1036,7 @@
                 let subtotal = 0;
 
                 document.querySelectorAll(".cart-item-row .item-total-price").forEach(item => {
-                    subtotal += Number(item.innerText.replace(/[^\d]/g, ""));
+                    subtotal += Number(item.innerText.replace(/[^\d.]/g, ""));
                 });
 
                 let shipping = 0;

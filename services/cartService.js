@@ -12,6 +12,9 @@ export const addProductToCart = async (userId, cartData) => {
             variantId
         } = cartData
 
+    console.log("PRODUCT ID:", productId);
+    console.log("VARIANT ID:", variantId);
+
         const product =
             await Product.findById(productId)
 
