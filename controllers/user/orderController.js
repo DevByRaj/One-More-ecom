@@ -7,13 +7,9 @@ import {
     returnOrderItemService,
     getOrderStatusInfo
 } from "../../services/orderService.js"
-
 import { applyCouponService, getAvailableCouponsService } from "../../services/couponService.js"
-
 import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
-
 import Order from "../../models/orderModel.js"
-
 import {generateInvoice} from "../../utils/invoiceGenerator.js"
 
 export const getCheckout = async (req, res) => {
@@ -27,7 +23,7 @@ export const getCheckout = async (req, res) => {
             return res.redirect("/cart")
         }
 
-        const couponResult = await getAvailableCouponsService(userId)
+        const couponResult = await getAvailableCouponsService(userId, req.session.appliedCoupon?.couponId)
 
         return res.render("user/checkout", {
             addresses: result.addresses,

@@ -858,6 +858,7 @@
 
         // VARIANT SELECTION CONFIGURATOR
         function changeVariant(button, images, offer, stock) {
+             console.log("SELECTED VARIANT:", button.dataset.variantId);
             document.querySelectorAll(".variant-color-btn").forEach(btn => {
                 btn.classList.remove("active-variant");
             });
@@ -879,27 +880,27 @@
 
             regPriceElem.style.display = "inline";
 
-            if (offerData.appliedOffer) {
+                if (offerData.appliedOffer && discountBadge) {
 
-                if (offerData.appliedOffer.offerType === "PERCENTAGE") {
+                    if (offerData.appliedOffer.offerType === "PERCENTAGE") {
 
-                    discountBadge.innerText =
-                        `${offerData.appliedOffer.offerName} - ${offerData.appliedOffer.discountValue}% OFF`;
+                        discountBadge.innerText =
+                            `${offerData.appliedOffer.offerName} - ${offerData.appliedOffer.discountValue}% OFF`;
 
-                } else {
+                    } else {
 
-                    discountBadge.innerText =
-                        `${offerData.appliedOffer.offerName} - ₹${offerData.appliedOffer.discountValue} OFF`;
+                        discountBadge.innerText =
+                            `${offerData.appliedOffer.offerName} - ₹${offerData.appliedOffer.discountValue} OFF`;
+
+                    }
+
+                    discountBadge.style.display = "inline";
+
+                } else if (discountBadge) {
+
+                    discountBadge.style.display = "none";
 
                 }
-
-                discountBadge.style.display = "inline";
-
-            } else {
-
-                discountBadge.style.display = "none";
-
-            } 
             const vId = button.dataset.variantId;
             document.getElementById("wishlistBtn").dataset.variantId = vId;
             document.getElementById("addToCartBtn").dataset.variantId = vId;

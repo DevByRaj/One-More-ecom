@@ -6,18 +6,17 @@ import {
     saveItemForLater,
     moveToCart, calculateCartTotals
 } from "../../services/cartService.js"
-
 import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
 
 export const addToCart = async (req, res) => {
 
     try {
 
-        const userId =
-            req.session.user
+        const userId = req.session.user
 
-        const result =
-            await addProductToCart(
+        console.log("ADD TO CART BODY:", req.body);
+
+        const result = await addProductToCart(
                 userId,
                 req.body
             )
