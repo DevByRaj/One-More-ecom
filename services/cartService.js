@@ -72,11 +72,11 @@ export const addProductToCart = async (userId, cartData) => {
                 }
             }
 
-            if(existingItem.quantity >= variant.stock){
+            if (existingItem.quantity >= variant.stock) {
 
                 return {
                     success: false,
-                    message: "Insufficient stock"
+                    message: "You have reached the available stock limit"
                 }
             }
 

@@ -4,7 +4,7 @@ import Order from "../../models/orderModel.js";
 
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
 
-import {getCheckoutData, createPendingOrderService, placeOrderService} from "../../services/orderService.js";
+import {getCheckoutData, createPendingOrderService, placeOrderService, completeRazorpayOrderService} from "../../services/orderService.js";
 
 export const createRazorpayOrder = async (req, res) => {
     try {
@@ -13,16 +13,26 @@ export const createRazorpayOrder = async (req, res) => {
 
         const {addressId} = req.body
 
-        const checkout = await getCheckoutData(userId, req.session.appliedCoupon)
+        const appliedCoupon = req.session.appliedCoupon || null
+        const buyNow = req.session.buyNow || null
+
+        const checkout = await getCheckoutData(
+            userId,
+            appliedCoupon,
+            buyNow
+        )
 
         if (!checkout.success) {
             return res.json({
-                success: false
+                success: false,
+                message: checkout.message || "Unable to load checkout"
             })
         }
 
-        for(const item of checkout.cart.items){
-            if(item.variantId.stock < item.quantity){
+        for (const item of checkout.cart.items) {
+
+            if (item.variantId.stock < item.quantity) {
+
                 return res.json({
                     success: false,
                     message: `${item.productId.productName} is out of stock`
@@ -30,22 +40,46 @@ export const createRazorpayOrder = async (req, res) => {
             }
         }
 
-        const razorpayOrder = await createRazorpayOrderService(checkout.totals.grandTotal)
+        const razorpayOrder =
+            await createRazorpayOrderService(
+                checkout.totals.grandTotal
+            )
 
-        res.json({
+        const pendingOrder =
+            await createPendingOrderService(
+                userId,
+                {
+                    addressId,
+                    paymentMethod: "RAZORPAY",
+                    razorpayOrderId: razorpayOrder.id
+                },
+                appliedCoupon,
+                buyNow
+            )
+
+        if (!pendingOrder.success) {
+
+            return res.json({
+                success: false,
+                message: pendingOrder.message
+            })
+        }
+
+        return res.json({
             success: true,
             order: razorpayOrder,
-            key: process.env.RAZORPAY_KEY_ID,
+            orderId: pendingOrder.order._id,
+            key: process.env.RAZORPAY_KEY_ID
         })
 
     } catch (error) {
 
-        console.log(error);
+        console.log(error)
 
-        res.json({
-            success: false
+        return res.json({
+            success: false,
+            message: "Unable to create Razorpay order"
         })
-
     }
 }
 
@@ -56,7 +90,6 @@ export const verifyPayment = async (req, res) => {
             razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature,
-            addressId
         } = req.body
 
         const generatedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -70,17 +103,21 @@ export const verifyPayment = async (req, res) => {
             })
         }
 
-        const result = await placeOrderService(req.session.user,
-            {
-                addressId,
-                paymentMethod: "RAZORPAY",
-                paymentStatus: "Paid",
-                razorpayOrderId: razorpay_order_id,
-                razorpayPaymentId: razorpay_payment_id,
-                razorpaySignature: razorpay_signature
-            }
+        const result = await completeRazorpayOrderService(
+            req.session.user,
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            req.session.buyNow || null
         )
-        
+
+        if(!result.success){
+            return res.json(result)
+        }
+
+        delete req.session.buyNow
+        delete req.session.appliedCoupon
+
         return res.json(result)
 
     } catch (error) {

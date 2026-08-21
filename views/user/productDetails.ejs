@@ -362,51 +362,193 @@
             color: #aaa;
         }
 
-        /* TOAST NOTIFICATION */
-        .custom-toast {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: #111;
-            color: white;
-            padding: 14px 22px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 9999;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
+        /* COUNT BADGES */
 
-        .custom-toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+.count-badge {
+    position: absolute;
+    top: -10px;
+    right: -12px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
 
-        @media(max-width:768px) {
-            .main-image-wrapper {
-                height: 350px;
-            }
+.show-badge {
+    display: flex;
+}
 
-            .product-title {
-                font-size: 28px;
-                margin-top: 25px;
-            }
+.hide-badge {
+    display: none;
+}
 
-            .action-btns {
-                flex-direction: column;
-            }
+        /*TOAST NOTIFICATION */
+.custom-toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    min-width: 320px;
+    max-width: 380px;
 
-            .action-btns button {
-                width: 100%;
-            }
+    background: #ffffff;
+    color: #222;
 
-            .breadcrumb-container {
-                margin: 15px 20px;
-            }
-        }
+    padding: 16px 20px;
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    z-index: 99999;
+
+    opacity: 0;
+    transform: translateX(120%);
+
+    transition: all 0.35s ease;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.18);
+
+    border-left: 5px solid #ff3b30;
+
+    overflow: hidden;
+}
+
+.custom-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ERROR ICON */
+/* TOAST ICON */
+.custom-toast::before {
+    content: "!";
+    
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* SUCCESS */
+.custom-toast.success {
+    border-left-color: #22c55e;
+}
+
+.custom-toast.success::before {
+    content: "✓";
+    background: #e8f8ee;
+    color: #22c55e;
+}
+
+.custom-toast.success::after {
+    background: #22c55e;
+}
+
+/* ERROR */
+.custom-toast.error {
+    border-left-color: #ff3b30;
+}
+
+.custom-toast.error::before {
+    content: "!";
+    background: #ffe8e6;
+    color: #ff3b30;
+}
+
+.custom-toast.error::after {
+    background: #ff3b30;
+}
+
+/* WARNING */
+.custom-toast.warning {
+    border-left-color: #f59e0b;
+}
+
+.custom-toast.warning::before {
+    content: "!";
+    background: #fff4d6;
+    color: #f59e0b;
+}
+
+.custom-toast.warning::after {
+    background: #f59e0b;
+}
+
+/* TOAST MESSAGE */
+.custom-toast-message {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.custom-toast-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+}
+
+.custom-toast-text {
+    font-size: 13px;
+    color: #666;
+}
+
+/* PROGRESS BAR */
+.custom-toast::after {
+    content: "";
+
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    height: 3px;
+    width: 100%;
+
+    background: #ff3b30;
+
+    transform-origin: left;
+    animation: toastProgress 2.5s linear forwards;
+}
+
+@keyframes toastProgress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+@media(max-width: 600px) {
+
+    .custom-toast {
+        top: 20px;
+        right: 15px;
+        left: 15px;
+
+        min-width: auto;
+        max-width: none;
+    }
+}
+        
     </style>
 </head>
 
@@ -432,8 +574,7 @@
                     <a href="/wishlist">
                         <div style="position:relative;">
                             <i class="bi bi-heart"></i>
-                            <span id="wishlistCountBadge"
-                                style="position:absolute; top:-10px; right:-12px; background:red; color:white; font-size:10px; width:18px; height:18px; border-radius:50%; display:<%= wishlistCount > 0 ? 'flex' : 'none' %>; align-items:center; justify-content:center; font-weight:600;">
+                            <span id="wishlistCountBadge" class="count-badge <%= wishlistCount > 0 ? 'show-badge' : 'hide-badge' %>">
                                 <%= wishlistCount || 0 %>
                             </span>
                         </div>
@@ -441,24 +582,11 @@
                     <a href="/cart">
                         <div style="position:relative;">
                             <i class="bi bi-bag" style="font-size: 22px;"></i>
-                            <% if(typeof cartCount !=='undefined' && cartCount> 0){ %>
-                                <span id="cartCountBadge" style="
-                                        position:absolute;
-                                        top:-10px;
-                                        right:-12px;
-                                        background:red;
-                                        color:white;
-                                        font-size:10px;
-                                        width:18px;
-                                        height:18px;
-                                        border-radius:50%;
-                                        display:<%= cartCount > 0 ? 'flex' : 'none' %>;
-                                        align-items:center;
-                                        justify-content:center;
-                                        font-weight:600;">
-                                    <%= cartCount || 0 %>
-                                </span>
-                                <% } %>
+                        <% if(typeof cartCount !=='undefined' && cartCount> 0){ %>
+                            <span id="cartCountBadge" class="count-badge show-badge">
+                                <%= cartCount || 0 %>
+                            </span>
+                            <% } %>
                         </div>
                     </a>
                 </div>
@@ -605,7 +733,11 @@
                     </button>
 
                     <div class="action-btns">
-                        <button type="button">Buy Now</button>
+                        <button type="button" id="buyNowBtn" data-product-id="<%= product._id %>"
+                            data-variant-id="<%= variants?.[0]?._id || '' %>">
+                            Buy Now
+                        </button>
+                    
                         <button type="button" id="addToCartBtn" data-product-id="<%= product._id %>"
                             data-variant-id="<%= variants?.[0]?._id || '' %>" class="btn btn-dark">
                             Add To Cart
@@ -748,8 +880,9 @@
     <!-- LOGIC SCRIPTS ENGINE -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const addToCartBtn = document.getElementById("addToCartBtn");
+           const addToCartBtn = document.getElementById("addToCartBtn");
             const wishlistBtn = document.getElementById("wishlistBtn");
+            const buyNowBtn = document.getElementById("buyNowBtn");
             const container = document.getElementById("zoomContainer");
             const image = document.getElementById("mainProductImage");
 
@@ -785,12 +918,19 @@
                     const response = await fetch("/cart/add", {
                         method: "POST",
                         credentials: "same-origin",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
                         body: JSON.stringify({ productId, variantId })
                     });
 
                     const data = await response.json();
-                    showToast(data.message);
+                    showToast(
+                        data.message,
+                        data.success ? "Added to Cart" : "Unable to Add",
+                        data.success ? "success" : "error"
+                    );
 
                     if (data.success) {
 
@@ -812,8 +952,31 @@
                     }
                 } catch (error) {
                     console.error(error);
-                    showToast("Failed adding product to cart.");
+                   showToast(
+                        "Failed adding product to cart.",
+                        "Something Went Wrong",
+                        "error"
+                    );
                 }
+            });
+
+            // BUY NOW
+            buyNowBtn.addEventListener("click", () => {
+
+                const productId = buyNowBtn.dataset.productId;
+                const variantId = buyNowBtn.dataset.variantId;
+
+                if (!productId || !variantId) {
+                    showToast(
+                        "Please select a product variant.",
+                        "Unable to Continue",
+                        "error"
+                    );
+                    return;
+                }
+
+                window.location.href =
+                    `/buy-now?productId=${productId}&variantId=${variantId}`;
             });
 
             // WISHLIST OPERATIONS PIPELINE
@@ -829,7 +992,11 @@
                     });
 
                     const data = await response.json();
-                    showToast(data.message);
+                    showToast(
+                        data.message,
+                        data.success ? "Added to Wishlist" : "Unable to Add",
+                        data.success ? "success" : "error"
+                    );
 
                     if (data.success) {
 
@@ -904,6 +1071,7 @@
             const vId = button.dataset.variantId;
             document.getElementById("wishlistBtn").dataset.variantId = vId;
             document.getElementById("addToCartBtn").dataset.variantId = vId;
+            document.getElementById("buyNowBtn").dataset.variantId = vId;
 
             const stockStatus = document.getElementById("stockStatus");
             stockStatus.innerText = Number(stock) > 0 ? "In Stock" : "Out of Stock";
@@ -917,21 +1085,48 @@
         }
 
         // GLOBAL DYNAMIC TOAST COMPONENT
-        function showToast(message) {
-            const existingToast = document.querySelector(".custom-toast");
-            if (existingToast) { existingToast.remove(); }
+       
+        function showToast(message, title = "Notice", type = "error") {
 
-            const toast = document.createElement("div");
-            toast.className = "custom-toast";
-            toast.innerText = message;
-            document.body.appendChild(toast);
+                const existingToast = document.querySelector(".custom-toast");
 
-            setTimeout(() => { toast.classList.add("show"); }, 100);
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => { toast.remove(); }, 300);
-            }, 2500);
-        }
+                if (existingToast) {
+                    existingToast.remove();
+                }
+
+                const toast = document.createElement("div");
+
+                toast.className = `custom-toast ${type}`;
+
+                toast.innerHTML = `
+        <div class="custom-toast-message">
+            <div class="custom-toast-title">
+                ${title}
+            </div>
+
+            <div class="custom-toast-text">
+                ${message}
+            </div>
+        </div>
+    `;
+
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add("show");
+                }, 50);
+
+                setTimeout(() => {
+
+                    toast.classList.remove("show");
+
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 350);
+
+                }, 2500);
+            }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

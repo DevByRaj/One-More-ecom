@@ -3,18 +3,26 @@ import Wallet from "../models/walletModel.js"
 import WalletTopup from "../models/walletTopupModel.js"
 import {createRazorpayOrderService} from "./paymentService.js"
 
-export const getOrCreateWallet = async (userId) =>{
+export const getOrCreateWallet = async (userId, session = null) => {
 
-    let wallet = await Wallet.findOne({userId})
+    let wallet = await Wallet.findOne(
+        {userId},
+        null,
+        session ? {session} : undefined
+    )
 
-    if(!wallet){
+    if (!wallet) {
 
-        wallet = await Wallet.create({
-            userId,
-            balance: 0,
-            transactions: []
-        })
-        
+        const wallets = await Wallet.create(
+            [{
+                userId,
+                balance: 0,
+                transactions: []
+            }],
+            session ? {session} : undefined
+        )
+
+        wallet = wallets[0]
     }
 
     return wallet
