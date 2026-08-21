@@ -20,24 +20,35 @@ export const getWallet = async(req, res) =>{
     }
 }
 
-export const payWithWallet = async(req, res) =>{
+export const payWithWallet = async (req, res) => {
     try {
 
         const userId = req.session.user
 
-        const result = await payWithWalletService(userId, req.body, req.session.appliedCoupon)
+        const result = await payWithWalletService(
+            userId,
+            req.body,
+            req.session.appliedCoupon,
+            req.session.buyNow || null
+        )
 
-        res.json(result)
-        
+        if (!result.success) {
+            return res.json(result)
+        }
+
+        delete req.session.buyNow
+
+        return res.json(result)
+
     } catch (error) {
 
         console.log(error);
-        
-        res.json({
+
+        return res.json({
             success: false,
             message: "Wallet payment failed"
         })
-        
+
     }
 }
 

@@ -12,12 +12,39 @@ import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
 import Order from "../../models/orderModel.js"
 import {generateInvoice} from "../../utils/invoiceGenerator.js"
 
+export const getBuyNow = async(req, res) =>{
+    try {
+
+        const userId = req.session.user
+        
+        const {productId, variantId} = req.query
+
+        if(!productId || !variantId){
+            return res.redirect("/shop")
+        }
+
+        req.session.buyNow = {
+            productId, variantId
+        }
+
+        delete req.session.appliedCoupon
+
+        return res.redirect("/checkout")
+        
+    } catch (error) {
+
+        console.log(error);
+        
+        return res.redirect("/shop")
+    }
+}
+
 export const getCheckout = async (req, res) => {
     try {
 
         const userId = req.session.user
 
-        const result = await getCheckoutData(userId, req.session.appliedCoupon)
+        const result = await getCheckoutData(userId, req.session.appliedCoupon, req.session.buyNow)
 
         if (!result.success) {
             return res.redirect("/cart")
@@ -41,13 +68,14 @@ export const getCheckout = async (req, res) => {
     }
 }
 
+
 export const applyCoupon = async(req, res) =>{
     try {
 
         const userId = req.session.user
         const {couponCode} = req.body
 
-        const checkout = await getCheckoutData(userId)
+        const checkout = await getCheckoutData(userId, null, req.session.buyNow || null)
 
         if(!checkout.success){
             return res.json({
@@ -99,14 +127,24 @@ export const placeOrder = async (req, res) => {
 
         const appliedCoupon = req.session.appliedCoupon || null
 
-        const result = await placeOrderService(userId, {...req.body, coupon:appliedCoupon})
+        const result = await placeOrderService(
+            userId,
+            {
+                ...req.body,
+                coupon: appliedCoupon,
+                buyNow: req.session.buyNow || null
+            }
+        )
 
-        if(!result.success){
+        if (!result.success) {
             return res.json({
                 success: false,
                 message: result.message
             })
         }
+
+        delete req.session.buyNow
+        delete req.session.appliedCoupon
 
         return res.json({
             success: true,
@@ -295,11 +333,14 @@ export const downloadInvoice = async(req,res) =>{
             });
         }
 
-        invoiceOrder.subTotal = deliveredItems.reduce((total, item) => total+ item.totalPrice, 0)
+        invoiceOrder.subTotal = deliveredItems.reduce(
+            (total, item) => total + item.totalPrice,
+            0
+        )
 
-        invoiceOrder.discount = 0
+        invoiceOrder.discount = order.discount || 0
 
-        invoiceOrder.shipping = invoiceOrder.subTotal >= 1000 || invoiceOrder.subTotal === 0 ? 0 : 50
+        invoiceOrder.shipping = order.shipping || 0
 
         invoiceOrder.grandTotal = invoiceOrder.subTotal - invoiceOrder.discount + invoiceOrder.shipping
 
@@ -327,7 +368,7 @@ export const getPaymentPage = async(req, res) =>{
 
         const {addressId} = req.query
 
-        const result = await getCheckoutData(userId, req.session.appliedCoupon)
+        const result = await getCheckoutData(userId, req.session.appliedCoupon, req.session.buyNow)
 
         if(!result.success){
             return res.redirect("/cart")
