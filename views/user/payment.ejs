@@ -465,6 +465,12 @@
 
             const rzp = new Razorpay(options);
 
+            rzp.on("payment.failed", function (response) {
+
+                window.location.href = `/payment-failed/${data.orderId}`;
+
+            });
+
             rzp.open();
 
             return;

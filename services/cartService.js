@@ -316,6 +316,36 @@ export const moveToCart = async(userId, savedItemsId) =>{
     }
 }
 
+export const removeSaveditemService = async(userId, savedItemsId) =>{
+
+    const cart = await Cart.findOne({userId})
+
+    if(!cart){
+        return{
+            success: false,
+            message: "Cart not found"
+        }
+    }
+
+    const item = cart.savedItems.id(savedItemsId)
+
+    if(!item){
+        return{
+            success: false,
+            message: "Saved item not found"
+        }
+    }
+
+    cart.savedItems.pull(savedItemsId)
+
+    await cart.save()
+
+    return{
+        success: true,
+        message: "Saved item removed successfully"
+    }
+}
+
 export const calculateCartTotals = (cart, couponDiscount = 0) =>{
 
     let subtotal = 0
