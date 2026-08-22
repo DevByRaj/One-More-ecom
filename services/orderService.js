@@ -308,6 +308,8 @@ export const placeOrderService = async (userId, orderData, session = null) => {
 
                 salePrice: offer.finalPrice,
 
+                offerDiscount: offer.discountAmount * item.quantity,
+
                 totalPrice: offer.finalPrice * item.quantity,
 
                 status: "Pending"
@@ -599,6 +601,8 @@ export const createPendingOrderService = async (userId, orderData, appliedCoupon
                 regularPrice: item.variantId.regularPrice,
 
                 salePrice: offer.finalPrice,
+
+                offerDiscount: offer.discountAmount * item.quantity,
 
                 totalPrice:
                     offer.finalPrice * item.quantity,
