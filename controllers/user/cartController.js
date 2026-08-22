@@ -4,7 +4,7 @@ import {
     updateCartItemQuantity,
     removeProductFromCart,
     saveItemForLater,
-    moveToCart, calculateCartTotals
+    moveToCart, removeSaveditemService, calculateCartTotals
 } from "../../services/cartService.js"
 import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
 
@@ -155,6 +155,25 @@ export const moveSavedItemToCart = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "something went wrong"
+        })
+    }
+}
+
+export const removeSaveditem = async(req, res) =>{
+    try {
+
+        const userId = req.session.user
+        const result = await removeSaveditemService(userId, req.params.id)
+
+        return res.json(result)
+        
+    } catch (error) {
+
+        console.log(error);
+        
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong"
         })
     }
 }

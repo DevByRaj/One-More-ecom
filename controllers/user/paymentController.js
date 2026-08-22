@@ -1,10 +1,10 @@
 import crypto from "crypto"
-
 import Order from "../../models/orderModel.js";
-
+import Product from "../../models/productModel.js"
+import Variant from "../../models/variantModel.js";
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
-
 import {getCheckoutData, createPendingOrderService, placeOrderService, completeRazorpayOrderService} from "../../services/orderService.js";
+
 
 export const createRazorpayOrder = async (req, res) => {
     try {
@@ -111,7 +111,7 @@ export const verifyPayment = async (req, res) => {
             req.session.buyNow || null
         )
 
-        if(!result.success){
+        if (!result.success) {
             return res.json(result)
         }
 
@@ -157,19 +157,58 @@ export const getPaymentFailed = async (req, res) => {
 export const retryPayment = async (req, res) => {
     try {
 
-        const order = await Order.findById(req.params.id)
+        const userId = req.session.user
+        const order = await Order.findOne({
+            _id: req.params.id,
+            userId
+        })
 
         if (!order) {
-            return res.redirect("/orders")
+            return res.json({
+                success: false,
+                message: "Order not found"
+            })
         }
 
-        const razorpayOrder = await  retryRazorpayOrderService(order.grandTotal)
+        for (const item of order.items) {
+
+            if (item.status === "Cancelled" || item.status === "Returned") {
+                continue
+            }
+
+            const variant = await Variant.findById(item.variantId)
+
+            if (!variant || !variant.isListed) {
+                return res.json({
+                    success: false,
+                    message: `${item.productName} is no longer available`
+                })
+            }
+
+            if (variant.stock < item.quantity) {
+                return res.json({
+                    success: false,
+                    message: `${item.productName} is out of stock`
+                })
+            }
+
+            const product = await Product.findById(item.productId)
+
+            if(!product || !product.isListed){
+                return res.json({
+                    success: false,
+                    message: `${item.productName} is no longer available`
+                })
+            }
+        }
+
+        const razorpayOrder = await retryRazorpayOrderService(order.grandTotal)
 
         order.razorpayOrderId = razorpayOrder.id
-        
-        await  order.save()
 
-        res.json({
+        await order.save()
+
+        return res.json({
             success: true,
             order: razorpayOrder,
             key: process.env.RAZORPAY_KEY_ID
@@ -179,7 +218,10 @@ export const retryPayment = async (req, res) => {
 
         console.log(error);
 
-        res.redirect("/orders")
+        return res.status(500).json({
+            success: false,
+            message: "Unavailabe to retry payment"
+        })
 
     }
 }
