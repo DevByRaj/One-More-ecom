@@ -91,7 +91,7 @@ router.get("/orders/:id", isAdminLoggedIn, getOrderDetails)
 
 router.post("/orders/update-item-status", isAdminLoggedIn, updateOrderItemStatus)
 
-router.get("sales-report", isAdminLoggedIn, getSalesReport)
+router.get("/sales-report", isAdminLoggedIn, getSalesReport)
 
 router.get("/offers", isAdminLoggedIn, getOfferList);
 
