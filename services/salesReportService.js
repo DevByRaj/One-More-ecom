@@ -1,7 +1,6 @@
 import Order from "../models/orderModel.js";
-import User from "../models/userModel.js";
 
-export const getSalesReportService = async (startDate, endDate, page = 1, limit = 10) => {
+export const getSalesReportService = async (startDate, endDate, page = 1, limit = 10, paginate = true) => {
 
     const start = new Date(startDate)
     start.setHours(0, 0, 0, 0)
@@ -61,11 +60,43 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
     }
 
     const totalSalesRows = sales.length
-    const totalPages = Math.ceil(totalSalesRows/limit)
-    const currentPage = Math.max(1, Math.min(page, totalPages || 1))
-    const skip = (currentPage - 1) * limit
-    const paginatedSales = sales.slice(skip, skip + limit)
 
+    // For PDF / Excel export
+    // Return all rows without pagination
+    if (!paginate) {
+
+        return {
+            totalSales,
+            totalOrders,
+            couponDiscount,
+            offerDiscount,
+            netRevenue: totalSales,
+
+            sales,
+
+            pagination: {
+                currentPage: 1,
+                totalPages: 1,
+                totalSalesRows,
+                hasPrev: false,
+                hasNext: false
+            }
+        }
+    }
+
+    const totalPages = Math.ceil(totalSalesRows / limit)
+
+    const currentPage = Math.max(
+        1,
+        Math.min(page, totalPages || 1)
+    )
+
+    const skip = (currentPage - 1) * limit
+
+    const paginatedSales = sales.slice(
+        skip,
+        skip + limit
+    )
     return {
         totalSales,
         totalOrders,
