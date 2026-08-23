@@ -222,9 +222,21 @@
                     <div class="dropdown">
                 
                         <button class="btn btn-filter dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                
-                            Filter
-                
+                        
+                            <% if (filter==="daily" ) { %>
+                                Daily
+                                <% } else if (filter==="weekly" ) { %>
+                                    Weekly
+                                    <% } else if (filter==="monthly" ) { %>
+                                        Monthly
+                                        <% } else if (filter==="yearly" ) { %>
+                                            Yearly
+                                            <% } else if (filter==="custom" ) { %>
+                                                Custom Date Range
+                                                <% } else { %>
+                                                    Filter
+                                                    <% } %>
+                        
                         </button>
                 
                         <ul class="dropdown-menu">
@@ -269,7 +281,17 @@
                 
                 </div>
                 <div class="col-6 col-sm-3 col-md-2 text-end">
-                    <a href="/sales-report/download-pdf" class="btn btn-pdf w-100">PDF Download</a>
+                
+                    <a href="/admin/sales-report/download-pdf?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
+                        class="btn btn-pdf w-100 mb-2">
+                        PDF Download
+                    </a>
+                
+                    <a href="/admin/sales-report/download-excel?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
+                        class="btn btn-success w-100">
+                        Excel Download
+                    </a>
+                
                 </div>
             </div>
         </div>
