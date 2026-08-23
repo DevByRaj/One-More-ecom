@@ -21,6 +21,7 @@ import upload from "../middlewares/multer.js"
 import {getOrders, getOrderDetails, updateOrderItemStatus} from "../controllers/admin/orderController.js"
 import{ getOfferList, getAddOffer, addOffer, getEditOffer, updateOffer, deleteOffer} from "../controllers/admin/offerController.js"
 import { getCouponList, getAddCoupon, createCoupon, getEditCoupon, updateCoupon,deleteCoupon } from "../controllers/admin/couponcontroller.js"
+import {getSalesReport} from "../controllers/admin/salesReportController.js"
 
 const router = express.Router()
 
@@ -89,6 +90,8 @@ router.get("/orders", isAdminLoggedIn, getOrders)
 router.get("/orders/:id", isAdminLoggedIn, getOrderDetails)
 
 router.post("/orders/update-item-status", isAdminLoggedIn, updateOrderItemStatus)
+
+router.get("/sales-report", isAdminLoggedIn, getSalesReport)
 
 router.get("/offers", isAdminLoggedIn, getOfferList);
 

@@ -17,8 +17,12 @@ const orderItemschema = new mongoose.Schema({
     variantName: String,
     productImage: String,
     quantity: Number,
-    regularPrice: String,
+    regularPrice: Number,
     salePrice: Number,
+    offerDiscount: {
+        type: Number,
+        default: 0
+    },
     totalPrice: Number,
 
     status:{
