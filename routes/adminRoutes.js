@@ -22,6 +22,7 @@ import {getOrders, getOrderDetails, updateOrderItemStatus} from "../controllers/
 import{ getOfferList, getAddOffer, addOffer, getEditOffer, updateOffer, deleteOffer} from "../controllers/admin/offerController.js"
 import { getCouponList, getAddCoupon, createCoupon, getEditCoupon, updateCoupon,deleteCoupon } from "../controllers/admin/couponcontroller.js"
 import {getSalesReport, downloadSalesReportPdf, downloadSalesReportExcel} from "../controllers/admin/salesReportController.js"
+import {getDashboard} from "../controllers/admin/dashboardController.js";
 
 const router = express.Router()
 
@@ -30,9 +31,7 @@ router.post("/login", isAdminLoggedOut, postAdminLogin)
 
 router.get("/logout", adminLogout)
 
-router.get("/dashboard", isAdminLoggedIn, (req, res) => {
-    res.render("admin/dashboard")
-})
+router.get("/dashboard", isAdminLoggedIn, getDashboard)
 
 router.get("/users", isAdminLoggedIn, getUsers)
 
