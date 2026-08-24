@@ -12,6 +12,8 @@
     <!-- Google Font: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --bg-dark: #000000;
@@ -135,6 +137,12 @@
             text-decoration: none;
         }
 
+        .active-filter {
+    background-color: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: #ffffff;
+}
+
         /* --- TOP TOOLS --- */
         .top-tools {
             display: flex;
@@ -238,8 +246,17 @@
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h2 class="section-title">Sales Summary</h2>
                     <div class="top-tools">
-                        <select class="year-select">
-                            <option>2024</option>
+                        <select class="year-select"
+                            onchange="window.location.href='/admin/dashboard?year=' + this.value">
+
+                            <% for (let year=2024; year <=new Date().getFullYear(); year++) { %>
+
+                                <option value="<%= year %>" <%=selectedYear===year ? 'selected' : '' %>>
+                                    <%= year %>
+                                </option>
+
+                                <% } %>
+
                         </select>
                         <button class="btn-download">Download</button>
                     </div>
@@ -249,40 +266,71 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <div class="stat-card">
-                            <div class="stat-header"><span>Revenue</span> <span class="trend-up">+ 22%</span></div>
-                            <div class="stat-value">$7,825</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="stat-header"><span>Orders</span> <span class="trend-down">- 25%</span></div>
-                            <div class="stat-value">900</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="stat-header"><span>Products Sold</span> <span class="trend-neutral">+ 45%</span>
+                            <div class="stat-header"><span>Revenue</span></div>
+                            <div class="stat-value">
+                                ₹<%= Number(totalRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2 }) %>
                             </div>
-                            <div class="stat-value">14.4k</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="stat-card">
-                            <div class="stat-header"><span>Total customers</span> <span class="trend-neutral">+
-                                    4%</span></div>
-                            <div class="stat-value">100</div>
+                            <div class="stat-header"><span>Orders</span></div>
+                            <div class="stat-value">
+                                <%= Number(totalOrders || 0).toLocaleString('en-IN') %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Products Sold</span>
+                            </div>
+                            <div class="stat-value">
+                                <%= Number(productsSold || 0).toLocaleString('en-IN') %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Total Customers</span></div>
+                            <div class="stat-value">
+                                <%= Number(totalCustomers || 0).toLocaleString('en-IN') %>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Chart Placeholder -->
                 <div class="chart-container">
-                    <div class="chart-header">
-                        <div class="small"><span style="color: #f2a900;">●</span> Orders Update</div>
-                        <a href="#" class="view-details-btn">View Details <i class="bi bi-arrow-right"></i></a>
+                <div class="chart-header">
+                
+                    <div class="small">
+                        <span style="color: #f2a900;">●</span>
+                        Orders Update
                     </div>
-                    <div style="height: 300px; border-bottom: 1px dashed #333; position: relative;">
-                        <p class="text-muted text-center pt-5 mt-5">Chart visualization goes here</p>
+                
+                    <div class="d-flex gap-2">
+                
+                        <a href="/admin/dashboard?year=<%= selectedYear %>&filter=weekly"
+                            class="view-details-btn <%= filter === 'weekly' ? 'active-filter' : '' %>">
+                            Weekly
+                        </a>
+                
+                        <a href="/admin/dashboard?year=<%= selectedYear %>&filter=monthly&month=<%= new Date().getMonth() %>"
+                            class="view-details-btn <%= filter === 'monthly' ? 'active-filter' : '' %>">
+                            Monthly
+                        </a>
+                
+                        <a href="/admin/dashboard?year=<%= selectedYear %>&filter=yearly"
+                            class="view-details-btn <%= filter === 'yearly' ? 'active-filter' : '' %>">
+                            Yearly
+                        </a>
+                
+                    </div>
+                
+                </div>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="salesChart" style="width: 100%; height: 100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -292,6 +340,213 @@
             © 2026 onemore. All Rights Reserved.
         </div>
     </div>
+
+    <script>
+
+        const salesData =
+            <%- JSON.stringify(monthlySales) %>;
+
+        const currentFilter =
+            "<%= filter %>";
+
+
+        let chartLabels = [];
+
+
+        if (currentFilter === "yearly") {
+
+            chartLabels = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec"
+            ];
+
+        } else if (currentFilter === "monthly") {
+
+            chartLabels =
+                salesData.map(item =>
+                    item.day
+                );
+
+        } else if (currentFilter === "weekly") {
+
+            const today = new Date();
+
+            chartLabels =
+                salesData.map((item, index) => {
+
+                    const date =
+                        new Date();
+
+                    date.setDate(
+                        today.getDate() -
+                        (6 - index)
+                    );
+
+                    return date.toLocaleDateString(
+                        "en-IN",
+                        {
+                            day: "2-digit",
+                            month: "short"
+                        }
+                    );
+
+                });
+
+        }
+
+
+        const revenueData =
+            salesData.map(
+                item => Number(item.revenue || 0)
+            );
+
+
+        const ordersData =
+            salesData.map(
+                item => Number(item.orders || 0)
+            );
+
+
+        const ctx =
+            document.getElementById("salesChart");
+
+
+        new Chart(ctx, {
+
+            type: "line",
+
+            data: {
+
+                labels: chartLabels,
+
+                datasets: [
+
+                    {
+                        label: "Revenue",
+
+                        data: revenueData,
+
+                        borderColor: "#00ff00",
+                        backgroundColor: "#00ff00",
+
+                        borderWidth: 2,
+
+                        tension: 0.4,
+
+                        pointBackgroundColor: "#00ff00",
+                        pointBorderColor: "#00ff00",
+
+                        yAxisID: "revenue"
+                    },
+
+
+                    {
+                        label: "Orders",
+
+                        data: ordersData,
+
+                        borderColor: "#0066cc",
+                        backgroundColor: "#0066cc",
+
+                        borderWidth: 2,
+
+                        tension: 0.4,
+
+                        pointBackgroundColor: "#0066cc",
+                        pointBorderColor: "#0066cc",
+
+                        yAxisID: "orders"
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        labels: {
+                            color: "#ffffff"
+                        }
+
+                    }
+
+                },
+
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+                            color: "#888888"
+                        },
+
+                        grid: {
+                            color: "#222222"
+                        }
+
+                    },
+
+
+                    revenue: {
+
+                        type: "linear",
+
+                        position: "left",
+
+                        ticks: {
+                            color: "#888888"
+                        },
+
+                        grid: {
+                            color: "#222222"
+                        }
+
+                    },
+
+
+                    orders: {
+
+                        type: "linear",
+
+                        position: "right",
+
+                        ticks: {
+                            color: "#888888"
+                        },
+
+                        grid: {
+                            drawOnChartArea: false
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    </script>
 
 </body>
 

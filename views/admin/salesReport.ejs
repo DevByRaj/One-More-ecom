@@ -195,12 +195,8 @@
 <body class="p-3 p-md-4">
 
     <!-- Header / Brand Logo -->
-    <div class="mb-3 ps-2">
-        <div class="d-flex align-items-center">
-            <!-- Standard Icon / SVG replacement for logo -->
-            <i class="bi bi-person-workspace text-white fs-2 me-2"></i>
-            <span class="fw-bold fs-3 text-white">iM</span>
-        </div>
+    <div class="mb-4 ps-3">
+        <img src="/images/logo.png" alt="OneMore" style="width: 60px;">
     </div>
 
     <div class="container-fluid px-0">
@@ -347,24 +343,31 @@
             <div class="col-12 col-lg-2">
                 <div class="card sidebar border-purple p-2">
                     <ul class="nav flex-column gap-1">
-                        <% const menuItems=[ { name: 'Dashboard' , icon: 'bi-pie-chart' , key: 'dashboard' }, {
-                            name: 'Products' , icon: 'bi-grid-3x3-gap' , key: 'products' }, { name: 'Customers' ,
-                            icon: 'bi-people' , key: 'customers' }, { name: 'Orders' , icon: 'bi-cart' , key: 'orders'
-                            }, { name: 'Coupons' , icon: 'bi-receipt' , key: 'coupons' }, { name: 'Category' ,
-                            icon: 'bi-grid' , key: 'category' }, { name: 'Brand' , icon: 'bi-bag' , key: 'brand' }, {
-                            name: 'Offers' , icon: 'bi-percent' , key: 'offers' }, { name: 'Banner' , icon: 'bi-image' ,
-                            key: 'banner' }, { name: 'Sales Report' , icon: 'bi-bar-chart-line' , key: 'sales-report' },
-                            { name: 'Logout' , icon: 'bi-power' , key: 'logout' } ]; const activePage=typeof currentPage
-                            !=='undefined' ? currentPage : 'sales-report' ; %>
-
+                        <% const menuItems=[ { name: 'Dashboard' , icon: 'bi-pie-chart' , key: 'dashboard' , path: '/admin/dashboard' }, {
+                            name: 'Products' , icon: 'bi-grid-3x3-gap' , key: 'products' , path: '/admin/products' }, { name: 'Customers' ,
+                            icon: 'bi-people' , key: 'customers' , path: '/admin/users' }, { name: 'Orders' , icon: 'bi-cart' , key: 'orders' ,
+                            path: '/admin/orders' }, { name: 'Coupons' , icon: 'bi-receipt' , key: 'coupons' , path: '/admin/coupons' }, {
+                            name: 'Category' , icon: 'bi-grid' , key: 'category' , path: '/admin/category' }, { name: 'Brand' , icon: 'bi-bag' ,
+                            key: 'brand' , path: '/admin/brand' }, { name: 'Offers' , icon: 'bi-percent' , key: 'offers' , path: '/admin/offers'
+                            }, { name: 'Banner' , icon: 'bi-image' , key: 'banner' , path: '/admin/banner' }, { name: 'Sales Report' ,
+                            icon: 'bi-bar-chart-line' , key: 'sales-report' , path: '/admin/sales-report' }, { name: 'Logout' , icon: 'bi-power'
+                            , key: 'logout' , path: '/admin/logout' } ]; const activePage=typeof currentPage !=='undefined' ? currentPage
+                            : 'sales-report' ; %>
+                        
                             <% menuItems.forEach(item=> { %>
+                        
                                 <li class="nav-item">
-                                    <a href="/<%= item.key %>"
-                                        class="nav-link <%= activePage === item.key ? 'active' : '' %>">
+                        
+                                    <a href="<%= item.path %>" class="nav-link <%= activePage === item.key ? 'active' : '' %>">
+                        
                                         <i class="bi <%= item.icon %>"></i>
+                        
                                         <%= item.name %>
+                        
                                     </a>
+                        
                                 </li>
+                        
                                 <% }); %>
                     </ul>
                 </div>
