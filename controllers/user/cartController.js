@@ -58,13 +58,18 @@ export const getCart = async (req, res) => {
 
         const totals = calculateCartTotals(cart)
 
+        const checkoutError = req.session.checkoutError
+
+        delete req.session.checkoutError
+
         return res.render(
             "user/cart",
             {
                 cart,
                 totals,
                 savedItems: cart?.savedItems || [],
-                freeShippingLimit: FREE_SHIPPING_LIMIT
+                freeShippingLimit: FREE_SHIPPING_LIMIT,
+                checkoutError
             }
         )
 

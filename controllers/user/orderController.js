@@ -47,6 +47,8 @@ export const getCheckout = async (req, res) => {
         const result = await getCheckoutData(userId, req.session.appliedCoupon, req.session.buyNow)
 
         if (!result.success) {
+
+            req.session.checkoutError = result.message
             return res.redirect("/cart")
         }
 
@@ -80,7 +82,7 @@ export const applyCoupon = async(req, res) =>{
         if(!checkout.success){
             return res.json({
                 success: false,
-                message: "your cart is empty"
+                message: checkout.message || "Unable to load checkout"
             })
         }
 
@@ -371,6 +373,7 @@ export const getPaymentPage = async(req, res) =>{
         const result = await getCheckoutData(userId, req.session.appliedCoupon, req.session.buyNow)
 
         if(!result.success){
+            req.session.checkoutError = result.message
             return res.redirect("/cart")
         }
 

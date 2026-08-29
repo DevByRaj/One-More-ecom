@@ -12,6 +12,8 @@ import {creditWallet, getOrCreateWallet} from "./walletService.js"
 import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
 import { calculateBestOffer } from "./offerCalulationService.js"
 import { applyCouponService } from "./couponService.js"
+
+
 export const allowedStatusTransitions = {
     Pending: [
         "Pending",
@@ -167,6 +169,15 @@ export const getCheckoutData = async (userId, appliedCoupon = null, buyNow = nul
         }
     }
 
+    for(const item of cart.items){
+        if(!item.variantId || item.variantId.stock < item.quantity){
+            return{
+                success: false,
+                message: `${item.productId.productName} has only ${item.variantId?.stock || 0} item(s) available`
+            }
+        }
+    }
+
     let couponDiscount = 0
 
     if (appliedCoupon?.couponCode) {
@@ -279,7 +290,7 @@ export const placeOrderService = async (userId, orderData, session = null) => {
         if (item.variantId.stock < item.quantity) {
             return {
                 success: false,
-                message: `${item.productId.productName} is out of stock`
+                message: `${item.productId.productName} has only ${item.variantId.stock} item(s) available`
             }
         }
     }
@@ -699,17 +710,19 @@ export const getOrderDetailsService = async (userId, orderId) => {
 
 const recalculateOrderTotals = (order) => {
 
-    const activeItems = order.items.filter(item => item.status !== "Cancelled" && item.status !== "Returned")
+    const activeItems = order.items.filter(
+        item => !["Cancelled", "Returned"].includes(item.status)
+    )
 
     const subtotal = activeItems.reduce((total, item) => total + item.totalPrice, 0)
 
-    let discount = 0
-
-    const grandTotal = subtotal - discount + order.shipping
-
     order.subTotal = subtotal
-    order.discount = discount
-    order.grandTotal = grandTotal
+
+    order.shipping = subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT ? SHIPPING_CHARGE: 0
+
+    order.discount = Math.min(order.discount || 0, subtotal)
+
+    order.grandTotal =  order.subTotal - order.discount + order.shipping
 }
 
 const calculateOverallOrderStatus = (items) => {
@@ -732,24 +745,24 @@ const calculateOverallOrderStatus = (items) => {
         return "Delivered"
     }
 
-    if (activeItems.some(item => item.status === "Pending")) {
-        return "Pending";
+    if(activeItems.every(item => item.status === "Delivered")){
+        return "Delivered"
     }
 
-    if (activeItems.some(item => item.status === "Processing")) {
+    if(activeItems.some(item => item.status === "Out For Delivery")){
+        return "Out For Delivery"
+    }
+
+    if(activeItems.some(item => item.status === "Shipped")){
+        return "Shipped"
+    }
+
+    if(activeItems.some(item => item.status === "Processing")){
         return "Processing"
     }
 
-    if (activeItems.some(item => item.status === "Shipped")) {
-        return "Shipped";
-    }
-
-    if (activeItems.some(item => item.status === "Out For Delivery")) {
-        return "Out For Delivery";
-    }
-
-    if (activeItems.every(item => item.status === "Delivered")) {
-        return "Delivered";
+    if(activeItems.some(item => item.status === "Pending")){
+        return "Pending"
     }
 
     return "Pending"
@@ -810,36 +823,33 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
-    if (order.paymentStatus === "Paid") {
+    const previousGrandTotal = order.grandTotal
 
-        const itemDiscount =
-            order.subTotal > 0
-                ? (item.totalPrice / order.subTotal) * order.discount
-                : 0
+    if(order.discount > 0 && order.subTotal > 0){
 
-        let refundAmount = item.totalPrice - itemDiscount
+        const itemDiscount = (item.totalPrice / order.subTotal) * order.discount
 
-        const remainingActiveItems = order.items.filter(orderItem => {
-            if (orderItem._id.toString() === item._id.toString()) {
-                return false
-            }
+        order.discount = Math.max(0, order.discount - itemDiscount)
+    }
 
-            return !["Cancelled", "Returned"].includes(orderItem.status)
-        })
+    recalculateOrderTotals(order)
 
-        const isLastActiveItem = remainingActiveItems.length === 0
+    order.orderStatus = calculateOverallOrderStatus(order.items)
 
-        if (isLastActiveItem) {
-            refundAmount += order.shipping
+    if(order.paymentStatus === "Paid"){
+
+        const refundAmount = previousGrandTotal - order.grandTotal
+
+        if(refundAmount > 0){
+
+            await creditWallet(
+                order.userId,
+                refundAmount,
+                `Refund for cancelled product - ${item.productName}`,
+                order._id,
+                "Refund"
+            )
         }
-
-        await creditWallet(
-            order.userId,
-            refundAmount,
-            `Refund for cancelled product - ${item.productName}`,
-            order._id,
-            "Refund"
-        )
     }
 
     await order.save()
@@ -1107,7 +1117,7 @@ export const payWithWalletService = async (
 
             return {
                 success: false,
-                message: "Cart is empty"
+                message: checkout.message || "Cart is empty"
             }
         }
 

@@ -618,7 +618,21 @@
         <div class="cart-container">
             <h2 class="page-title">Shopping Cart</h2>
 
-
+            <% if (checkoutError) { %>
+            
+                <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+            
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            
+                    <strong>Stock updated:</strong>
+                    <%= checkoutError %>
+            
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        </button>
+            
+                </div>
+            
+                <% } %>
 
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -1010,6 +1024,7 @@
 
                     } catch (error) {
                         console.error("Error updating quantity:", error);
+                        showToast("Unable to update quantity. Please try again.");
                     }
                 });
             });

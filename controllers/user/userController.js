@@ -1029,7 +1029,12 @@ export const getProductDetails = async (req, res) => {
       return res.redirect("/shop")
     }
 
-    res.render("user/productDetails", productData)
+    const unavailable = !productData.product.isListed
+
+    res.render("user/productDetails", {
+      ...productData,
+      unavailable
+    })
 
   } catch (error) {
     console.log(error)

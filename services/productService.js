@@ -189,7 +189,7 @@ export const getProductDetailsService = async (productId) => {
 
     const product = await Product.findById(productId).populate("brand").populate("category").lean()
 
-    if (!product || !product.isListed) {
+    if (!product) {
         return null
     }
 
