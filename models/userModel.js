@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema(
             default: null
         },
 
+        referralRewardClaimed: {
+            type: Boolean,
+            default: false
+        },
+
         otp: {
             type: String,
         },

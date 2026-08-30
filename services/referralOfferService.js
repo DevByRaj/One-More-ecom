@@ -1,5 +1,6 @@
 import ReferralOffer from "../models/referralOfferModel.js";
-
+import User from "../models/userModel.js";
+import { creditWallet } from "./walletService.js";
 
 export const getReferralOffersService = async () => {
 
@@ -147,18 +148,6 @@ export const updateReferralOfferService = async (id, offerData) => {
         success: true,
         offer
     }
-
-    if (!offer) {
-        return {
-            success: false,
-            message: "Referral offer not found"
-        }
-    }
-
-    return {
-        success: true,
-        offer
-    }
 }
 
 
@@ -175,5 +164,86 @@ export const deleteReferralOfferService = async (id) => {
 
     return {
         success: true
+    }
+}
+
+export const processReferralRewardService = async (userId) => {
+
+    const referredUser = await User.findById(userId)
+
+    if (!referredUser) {
+        return {
+            success: false,
+            message: "User not found"
+        }
+    }
+
+    if (!referredUser.referredBy) {
+        return {
+            success: false,
+            message: "User was not referred"
+        }
+    }
+
+    if (referredUser.referralRewardClaimed) {
+        return {
+            success: false,
+            message: "Referral reward already claimed"
+        }
+    }
+
+    const now = new Date()
+
+    const referralOffer = await ReferralOffer.findOne({
+        isActive: true,
+        startDate: {$lte: now},
+        endDate: {$gte: now}
+    }).sort({
+        createdAt: -1
+    })
+
+    if (!referralOffer) {
+        return {
+            success: false,
+            message: "No active referral offer"
+        }
+    }
+
+    const referrer = await User.findById(
+        referredUser.referredBy
+    )
+
+    if (!referrer) {
+        return {
+            success: false,
+            message: "Referring user not found"
+        };
+    }
+
+    await creditWallet(
+        referrer._id,
+        referralOffer.referrerReward,
+        "Referral reward",
+        null,
+        "Credit"
+    );
+
+    await creditWallet(
+        referredUser._id,
+        referralOffer.referredUserReward,
+        "Referral signup reward",
+        null,
+        "Credit"
+    )
+
+    referredUser.referralRewardClaimed = true;
+
+    await referredUser.save()
+
+    return {
+        success: true,
+        message: "Referral rewards credited successfully",
+        referrerReward: referralOffer.referrerReward,
+        referredUserReward: referralOffer.referredUserReward
     }
 }
