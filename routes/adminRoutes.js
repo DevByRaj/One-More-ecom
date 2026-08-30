@@ -23,6 +23,7 @@ import{ getOfferList, getAddOffer, addOffer, getEditOffer, updateOffer, deleteOf
 import { getCouponList, getAddCoupon, createCoupon, getEditCoupon, updateCoupon,deleteCoupon } from "../controllers/admin/couponcontroller.js"
 import {getSalesReport, downloadSalesReportPdf, downloadSalesReportExcel} from "../controllers/admin/salesReportController.js"
 import {getDashboard} from "../controllers/admin/dashboardController.js";
+import {getReferralOfferList, getAddReferralOffer, addReferralOffer, getEditReferralOffer,updateReferralOffer, deleteReferralOffer} from "../controllers/admin/referralOfferController.js";
 
 const router = express.Router()
 
@@ -121,5 +122,19 @@ router.get("/best-selling-products", isAdminLoggedIn, getBestSellingProducts)
 router.get("/best-selling-categories", isAdminLoggedIn, getBestSellingCategories)
 
 router.get("/best-selling-brands", isAdminLoggedIn, getBestSellingBrands)
+
+router.get("/referral-offers", isAdminLoggedIn, getReferralOfferList)
+
+router.get("/referral-offers/add", isAdminLoggedIn, getAddReferralOffer)
+
+router.post("/referral-offers/add", isAdminLoggedIn, addReferralOffer)
+
+router.get("/referral-offers/edit/:id", isAdminLoggedIn, getEditReferralOffer)
+
+router.post("/referral-offers/edit/:id", isAdminLoggedIn, updateReferralOffer)
+
+router.post("/referral-offers/delete/:id", isAdminLoggedIn, deleteReferralOffer)
+
+router.get("/referral-offers", isAdminLoggedIn, getReferralOfferList)
 
 export default router

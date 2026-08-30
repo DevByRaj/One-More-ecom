@@ -16,9 +16,13 @@ import {getWishlist} from "../../services/wishlistService.js"
 
 
 export const getSignup = (req, res) => {
+
+  const refCode = req.query.ref || ""
+
   res.render("user/signup", {
     errors: [],
-    oldData: {}
+    oldData: {},
+    refCode
   })
 }
 
@@ -35,7 +39,7 @@ export const postSignup = async (req, res) => {
 
     const {name, email, password, refCode} = req.body
 
-    let user = - await findUserByEmail(email)
+    let user = await findUserByEmail(email)
 
 
     if (user && user.isVerified) {
@@ -304,11 +308,24 @@ export const verifyOTP = async (req, res) => {
       })
     }
 
+    let referredBy = null
+
+    if (tempUser.refCode) {
+
+      const referringUser = await User.findOne({
+        referralCode: tempUser.refCode
+      })
+
+      if (referringUser) {
+        referredBy = referringUser._id
+      }
+    }
+
     const newUser = new User({
       name: tempUser.name,
       email: tempUser.email,
       password: tempUser.password,
-      refCode: tempUser.refCode,
+      referredBy,
       isVerified: true
     })
 
