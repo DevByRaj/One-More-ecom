@@ -822,6 +822,12 @@
                             </form>
                             
                             <div id="couponMessage" class="small mt-2"></div>
+                            
+                            <div id="removeCouponContainer" class="mt-2" style="<%= appliedCoupon ? '' : 'display: none;' %>">
+                                <button type="button" id="removeCouponBtn" class="btn btn-sm btn-outline-danger">
+                                    Remove Coupon
+                                </button>
+                            </div>
                         
                         
                             <!-- Available Coupons -->
@@ -836,7 +842,8 @@
                         
                                     <% coupons.forEach(coupon=> { %>
                         
-                                    <div class="coupon-card mb-2" data-coupon-code="<%= coupon.couponCode %>">
+                                <div class="coupon-card mb-2" data-coupon-code="<%= coupon.couponCode %>"
+                                    style="<%= appliedCoupon && appliedCoupon.couponCode === coupon.couponCode ? 'display:none;' : '' %>">
                                     
                                     <div>
                                         <strong>
@@ -1242,28 +1249,26 @@
                     document.getElementById("checkoutGrandTotal").textContent =
                         grandTotal.toFixed(2);
 
-                        document
-                        .querySelectorAll(".coupon-card")
-                        .forEach(card => {
+                       document.querySelectorAll(".coupon-card").forEach(card => {
 
-                            const cardCode =
-                                card.dataset.couponCode.toUpperCase();
+                        const cardCode =
+                            card.dataset.couponCode.toUpperCase();
 
-                            const appliedCode =
-                                couponCode.trim().toUpperCase();
+                        const appliedCode =
+                            data.couponCode.toUpperCase();
 
-                            if (cardCode === appliedCode) {
-                                card.style.display = "none";
-                            } else {
-                                card.style.display = "flex";
-                            }
-
-                        });
+                        card.style.display =
+                            cardCode === appliedCode
+                                ? "none"
+                                : "flex";
+                    });
 
                     showCouponMessage(
                         `Coupon applied successfully. You saved ₹${Number(data.discount).toFixed(2)}`,
                         true
                     );
+
+                    document.getElementById("removeCouponContainer").style.display = "block";
 
                 } catch (error) {
 
@@ -1319,6 +1324,42 @@
                     });
 
                 });
+
+                document.getElementById("removeCouponBtn")
+                        ?.addEventListener("click", async function () {
+
+                            try {
+
+                                const response = await fetch("/remove-coupon", {
+                                    method: "POST"
+                                });
+
+                                const data = await response.json();
+
+                                if (!data.success) {
+
+                                    showCouponMessage(
+                                        data.message,
+                                        false
+                                    );
+
+                                    return;
+                                }
+
+                                // Reload checkout so totals and coupons are refreshed
+                                window.location.reload();
+
+                            } catch (error) {
+
+                                console.log(error);
+
+                                showCouponMessage(
+                                    "Unable to remove coupon.",
+                                    false
+                                );
+                            }
+
+                        });
 
         </script>
         

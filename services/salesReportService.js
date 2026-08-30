@@ -61,8 +61,6 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
 
     const totalSalesRows = sales.length
 
-    // For PDF / Excel export
-    // Return all rows without pagination
     if (!paginate) {
 
         return {
@@ -113,5 +111,340 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
             hasPrev: currentPage > 1,
             hasNext: currentPage < totalPages
         }
+    }
+}
+
+export const getBestSellingProductsService = async (page = 1, limit = 10) => {
+
+    const skip = (page - 1) * limit
+
+    const bestSellingProducts = await Order.aggregate([
+
+        {
+            $unwind: "$items"
+        },
+
+        {
+            $match: {
+                "items.status": "Delivered"
+            }
+        },
+
+        {
+            $group: {
+                _id: "$items.productId",
+
+                productName: {
+                    $first: "$items.productName"
+                },
+
+                totalQuantitySold: {
+                    $sum: "$items.quantity"
+                },
+
+                totalRevenue: {
+                    $sum: "$items.totalPrice"
+                }
+            }
+        },
+
+        {
+            $sort: {
+                totalQuantitySold: -1
+            }
+        },
+
+        {
+            $skip: skip
+        },
+
+        {
+            $limit: limit
+        }
+
+    ])
+
+    const totalResult = await Order.aggregate([
+
+        {
+            $unwind: "$items"
+        },
+
+        {
+            $match: {
+                "items.status": "Delivered"
+            }
+        },
+
+        {
+            $group: {
+                _id: "$items.productId"
+            }
+        },
+
+        {
+            $count: "total"
+        }
+
+    ])
+
+    const totalProducts = totalResult[0]?.total || 0
+
+    const totalPages = Math.ceil(totalProducts / limit)
+
+    return {
+        products: bestSellingProducts,
+        currentPage: page,
+        totalPages
+    }
+}
+
+export const getBestSellingCategoriesService = async (page = 1, limit = 10) => {
+
+    const skip = (page - 1) * limit
+
+    const bestSellingCategories = await Order.aggregate([
+
+        {
+            $unwind: "$items"
+        },
+
+        {
+            $match: {
+                "items.status": "Delivered"
+            }
+        },
+
+        {
+            $lookup: {
+                from: "products",
+                localField: "items.productId",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+
+        {
+            $unwind: "$product"
+        },
+
+        {
+            $lookup: {
+                from: "categories",
+                localField: "product.category",
+                foreignField: "_id",
+                as: "category"
+            }
+        },
+
+        {
+            $unwind: "$category"
+        },
+
+        {
+            $group: {
+                _id: "$category._id",
+
+                categoryName: {
+                    $first: "$category.name"
+                },
+
+                totalQuantitySold: {
+                    $sum: "$items.quantity"
+                },
+
+                totalRevenue: {
+                    $sum: "$items.totalPrice"
+                }
+            }
+        },
+
+        {
+            $sort: {
+                totalQuantitySold: -1
+            }
+        },
+
+        {
+            $skip: skip
+        },
+
+        {
+            $limit: limit
+        }
+
+    ])
+
+    const totalResult = await Order.aggregate([
+
+        {
+            $unwind: "$items"
+        },
+
+        {
+            $match: {
+                "items.status": "Delivered"
+            }
+        },
+
+        {
+            $lookup: {
+                from: "products",
+                localField: "items.productId",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+
+        {
+            $unwind: "$product"
+        },
+
+        {
+            $group: {
+                _id: "$product.category"
+            }
+        },
+
+        {
+            $count: "total"
+        }
+
+    ])
+
+    const totalCategories = totalResult[0]?.total || 0
+
+    const totalPages = Math.ceil(totalCategories / limit)
+
+    return {
+        categories: bestSellingCategories,
+        currentPage: page,
+        totalPages
+    }
+}
+
+export const getBestSellingBrandsService = async (page = 1, limit = 10) => {
+
+    const skip = (page - 1) * limit
+
+    const bestSellingBrands = await Order.aggregate([
+
+        {
+            $unwind: "$items"
+        },
+
+        {
+            $match: {
+                "items.status": "Delivered"
+            }
+        },
+
+        {
+            $lookup: {
+                from: "products",
+                localField: "items.productId",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+
+        {
+            $unwind: "$product"
+        },
+
+        {
+            $lookup: {
+                from: "brands",
+                localField: "product.brand",
+                foreignField: "_id",
+                as: "brand"
+            }
+        },
+
+        {
+            $unwind: "$brand"
+        },
+
+        {
+            $group: {
+                _id: "$brand._id",
+
+                brandName: {
+                    $first: "$brand.name"
+                },
+
+                totalQuantitySold: {
+                    $sum: "$items.quantity"
+                },
+
+                totalRevenue: {
+                    $sum: "$items.totalPrice"
+                }
+            }
+        },
+
+        {
+            $sort: {
+                totalQuantitySold: -1
+            }
+        },
+
+        {
+            $skip: skip
+        },
+
+        {
+            $limit: limit
+        }
+
+    ])
+
+    const totalResult = await Order.aggregate([
+
+        {
+            $unwind: "$items"
+        },
+
+        {
+            $match: {
+                "items.status": "Delivered"
+            }
+        },
+
+        {
+            $lookup: {
+                from: "products",
+                localField: "items.productId",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+
+        {
+            $unwind: "$product"
+        },
+
+        {
+            $group: {
+                _id: "$product.brand"
+            }
+        },
+
+        {
+            $count: "total"
+        }
+
+    ])
+
+
+    const totalBrands = totalResult[0]?.total || 0
+
+    const totalPages = Math.ceil(totalBrands / limit)
+
+
+    return {
+        brands: bestSellingBrands,
+        currentPage: page,
+        totalPages
     }
 }

@@ -320,7 +320,7 @@ export const applyCouponService = async(userId,couponCode, subtotal) =>{
 }
 
 
-export const getAvailableCouponsService = async(userId, appliedCouponId) =>{
+export const getAvailableCouponsService = async(userId) =>{
     try {
 
         const currentDate = new Date()
@@ -335,7 +335,7 @@ export const getAvailableCouponsService = async(userId, appliedCouponId) =>{
         const usedCouponIds = usedOrders.map(
             order => order.coupon.couponId
         )
-
+        
         const coupons = await Coupon.find({
             isActive: true,
             startDate: {$lte: currentDate},
@@ -345,11 +345,8 @@ export const getAvailableCouponsService = async(userId, appliedCouponId) =>{
                 {$expr: {$lt: ["$usedCount", "$usageLimit"]}}
             ],
             _id: {
-                $nin: [
-                    ...usedCouponIds,
-                    ...(appliedCouponId ? [appliedCouponId] : [])
-                ]
-            } 
+                $nin: usedCouponIds
+            }
         }).sort({createdAt: -1})
 
         return {

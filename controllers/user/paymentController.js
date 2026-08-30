@@ -140,6 +140,10 @@ export const getPaymentFailed = async (req, res) => {
             return res.redirect("/orders")
         }
 
+        order.paymentStatus = "Failed"
+
+        await order.save()
+
         res.render("user/paymentFailed", {
             orderId: order.orderId,
             retryUrl: `/payment/retry/${order._id}`

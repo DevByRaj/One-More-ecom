@@ -52,14 +52,15 @@ export const getCheckout = async (req, res) => {
             return res.redirect("/cart")
         }
 
-        const couponResult = await getAvailableCouponsService(userId, req.session.appliedCoupon?.couponId)
+        const couponResult = await getAvailableCouponsService(userId)
 
         return res.render("user/checkout", {
             addresses: result.addresses,
             cart: result.cart,
             totals: result.totals,
             freeShippingLimit: FREE_SHIPPING_LIMIT,
-            coupons: couponResult.coupons
+            coupons: couponResult.coupons,
+            appliedCoupon: req.session.appliedCoupon || null
         })
 
     } catch (error) {
@@ -119,6 +120,27 @@ export const applyCoupon = async(req, res) =>{
             success: false,
             message: "Unable to apply coupon"
         })
+    }
+}
+
+export const removeCoupon = async (req, res) =>{
+    try {
+
+        delete req.session.appliedCoupon
+
+        return res.json({
+            success: true,
+            message: "Coupon removed"
+        })
+        
+    } catch (error) {
+        console.log(error);
+        
+        return res.status(500).json({
+            success: false,
+            message: "Unable to remove coupon"
+        })
+        
     }
 }
 
