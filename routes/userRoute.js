@@ -12,9 +12,10 @@ import {
   postForgotPassword,
   getResetPassword,
   postResetPassword,
-  getAddressPage, getAddAddress, postAddAddress, deleteAddress,
+  getAddressPage, getAddAddress, postAddAddress, postAddAddressFromCheckout, deleteAddress,
   getSingleAddress,
   resendOTP,
+  getChangePassword,
   postChangePassword,
   checkUserStatus,
   getShop,
@@ -95,6 +96,7 @@ router.post("/verify-otp", verifyOTP)
 
 router.get("/address", isUserLoggedIn, getAddressPage)
 router.post("/address/add", isUserLoggedIn, postAddAddress)
+router.post("/checkout/address/add", isUserLoggedIn,postAddAddressFromCheckout)
 router.get("/address/:id", isUserLoggedIn, getSingleAddress)
 router.post("/address/delete/:id", isUserLoggedIn, deleteAddress);
 router.get("/address/default/:id", isUserLoggedIn, setDefaultAddress)
@@ -107,9 +109,7 @@ router.post("/reset-password", postResetPassword)
 
 router.post("/resend-otp", resendOTP)
 
-router.get("/change-password", isUserLoggedIn, (req, res) => {
-  res.render("user/changePassword", {error: null})
-})
+router.get("/change-password", isUserLoggedIn, getChangePassword)
 
 router.post("/change-password", isUserLoggedIn, postChangePassword)
 

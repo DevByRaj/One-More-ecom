@@ -511,6 +511,7 @@ export const postEditProfile = async (req, res) => {
     const name = `${fname || ""} ${lname || ""}`.trim();
 
     if (!/^\d{10}$/.test(phone)) {
+
       const user = await User.findById(userId)
 
       return res.render("user/editProfile", {
@@ -523,6 +524,18 @@ export const postEditProfile = async (req, res) => {
     }
 
     const user = await User.findById(userId)
+
+    if(user.authType === "google" && email !== user.email){
+      
+      return res.render("user/editProfile",{
+        user,
+        errors:{
+          email: "Email cannot be changed for Google Login Users"
+        },
+        oldData: req.body,
+        message: null
+      })
+    }
 
     if (email !== user.email) {
 
@@ -655,6 +668,81 @@ export const postAddAddress = async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(500).send("error saving address")
+  }
+}
+
+export const postAddAddressFromCheckout = async (req, res) => {
+  try {
+
+    const userId = req.session.user
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Please login first"
+      })
+    }
+
+    const {
+      fname,
+      lname,
+      phone,
+      house,
+      street,
+      city,
+      state,
+      pin,
+      type
+    } = req.body
+
+    if (!fname || !phone || !house || !city || !state || !pin) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all required fields"
+      })
+    }
+
+    const count = await Address.countDocuments({userId});
+
+    if (count >= 3) {
+      return res.status(400).json({
+        success: false,
+        message: "You can add maximum 3 addresses"
+      });
+    }
+
+    const name = `${fname} ${lname || ""}`.trim()
+
+    const addressData = {
+      userId,
+      name,
+      houseName: house,
+      street,
+      city,
+      state,
+      country: "india",
+      phone,
+      pincode: pin,
+      type,
+      isDefault: count === 0
+    }
+
+    const address = await Address.create(addressData);
+
+    return res.json({
+      success: true,
+      message: "Address added successfully",
+      address
+    })
+
+  } catch (error) {
+
+    console.log("Checkout address error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to save address"
+    })
   }
 }
 
@@ -925,7 +1013,7 @@ export const resendOTP = async (req, res) => {
       error: "Error resending OTP"
     })
   }
-};
+}
 
 export const getSingleAddress = async (req, res) => {
   try {
@@ -934,33 +1022,66 @@ export const getSingleAddress = async (req, res) => {
   } catch (error) {
     res.status(500).json({message: "Error fetching address"});
   }
-};
+}
+
+export const getChangePassword = async (req, res) => {
+  try {
+
+    const userId = req.session.user;
+
+    const user = await User.findById(userId)
+
+    if (!user) {
+      return res.redirect("/login")
+    }
+
+    return res.render("user/changePassword", {
+      user,
+      error: null
+    })
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.redirect("/profile")
+  }
+}
 
 export const postChangePassword = async (req, res) => {
   try {
-    console.log('Body:', req.body);
-
 
     const userId = req.session.user
     const {currentPassword, newPassword, confirmPassword} = req.body
 
     const user = await User.findById(userId)
 
+    if(!user){
+      return res.redirect("/login")
+    }
+
+    if(user.authType === "google"){
+      return res.redirect("/profile")
+    }
+
     const isMatch = await comparePassword(currentPassword, user.password)
     if (!isMatch) {
       return res.render("user/changePassword", {
+        user,
         error: "Incorrect current password"
       })
     }
 
     if (newPassword !== confirmPassword) {
       return res.render("user/changePassword", {
+        user,
         error: "password do not match"
       })
     }
 
     if (newPassword.length < 8) {
       return res.render("user/changePassword", {
+        user,
         error: "Password must be at least 8 characters"
       })
     }
@@ -968,6 +1089,7 @@ export const postChangePassword = async (req, res) => {
     const isSame = await comparePassword(newPassword, user.password)
     if (isSame) {
       return res.render("user/changePassword", {
+        user,
         error: "New password cannot be same as old password"
       })
     }
@@ -982,6 +1104,7 @@ export const postChangePassword = async (req, res) => {
   } catch (error) {
     console.log(error)
     res.render("user/changePassword", {
+      user,
       error: "Something went wrong"
     })
   }
