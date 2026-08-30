@@ -80,5 +80,3 @@ export const updateOrderItemStatus = async(req, res) =>{
         
     }
 }
-
-

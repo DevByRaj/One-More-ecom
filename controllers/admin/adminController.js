@@ -8,6 +8,7 @@ import {uploadCloudinary} from "../../utils/cloudinary.js";
 import Variant from "../../models/variantModel.js"
 import { createVariant, updateVariant } from "../../services/variantService.js"
 import { createProduct, updateProduct } from "../../services/productService.js"
+import { getBestSellingProductsService, getBestSellingCategoriesService, getBestSellingBrandsService } from "../../services/salesReportService.js"
 
 export const getAdminLogin = (req, res) => {
   res.render("admin/login", {error: null})
@@ -939,5 +940,80 @@ export const postEditVariant = async (req,res) => {
     console.log(error)
 
     return res.redirect("/admin/products")
+  }
+}
+
+export const getBestSellingProducts = async (req, res) => {
+  try {
+
+    const page = Number(req.query.page) || 1
+    const limit = 10
+
+    const result = await getBestSellingProductsService(
+      page,
+      limit
+    )
+
+    return res.render("admin/bestSellingProducts", {
+      products: result.products,
+      currentPage: result.currentPage,
+      totalPages: result.totalPages
+    })
+
+  } catch (error) {
+
+    console.log(error)
+
+    return res.redirect("/admin/dashboard")
+  }
+}
+
+export const getBestSellingCategories = async (req, res) => {
+  try {
+
+    const page = Number(req.query.page) || 1
+    const limit = 10
+
+    const result = await getBestSellingCategoriesService(
+      page,
+      limit
+    )
+
+    return res.render("admin/bestSellingCategories", {
+      categories: result.categories,
+      currentPage: result.currentPage,
+      totalPages: result.totalPages
+    })
+
+  } catch (error) {
+
+    console.log(error)
+
+    return res.redirect("/admin/dashboard")
+  }
+}
+
+export const getBestSellingBrands = async (req, res) => {
+  try {
+
+    const page = Number(req.query.page) || 1
+    const limit = 10
+
+    const result = await getBestSellingBrandsService(
+      page,
+      limit
+    )
+
+    return res.render("admin/bestSellingBrands", {
+      brands: result.brands,
+      currentPage: result.currentPage,
+      totalPages: result.totalPages
+    })
+
+  } catch (error) {
+
+    console.log(error)
+
+    return res.redirect("/admin/dashboard")
   }
 }
