@@ -39,6 +39,24 @@ const userSchema = new mongoose.Schema(
             enum: ["local", "google"],
             default: "local",
         },
+
+        referralCode: {
+            type: String,
+            unique: true,
+            sparse: true
+        },
+
+        referredBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        referralRewardClaimed: {
+            type: Boolean,
+            default: false
+        },
+
         otp: {
             type: String,
         },
@@ -58,6 +76,29 @@ const userSchema = new mongoose.Schema(
         timestamps: true,
     }
 )
+userSchema.pre("save", async function () {
+
+    if (!this.isNew || this.referralCode) {
+        return
+    }
+
+    let code
+    let existingUser
+
+    do {
+        code = Math.random()
+            .toString(36)
+            .substring(2, 8)
+            .toUpperCase()
+
+        existingUser = await mongoose.models.User.findOne({
+            referralCode: code
+        })
+
+    } while (existingUser)
+
+    this.referralCode = code
+})
 
 const User = mongoose.model("User", userSchema)
 

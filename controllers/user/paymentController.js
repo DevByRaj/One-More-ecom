@@ -4,7 +4,7 @@ import Product from "../../models/productModel.js"
 import Variant from "../../models/variantModel.js";
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
 import {getCheckoutData, createPendingOrderService, placeOrderService, completeRazorpayOrderService} from "../../services/orderService.js";
-
+import {processReferralRewardService} from "../../services/referralOfferService.js";
 
 export const createRazorpayOrder = async (req, res) => {
     try {
@@ -114,6 +114,8 @@ export const verifyPayment = async (req, res) => {
         if (!result.success) {
             return res.json(result)
         }
+
+        await processReferralRewardService(req.session.user)
 
         delete req.session.buyNow
         delete req.session.appliedCoupon

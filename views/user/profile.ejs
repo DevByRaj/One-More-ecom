@@ -592,7 +592,11 @@
 
                   <div class="ref-section">
                     <span class="ref-label">REF</span>
-                    <span class="ref-code">XANFIMI234</span>
+                  
+                    <span class="ref-code" id="refCode" data-ref="<%= user.referralCode %>">
+                      <%= user.referralCode %>
+                    </span>
+                  
                     <button class="copy-btn" onclick="copyRef()">copy</button>
                   </div>
                 </div>
@@ -690,9 +694,13 @@
 
           <script>
             function copyRef() {
-              navigator.clipboard.writeText('XANFIMI234').catch(() => { });
-              showToast('Ref code copied!');
-            }
+
+                const refCode = document.getElementById("refCode").dataset.ref;
+
+                navigator.clipboard.writeText(refCode).catch(() => { });
+
+                showToast("Ref code copied!");
+              }
             function showToast(msg) {
               const t = document.getElementById('toast');
               t.textContent = msg;
