@@ -678,6 +678,13 @@ export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
     const skip = (page - 1) * limit
 
+    const filter = {
+        userId,
+        $or:[{paymentMethod: {$ne:"RAZORPAY"}},
+            {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
+        ]
+    }
+
     const totalOrders = await Order.countDocuments({userId})
 
     const orders = await Order.find({userId}).sort({createdAt: -1}).skip(skip).limit(limit)

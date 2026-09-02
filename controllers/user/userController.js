@@ -33,7 +33,8 @@ export const postSignup = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.render("user/signup", {
         errors: errors.array(),
-        oldData: req.body
+        oldData: req.body,
+        refCode: req.body.refCode || ""
       })
     }
 
@@ -45,7 +46,8 @@ export const postSignup = async (req, res) => {
     if (user && user.isVerified) {
       return res.render("user/signup", {
         errors: [{msg: "Email already Registered. Please login.", path: "email"}],
-        oldData: req.body
+        oldData: req.body,
+        refCode: req.body.refCode || ""
       })
     }
 
@@ -68,7 +70,8 @@ export const postSignup = async (req, res) => {
     if (!isSent) {
       return res.render("user/signup", {
         errors: [{msg: "Failed to send OTP. Try again.", path: "email"}],
-        oldData: req.body
+        oldData: req.body,
+        refCode: req.body.refCode || ""
       })
     }
 
@@ -79,7 +82,8 @@ export const postSignup = async (req, res) => {
 
     return res.render("user/signup", {
       errors: [{msg: "something went wrong. Please try again.", path: "general"}],
-      oldData: req.body || {}
+      oldData: req.body || {},
+      refCode: req.body?.refCode || ""
     })
   }
 }

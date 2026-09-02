@@ -211,6 +211,7 @@ export const retryPayment = async (req, res) => {
         const razorpayOrder = await retryRazorpayOrderService(order.grandTotal)
 
         order.razorpayOrderId = razorpayOrder.id
+        order.paymentStatus = "Pending"
 
         await order.save()
 
