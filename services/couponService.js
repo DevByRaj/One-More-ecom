@@ -59,6 +59,13 @@ export const createCouponService = async (couponData) =>{
         }
     }
 
+    if(discountType === "FLAT" && discount >= minimum){
+        return{
+            success: false,
+            message: "Discount should be less than minimum purchase amount"
+        }
+    }
+
     if (discountType === "PERCENTAGE" && discount > 100) {
         return {
             success: false,
@@ -144,6 +151,13 @@ export const updateCouponService = async(couponId, couponData) =>{
         return {
             success: false,
             message: "Minimum purchase cannot be negative"
+        }
+    }
+
+    if(discountType === "FLAT" && discount >= minimum){
+        return{
+            success: false,
+            message: "Discout should be less than minimum purchase amount"
         }
     }
 
