@@ -248,7 +248,16 @@ export const applyCouponService = async(userId,couponCode, subtotal) =>{
         userId,
         "coupon.couponId": coupon._id,
         orderStatus: {$ne: "Cancelled"},
-        paymentStatus: {$ne: "Failed"}
+        $or: [
+            {
+                paymentMethod: {$ne: "RAZORPAY"},
+                paymentStatus: {$ne: "Failed"}
+            },
+            {
+                paymentMethod: "RAZORPAY",
+                paymentStatus: "Paid"
+            }
+        ]
     })
 
     if (alreadyUsed) {
@@ -329,7 +338,16 @@ export const getAvailableCouponsService = async(userId) =>{
             userId,
             "coupon.couponId": {$ne: null},
             orderStatus: {$ne: "Cancelled"},
-            paymentStatus: {$ne: "Failed"}
+            $or: [
+                {
+                    paymentMethod: {$ne: "RAZORPAY"},
+                    paymentStatus: {$ne: "Failed"}
+                },
+                {
+                    paymentMethod: "RAZORPAY",
+                    paymentStatus: "Paid"
+                }
+            ]
         }).select("coupon.couponId")
 
         const usedCouponIds = usedOrders.map(
