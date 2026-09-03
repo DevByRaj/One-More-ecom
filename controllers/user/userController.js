@@ -509,10 +509,43 @@ export const getEditProfile = async (req, res) => {
 export const postEditProfile = async (req, res) => {
   try {
     const userId = req.session.user
+    
     const {fname, lname, email, phone} = req.body
 
-    // const name = fname + " " + lname
-    const name = `${fname || ""} ${lname || ""}`.trim();
+    const firstName = fname?.trim()
+    const lastName = lname?.trim()
+
+    const nameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/
+
+    if (!firstName || !nameRegex.test(firstName)) {
+
+      const user = await User.findById(userId)
+
+      return res.render("user/editProfile", {
+        user,
+        errors: {
+          fname: "Please enter a valid first name"
+        },
+        oldData: req.body,
+        message: null
+      })
+    }
+
+    if (!lastName || !nameRegex.test(lastName)) {
+
+      const user = await User.findById(userId)
+
+      return res.render("user/editProfile", {
+        user,
+        errors: {
+          lname: "Please enter a valid last name"
+        },
+        oldData: req.body,
+        message: null
+      })
+    }
+
+    const name = `${firstName} ${lastName}`
 
     if (!/^\d{10}$/.test(phone)) {
 

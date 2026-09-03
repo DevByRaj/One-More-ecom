@@ -119,7 +119,7 @@
       <h1>Edit Personal Information</h1>
     </div>
 
-    <form id="profileForm" action="/profile/edit" method="POST" enctype="multipart/form-data">
+  <form id="profileForm" action="/profile/edit" method="POST" enctype="multipart/form-data" novalidate>
       
       <div class="avatar-section">
         <div class="avatar-box" onclick="document.getElementById('fileInput').click()">
@@ -133,17 +133,31 @@
       </div>
 
       
-      <div class="form-group">
-  <label>First Name</label>
-  <input type="text" name="fname" 
-         value="<%= locals.oldData?.fname || user.name.split(' ')[0] || '' %>" required>
-</div>
+    <div class="form-group">
+      <label>First Name</label>
+    
+      <input type="text" name="fname" value="<%= locals.oldData?.fname || user.name.split(' ')[0] || '' %>"
+        style="<%= locals.errors?.fname ? 'border-bottom-color: #c0392b;' : '' %>">
+    
+      <% if (locals.errors?.fname) { %>
+        <div class="error-msg" style="color: #c0392b; font-size: 11px; margin-top: 5px;">
+          <%= errors.fname %>
+        </div>
+        <% } %>
+    </div>
 
-<div class="form-group">
-  <label>Last Name</label>
-  <input type="text" name="lname" 
-         value="<%= locals.oldData?.lname || user.name.split(' ')[1] || '' %>" required>
-</div>
+    <div class="form-group">
+      <label>Last Name</label>
+    
+      <input type="text" name="lname" value="<%= locals.oldData?.lname || user.name.split(' ')[1] || '' %>"
+        style="<%= locals.errors?.lname ? 'border-bottom-color: #c0392b;' : '' %>">
+    
+      <% if (locals.errors?.lname) { %>
+        <div class="error-msg" style="color: #c0392b; font-size: 11px; margin-top: 5px;">
+          <%= errors.lname %>
+        </div>
+        <% } %>
+    </div>
 
 <div class="form-group">
 
