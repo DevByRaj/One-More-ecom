@@ -739,6 +739,40 @@ export const postAddAddressFromCheckout = async (req, res) => {
       })
     }
 
+    const nameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/
+
+    if (!nameRegex.test(fname.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid first name"
+      })
+    }
+
+    const phoneRegex = /^[6-9]\d{9}$/
+
+    if (!phoneRegex.test(phone.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit phone number"
+      })
+    }
+
+    const pinRegex = /^\d{6}$/
+
+    if (!pinRegex.test(pin.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 6-digit pincode"
+      })
+    }
+
+    if (lname && !nameRegex.test(lname.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid last name"
+      })
+    }
+
     const count = await Address.countDocuments({userId});
 
     if (count >= 3) {

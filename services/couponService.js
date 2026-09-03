@@ -222,7 +222,7 @@ export const updateCouponService = async(couponId, couponData) =>{
 export const deleteCouponService = async(id) =>{
     try {
 
-        const coupon = await Coupon.findOneAndDelete(id)
+        const coupon = await Coupon.findByIdAndDelete(id)
 
         if(!coupon){
             return{
