@@ -1,11 +1,29 @@
 import Order from "../../models/orderModel.js"
 import User from "../../models/userModel.js"
+import {
+    getBestSellingProductsService,
+    getBestSellingCategoriesService,
+    getBestSellingBrandsService
+} from "../../services/salesReportService.js"
 
-export const getDashboard = async (req, res) =>{
+export const getDashboard = async (req, res) => {
     try {
 
-        const year = Number(req.query.year) || new Date(). getFullYear()
+        const year = Number(req.query.year) || new Date().getFullYear()
 
+        const [
+            bestSellingProductsResult,
+            bestSellingCategoriesResult,
+            bestSellingBrandsResult
+        ] = await Promise.all([
+            getBestSellingProductsService(1, 10),
+            getBestSellingCategoriesService(1, 10),
+            getBestSellingBrandsService(1, 10)
+        ])
+
+        const bestSellingProducts = bestSellingProductsResult.products
+        const bestSellingCategories = bestSellingCategoriesResult.categories
+        const bestSellingBrands = bestSellingBrandsResult.brands
         const filter = req.query.filter || "yearly"
 
         if(filter === "yearly"){
@@ -71,15 +89,19 @@ export const getDashboard = async (req, res) =>{
 
             const totalCustomers = await User.countDocuments()
 
-            return res.render("admin/dashboard",{
+            return res.render("admin/dashboard", {
                 totalRevenue,
-                 totalOrders,
-                 productsSold,
-                 totalCustomers,
-                 monthlySales,
-                 selectedYear: year,
-                 filter,
-                 currentPage: "dashboard"
+                totalOrders,
+                productsSold,
+                totalCustomers,
+                monthlySales,
+                selectedYear: year,
+                filter,
+                currentPage: "dashboard",
+
+                bestSellingProducts,
+                bestSellingCategories,
+                bestSellingBrands
             })
         }
 
@@ -152,16 +174,19 @@ export const getDashboard = async (req, res) =>{
 
             const totalCustomers = await User.countDocuments()
 
-            return res.render("admin/dashboard",{
+            return res.render("admin/dashboard", {
                 totalRevenue,
                 totalOrders,
                 productsSold,
                 totalCustomers,
                 monthlySales: dailySales,
                 selectedYear: year,
-                selectedMonth,
                 filter,
-                currentPage: "dashboard"
+                currentPage: "dashboard",
+
+                bestSellingProducts,
+                bestSellingCategories,
+                bestSellingBrands
             })
         }
 
@@ -241,16 +266,20 @@ export const getDashboard = async (req, res) =>{
 
                 const totalCustomers = await User.countDocuments()
 
-                return res.render("admin/dashboard",{
-                    totalRevenue,
-                    totalOrders,
-                    productsSold,
-                    totalCustomers,
-                    monthlySales: weeklySales,
-                    selectedYear: year,
-                    filter,
-                    currentPage: "dashboard"
-                })
+            return res.render("admin/dashboard", {
+                totalRevenue,
+                totalOrders,
+                productsSold,
+                totalCustomers,
+                monthlySales: weeklySales,
+                selectedYear: year,
+                filter,
+                currentPage: "dashboard",
+
+                bestSellingProducts,
+                bestSellingCategories,
+                bestSellingBrands
+            })
         }
 
         return res.redirect(`/admin/dashboard?year=${year}&filter=yearly`)
