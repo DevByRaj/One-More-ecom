@@ -256,6 +256,73 @@ export const updateOfferService = async (offerId, formData) => {
             }
         }
 
+        if(!offerName || !offerName.trim()){
+            return{
+                success: false,
+                message: "Offer name is required"
+            }
+        }
+
+        if(!["PRODUCT", "CATEGORY"].includes(appliesTo)){
+            return{
+                success: false,
+                message: "Invalid offer target"
+            }
+        }
+
+        if(appliesTo === "PRODUCT" && !productId){
+            return{
+                success: false,
+                message: "Please select a product"
+            }
+        }
+
+        if(appliesTo === "CATEGORY" && !categoryId){
+            return{
+                success: false,
+                message: "Please select a category"
+            }
+        }
+
+        if(!["PERCENTAGE", "FLAT"].includes(offerType)){
+            return{
+                success: false,
+                message: "Invalid discount type"
+            }
+        }
+
+
+        if (!discountValue || Number(discountValue) <= 0) {
+            return {
+                success: false,
+                message: "Discount value must be greater than zero"
+            }
+        }
+
+        if (
+            offerType === "PERCENTAGE" &&
+            Number(discountValue) > 100
+        ) {
+            return {
+                success: false,
+                message: "Percentage discount cannot exceed 100%"
+            }
+        }
+
+        if (!startDate || !endDate) {
+            return {
+                success: false,
+                message: "Start date and end date are required"
+            }
+        }
+
+        if (new Date(startDate) >= new Date(endDate)) {
+            return {
+                success: false,
+                message: "End date must be after start date"
+            }
+        }
+
         const activeStatus = !!isActive
 
         if(activeStatus){

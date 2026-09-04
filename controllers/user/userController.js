@@ -33,7 +33,8 @@ export const postSignup = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.render("user/signup", {
         errors: errors.array(),
-        oldData: req.body
+        oldData: req.body,
+        refCode: req.body.refCode || ""
       })
     }
 
@@ -45,7 +46,8 @@ export const postSignup = async (req, res) => {
     if (user && user.isVerified) {
       return res.render("user/signup", {
         errors: [{msg: "Email already Registered. Please login.", path: "email"}],
-        oldData: req.body
+        oldData: req.body,
+        refCode: req.body.refCode || ""
       })
     }
 
@@ -68,7 +70,8 @@ export const postSignup = async (req, res) => {
     if (!isSent) {
       return res.render("user/signup", {
         errors: [{msg: "Failed to send OTP. Try again.", path: "email"}],
-        oldData: req.body
+        oldData: req.body,
+        refCode: req.body.refCode || ""
       })
     }
 
@@ -79,7 +82,8 @@ export const postSignup = async (req, res) => {
 
     return res.render("user/signup", {
       errors: [{msg: "something went wrong. Please try again.", path: "general"}],
-      oldData: req.body || {}
+      oldData: req.body || {},
+      refCode: req.body?.refCode || ""
     })
   }
 }
@@ -505,10 +509,43 @@ export const getEditProfile = async (req, res) => {
 export const postEditProfile = async (req, res) => {
   try {
     const userId = req.session.user
+    
     const {fname, lname, email, phone} = req.body
 
-    // const name = fname + " " + lname
-    const name = `${fname || ""} ${lname || ""}`.trim();
+    const firstName = fname?.trim()
+    const lastName = lname?.trim()
+
+    const nameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/
+
+    if (!firstName || !nameRegex.test(firstName)) {
+
+      const user = await User.findById(userId)
+
+      return res.render("user/editProfile", {
+        user,
+        errors: {
+          fname: "Please enter a valid first name"
+        },
+        oldData: req.body,
+        message: null
+      })
+    }
+
+    if (!lastName || !nameRegex.test(lastName)) {
+
+      const user = await User.findById(userId)
+
+      return res.render("user/editProfile", {
+        user,
+        errors: {
+          lname: "Please enter a valid last name"
+        },
+        oldData: req.body,
+        message: null
+      })
+    }
+
+    const name = `${firstName} ${lastName}`
 
     if (!/^\d{10}$/.test(phone)) {
 
@@ -699,6 +736,40 @@ export const postAddAddressFromCheckout = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Please fill all required fields"
+      })
+    }
+
+    const nameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/
+
+    if (!nameRegex.test(fname.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid first name"
+      })
+    }
+
+    const phoneRegex = /^[6-9]\d{9}$/
+
+    if (!phoneRegex.test(phone.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit phone number"
+      })
+    }
+
+    const pinRegex = /^\d{6}$/
+
+    if (!pinRegex.test(pin.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 6-digit pincode"
+      })
+    }
+
+    if (lname && !nameRegex.test(lname.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid last name"
       })
     }
 

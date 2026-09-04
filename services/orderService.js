@@ -11,6 +11,7 @@ import {userInfo} from "os"
 import {creditWallet, getOrCreateWallet} from "./walletService.js"
 import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
 import { calculateBestOffer } from "./offerCalulationService.js"
+import Coupon from "../models/couponModel.js"
 import { applyCouponService } from "./couponService.js"
 
 
@@ -327,6 +328,39 @@ export const placeOrderService = async (userId, orderData, session = null) => {
             }
         })
     )
+
+    if (coupon?.couponId) {
+
+        const updatedCoupon = await Coupon.findOneAndUpdate(
+            {
+                _id: coupon.couponId,
+                $or: [
+                    {usageLimit: null},
+                    {
+                        $expr: {
+                            $lt: ["$usedCount", "$usageLimit"]
+                        }
+                    }
+                ]
+            },
+            {
+                $inc: {
+                    usedCount: 1
+                }
+            },
+            {
+                new: true,
+                ...(session ? {session} : {})
+            }
+        )
+
+        if (!updatedCoupon) {
+            return {
+                success: false,
+                message: "Coupon usage limit reached"
+            }
+        }
+    }
 
     const orderDataToCreate = {
         orderId: generateOrderId(),
@@ -678,10 +712,19 @@ export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
     const skip = (page - 1) * limit
 
-    const totalOrders = await Order.countDocuments({userId})
+    const filter = {
+        userId,
+        $or:[{paymentMethod: {$ne:"RAZORPAY"}},
+            {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
+        ]
+    }
 
-    const orders = await Order.find({userId}).sort({createdAt: -1}).skip(skip).limit(limit)
+    const totalOrders = await Order.countDocuments(filter)
 
+    const orders = await Order.find(filter)
+        .sort({createdAt: -1})
+        .skip(skip)
+        .limit(limit)
     return {
         orders,
         totalPages: Math.ceil(totalOrders / limit),

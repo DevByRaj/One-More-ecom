@@ -59,6 +59,13 @@ export const createCouponService = async (couponData) =>{
         }
     }
 
+    if(discountType === "FLAT" && discount >= minimum){
+        return{
+            success: false,
+            message: "Discount should be less than minimum purchase amount"
+        }
+    }
+
     if (discountType === "PERCENTAGE" && discount > 100) {
         return {
             success: false,
@@ -147,6 +154,13 @@ export const updateCouponService = async(couponId, couponData) =>{
         }
     }
 
+    if(discountType === "FLAT" && discount >= minimum){
+        return{
+            success: false,
+            message: "Discout should be less than minimum purchase amount"
+        }
+    }
+
     if (discountType === "PERCENTAGE" && discount > 100) {
         return {
             success: false,
@@ -208,7 +222,7 @@ export const updateCouponService = async(couponId, couponData) =>{
 export const deleteCouponService = async(id) =>{
     try {
 
-        const coupon = await Coupon.findOneAndDelete(id)
+        const coupon = await Coupon.findByIdAndDelete(id)
 
         if(!coupon){
             return{
@@ -248,7 +262,16 @@ export const applyCouponService = async(userId,couponCode, subtotal) =>{
         userId,
         "coupon.couponId": coupon._id,
         orderStatus: {$ne: "Cancelled"},
-        paymentStatus: {$ne: "Failed"}
+        $or: [
+            {
+                paymentMethod: {$ne: "RAZORPAY"},
+                paymentStatus: {$ne: "Failed"}
+            },
+            {
+                paymentMethod: "RAZORPAY",
+                paymentStatus: "Paid"
+            }
+        ]
     })
 
     if (alreadyUsed) {
@@ -329,7 +352,16 @@ export const getAvailableCouponsService = async(userId) =>{
             userId,
             "coupon.couponId": {$ne: null},
             orderStatus: {$ne: "Cancelled"},
-            paymentStatus: {$ne: "Failed"}
+            $or: [
+                {
+                    paymentMethod: {$ne: "RAZORPAY"},
+                    paymentStatus: {$ne: "Failed"}
+                },
+                {
+                    paymentMethod: "RAZORPAY",
+                    paymentStatus: "Paid"
+                }
+            ]
         }).select("coupon.couponId")
 
         const usedCouponIds = usedOrders.map(

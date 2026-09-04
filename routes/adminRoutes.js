@@ -15,7 +15,7 @@ import {
     toggleProduct,
     getVariants, getAddVariant, 
     postAddVariant, toggleVariantStatus,
-    getEditVariant, postEditVariant, getBestSellingProducts, getBestSellingCategories, getBestSellingBrands } from "../controllers/admin/adminController.js"
+    getEditVariant, postEditVariant } from "../controllers/admin/adminController.js"
 import {isAdminLoggedIn, isAdminLoggedOut} from "../middlewares/adminAuth.js"
 import upload from "../middlewares/multer.js"
 import {getOrders, getOrderDetails, updateOrderItemStatus } from "../controllers/admin/orderController.js"
@@ -116,12 +116,6 @@ router.get("/coupons/edit/:id", isAdminLoggedIn, getEditCoupon)
 router.post("/coupons/edit/:id", isAdminLoggedIn, updateCoupon)
 
 router.post("/coupons/delete/:id", isAdminLoggedIn, deleteCoupon)
-
-router.get("/best-selling-products", isAdminLoggedIn, getBestSellingProducts)
-
-router.get("/best-selling-categories", isAdminLoggedIn, getBestSellingCategories)
-
-router.get("/best-selling-brands", isAdminLoggedIn, getBestSellingBrands)
 
 router.get("/referral-offers", isAdminLoggedIn, getReferralOfferList)
 

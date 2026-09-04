@@ -909,7 +909,7 @@
                         
                         </div>
 
-                        <form action="/payment" method="GET">
+                        <form id="checkoutForm" action="/payment" method="GET">
                         
                             <input type="hidden" name="addressId" id="selectedAddressId"
                                 value="<%= defaultAddress ? defaultAddress._id : '' %>">
@@ -998,22 +998,26 @@
         
                     </div>
         
-                    <form id="addAddressForm">
+                    <form id="addAddressForm" novalidate>
         
                         <div class="modal-body">
-        
+                        
+                            <div id="addAddressError" class="text-danger small fw-medium mb-3">
+                            </div>
+                        
                             <div class="row">
-        
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">First Name</label>
         
-                                    <input type="text" name="fname" class="form-control" required>
+                                    <input type="text" name="fname" class="form-control">
+                                    <div id="fnameError" class="text-danger small mt-1"></div>
                                 </div>
         
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Last Name</label>
         
                                     <input type="text" name="lname" class="form-control">
+                                    <div id="lnameError" class="text-danger small mt-1"></div>
                                 </div>
         
                             </div>
@@ -1022,7 +1026,8 @@
         
                                 <label class="form-label">Phone</label>
         
-                                <input type="text" name="phone" class="form-control" required>
+                                <input type="text" name="phone" class="form-control">
+                                <div id="phoneError" class="text-danger small mt-1"></div>
         
                             </div>
         
@@ -1030,7 +1035,8 @@
         
                                 <label class="form-label">House Name</label>
         
-                                <input type="text" name="house" class="form-control" required>
+                                <input type="text" name="house" class="form-control">
+                                <div id="houseError" class="text-danger small mt-1"></div>
         
                             </div>
         
@@ -1039,6 +1045,7 @@
                                 <label class="form-label">Street</label>
         
                                 <input type="text" name="street" class="form-control">
+                                <div id="streetError" class="text-danger small mt-1"></div>
         
                             </div>
         
@@ -1048,7 +1055,8 @@
         
                                     <label class="form-label">City</label>
         
-                                    <input type="text" name="city" class="form-control" required>
+                                    <input type="text" name="city" class="form-control">
+                                    <div id="cityError" class="text-danger small mt-1"></div>
         
                                 </div>
         
@@ -1056,7 +1064,8 @@
         
                                     <label class="form-label">State</label>
         
-                                    <input type="text" name="state" class="form-control" required>
+                                    <input type="text" name="state" class="form-control">
+                                    <div id="stateError" class="text-danger small mt-1"></div>
         
                                 </div>
         
@@ -1066,7 +1075,8 @@
         
                                 <label class="form-label">Pincode</label>
         
-                                <input type="text" name="pin" class="form-control" required>
+                                <input type="text" name="pin" class="form-control">
+                                <div id="pinError" class="text-danger small mt-1"></div>
         
                             </div>
         
@@ -1083,10 +1093,6 @@
         
                             </div>
         
-                            <div id="addAddressError" class="text-danger small">
-                            </div>
-        
-                        </div>
         
                         <div class="modal-footer">
         
@@ -1510,8 +1516,132 @@
                                     errorElement.textContent = "";
 
                                     const formData = new FormData(addAddressForm);
-
                                     const data = Object.fromEntries(formData.entries());
+
+                                    const fname = data.fname.trim();
+                                    const lname = data.lname.trim();
+                                    const phone = data.phone.trim();
+                                    const house = data.house.trim();
+                                    const street = data.street.trim();
+                                    const city = data.city.trim();
+                                    const state = data.state.trim();
+                                    const pin = data.pin.trim();
+
+                                    const nameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+                                    const phoneRegex = /^[6-9]\d{9}$/;
+                                    const pinRegex = /^\d{6}$/;
+
+                                   // Clear previous errors
+                                    document.getElementById("fnameError").textContent = "";
+                                    document.getElementById("lnameError").textContent = "";
+                                    document.getElementById("phoneError").textContent = "";
+                                    document.getElementById("houseError").textContent = "";
+                                    document.getElementById("streetError").textContent = "";
+                                    document.getElementById("cityError").textContent = "";
+                                    document.getElementById("stateError").textContent = "";
+                                    document.getElementById("pinError").textContent = "";
+
+
+                                    // First Name
+                                    if (!fname) {
+                                        document.getElementById("fnameError").textContent =
+                                            "First name is required";
+                                        return;
+                                    }
+
+                                    if (!nameRegex.test(fname)) {
+                                        document.getElementById("fnameError").textContent =
+                                            "Please enter a valid first name";
+                                        return;
+                                    }
+
+
+                                    // Last Name
+                                    if (!lname) {
+                                        document.getElementById("lnameError").textContent =
+                                            "Last name is required";
+                                        return;
+                                    }
+
+                                    if (!nameRegex.test(lname)) {
+                                        document.getElementById("lnameError").textContent =
+                                            "Please enter a valid last name";
+                                        return;
+                                    }
+
+
+                                    // Phone
+                                    if (!phone) {
+                                        document.getElementById("phoneError").textContent =
+                                            "Phone number is required";
+                                        return;
+                                    }
+
+                                    if (!phoneRegex.test(phone)) {
+                                        document.getElementById("phoneError").textContent =
+                                            "Please enter a valid 10-digit phone number";
+                                        return;
+                                    }
+
+
+                                    // House
+                                    if (!house) {
+                                        document.getElementById("houseError").textContent =
+                                            "House name is required";
+                                        return;
+                                    }
+
+
+                                    // Street
+                                    if (!street) {
+                                        document.getElementById("streetError").textContent =
+                                            "Street is required";
+                                        return;
+                                    }
+
+
+                                    // City
+                                    if (!city) {
+                                        document.getElementById("cityError").textContent =
+                                            "City is required";
+                                        return;
+                                    }
+
+                                    if (!nameRegex.test(city)) {
+                                        document.getElementById("cityError").textContent =
+                                            "Please enter a valid city name";
+                                        return;
+                                    }
+
+
+                                    // State
+                                    if (!state) {
+                                        document.getElementById("stateError").textContent =
+                                            "State is required";
+                                        return;
+                                    }
+
+                                    if (!nameRegex.test(state)) {
+                                        document.getElementById("stateError").textContent =
+                                            "Please enter a valid state name";
+                                        return;
+                                    }
+
+
+                                    // Pincode
+                                    if (!pin) {
+                                        document.getElementById("pinError").textContent =
+                                            "Pincode is required";
+                                        return;
+                                    }
+
+                                    if (!pinRegex.test(pin)) {
+                                        document.getElementById("pinError").textContent =
+                                            "Please enter a valid 6-digit pincode";
+                                        return;
+                                    }
+
+
 
                                     try {
 
@@ -1535,18 +1665,40 @@
 
                                         const address = result.address;
 
-                                        // Update selected address
                                         document.getElementById("selectedAddressId").value =
                                             address._id;
 
-                                        document.getElementById("displayName").innerText =
-                                            address.name;
+                                        const addressContentArea =
+                                            document.getElementById("addressContentArea");
 
-                                        document.getElementById("displayAddress").innerText =
-                                            `${address.houseName}, ${address.street || ""}, ${address.city}, ${address.state}, ${address.country} - ${address.pincode}`;
+                                        addressContentArea.innerHTML = `
+    <button type="button"
+            class="change-address-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#addressModal">
+        Change
+    </button>
 
-                                        document.getElementById("displayPhone").innerText =
-                                            `Phone: ${address.phone}`;
+    <div class="user-name" id="displayName">
+        ${address.name}
+    </div>
+
+    <p class="address-text">
+        <span id="displayAddress">
+            ${address.houseName},
+            ${address.street || ""},
+            ${address.city},
+            ${address.state} -
+            ${address.pincode}
+        </span>
+        <br>
+        <strong id="displayPhone">
+            Phone: ${address.phone}
+        </strong>
+    </p>
+`;
+
+                                        document.querySelector(".figma-checkout-btn").disabled = false;
 
                                         // Close Add Address modal
                                         const addModal =
