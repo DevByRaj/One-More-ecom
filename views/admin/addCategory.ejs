@@ -149,6 +149,18 @@
             display: none;
         }
 
+        .category-server-error {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.08);
+    border: 1px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
         .footer-text {
             text-align: center;
             font-size: 12px;
@@ -205,7 +217,7 @@
 %>" method="POST" class="form-body" novalidate>
 
                         <% if (error) { %>
-                            <div class="alert alert-dark border-secondary small py-2 px-4 mb-4 text-white text-center">
+                            <div class="category-server-error">
                                 <%= error %>
                             </div>
                             <% } %>
@@ -231,52 +243,72 @@
             © 2026 onemore. All Rights Reserved.
         </div>
     </div>
+<script>
+    const categoryForm = document.getElementById('categoryForm');
+    const categoryInput = document.getElementById('categoryName');
+    const errorDiv = document.getElementById('nameError');
 
-    <script>
-        document.getElementById('categoryForm').addEventListener('submit', function (event) {
-            const categoryInput = document.getElementById('categoryName');
-            const nameValue = categoryInput.value.trim();
-            let isValid = true;
+    categoryForm.addEventListener('submit', function (event) {
 
-            if (nameValue === "") {
-                handleError("Category name cannot be empty.");
-                isValid = false;
-            } else if (nameValue.length < 3) {
-                handleError("Category name must be at least 3 characters long.");
-                isValid = false;
-            } else if (!/^[a-zA-Z\s]+$/.test(nameValue)) {
-                handleError("Category name should only contain letters.");
-                isValid = false;
-            }
+        const nameValue = categoryInput.value.trim();
 
-            if (!isValid) {
-                event.preventDefault();
-            }
-        });
+        // Clear previous error
+        categoryInput.classList.remove('is-invalid');
+        errorDiv.style.display = 'none';
 
-        function handleError(msg) {
-            const categoryInput = document.getElementById('categoryName');
-            const errorDiv = document.getElementById('nameError');
-
-            categoryInput.classList.add('is-invalid');
-            errorDiv.textContent = msg;
-            errorDiv.style.display = 'block';
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: msg,
-                background: '#111',
-                color: '#fff',
-                confirmButtonColor: '#8a7df0'
-            });
+        if (nameValue === '') {
+            showError('Category name cannot be empty.');
+            event.preventDefault();
+            return;
         }
 
-        document.getElementById('categoryName').addEventListener('input', function () {
-            this.classList.remove('is-invalid');
-            document.getElementById('nameError').style.display = 'none';
+        if (nameValue.length < 3) {
+            showError('Category name must be at least 3 characters long.');
+            event.preventDefault();
+            return;
+        }
+
+        if (nameValue.length > 30) {
+            showError('Category name cannot exceed 30 characters.');
+            event.preventDefault();
+            return;
+        }
+
+        if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(nameValue)) {
+            showError('Category name should contain only letters and single spaces.');
+            event.preventDefault();
+            return;
+        }
+    });
+
+
+    function showError(message) {
+
+        categoryInput.classList.add('is-invalid');
+
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: message,
+            background: '#111',
+            color: '#fff',
+            confirmButtonColor: '#8a7df0'
         });
-    </script>
+    }
+
+
+    categoryInput.addEventListener('input', function () {
+
+        categoryInput.classList.remove('is-invalid');
+
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+
+    });
+</script>
 </body>
 
 </html>
