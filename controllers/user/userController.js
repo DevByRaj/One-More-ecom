@@ -509,18 +509,24 @@ export const getEditProfile = async (req, res) => {
 export const postEditProfile = async (req, res) => {
   try {
     const userId = req.session.user
-    
-    const {fname, lname, email, phone} = req.body
+
+    const {fname, lname, email, phone} = req.body || {};
+
+    const user = await User.findById(userId)
+
+    if (!user) {
+      return res.redirect("/login")
+    }
 
     const firstName = fname?.trim()
     const lastName = lname?.trim()
+    const phoneNumber = phone?.trim()
+    const newEmail = email?.trim()
 
     const nameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/
+    const phoneRegex = /^[6-9]\d{9}$/
 
     if (!firstName || !nameRegex.test(firstName)) {
-
-      const user = await User.findById(userId)
-
       return res.render("user/editProfile", {
         user,
         errors: {
@@ -528,13 +534,11 @@ export const postEditProfile = async (req, res) => {
         },
         oldData: req.body,
         message: null
-      })
+      });
     }
 
-    if (!lastName || !nameRegex.test(lastName)) {
-
-      const user = await User.findById(userId)
-
+    // Last name is optional
+    if (lastName && !nameRegex.test(lastName)) {
       return res.render("user/editProfile", {
         user,
         errors: {
@@ -545,28 +549,21 @@ export const postEditProfile = async (req, res) => {
       })
     }
 
-    const name = `${firstName} ${lastName}`
-
-    if (!/^\d{10}$/.test(phone)) {
-
-      const user = await User.findById(userId)
-
+    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
       return res.render("user/editProfile", {
         user,
         errors: {
-          phone: "Phone number should be exactly 10 digits"
+          phone: "Please enter a valid 10-digit phone number"
         },
-        oldData: req.body
+        oldData: req.body,
+        message: null
       })
     }
 
-    const user = await User.findById(userId)
-
-    if(user.authType === "google" && email !== user.email){
-      
-      return res.render("user/editProfile",{
+    if (user.authType === "google" && newEmail !== user.email) {
+      return res.render("user/editProfile", {
         user,
-        errors:{
+        errors: {
           email: "Email cannot be changed for Google Login Users"
         },
         oldData: req.body,
@@ -574,27 +571,40 @@ export const postEditProfile = async (req, res) => {
       })
     }
 
-    if (email !== user.email) {
+    
+    if (newEmail !== user.email) {
 
-      const existing = await User.findOne({email})
+      const existing = await User.findOne({
+        email: newEmail
+      });
+
       if (existing) {
         return res.render("user/editProfile", {
           user,
-          errors: {email: "Email already exists"},
-          oldData: req.body
+          errors: {
+            email: "Email already exists"
+          },
+          oldData: req.body,
+          message: null
         })
       }
 
-      const otp = Math.floor(1000 + Math.random() * 9000).toString()
+      const otp = Math.floor(
+        1000 + Math.random() * 9000
+      ).toString()
+
+      const name = `${firstName} ${lastName || ""}`.trim()
 
       req.session.emailEdit = {
-        newEmail: email,
+        newEmail,
         oldEmail: user.email,
         otp,
         otpExpires: Date.now() + 60 * 1000,
         name,
-        phone,
-        profileImage: req.file ? "/uploads/" + req.file.filename : user.profileImage
+        phone: phoneNumber || "",
+        profileImage: req.file
+          ? "/uploads/" + req.file.filename
+          : user.profileImage
       }
 
       await sendOtpEmail(user.email, otp)
@@ -602,26 +612,41 @@ export const postEditProfile = async (req, res) => {
       return res.redirect("/verify-otp?type=emailEdit")
     }
 
-    let updateData = {
-      name, email, phone
-    }
+
+    const name = `${firstName} ${lastName || ""}`.trim()
+
+    const updateData = {
+      name,
+      email: newEmail,
+      phone: phoneNumber || ""
+    };
+
     if (req.file) {
       updateData.profileImage = "/uploads/" + req.file.filename
     }
 
-    await User.findByIdAndUpdate(userId, updateData)
+    await User.findByIdAndUpdate(
+      userId,
+      updateData
+    )
 
-    req.session.success = "profile edited successfully"
+    if (req.file) {
+      req.session.success = "Profile picture added successfully";
+    } else {
+      req.session.success = "Profile updated successfully";
+    }
 
-    res.redirect("/profile")
+    return res.redirect("/profile")
 
   } catch (error) {
     console.log(error)
+
     const user = await User.findById(req.session.user)
-    res.render("user/editProfile", {
+
+    return res.render("user/editProfile", {
       user,
       errors: {},
-      oldData: {},
+      oldData: req.body || {},
       message: null,
       error: "Something went wrong"
     })
@@ -819,22 +844,39 @@ export const postAddAddressFromCheckout = async (req, res) => {
 
 export const deleteAddress = async (req, res) => {
   try {
-    const userId = req.session.user;
-    const addressId = req.params.id;
+    const userId = req.session.user
+    const addressId = req.params.id
+
+    const address = await Address.findOne({
+      _id: addressId,
+      userId
+    });
+
+    if (!address) {
+      return res.redirect("/address?error=notfound")
+    }
+
+    const wasDefault = address.isDefault
 
     await Address.findOneAndDelete({
       _id: addressId,
-      userId: userId
-    });
-
-    res.redirect("/address");
-  } catch (error) {
-    res.render("user/address", {
-      user,
-      addresses,
-      error
+      userId
     })
 
+    if (wasDefault) {
+      const nextAddress = await Address.findOne({userId}).sort({createdAt: 1});
+
+      if (nextAddress) {
+        nextAddress.isDefault = true
+        await nextAddress.save()
+      }
+    }
+
+    return res.redirect("/address")
+
+  } catch (error) {
+    console.log("Delete address error:", error)
+    return res.redirect("/address?error=server")
   }
 }
 
