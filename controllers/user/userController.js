@@ -1,17 +1,10 @@
 import User from "../../models/userModel.js"
 import {findUserByEmail, hashPassword, sendOTP, comparePassword, sendForgotPasswordOTP, resetUserPassword, loginUser} from "../../services/authService.js"
 import {validationResult} from "express-validator"
-import crypto from "crypto"
 import {sendOtpEmail} from "../../services/mailService.js"
 import Address from "../../models/addressModel.js"
-import {log} from "console"
-import {create} from "domain"
 import Product from "../../models/productModel.js"
-import Category from "../../models/categoryModel.js"
-import Variant from "../../models/variantModel.js"
-import Brand from "../../models/brandModel.js"
 import {getShopProducts, getProductDetailsService} from "../../services/productService.js"
-import Cart from "../../models/cartModel.js"
 import {getWishlist} from "../../services/wishlistService.js"
 
 
@@ -1282,7 +1275,10 @@ export const getProductDetails = async (req, res) => {
       return res.redirect("/shop")
     }
 
-    const unavailable = !productData.product.isListed
+    const unavailable =
+      !productData.product.isListed ||
+      !productData.defaultVariant ||
+      productData.variants.every(variant => variant.stock <= 0)
 
     res.render("user/productDetails", {
       ...productData,

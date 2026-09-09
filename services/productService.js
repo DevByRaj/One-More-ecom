@@ -198,6 +198,8 @@ export const getProductDetailsService = async (productId) => {
         isListed: true
     })
 
+    const defaultVariant = variants.find(variant => variant.stock > 0) || variant[0]
+
     for(const variant of variants){
 
         variant.offer = await calculateBestOffer(
@@ -216,6 +218,7 @@ export const getProductDetailsService = async (productId) => {
     return {
         product,
         variants,
+        defaultVariant,
         similarProducts: relatedProducts
     }
 }
