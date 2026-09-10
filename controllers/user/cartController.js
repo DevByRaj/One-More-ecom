@@ -21,6 +21,8 @@ export const addToCart = async (req, res) => {
                 req.body
             )
 
+        
+
         if (!result.success) {
 
             return res.status(400).json({

@@ -859,13 +859,13 @@
                                 <div class="action-btns">
                                     <button type="button" id="buyNowBtn" <%=unavailable ? 'disabled' : '' %>
                                         data-product-id="<%= product._id %>"
-                                            data-variant-id="<%= variants?.[0]?._id || '' %>">
+                                            data-variant-id="<%= defaultVariant?._id || '' %>">
                                                 Buy Now
                                     </button>
 
                                     <button type="button" id="addToCartBtn" <%=unavailable ? 'disabled' : '' %>
                                         data-product-id="<%= product._id %>"
-                                            data-variant-id="<%= variants?.[0]?._id || '' %>" class="btn btn-dark">
+                                            data-variant-id="<%= defaultVariant?._id || '' %>" class="btn btn-dark">
                                                 Add To Cart
                                     </button>
                                 </div>
