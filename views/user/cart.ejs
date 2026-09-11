@@ -898,7 +898,7 @@
 
                             <% let holdsOverstock=cart && cart.items.some(item=> item.quantity > item.variantId.stock);
                                 %>
-                                <a href="/checkout"
+                                <a href="/checkout?source=cart"
                                     class="checkout-btn <%= (!cart || cart.items.length === 0 || holdsOverstock) ? 'disabled' : '' %>">
                                     Proceed to Checkout
                                 </a>
