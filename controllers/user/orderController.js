@@ -43,6 +43,10 @@ export const getCheckout = async (req, res) => {
     try {
 
         const userId = req.session.user
+        
+        if(req.query.source === "cart"){
+            delete req.session.buyNow
+        }
 
         const result = await getCheckoutData(userId, req.session.appliedCoupon, req.session.buyNow)
 
