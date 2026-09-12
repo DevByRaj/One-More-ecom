@@ -951,12 +951,13 @@
                             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                                 <div class="product-card">
                                     <a href="/productDetails?id=<%= item._id %>">
-                                        <img src="<%= item.productImage[0] %>" alt="<%= item.productName %>">
+                                        <img src="<%= item.defaultVariant?.variantImage?.[0] || item.productImage?.[0] %>" alt="<%= item.productName %>">
                                     </a>
                                     <div class="product-name">
                                         <%= item.productName %>
                                     </div>
-                                    <div class="card-price">₹<%= item.salePrice || 0 %>
+                                    <div class="card-price">
+                                        ₹<%= item.defaultVariant.offer.finalPrice.toFixed(2) %>
                                     </div>
                                     <div class="card-rating">
                                         <i class="bi bi-star-fill"></i>

@@ -13,6 +13,7 @@ export const getShopProducts = async (queryParams) => {
         category,
         brand,
         color,
+        playtime,
         minPrice,
         maxPrice,
         page
@@ -70,6 +71,7 @@ export const getShopProducts = async (queryParams) => {
                 $lte: Number(maxPrice)
             }
         }
+        
 
         const variants = await Variant.find(variantQuery)
 
@@ -80,6 +82,59 @@ export const getShopProducts = async (queryParams) => {
             filteredProductIds = filteredProductIds.filter(id => priceProductIds.includes(id))
         } else {
             filteredProductIds = priceProductIds
+        }
+    }
+
+    if (playtime) {
+
+        const selectedPlaytimes = Array.isArray(playtime)
+            ? playtime
+            : [playtime]
+
+        const playtimeProductIds = []
+
+        const productsWithPlaytime = await Product.find({
+            isListed: true,
+            playtime: {$ne: ""}
+        }).select("_id playtime")
+
+        for (const product of productsWithPlaytime) {
+
+            const hours = parseInt(product.playtime)
+
+            const matches = selectedPlaytimes.some(value => {
+
+                const selectedHours = Number(value)
+
+                if (selectedHours === 10) {
+                    return hours <= 10
+                }
+
+                if (selectedHours === 20) {
+                    return hours <= 20
+                }
+
+                if (selectedHours === 30) {
+                    return hours >= 30
+                }
+
+                return false
+            })
+
+            if (matches) {
+                playtimeProductIds.push(product._id.toString())
+            }
+        }
+
+        if (filteredProductIds) {
+
+            filteredProductIds = filteredProductIds.filter(id =>
+                playtimeProductIds.includes(id)
+            )
+
+        } else {
+
+            filteredProductIds = playtimeProductIds
         }
     }
 
@@ -187,7 +242,10 @@ export const getShopProducts = async (queryParams) => {
 
 export const getProductDetailsService = async (productId) => {
 
-    const product = await Product.findById(productId).populate("brand").populate("category").lean()
+    const product = await Product.findById(productId)
+        .populate("brand")
+        .populate("category")
+        .lean()
 
     if (!product) {
         return null
@@ -198,28 +256,58 @@ export const getProductDetailsService = async (productId) => {
         isListed: true
     })
 
-    const defaultVariant = variants.find(variant => variant.stock > 0) || variant[0]
+    const defaultVariant =
+        variants.find(variant => variant.stock > 0) ||
+        variants[0]
 
-    for(const variant of variants){
+    for (const variant of variants) {
 
         variant.offer = await calculateBestOffer(
-            product, variant
+            product,
+            variant
         )
     }
 
     const relatedProducts = await Product.find({
-
         category: product.category._id,
-
-        _id: {$ne: product._id},
+        _id: { $ne: product._id },
         isListed: true
     }).limit(4)
+
+    const similarProducts = []
+
+    for (const relatedProduct of relatedProducts) {
+
+        const relatedVariants = await Variant.find({
+            productId: relatedProduct._id,
+            isListed: true
+        })
+
+        const defaultRelatedVariant =
+            relatedVariants.find(variant => variant.stock > 0) ||
+            relatedVariants[0]
+
+        if (!defaultRelatedVariant) {
+            continue
+        }
+
+        defaultRelatedVariant.offer =
+            await calculateBestOffer(
+                relatedProduct,
+                defaultRelatedVariant
+            )
+
+        similarProducts.push({
+            ...relatedProduct,
+            defaultVariant: defaultRelatedVariant
+        })
+    }
 
     return {
         product,
         variants,
         defaultVariant,
-        similarProducts: relatedProducts
+        similarProducts
     }
 }
 
