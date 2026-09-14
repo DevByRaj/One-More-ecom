@@ -349,7 +349,7 @@ export const placeOrderService = async (userId, orderData, session = null) => {
                 }
             },
             {
-                new: true,
+                returnDocument: "after",
                 ...(session ? {session} : {})
             }
         )
@@ -431,86 +431,108 @@ export const completeRazorpayOrderService = async (
     razorpayOrderId,
     razorpayPaymentId,
     razorpaySignature,
+    addressId,
+    appliedCoupon = null,
     buyNow = null
 ) => {
+    try {
 
-    const order = await Order.findOne({
-        userId,
-        razorpayOrderId,
-        paymentStatus: "Pending"
-    })
+        const alreadyPaidOrder = await Order.findOne({
+            userId,
+            razorpayOrderId,
+            paymentStatus: "Paid"
+        })
 
-    if (!order) {
-        return {
-            success: false,
-            message: "Pending order not found"
-        }
-    }
-
-    for (const item of order.items) {
-
-        const variant = await Variant.findById(item.variantId)
-
-        if (!variant || !variant.isListed) {
+        if (alreadyPaidOrder) {
             return {
-                success: false,
-                message: `${item.productName} is no longer available`
+                success: true,
+                orderId: alreadyPaidOrder._id
             }
         }
 
-        if (variant.stock < item.quantity) {
-            return {
-                success: false,
-                message: `${item.productName} is out of stock`
-            }
-        }
-    }
+        const pendingOrder = await Order.findOne({
+            userId,
+            razorpayOrderId,
+            paymentStatus: "Pending"
+        })
 
-    for (const item of order.items) {
+        if (pendingOrder) {
 
-        await Variant.findByIdAndUpdate(
-            item.variantId,
-            {
-                $inc: {
-                    stock: -item.quantity
+            for (const item of pendingOrder.items) {
+
+                const variant = await Variant.findById(item.variantId)
+
+                if (!variant || !variant.isListed) {
+                    return {
+                        success: false,
+                        message: `${item.productName} is no longer available`
+                    }
+                }
+
+                if (variant.stock < item.quantity) {
+                    return {
+                        success: false,
+                        message: `${item.productName} is out of stock`
+                    }
                 }
             }
+
+            for (const item of pendingOrder.items) {
+
+                await Variant.findByIdAndUpdate(
+                    item.variantId,
+                    {
+                        $inc: {
+                            stock: -item.quantity
+                        }
+                    }
+                )
+            }
+
+            pendingOrder.paymentStatus = "Paid"
+            pendingOrder.razorpayPaymentId = razorpayPaymentId
+            pendingOrder.razorpaySignature = razorpaySignature
+
+            await pendingOrder.save()
+
+            return {
+                success: true,
+                orderId: pendingOrder._id
+            }
+        }
+
+        const result = await placeOrderService(
+            userId,
+            {
+                addressId,
+                paymentMethod: "RAZORPAY",
+                paymentStatus: "Paid",
+                razorpayOrderId,
+                razorpayPaymentId,
+                coupon: appliedCoupon,
+                buyNow
+            }
         )
-    }
 
-    order.paymentStatus = "Paid"
-    order.razorpayPaymentId = razorpayPaymentId
-    order.razorpaySignature = razorpaySignature
+        if (!result.success) {
+            return result
+        }
 
-    await order.save()
+        return {
+            success: true,
+            orderId: result.orderId
+        }
 
-    if (!buyNow) {
+    } catch (error) {
 
-        const cart = await Cart.findOne({userId})
+        console.log("Complete Razorpay Order Error:", error)
 
-        if (cart) {
-
-            const orderedVariantIds = order.items.map(
-                item => item.variantId.toString()
-            )
-
-            cart.items = cart.items.filter(
-                item =>
-                    !orderedVariantIds.includes(
-                        item.variantId.toString()
-                    )
-            )
-
-            await cart.save()
+        return {
+            success: false,
+            message: "Unable to complete Razorpay order"
         }
     }
-
-    return {
-        success: true,
-        orderId: order._id
-    }
 }
-
 export const createPendingOrderService = async (userId, orderData, appliedCoupon = null, buyNow = null) => {
 
     const {
@@ -1054,21 +1076,26 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
 
             if (order.paymentStatus === "Paid") {
 
-                let refundAmount = item.totalPrice
+                const itemDiscount =
+                    order.subTotal > 0
+                        ? (item.totalPrice / order.subTotal) * order.discount
+                        : 0
+
+                let refundAmount = item.totalPrice - itemDiscount
 
                 const remainingActiveItems = order.items.filter(orderItem => {
                     if (orderItem._id.toString() === item._id.toString()) {
-                        return false;
+                        return false
                     }
 
-                    const status = formData[`status_${orderItem._id}`] || orderItem.status;
+                    const status =
+                        formData[`status_${orderItem._id}`] || orderItem.status
 
-                    return !["Cancelled", "Returned"].includes(status);
+                    return !["Cancelled", "Returned"].includes(status)
                 })
 
                 if (remainingActiveItems.length === 0) {
                     refundAmount += order.shipping
-
                 }
 
                 await creditWallet(
