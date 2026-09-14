@@ -3,7 +3,7 @@ import Order from "../../models/orderModel.js";
 import Product from "../../models/productModel.js"
 import Variant from "../../models/variantModel.js";
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
-import {getCheckoutData, createPendingOrderService, placeOrderService, completeRazorpayOrderService} from "../../services/orderService.js";
+import {getCheckoutData, completeRazorpayOrderService} from "../../services/orderService.js";
 import {processReferralRewardService} from "../../services/referralOfferService.js";
 
 export const createRazorpayOrder = async (req, res) => {
@@ -45,30 +45,29 @@ export const createRazorpayOrder = async (req, res) => {
                 checkout.totals.grandTotal
             )
 
-        const pendingOrder =
-            await createPendingOrderService(
-                userId,
-                {
-                    addressId,
-                    paymentMethod: "RAZORPAY",
-                    razorpayOrderId: razorpayOrder.id
-                },
-                appliedCoupon,
-                buyNow
-            )
+        // const pendingOrder =
+        //     await createPendingOrderService(
+        //         userId,
+        //         {
+        //             addressId,
+        //             paymentMethod: "RAZORPAY",
+        //             razorpayOrderId: razorpayOrder.id
+        //         },
+        //         appliedCoupon,
+        //         buyNow
+        //     )
 
-        if (!pendingOrder.success) {
+        // if (!pendingOrder.success) {
 
-            return res.json({
-                success: false,
-                message: pendingOrder.message
-            })
-        }
+        //     return res.json({
+        //         success: false,
+        //         message: pendingOrder.message
+        //     })
+        // }
 
         return res.json({
             success: true,
             order: razorpayOrder,
-            orderId: pendingOrder.order._id,
             key: process.env.RAZORPAY_KEY_ID
         })
 
@@ -103,12 +102,18 @@ export const verifyPayment = async (req, res) => {
             })
         }
 
+        const addressId = req.body.addressId
+        const appliedCoupon = req.session.appliedCoupon || null
+        const buyNow = req.session.buyNow || null
+
         const result = await completeRazorpayOrderService(
             req.session.user,
             razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature,
-            req.session.buyNow || null
+            addressId,
+            appliedCoupon,
+            buyNow
         )
 
         if (!result.success) {
