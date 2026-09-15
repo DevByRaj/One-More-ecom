@@ -10,9 +10,9 @@ import User from "../models/userModel.js"
 import {userInfo} from "os"
 import {creditWallet, getOrCreateWallet} from "./walletService.js"
 import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
-import { calculateBestOffer } from "./offerCalulationService.js"
+import {calculateBestOffer} from "./offerCalulationService.js"
 import Coupon from "../models/couponModel.js"
-import { applyCouponService } from "./couponService.js"
+import {applyCouponService} from "./couponService.js"
 
 
 export const allowedStatusTransitions = {
@@ -139,40 +139,40 @@ export const getCheckoutData = async (userId, appliedCoupon = null, buyNow = nul
         .sort({isDefault: -1, createdAt: -1});
 
     let cart
-    if(buyNow){
-        
+    if (buyNow) {
+
         const product = await Product.findById(buyNow.productId)
         const variant = await Variant.findById(buyNow.variantId)
 
-        if(!product || !product.isListed || 
+        if (!product || !product.isListed ||
             !variant || !variant.isListed ||
             variant.stock <= 0
-        ){
-            return{
+        ) {
+            return {
                 success: false,
                 message: "Product unavailabe"
             }
         }
         cart = {
-            items:[{
+            items: [{
                 productId: product,
                 variantId: variant,
                 quantity: 1
             }]
         }
-    } else{
+    } else {
         cart = await getUserCart(userId)
 
-        if(!cart || cart.items.length === 0){
+        if (!cart || cart.items.length === 0) {
             return {
                 success: false
             }
         }
     }
 
-    for(const item of cart.items){
-        if(!item.variantId || item.variantId.stock < item.quantity){
-            return{
+    for (const item of cart.items) {
+        if (!item.variantId || item.variantId.stock < item.quantity) {
+            return {
                 success: false,
                 message: `${item.productId.productName} has only ${item.variantId?.stock || 0} item(s) available`
             }
@@ -195,7 +195,7 @@ export const getCheckoutData = async (userId, appliedCoupon = null, buyNow = nul
     }
 
     const totals = calculateCartTotals(cart, couponDiscount)
-    
+
     const wishlist = await Wishlist.findOne({userId})
 
     const wishlistCount = wishlist ? wishlist.products.length : 0
@@ -222,25 +222,25 @@ export const placeOrderService = async (userId, orderData, session = null) => {
         razorpayOrderId = null,
         razorpayPaymentId = null,
         coupon = null,
-        buyNow = null } = orderData
+        buyNow = null} = orderData
 
     let cart
 
-    if(buyNow){
+    if (buyNow) {
 
         const product = await Product.findById(buyNow.productId)
         const variant = await Variant.findById(buyNow.variantId)
 
-        if(!product || !product.isListed ||
+        if (!product || !product.isListed ||
             !variant || !variant.isListed
-        ){
-            return{
+        ) {
+            return {
                 success: false,
                 message: "Product unavailable"
             }
         }
-        if(variant.stock <= 0){
-            return{
+        if (variant.stock <= 0) {
+            return {
                 success: false,
                 message: "Out of stock"
             }
@@ -253,11 +253,11 @@ export const placeOrderService = async (userId, orderData, session = null) => {
                 quantity: 1
             }]
         }
-    } else{
+    } else {
         cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
 
-        if(!cart || cart.items.length === 0){
-            return{
+        if (!cart || cart.items.length === 0) {
+            return {
                 success: false,
                 message: "Cart is empty"
             }
@@ -297,17 +297,17 @@ export const placeOrderService = async (userId, orderData, session = null) => {
     }
 
     const orderItems = await Promise.all(
-        cart.items.map(async(item) =>{
+        cart.items.map(async (item) => {
 
             const offer = await calculateBestOffer(
                 item.productId, item.variantId
             )
 
-            return{
+            return {
                 productId: item.productId._id,
 
                 variantId: item.variantId._id,
-                
+
                 productName: item.productId.productName,
 
                 variantName: item.variantId.variantName,
@@ -399,7 +399,7 @@ export const placeOrderService = async (userId, orderData, session = null) => {
     )
 
     const createdOrder = order[0]
-    
+
 
     for (const item of cart.items) {
         await Variant.findByIdAndUpdate(
@@ -413,10 +413,10 @@ export const placeOrderService = async (userId, orderData, session = null) => {
         )
     }
 
-    if(!buyNow){
+    if (!buyNow) {
 
         cart.items = []
-        await cart.save(session?{session}:undefined)
+        await cart.save(session ? {session} : undefined)
 
     }
     return {
@@ -477,6 +477,36 @@ export const completeRazorpayOrderService = async (
                 }
             }
 
+            if (pendingOrder.coupon?.couponId && !pendingOrder.coupon?.usageCounted) {
+                const updatedCoupon = await Coupon.findOneAndUpdate(
+                    {
+                        _id: pendingOrder.coupon.couponId,
+                        $or: [
+                            {usageLimit: null},
+                            {
+                                $expr: {
+                                    $lt: ["$usedCount", "$usageLimit"]
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        $inc: {
+                            usedCount: 1
+                        }
+                    }
+                )
+
+                if (!updatedCoupon) {
+                    return {
+                        success: false,
+                        message: "Coupon usage limit reached"
+                    }
+                }
+
+                pendingOrder.coupon.usageCounted = true
+            }
+
             for (const item of pendingOrder.items) {
 
                 await Variant.findByIdAndUpdate(
@@ -494,6 +524,22 @@ export const completeRazorpayOrderService = async (
             pendingOrder.razorpaySignature = razorpaySignature
 
             await pendingOrder.save()
+
+            if (!buyNow) {
+                const cart = await Cart.findOne({userId})
+
+                if (cart) {
+                    const orderedVariantIds = pendingOrder.items.map(
+                        item => item.variantId.toString()
+                    )
+
+                    cart.items = cart.items.filter(
+                        item => !orderedVariantIds.includes(item.variantId.toString())
+                    )
+
+                    await cart.save()
+                }
+            }
 
             return {
                 success: true,
@@ -736,8 +782,8 @@ export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
     const filter = {
         userId,
-        $or:[{paymentMethod: {$ne:"RAZORPAY"}},
-            {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
+        $or: [{paymentMethod: {$ne: "RAZORPAY"}},
+        {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
         ]
     }
 
@@ -783,11 +829,11 @@ const recalculateOrderTotals = (order) => {
 
     order.subTotal = subtotal
 
-    order.shipping = subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT ? SHIPPING_CHARGE: 0
+    order.shipping = subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT ? SHIPPING_CHARGE : 0
 
     order.discount = Math.min(order.discount || 0, subtotal)
 
-    order.grandTotal =  order.subTotal - order.discount + order.shipping
+    order.grandTotal = order.subTotal - order.discount + order.shipping
 }
 
 const calculateOverallOrderStatus = (items) => {
@@ -810,23 +856,23 @@ const calculateOverallOrderStatus = (items) => {
         return "Delivered"
     }
 
-    if(activeItems.every(item => item.status === "Delivered")){
+    if (activeItems.every(item => item.status === "Delivered")) {
         return "Delivered"
     }
 
-    if(activeItems.some(item => item.status === "Out For Delivery")){
+    if (activeItems.some(item => item.status === "Out For Delivery")) {
         return "Out For Delivery"
     }
 
-    if(activeItems.some(item => item.status === "Shipped")){
+    if (activeItems.some(item => item.status === "Shipped")) {
         return "Shipped"
     }
 
-    if(activeItems.some(item => item.status === "Processing")){
+    if (activeItems.some(item => item.status === "Processing")) {
         return "Processing"
     }
 
-    if(activeItems.some(item => item.status === "Pending")){
+    if (activeItems.some(item => item.status === "Pending")) {
         return "Pending"
     }
 
@@ -890,7 +936,7 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     const previousGrandTotal = order.grandTotal
 
-    if(order.discount > 0 && order.subTotal > 0){
+    if (order.discount > 0 && order.subTotal > 0) {
 
         const itemDiscount = (item.totalPrice / order.subTotal) * order.discount
 
@@ -901,11 +947,11 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
-    if(order.paymentStatus === "Paid"){
+    if (order.paymentStatus === "Paid") {
 
         const refundAmount = previousGrandTotal - order.grandTotal
 
-        if(refundAmount > 0){
+        if (refundAmount > 0) {
 
             await creditWallet(
                 order.userId,
@@ -1014,14 +1060,14 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
 
-        if(newStatus === "Delivered" && order.paymentMethod === "COD"){
+        if (newStatus === "Delivered" && order.paymentMethod === "COD") {
             order.paymentStatus = "Paid"
         }
 
-        if(item.status === "Return Requested" && newStatus === "Returned"){
+        if (item.status === "Return Requested" && newStatus === "Returned") {
 
             await Variant.findByIdAndUpdate(item.variantId, {
-                $inc:{
+                $inc: {
                     stock: item.quantity
                 }
             })
@@ -1035,9 +1081,9 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
 
                 let refundAmount = item.totalPrice - itemDiscount
 
-                const remainingActiveItems = order.items.filter(orderItem =>{
+                const remainingActiveItems = order.items.filter(orderItem => {
 
-                    if(orderItem._id.toString() === item._id.toString()){
+                    if (orderItem._id.toString() === item._id.toString()) {
                         return false
                     }
 
@@ -1046,7 +1092,7 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                     return !["Cancelled", "Returned"].includes(status)
                 })
 
-                if(remainingActiveItems.length === 0){
+                if (remainingActiveItems.length === 0) {
                     refundAmount += order.shipping
                 }
 
@@ -1056,17 +1102,17 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                     `Refund for returned product - ${item.productName}`,
                     order._id,
                     "Refund"
-                )                
-                
+                )
+
             }
 
             item.returnedAt = new Date()
         }
-        
+
         if (
             item.status !== "Cancelled" &&
             newStatus === "Cancelled"
-        )  {
+        ) {
 
             await Variant.findByIdAndUpdate(item.variantId, {
                 $inc: {

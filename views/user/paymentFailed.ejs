@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Order Failed | OneMore</title>
+    <title>Order Failed | OneMore</title>
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -149,52 +149,54 @@
             font-size: 1.1rem;
             margin-bottom: 2.5rem;
         }
-.btn-group{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:18px;
-}
 
-    .action-btn {
-    width: 200px;
-    height: 50px;
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+        }
 
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+        .action-btn {
+            width: 200px;
+            height: 50px;
 
-    background: #000;
-    color: #fff !important;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
 
-    border: 0;
-    border-radius: 30px;
+            background: #000;
+            color: #fff !important;
 
-    text-decoration: none;
-    text-align: center;
+            border: 0;
+            border-radius: 30px;
 
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1;
+            text-decoration: none;
+            text-align: center;
 
-    cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1;
 
-    padding: 0;
-    margin: 0;
+            cursor: pointer;
 
-    box-sizing: border-box;
+            padding: 0;
+            margin: 0;
 
-    transition: .3s ease;
+            box-sizing: border-box;
 
-    appearance: none;
-    -webkit-appearance: none;
-}
+            transition: .3s ease;
 
-.action-btn:hover {
-    background: #333;
-    color: #fff;
-    transform: translateY(-2px);
-}
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .action-btn:hover {
+            background: #333;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
         /* ================= FOOTER ================= */
         footer {
             background-color: var(--bg-dark);
@@ -303,10 +305,11 @@
                 flex-direction: column;
                 width: 100%;
             }
-.action-btn {
-    width: 100%;
-    max-width: 220px;
-}
+
+            .action-btn {
+                width: 100%;
+                max-width: 220px;
+            }
         }
     </style>
 </head>
@@ -316,157 +319,173 @@
     <!-- Header -->
     <%- include("../partials/navbar") %>
 
-    <!-- Main Content -->
-    <main>
-        <div class="card">
-            <h1 class="status-title">
-                <i class="fa-solid fa-xmark"></i> ORDER FAILED!
-            </h1>
+        <!-- Main Content -->
+        <main>
+            <div class="card">
+                <h1 class="status-title">
+                    <i class="fa-solid fa-xmark"></i> ORDER FAILED!
+                </h1>
 
-        <p class="error-msg">
-            <i class="fa-solid fa-xmark"></i>
-            Payment failed. Please try again.
-        </p>
-
-            <p class="order-number">
-                Order Number: <%= orderId %>
-            </p>
-
-            <div class="btn-group">
-                <button id="retryPaymentBtn" class="action-btn">
-                    Try Again
-                </button>
-                
-                <a href="/shop" class="action-btn">
-                    Continue shopping
-                </a>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-logo">1M</div>
-
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4>SUPPORT</h4>
-                <ul>
-                    <li><a href="/order-status">Order Status</a></li>
-                    <li><a href="/product-support">Product Support</a></li>
-                    <li><a href="/shipping-policy">Shipping & Return Policy</a></li>
-                    <li><a href="/complaints">Complaint Registration</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>About Us</h4>
-                <ul>
-                    <li><a href="/contact">Contact Us</a></li>
-                    <li><a href="/privacy-policy">Privacy Policy</a></li>
-                    <li><a href="/terms">Terms of use</a></li>
-                    <li><a href="/faq">FAQ</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col contact-info">
-                <h4>Contact</h4>
-            <p><strong>Email :</strong>
-                onemore@gmail.com
-            </p>
-                <p><strong>Phone :</strong>
-                    +91 8888888888
+                <p class="error-msg">
+                    <i class="fa-solid fa-xmark"></i>
+                    Payment failed. Please try again.
                 </p>
-            </div>
 
-            <div class="footer-col">
-                <h4>Connect with us</h4>
-                <div class="social-icons">
-                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                <p class="order-number">
+                    Order Number: <%= orderId %>
+                </p>
+
+                <div class="btn-group">
+                    <button id="retryPaymentBtn" class="action-btn">
+                        Try Again
+                    </button>
+
+                    <a href="/shop" class="action-btn">
+                        Continue shopping
+                    </a>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div class="footer-bottom">
-            <p>
-                © <%= new Date().getFullYear() %> OneMore. All Rights Reserved.
-            </p>
-        </div>
-    </footer>
+        <!-- Footer -->
+        <footer>
+            <div class="footer-logo">1M</div>
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    
-    <script>
-        document.getElementById("retryPaymentBtn").addEventListener("click", async () => {
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>SUPPORT</h4>
+                    <ul>
+                        <li><a href="/order-status">Order Status</a></li>
+                        <li><a href="/product-support">Product Support</a></li>
+                        <li><a href="/shipping-policy">Shipping & Return Policy</a></li>
+                        <li><a href="/complaints">Complaint Registration</a></li>
+                    </ul>
+                </div>
 
-            const response = await fetch("<%= retryUrl %>");
+                <div class="footer-col">
+                    <h4>About Us</h4>
+                    <ul>
+                        <li><a href="/contact">Contact Us</a></li>
+                        <li><a href="/privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of use</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                    </ul>
+                </div>
 
-            const data = await response.json();
+                <div class="footer-col contact-info">
+                    <h4>Contact</h4>
+                    <p><strong>Email :</strong>
+                        onemore@gmail.com
+                    </p>
+                    <p><strong>Phone :</strong>
+                        +91 8888888888
+                    </p>
+                </div>
 
-            if (!data.success) {
-                return alert("Unable to retry payment");
-            }
+                <div class="footer-col">
+                    <h4>Connect with us</h4>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
 
-            const options = {
+            <div class="footer-bottom">
+                <p>
+                    © <%= new Date().getFullYear() %> OneMore. All Rights Reserved.
+                </p>
+            </div>
+        </footer>
 
-                key: data.key,
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-                amount: data.order.amount,
+        <script>
+            document.getElementById("retryPaymentBtn").addEventListener("click", async () => {
 
-                currency: data.order.currency,
+                const response = await fetch("<%= retryUrl %>");
 
-                name: "OneMore",
+                const data = await response.json();
 
-                description: "Retry Payment",
-
-                order_id: data.order.id,
-
-                handler: async function (response) {
-
-                    const verifyResponse = await fetch("/payment/verify", {
-
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-
-                        body: JSON.stringify({
-
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature
-
-                        })
-
-                    });
-
-                    const verifyData = await verifyResponse.json();
-
-                    if (verifyData.success) {
-
-                        window.location.href = `/order-success/${verifyData.orderId}`;
-
-                    } else {
-
-                        alert("Payment verification failed");
-
-                    }
-
+                if (!data.success) {
+                    return alert(data.message || "Unable to retry payment");
                 }
 
-            };
+                let isRetrySuccess = false;
 
-            const rzp = new Razorpay(options);
+                const options = {
 
-            rzp.open();
+                    key: data.key,
 
-        });
-    </script>
+                    amount: data.order.amount,
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                    currency: data.order.currency,
+
+                    name: "OneMore",
+
+                    description: "Retry Payment",
+
+                    order_id: data.order.id,
+
+                    handler: async function (response) {
+
+                        isRetrySuccess = true;
+
+                        const verifyResponse = await fetch("/payment/verify", {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature
+
+                            })
+
+                        });
+
+                        const verifyData = await verifyResponse.json();
+
+                        if (verifyData.success) {
+
+                            window.location.href = `/order-success/${verifyData.orderId}`;
+
+                        } else {
+
+                            alert(verifyData.message || "Payment verification failed");
+
+                        }
+
+                    },
+
+                    modal: {
+                        ondismiss: function () {
+                            if (!isRetrySuccess) {
+                                window.location.href = `/payment-failed/<%= mongoOrderId %>`;
+                            }
+                        }
+                    }
+
+                };
+
+                const rzp = new Razorpay(options);
+
+                rzp.on("payment.failed", function (response) {
+                    window.location.href = `/payment-failed/<%= mongoOrderId %>`;
+                });
+
+                rzp.open();
+
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
