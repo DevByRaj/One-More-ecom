@@ -443,15 +443,15 @@
                                     <%= item.orderId %>
                                 </div>
                                 <div>
-                                    <%= item.userId.name %>
+                                    <%= item.userId?.name || "Unknown User" %>
                                 </div>
                                 <div>
                                     <%= item.paymentMethod %>
                                 </div>
                                 <div>
                                     <span
-                                        class="status-txt-field <%= (item.orderStatus || '').toLowerCase().replace(/\s+/g, '-') %>">
-                                        <%= item.orderStatus %>
+                                        class="status-txt-field <%= (item.paymentStatus === 'Failed' ? 'failed' : (item.orderStatus || '').toLowerCase().replace(/\s+/g, '-')) %>">
+                                        <%= item.paymentStatus==='Failed' ? 'Failed' : item.orderStatus %>
                                     </span>
                                 </div>
                                 <div>₹<%= Number(item.grandTotal).toFixed(2) %>

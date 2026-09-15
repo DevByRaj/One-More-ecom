@@ -3,7 +3,7 @@ import Order from "../../models/orderModel.js";
 import Product from "../../models/productModel.js"
 import Variant from "../../models/variantModel.js";
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
-import {getCheckoutData, completeRazorpayOrderService} from "../../services/orderService.js";
+import {getCheckoutData, createPendingOrderService, completeRazorpayOrderService} from "../../services/orderService.js";
 import {processReferralRewardService} from "../../services/referralOfferService.js";
 
 export const createRazorpayOrder = async (req, res) => {
@@ -45,29 +45,28 @@ export const createRazorpayOrder = async (req, res) => {
                 checkout.totals.grandTotal
             )
 
-        // const pendingOrder =
-        //     await createPendingOrderService(
-        //         userId,
-        //         {
-        //             addressId,
-        //             paymentMethod: "RAZORPAY",
-        //             razorpayOrderId: razorpayOrder.id
-        //         },
-        //         appliedCoupon,
-        //         buyNow
-        //     )
+        const pendingOrder = await createPendingOrderService(
+            userId,
+            {
+                addressId,
+                paymentMethod: "RAZORPAY",
+                razorpayOrderId: razorpayOrder.id
+            },
+            appliedCoupon,
+            buyNow
+        )
 
-        // if (!pendingOrder.success) {
-
-        //     return res.json({
-        //         success: false,
-        //         message: pendingOrder.message
-        //     })
-        // }
+        if (!pendingOrder.success) {
+            return res.json({
+                success: false,
+                message: pendingOrder.message
+            })
+        }
 
         return res.json({
             success: true,
             order: razorpayOrder,
+            orderId: pendingOrder.order._id,
             key: process.env.RAZORPAY_KEY_ID
         })
 
@@ -141,18 +140,25 @@ export const verifyPayment = async (req, res) => {
 export const getPaymentFailed = async (req, res) => {
     try {
 
-        const order = await Order.findById(req.params.id)
+        const userId = req.session.user
+
+        const order = await Order.findOne({
+            _id: req.params.id,
+            userId
+        })
 
         if (!order) {
             return res.redirect("/orders")
         }
 
-        order.paymentStatus = "Failed"
-
-        await order.save()
+        if (order.paymentStatus !== "Paid") {
+            order.paymentStatus = "Failed"
+            await order.save()
+        }
 
         res.render("user/paymentFailed", {
             orderId: order.orderId,
+            mongoOrderId: order._id,
             retryUrl: `/payment/retry/${order._id}`
         })
 
@@ -160,8 +166,6 @@ export const getPaymentFailed = async (req, res) => {
         console.log(error);
 
         res.redirect("/orders")
-
-
     }
 }
 
@@ -178,6 +182,13 @@ export const retryPayment = async (req, res) => {
             return res.json({
                 success: false,
                 message: "Order not found"
+            })
+        }
+
+        if (order.paymentStatus === "Paid") {
+            return res.json({
+                success: false,
+                message: "Order is already paid"
             })
         }
 
@@ -205,7 +216,7 @@ export const retryPayment = async (req, res) => {
 
             const product = await Product.findById(item.productId)
 
-            if(!product || !product.isListed){
+            if (!product || !product.isListed) {
                 return res.json({
                     success: false,
                     message: `${item.productName} is no longer available`
@@ -223,6 +234,7 @@ export const retryPayment = async (req, res) => {
         return res.json({
             success: true,
             order: razorpayOrder,
+            orderId: order._id,
             key: process.env.RAZORPAY_KEY_ID
         })
 
@@ -232,7 +244,7 @@ export const retryPayment = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: "Unavailabe to retry payment"
+            message: "Unable to retry payment"
         })
 
     }
