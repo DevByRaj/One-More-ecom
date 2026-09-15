@@ -4,6 +4,9 @@ import {validationResult} from "express-validator"
 import {sendOtpEmail} from "../../services/mailService.js"
 import Address from "../../models/addressModel.js"
 import Product from "../../models/productModel.js"
+import Category from "../../models/categoryModel.js"
+import Variant from "../../models/variantModel.js"
+import Cart from "../../models/cartModel.js"
 import {getShopProducts, getProductDetailsService} from "../../services/productService.js"
 import {getWishlist} from "../../services/wishlistService.js"
 
@@ -411,20 +414,80 @@ export const postLogin = async (req, res) => {
 }
 
 export const getHome = async (req, res) => {
-
   try {
-    const products = await Product.find({isListed: true})
+
+    const products = await Product.find({
+      isListed: true
+    })
+      .sort({createdAt: -1})
+      .limit(8)
+      .lean()
+
+    for (const product of products) {
+
+      const variants = await Variant.find({
+        productId: product._id,
+        isListed: true
+      })
+        .sort({createdAt: 1})
+        .lean()
+
+      const defaultVariant =
+        variants.find(variant => variant.stock > 0) ||
+        variants[0]
+
+      product.defaultVariant = defaultVariant
+    }
+
+    const categories = await Category.find({
+      isListed: true
+    })
+      .sort({createdAt: -1})
+      .limit(3)
+      .lean()
+
+    let wishlistCount = 0
+    let cartCount = 0
+
+    if (req.session.user) {
+
+      const wishlist = await getWishlist(req.session.user)
+
+      if (wishlist?.products) {
+        wishlistCount = wishlist.products.length
+      }
+
+      const cart = await Cart.findOne({
+        userId: req.session.user
+      })
+
+      if (cart?.items) {
+        cartCount = cart.items.reduce(
+          (total, item) => total + item.quantity,
+          0
+        )
+      }
+    }
 
     res.render("user/home", {
       products,
+      categories,
+      wishlistCount,
+      cartCount,
       user: req.session.user || null
     })
+
   } catch (error) {
-    console.error("user/home", error);
+
+    console.error("user/home", error)
 
     return res.render("user/home", {
       products: [],
-      error: "Unable load Products. Please try again later"
+      categories: [],
+      wishlistCount: 0,
+      cartCount: 0,
+      user: req.session.user || null,
+      error: "Unable to load products. Please try again later"
     })
   }
 }
@@ -441,7 +504,6 @@ export const getLogout = (req, res) => {
   })
 
 }
-
 
 export const getProfile = async (req, res) => {
   try {
