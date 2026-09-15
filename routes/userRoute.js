@@ -46,19 +46,7 @@ import { getWallet, payWithWallet, createWalletTopupOrder, verifyWalletTopupPaym
 
 const router = express.Router()
 
-router.get("/", (req, res) => {
-
-  let message = null
-
-  if (req.query.msg === "password-updated") {
-    message = "Password changed successfully"
-  }
-  res.render("user/home", {
-    user: req.session.user || null,
-    message
-  })
-})
-
+router.get("/", getHome)
 
 
 router.get("/signup", isUserLoggedOut, getSignup)
