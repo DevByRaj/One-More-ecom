@@ -7,7 +7,6 @@ import Order from "../models/orderModel.js"
 import Cart from "../models/cartModel.js"
 import Variant from "../models/variantModel.js";
 import User from "../models/userModel.js"
-import {userInfo} from "os"
 import {creditWallet, getOrCreateWallet} from "./walletService.js"
 import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
 import {calculateBestOffer} from "./offerCalulationService.js"
