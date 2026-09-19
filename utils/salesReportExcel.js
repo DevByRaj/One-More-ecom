@@ -97,8 +97,8 @@ export const generateSalesReportExcel = async (report,startDate,endDate,res) => 
 
     headerRow.values = [
         "SL",
-        "Username",
-        "Address",
+        "Order ID",
+        "Product Name",
         "Quantity",
         "Price",
         "Discounted",
@@ -164,8 +164,8 @@ export const generateSalesReportExcel = async (report,startDate,endDate,res) => 
         const row =
             worksheet.addRow([
                 index + 1,
-                sale?.username || "Unknown",
-                sale?.address || "N/A",
+                sale?.orderId || "N/A",
+                sale?.productName || "N/A",
                 Number(sale?.quantity || 0),
                 Number(sale?.price || 0),
                 Number(sale?.discounted || 0),
@@ -238,23 +238,14 @@ export const generateSalesReportExcel = async (report,startDate,endDate,res) => 
         }
     }
 
-
     worksheet.getColumn(1).width = 8
-
-    worksheet.getColumn(2).width = 20
-
-    worksheet.getColumn(3).width = 28
-
+    worksheet.getColumn(2).width = 18
+    worksheet.getColumn(3).width = 30
     worksheet.getColumn(4).width = 12
-
     worksheet.getColumn(5).width = 15
-
     worksheet.getColumn(6).width = 18
-
     worksheet.getColumn(7).width = 18
-
     worksheet.getColumn(8).width = 15
-
 
     worksheet.views = [
         {

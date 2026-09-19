@@ -160,6 +160,27 @@
             border-bottom: none;
         }
 
+        .pagination .page-link {
+    background-color: #1a1a1c;
+    color: #ffffff;
+    border-color: #333;
+}
+
+.pagination .page-link:hover {
+    background-color: #7a56f5;
+    color: #ffffff;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #7a56f5;
+    border-color: #7a56f5;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #1a1a1c;
+    color: #666;
+}
+
         .admin-footer {
             text-align: center;
             color: var(--text-gray);
@@ -275,10 +296,45 @@
 
                             </div>
                             <% }) %>
-                                <% } else { %>
-                                    <div class="text-center py-4 text-muted">No offers available.</div>
-                                    <% } %>
-                </div>
+                            <% } else { %>
+                                <div class="text-center py-4 text-muted">No offers available.</div>
+                                <% } %>
+                            
+                                    <% if (totalPages> 1) { %>
+                                        <div class="d-flex justify-content-center mt-4">
+                                            <nav>
+                                                <ul class="pagination mb-0">
+                            
+                                                    <% if (currentPage> 1) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="/admin/offers?page=<%= currentPage - 1 %>">
+                                                                Previous
+                                                            </a>
+                                                        </li>
+                                                        <% } %>
+                            
+                                                            <% for (let i=1; i <=totalPages; i++) { %>
+                                                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                                    <a class="page-link" href="/admin/offers?page=<%= i %>">
+                                                                        <%= i %>
+                                                                    </a>
+                                                                </li>
+                                                                <% } %>
+                            
+                                                                    <% if (currentPage < totalPages) { %>
+                                                                        <li class="page-item">
+                                                                            <a class="page-link" href="/admin/offers?page=<%= currentPage + 1 %>">
+                                                                                Next
+                                                                            </a>
+                                                                        </li>
+                                                                        <% } %>
+                            
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                        <% } %>
+                            
+                                            </div>
             </main>
         </div>
 
