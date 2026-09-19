@@ -136,7 +136,7 @@
     <div class="form-group">
       <label>First Name</label>
     
-      <input type="text" name="fname" value="<%= locals.oldData?.fname || user.name.split(' ')[0] || '' %>"
+      <input type="text" name="fname" value="<%= locals.oldData?.fname || user.name.split(' ').slice(0, -1).join(' ') || '' %>"
         style="<%= locals.errors?.fname ? 'border-bottom-color: #c0392b;' : '' %>">
     
       <% if (locals.errors?.fname) { %>
@@ -149,7 +149,7 @@
     <div class="form-group">
       <label>Last Name</label>
     
-      <input type="text" name="lname" value="<%= locals.oldData?.lname || user.name.split(' ')[1] || '' %>"
+      <input type="text" name="lname" value="<%= locals.oldData?.lname || user.name.split(' ').slice(-1)[0] || '' %>"
         style="<%= locals.errors?.lname ? 'border-bottom-color: #c0392b;' : '' %>">
     
       <% if (locals.errors?.lname) { %>
@@ -270,9 +270,13 @@
       formData.append('profileImage', croppedBlob, 'user-profile.jpg');
       
       try {
-        const response = await fetch(this.action, { method: 'POST', body: formData });
-        if (response.redirected) window.location.href = response.url;
-        else showToast("Profile updated!");
+        await fetch(this.action, {
+          method: 'POST',
+          body: formData,
+          redirect: "manual"
+        });
+
+        window.location.href = "/profile";
       } catch (err) { showToast("Error updating profile"); }
     }
   });

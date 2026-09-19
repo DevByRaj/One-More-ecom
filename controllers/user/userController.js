@@ -685,11 +685,9 @@ export const postEditProfile = async (req, res) => {
       updateData
     )
 
-    if (req.file) {
-      req.session.success = "Profile picture added successfully";
-    } else {
-      req.session.success = "Profile updated successfully";
-    }
+    req.session.success = req.file
+      ? "Profile picture added successfully"
+      : "Profile updated successfully";
 
     return res.redirect("/profile")
 
