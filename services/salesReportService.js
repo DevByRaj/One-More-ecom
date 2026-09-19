@@ -13,9 +13,7 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
             $gte: start,
             $lte: end
         },
-        paymentStatus: {
-            $in: ["Paid", "Pending"]
-        }
+        paymentStatus: "Paid"
     }).populate("userId", "name username");
 
     let totalSales = 0
@@ -40,20 +38,29 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
 
         for (const item of validItems) {
 
-            totalSales += item.totalPrice || 0
-            offerDiscount += item.offerDiscount || 0
+            const itemCouponDiscount =
+                order.subTotal > 0
+                    ? (item.totalPrice / order.subTotal) * (order.discount || 0)
+                    : 0
+
+            const itemFinalAmount =
+                (item.totalPrice || 0) - itemCouponDiscount
+
+            totalSales += itemFinalAmount
 
             sales.push({
-                username: order.userId?.name || order.userId?.username || "Unknown",
-                address: order.address
-                    ? `${order.address.city}, ${order.address.state}`
-                    : "N/A",
+                orderId: order.orderId,
+                productName: item.productName,
                 quantity: item.quantity || 0,
-                price: item.regularPrice || 0,
-                discounted: item.totalPrice || 0,
+                price: item.salePrice || 0,
+                discounted: itemFinalAmount,
                 paymentMethod: order.paymentMethod,
                 date: order.createdAt
             })
+        }
+
+        if (validItems.length > 0) {
+            totalSales += order.shipping || 0
         }
 
         couponDiscount += order.discount || 0

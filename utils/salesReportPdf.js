@@ -14,9 +14,6 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
     const lightGray = "#f4f4f5";
     const borderGray = "#e4e4e7";
 
-    // =========================
-    // HEADER
-    // =========================
 
     doc
         .fillColor(primaryColor)
@@ -141,33 +138,28 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             summaryY + 35
         );
 
-
-    // =========================
-    // TABLE
-    // =========================
-
     let tableTop = 230;
 
     const columns = {
         sl: 40,
-        username: 65,
-        address: 140,
-        quantity: 260,
-        price: 300,
-        discounted: 365,
-        payment: 440,
-        date: 500
+        orderId: 65,
+        productName: 145,
+        quantity: 300,
+        price: 340,
+        discounted: 405,
+        payment: 475,
+        date: 520
     };
 
     const columnWidths = {
         sl: 25,
-        username: 75,
-        address: 115,
+        orderId: 80,
+        productName: 150,
         quantity: 40,
         price: 65,
-        discounted: 75,
-        payment: 60,
-        date: 55
+        discounted: 70,
+        payment: 45,
+        date: 35
     };
 
     const drawTableHeader = (y) => {
@@ -185,14 +177,13 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             width: columnWidths.sl
         });
 
-        doc.text("Username", columns.username, y + 8, {
-            width: columnWidths.username
+        doc.text("Order ID", columns.orderId, y + 8, {
+            width: columnWidths.orderId
         });
 
-        doc.text("Address", columns.address, y + 8, {
-            width: columnWidths.address
+        doc.text("Product Name", columns.productName, y + 8, {
+            width: columnWidths.productName
         });
-
         doc.text("Qty", columns.quantity, y + 8, {
             width: columnWidths.quantity,
             align: "center"
@@ -221,10 +212,6 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
 
     let currentY = tableTop + 25;
 
-    // =========================
-    // TABLE ROWS
-    // =========================
-
     report.sales.forEach((sale, index) => {
 
         const rowHeight = 32;
@@ -241,7 +228,7 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             currentY += 25;
         }
 
-        // Alternate row
+        
         if (index % 2 === 0) {
 
             doc
@@ -251,7 +238,7 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
                 .restore();
         }
 
-        // Border
+       
         doc
             .strokeColor(borderGray)
             .lineWidth(0.5)
@@ -263,7 +250,7 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             .font("Helvetica")
             .fontSize(7);
 
-        // SL
+        
         doc.text(
             `${index + 1}`,
             columns.sl + 3,
@@ -273,29 +260,29 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             }
         );
 
-        // Username
+        
+    
         doc.text(
-            sale.username,
-            columns.username,
+            sale.orderId || "N/A",
+            columns.orderId,
             currentY + 10,
             {
-                width: columnWidths.username,
+                width: columnWidths.orderId,
                 ellipsis: true
             }
         );
 
-        // Address
         doc.text(
-            sale.address,
-            columns.address,
+            sale.productName || "N/A",
+            columns.productName,
             currentY + 10,
             {
-                width: columnWidths.address,
+                width: columnWidths.productName,
                 ellipsis: true
             }
         );
 
-        // Quantity
+        
         doc.text(
             `${sale.quantity}`,
             columns.quantity,
@@ -306,7 +293,6 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             }
         );
 
-        // Price
         doc.text(
             `INR ${Number(sale.price || 0).toFixed(2)}`,
             columns.price,
@@ -317,7 +303,6 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             }
         );
 
-        // Discounted
         doc.text(
             `INR ${Number(sale.discounted || 0).toFixed(2)}`,
             columns.discounted,
@@ -328,7 +313,7 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             }
         );
 
-        // Payment
+        
         doc.text(
             sale.paymentMethod || "N/A",
             columns.payment,
@@ -339,7 +324,6 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
             }
         );
 
-        // Date
         doc.text(
             new Date(sale.date).toLocaleDateString("en-IN"),
             columns.date,
@@ -352,10 +336,6 @@ export const generateSalesReportPdf = (report, startDate, endDate, res) => {
         currentY += rowHeight;
     });
 
-
-    // =========================
-    // FOOTER
-    // =========================
 
     const footerY = 800;
 
