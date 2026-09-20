@@ -250,37 +250,81 @@ export const verifyOTP = async (req, res) => {
         return res.redirect("/profile");
       }
 
-      if (data.otp !== otp) {
+      if (data.verificationStage === "oldEmail") {
+
+        if (data.otp !== otp) {
+          return res.render("user/verifyOtp", {
+            email: data.oldEmail,
+            error: "Invalid OTP",
+            type,
+            remainingSeconds: Math.max(
+              0,
+              Math.floor((data.otpExpires - Date.now()) / 1000)
+            )
+          })
+        }
+
+        if (data.otpExpires < Date.now()) {
+          return res.render("user/verifyOtp", {
+            email: data.oldEmail,
+            error: "OTP expired",
+            type,
+            remainingSeconds: 0
+          })
+        }
+
+        const newOtp = Math.floor(
+          1000 + Math.random() * 9000
+        ).toString()
+
+        data.otp = newOtp
+        data.otpExpires = Date.now() + 60 * 1000
+        data.verificationStage = "newEmail"
+
+        await sendOtpEmail(data.newEmail, newOtp)
+
         return res.render("user/verifyOtp", {
           email: data.newEmail,
-          error: "Invalid OTP",
+          error: "OTP sent to your new email",
           type,
-          remainingSeconds: Math.max(
-            0,
-            Math.floor((data.otpExpires - Date.now()) / 1000)
-          )
+          remainingSeconds: 60
         })
       }
 
-      if (data.otpExpires < Date.now()) {
-        return res.render("user/verifyOtp", {
+      if (data.verificationStage === "newEmail") {
+
+        if (data.otp !== otp) {
+          return res.render("user/verifyOtp", {
+            email: data.newEmail,
+            error: "Invalid OTP",
+            type,
+            remainingSeconds: Math.max(
+              0,
+              Math.floor((data.otpExpires - Date.now()) / 1000)
+            )
+          })
+        }
+
+        if (data.otpExpires < Date.now()) {
+          return res.render("user/verifyOtp", {
+            email: data.newEmail,
+            error: "OTP expired",
+            type,
+            remainingSeconds: 0
+          })
+        }
+
+        await User.findByIdAndUpdate(req.session.user, {
           email: data.newEmail,
-          error: "OTP expired",
-          type,
-          remainingSeconds: 0
+          name: data.name,
+          phone: data.phone,
+          profileImage: data.profileImage
         })
+
+        req.session.emailEdit = null
+
+        return res.redirect("/profile/edit?msg=email-updated")
       }
-
-      await User.findByIdAndUpdate(req.session.user, {
-        email: data.newEmail,
-        name: data.name,
-        phone: data.phone,
-        profileImage: data.profileImage
-      })
-
-      req.session.emailEdit = null
-
-      return res.redirect("/profile/edit?msg=email-updated");
     }
 
     const tempUser = req.session.tempUser
@@ -592,7 +636,7 @@ export const postEditProfile = async (req, res) => {
       });
     }
 
-    // Last name is optional
+  
     if (lastName && !nameRegex.test(lastName)) {
       return res.render("user/editProfile", {
         user,
@@ -655,6 +699,7 @@ export const postEditProfile = async (req, res) => {
         oldEmail: user.email,
         otp,
         otpExpires: Date.now() + 60 * 1000,
+        verificationStage: "oldEmail",
         name,
         phone: phoneNumber || "",
         profileImage: req.file
@@ -1111,25 +1156,37 @@ export const resendOTP = async (req, res) => {
       }
 
       if (data.otpExpires > Date.now()) {
-        const remainingSeconds = Math.floor((data.otpExpires - Date.now()) / 1000)
+        const remainingSeconds = Math.floor(
+          (data.otpExpires - Date.now()) / 1000
+        )
 
         return res.render("user/verifyOtp", {
-          email: data.newEmail,
+          email:
+            data.verificationStage === "oldEmail"
+              ? data.oldEmail
+              : data.newEmail,
           type,
           error: "Please wait before requesting new OTP",
           remainingSeconds
         })
       }
 
-      const otp = Math.floor(1000 + Math.random() * 9000).toString()
+      const otp = Math.floor(
+        1000 + Math.random() * 9000
+      ).toString()
 
       data.otp = otp
       data.otpExpires = Date.now() + 60 * 1000
 
-      await sendOtpEmail(data.oldEmail, otp)
+      const otpEmail =
+        data.verificationStage === "oldEmail"
+          ? data.oldEmail
+          : data.newEmail
+
+      await sendOtpEmail(otpEmail, otp)
 
       return res.render("user/verifyOtp", {
-        email: data.newEmail,
+        email: otpEmail,
         type,
         error: "New OTP sent successfully",
         remainingSeconds: 60
@@ -1222,15 +1279,16 @@ export const postChangePassword = async (req, res) => {
 
     const user = await User.findById(userId)
 
-    if(!user){
+    if (!user) {
       return res.redirect("/login")
     }
 
-    if(user.authType === "google"){
+    if (user.authType === "google") {
       return res.redirect("/profile")
     }
 
     const isMatch = await comparePassword(currentPassword, user.password)
+
     if (!isMatch) {
       return res.render("user/changePassword", {
         user,
@@ -1253,6 +1311,7 @@ export const postChangePassword = async (req, res) => {
     }
 
     const isSame = await comparePassword(newPassword, user.password)
+
     if (isSame) {
       return res.render("user/changePassword", {
         user,
@@ -1260,16 +1319,30 @@ export const postChangePassword = async (req, res) => {
       })
     }
 
-    user.password = await hashPassword(newPassword)
-    await user.save()
+    const otp = Math.floor(
+      1000 + Math.random() * 9000
+    ).toString()
 
-    req.session.success = "Password changed successfully"
+    req.session.passwordChange = {
+      userId,
+      newPassword: await hashPassword(newPassword),
+      otp,
+      otpExpires: Date.now() + 60 * 1000
+    }
 
-    return res.redirect("/profile")
+    await sendOtpEmail(user.email, otp)
+
+    return res.redirect(
+      `/verify-otp?email=${user.email}&type=passwordChange`
+    )
 
   } catch (error) {
+
     console.log(error)
-    res.render("user/changePassword", {
+
+    const user = await User.findById(req.session.user)
+
+    return res.render("user/changePassword", {
       user,
       error: "Something went wrong"
     })
