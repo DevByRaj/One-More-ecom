@@ -935,12 +935,12 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     const previousGrandTotal = order.grandTotal
 
-    if (order.discount > 0 && order.subTotal > 0) {
+    // if (order.discount > 0 && order.subTotal > 0) {
 
-        const itemDiscount = (item.totalPrice / order.subTotal) * order.discount
+    //     const itemDiscount = (item.totalPrice / order.subTotal) * order.discount
 
-        order.discount = Math.max(0, order.discount - itemDiscount)
-    }
+    //     order.discount = Math.max(0, order.discount - itemDiscount)
+    // }
 
     recalculateOrderTotals(order)
 
