@@ -151,6 +151,17 @@
             border-color: #6c38cc;
         }
 
+        .error-message {
+    color: #ff4d4f;
+    font-size: 11px;
+    margin-top: -3px;
+    min-height: 14px;
+}
+
+.input-error {
+    border-color: #ff4d4f !important;
+}
+
         .submit-btn-wrapper {
             grid-column: 2;
             display: flex;
@@ -232,19 +243,20 @@
                     <!-- Offer Name & Applies To -->
                     <div class="form-group">
                         <label for="offerName">Offer Name</label>
-                        <input type="text" id="offerName" name="offerName" value="<%= offer ? offer.offerName : '' %>"
-                            required>
+                        <input type="text" id="offerName" name="offerName" value="<%= offer ? offer.offerName : '' %>">
+                        <span class="error-message" id="offerNameError"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="appliesTo">Applies To</label>
-                        <select id="appliesTo" name="appliesTo" onchange="toggleAppliesToFields()" required>
+                        <select id="appliesTo" name="appliesTo" onchange="toggleAppliesToFields()">
                             <option value="" disabled <%=!offer ? 'selected' : '' %>>Select Target</option>
                             <option value="PRODUCT" <%=offer && offer.appliesTo==='PRODUCT' ? 'selected' : '' %>>Product
                             </option>
                             <option value="CATEGORY" <%=offer && offer.appliesTo==='CATEGORY' ? 'selected' : '' %>
                                 >Category</option>
                         </select>
+                        <span class="error-message" id="appliesToError"></span>
                     </div>
 
                     <!-- Target Selection Dropdowns -->
@@ -262,6 +274,7 @@
                                 </option>
                                 <% }) %>
                         </select>
+                        <span class="error-message" id="productIdError"></span>
                     </div>
 
                     <div class="form-group" id="categoryGroup"
@@ -278,36 +291,41 @@
                                 </option>
                                 <% }) %>
                         </select>
+                        <span class="error-message" id="categoryIdError"></span>
                     </div>
 
                     <!-- Discount Type & Discount Value -->
                     <div class="form-group">
                         <label for="offerType">Discount Type</label>
-                        <select id="offerType" name="offerType" required>
+                        <select id="offerType" name="offerType" >
                             <option value="" disabled <%=!offer ? 'selected' : '' %>>Select Discount Type</option>
                             <option value="PERCENTAGE" <%=offer && offer.offerType==='PERCENTAGE' ? 'selected' : '' %>
                                 >Percentage</option>
                             <option value="FLAT" <%=offer && offer.offerType==='FLAT' ? 'selected' : '' %>>Flat</option>
                         </select>
+                        <span class="error-message" id="offerTypeError"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="discountValue">Discount Value</label>
                         <input type="number" id="discountValue" name="discountValue" min="0.01" step="0.01"
-                            value="<%= offer ? offer.discountValue : '' %>" required>
+                            value="<%= offer ? offer.discountValue : '' %>">
+                        <span class="error-message" id="discountValueError"></span>
                     </div>
 
                     <!-- Start Date & End Date -->
                     <div class="form-group">
                         <label for="startDate">Start Date</label>
                         <input type="date" id="startDate" name="startDate" min="<%= new Date().toISOString().split('T')[0] %>"
-                            value="<%= offer && offer.startDate ? new Date(offer.startDate).toISOString().split('T')[0] : '' %>" required>
+                            value="<%= offer && offer.startDate ? new Date(offer.startDate).toISOString().split('T')[0] : '' %>" >
+                            <span class="error-message" id="startDateError"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="endDate">End Date</label>
                         <input type="date" id="endDate" name="endDate" min="<%= new Date().toISOString().split('T')[0] %>"
-                            value="<%= offer && offer.endDate ? new Date(offer.endDate).toISOString().split('T')[0] : '' %>" required>
+                            value="<%= offer && offer.endDate ? new Date(offer.endDate).toISOString().split('T')[0] : '' %>" >
+                            <span class="error-message" id="endDateError"></span>
                     </div>
 
                     <!-- Active Status Checkbox -->
@@ -350,7 +368,7 @@
                     productGroup.style.display = "flex";
                     categoryGroup.style.display = "none";
 
-                    productSelect.required = true;
+                    productSelect.required = false;
                     categorySelect.required = false;
 
                     categorySelect.value = "";
@@ -360,7 +378,7 @@
                     categoryGroup.style.display = "flex";
                     productGroup.style.display = "none";
 
-                    categorySelect.required = true;
+                    categorySelect.required = false;
                     productSelect.required = false;
 
                     productSelect.value = "";
@@ -380,6 +398,139 @@
             document.addEventListener("DOMContentLoaded", () => {
                     toggleAppliesToFields();
                 });
+
+                document.querySelector(".offer-form").addEventListener("submit", function (e) {
+
+                        let isValid = true
+
+                        const offerName = document.getElementById("offerName")
+                        const appliesTo = document.getElementById("appliesTo")
+                        const productId = document.getElementById("productId")
+                        const categoryId = document.getElementById("categoryId")
+                        const offerType = document.getElementById("offerType")
+                        const discountValue = document.getElementById("discountValue")
+                        const startDate = document.getElementById("startDate")
+                        const endDate = document.getElementById("endDate")
+
+                        // Clear previous errors
+                        document.querySelectorAll(".error-message").forEach(error => {
+                            error.textContent = ""
+                        })
+
+                        document.querySelectorAll(".input-error").forEach(input => {
+                            input.classList.remove("input-error")
+                        })
+
+
+                        // Offer Name
+                        if (!offerName.value.trim()) {
+                            document.getElementById("offerNameError").textContent =
+                                "Offer name is required"
+                            offerName.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // Applies To
+                        if (!appliesTo.value) {
+                            document.getElementById("appliesToError").textContent =
+                                "Please select a target"
+                            appliesTo.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // Product
+                        if (appliesTo.value === "PRODUCT" && !productId.value) {
+                            document.getElementById("productIdError").textContent =
+                                "Please select a product"
+                            productId.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // Category
+                        if (appliesTo.value === "CATEGORY" && !categoryId.value) {
+                            document.getElementById("categoryIdError").textContent =
+                                "Please select a category"
+                            categoryId.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // Discount Type
+                        if (!offerType.value) {
+                            document.getElementById("offerTypeError").textContent =
+                                "Please select discount type"
+                            offerType.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // Discount Value
+                        const discount = Number(discountValue.value)
+
+                        if (!discountValue.value) {
+
+                            document.getElementById("discountValueError").textContent =
+                                "Discount value is required"
+
+                            discountValue.classList.add("input-error")
+                            isValid = false
+
+                        } else if (discount <= 0) {
+
+                            document.getElementById("discountValueError").textContent =
+                                "Discount value must be greater than 0"
+
+                            discountValue.classList.add("input-error")
+                            isValid = false
+
+                        } else if (offerType.value === "PERCENTAGE" && discount > 100) {
+
+                            document.getElementById("discountValueError").textContent =
+                                "Percentage discount cannot exceed 100%"
+
+                            discountValue.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // Start Date
+                        if (!startDate.value) {
+
+                            document.getElementById("startDateError").textContent =
+                                "Start date is required"
+
+                            startDate.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        // End Date
+                        if (!endDate.value) {
+
+                            document.getElementById("endDateError").textContent =
+                                "End date is required"
+
+                            endDate.classList.add("input-error")
+                            isValid = false
+
+                        } else if (startDate.value && endDate.value < startDate.value) {
+
+                            document.getElementById("endDateError").textContent =
+                                "End date must be after start date"
+
+                            endDate.classList.add("input-error")
+                            isValid = false
+                        }
+
+
+                        if (!isValid) {
+                            e.preventDefault()
+                        }
+
+                    })
     </script>
 </body>
 

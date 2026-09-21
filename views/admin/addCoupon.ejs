@@ -167,6 +167,17 @@
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
         }
 
+        .error-message {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 5px;
+    min-height: 18px;
+}
+
+.input-error {
+    border-color: #ff4d4f !important;
+}
+
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
@@ -264,20 +275,31 @@
                                         <div>
                                             <label for="code" class="form-label">Coupon Code</label>
                                             <input type="text" class="form-control" id="code" name="couponCode" value="<%= coupon ? coupon.couponCode : '' %>"
-                                                required placeholder="e.g. SUMMER2026">
+                                                placeholder="e.g. SUMMER2026">
+                                            
+                                            <span class="error-message" id="couponCodeError"></span>
                                         </div>
 
                                         <div>
-                                            <label for="startDate" class="form-label">Start Date</label>
-                                            <input type="date" class="form-control" id="startDate" name="startDate"
-                                                value="<%= coupon ? new Date(coupon.startDate).toISOString().split('T')[0] : '' %>" required>
-                                        </div>
+    <label for="startDate" class="form-label">Start Date</label>
+
+    <input type="date"
+        class="form-control"
+        id="startDate"
+        name="startDate"
+        value="<%= coupon ? new Date(coupon.startDate).toISOString().split('T')[0] : '' %>">
+
+    <span class="error-message" id="startDateError"></span>
+</div>
 
                                         <div>
                                             <label for="maxAmount" class="form-label">Maximum Discount</label>
+                                        
                                             <input type="number" class="form-control" id="maxAmount" name="maximumDiscount"
                                                 value="<%= coupon && coupon.maximumDiscount !== null ? coupon.maximumDiscount : '' %>" min="0"
                                                 placeholder="1000">
+                                        
+                                            <span class="error-message" id="maxAmountError"></span>
                                         </div>
 
                                         <div>
@@ -285,6 +307,8 @@
                                         
                                             <textarea class="form-control" id="description" name="description" rows="4"
                                                 placeholder="Enter coupon description..."><%= coupon ? coupon.description : '' %></textarea>
+                                        
+                                            <span class="error-message" id="descriptionError"></span>
                                         </div>
 
                                     </div>
@@ -293,44 +317,65 @@
                                     <div class="col-12 col-md-6 d-flex flex-column gap-3">
                                         <div>
                                             <label for="discountType" class="form-label">Discount Type</label>
-                                            <select class="form-select" id="discountType" name="discountType" required>
+                                        
+                                            <select class="form-select" id="discountType" name="discountType">
                                                 <option value="" disabled <%=!coupon ? 'selected' : '' %>>
                                                     Select Type
                                                 </option>
-                                                
+                                        
                                                 <option value="PERCENTAGE" <%=coupon && coupon.discountType==='PERCENTAGE' ? 'selected' : '' %>>
                                                     Percentage (%)
                                                 </option>
-                                                
+                                        
                                                 <option value="FLAT" <%=coupon && coupon.discountType==='FLAT' ? 'selected' : '' %>>
                                                     Flat Amount (₹)
                                                 </option>
                                             </select>
+                                        
+                                            <span class="error-message" id="discountTypeError"></span>
                                         </div>
 
                                         <div>
                                             <label for="discountValue" class="form-label">Discount Value</label>
-                                        <input type="number" class="form-control" id="discountValue" name="discountValue"
-                                            value="<%= coupon ? coupon.discountValue : '' %>" required min="0.01" step="0.01" placeholder="20">
+                                        
+                                            <input type="number" class="form-control" id="discountValue" name="discountValue"
+                                                value="<%= coupon ? coupon.discountValue : '' %>" min="0.01" step="0.01" placeholder="20">
+                                        
+                                            <span class="error-message" id="discountValueError"></span>
                                         </div>
 
                                         <div>
                                             <label for="endDate" class="form-label">End Date</label>
+                                        
                                             <input type="date" class="form-control" id="endDate" name="endDate"
-                                                value="<%= coupon ? new Date(coupon.endDate).toISOString().split('T')[0] : '' %>" required>
+                                                value="<%= coupon ? new Date(coupon.endDate).toISOString().split('T')[0] : '' %>">
+                                        
+                                            <span class="error-message" id="endDateError"></span>
                                         </div>
 
                                         <div>
                                             <label for="minAmount" class="form-label">Min Amount</label>
+                                        
                                             <input type="number" class="form-control" id="minAmount" name="minimumPurchase"
-                                                value="<%= coupon ? coupon.minimumPurchase : '' %>" required min="0" step="0.01" placeholder="100">
+                                                value="<%= coupon ? coupon.minimumPurchase : '' %>" min="0" step="0.01" placeholder="100">
+                                        
+                                            <span class="error-message" id="minAmountError"></span>
                                         </div>
 
                                         <div>
-                                            <label for="usageLimit" class="form-label">Usage Limit</label>
-                                            <input type="number" class="form-control" id="usageLimit" name="usageLimit"
-                                                value="<%= coupon && coupon.usageLimit !== null ? coupon.usageLimit : '' %>" min="1" placeholder="100">
-                                        </div>
+    <label for="usageLimit" class="form-label">Usage Limit</label>
+
+    <input
+        type="number"
+        class="form-control"
+        id="usageLimit"
+        name="usageLimit"
+        value="<%= coupon && coupon.usageLimit !== null ? coupon.usageLimit : '' %>"
+        min="1"
+        placeholder="100">
+
+    <span class="error-message" id="usageLimitError"></span>
+</div>
 
                                         <div class="form-check mt-2">
                                             <input class="form-check-input" type="checkbox" id="isActive" name="isActive" <%=!coupon || coupon.isActive ? 'checked'
@@ -364,61 +409,274 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        const discountType = document.getElementById("discountType")
-        const discountValue = document.getElementById("discountValue")
-        const minAmount = document.getElementById("minAmount")
+        const couponForm = document.querySelector("form");
+
+        const discountType = document.getElementById("discountType");
+        const discountValue = document.getElementById("discountValue");
+
+        // --------------------------------
+        // Discount type change
+        // --------------------------------
 
         discountType.addEventListener("change", () => {
 
             if (discountType.value === "PERCENTAGE") {
-                discountValue.max = 100
-                discountValue.placeholder = "20"
+                discountValue.max = 100;
+                discountValue.placeholder = "20";
             } else {
-                discountValue.removeAttribute("max")
-                discountValue.placeholder = "500"
+                discountValue.removeAttribute("max");
+                discountValue.placeholder = "500";
             }
 
-        })
+        });
 
-        discountValue.addEventListener("input", () => {
 
-            if (discountType.value === "PERCENTAGE" &&
-                Number(discountValue.value) > 100) {
+        // --------------------------------
+        // Form submit validation
+        // --------------------------------
 
-                discountValue.setCustomValidity(
-                    "Percentage discount cannot be more than 100%"
-                )
+        couponForm.addEventListener("submit", function (e) {
 
-            } else if (Number(discountValue.value) <= 0) {
+            let isValid = true;
 
-                discountValue.setCustomValidity(
-                    "Discount value must be greater than 0"
-                )
+            const couponCode = document.getElementById("code");
+            const startDate = document.getElementById("startDate");
+            const maxAmount = document.getElementById("maxAmount");
+            const description = document.getElementById("description");
+            const endDate = document.getElementById("endDate");
+            const minAmount = document.getElementById("minAmount");
+            const usageLimit = document.getElementById("usageLimit");
 
-            } else {
 
-                discountValue.setCustomValidity("")
+            // --------------------------------
+            // Clear previous errors
+            // --------------------------------
+
+            document.querySelectorAll(".error-message").forEach(error => {
+                error.textContent = "";
+            });
+
+            document.querySelectorAll(".input-error").forEach(input => {
+                input.classList.remove("input-error");
+            });
+
+
+            // --------------------------------
+            // Coupon Code
+            // --------------------------------
+
+            if (!couponCode.value.trim()) {
+
+                document.getElementById("couponCodeError").textContent =
+                    "Coupon code is required";
+
+                couponCode.classList.add("input-error");
+
+                isValid = false;
+
+            } else if (!/^[A-Za-z0-9]+$/.test(couponCode.value.trim())) {
+
+                document.getElementById("couponCodeError").textContent =
+                    "Coupon code can contain only letters and numbers";
+
+                couponCode.classList.add("input-error");
+
+                isValid = false;
             }
-        })
 
-        minAmount.addEventListener("input", () => {
 
-            if (Number(minAmount.value) < 0) {
+            // --------------------------------
+            // Start Date
+            // --------------------------------
 
-                minAmount.setCustomValidity(
-                    "Minimum purchase cannot be negative"
-                )
+            if (!startDate.value) {
 
-            } else {
+                document.getElementById("startDateError").textContent =
+                    "Start date is required";
 
-                minAmount.setCustomValidity("")
+                startDate.classList.add("input-error");
+
+                isValid = false;
             }
-            
-        })
+
+
+            // --------------------------------
+            // Discount Type
+            // --------------------------------
+
+            if (!discountType.value) {
+
+                document.getElementById("discountTypeError").textContent =
+                    "Discount type is required";
+
+                discountType.classList.add("input-error");
+
+                isValid = false;
+            }
+
+
+            // --------------------------------
+            // Discount Value
+            // --------------------------------
+
+            const discount = Number(discountValue.value);
+
+            if (!discountValue.value.trim()) {
+
+                document.getElementById("discountValueError").textContent =
+                    "Discount value is required";
+
+                discountValue.classList.add("input-error");
+
+                isValid = false;
+
+            } else if (discount <= 0) {
+
+                document.getElementById("discountValueError").textContent =
+                    "Discount value must be greater than 0";
+
+                discountValue.classList.add("input-error");
+
+                isValid = false;
+
+            } else if (
+                discountType.value === "PERCENTAGE" &&
+                discount > 100
+            ) {
+
+                document.getElementById("discountValueError").textContent =
+                    "Percentage discount cannot exceed 100%";
+
+                discountValue.classList.add("input-error");
+
+                isValid = false;
+            }
+
+
+            // --------------------------------
+            // End Date
+            // --------------------------------
+
+            if (!endDate.value) {
+
+                document.getElementById("endDateError").textContent =
+                    "End date is required";
+
+                endDate.classList.add("input-error");
+
+                isValid = false;
+
+            } else if (
+                startDate.value &&
+                endDate.value < startDate.value
+            ) {
+
+                document.getElementById("endDateError").textContent =
+                    "End date must be after start date";
+
+                endDate.classList.add("input-error");
+
+                isValid = false;
+            }
+
+
+            // --------------------------------
+            // Maximum Discount
+            // Optional field
+            // --------------------------------
+
+            if (maxAmount.value !== "") {
+
+                const maximumDiscount = Number(maxAmount.value);
+
+                if (maximumDiscount < 0) {
+
+                    document.getElementById("maxAmountError").textContent =
+                        "Maximum discount cannot be negative";
+
+                    maxAmount.classList.add("input-error");
+
+                    isValid = false;
+                }
+            }
+
+
+            // --------------------------------
+            // Minimum Purchase
+            // Optional field
+            // --------------------------------
+
+            if (minAmount.value !== "") {
+
+                const minimumPurchase = Number(minAmount.value);
+
+                if (minimumPurchase < 0) {
+
+                    document.getElementById("minAmountError").textContent =
+                        "Minimum purchase cannot be negative";
+
+                    minAmount.classList.add("input-error");
+
+                    isValid = false;
+                }
+            }
+
+
+            // --------------------------------
+            // Usage Limit
+            // Optional field
+            // --------------------------------
+
+            if (usageLimit.value !== "") {
+
+                const limit = Number(usageLimit.value);
+
+                if (limit < 1) {
+
+                    document.getElementById("usageLimitError").textContent =
+                        "Usage limit must be at least 1";
+
+                    usageLimit.classList.add("input-error");
+
+                    isValid = false;
+                }
+            }
+
+
+            // --------------------------------
+            // Description
+            // Optional field
+            // --------------------------------
+
+            if (description.value.trim().length > 500) {
+
+                document.getElementById("descriptionError").textContent =
+                    "Description cannot exceed 500 characters";
+
+                description.classList.add("input-error");
+
+                isValid = false;
+            }
+
+
+            // --------------------------------
+            // Stop form submission
+            // --------------------------------
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+
+        });
+
+
+        // --------------------------------
+        // Set percentage max on edit page
+        // --------------------------------
 
         if (discountType.value === "PERCENTAGE") {
-                discountValue.max = 100
-            }
+            discountValue.max = 100;
+        }
     </script>
 
 </body>
