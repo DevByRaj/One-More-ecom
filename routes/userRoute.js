@@ -19,7 +19,8 @@ import {
   postChangePassword,
   checkUserStatus,
   getShop,
-  getProductDetails
+  getProductDetails,
+  getContact, getAbout
 } from "../controllers/user/userController.js";
 import {isUserLoggedIn, isUserLoggedOut} from "../middlewares/auth.js";
 import {validateSignup} from "../middlewares/validation.js";
@@ -104,6 +105,10 @@ router.post("/change-password", isUserLoggedIn, postChangePassword)
 router.get("/check-user-status", checkUserStatus)
 
 router.get("/shop", getShop)
+
+router.get("/contact", getContact)
+
+router.get("/about", getAbout)
 
 router.get("/productDetails", getProductDetails)
 

@@ -157,22 +157,31 @@
 
     /* --- Product Cards --- */
     .product-card {
-      border: none;
-      margin-bottom: 40px;
-      transition: opacity 0.3s;
-    }
+  border: none;
+  margin-bottom: 40px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
 
-    .product-card:hover {
-      opacity: 0.8;
-    }
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
 
     .product-card img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 12px;
-      background-color: #f1f1f1;
-    }
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  background-color: #f1f1f1;
+  transition: transform 0.45s ease;
+}
+
+.product-card:hover img {
+  transform: scale(1.05);
+}
 
     .product-details {
       margin-top: 15px;
@@ -432,19 +441,13 @@
 
       <% if (categories && categories.length> 0) { %>
 
-        <% categories.slice(0, 3).forEach(category=> { %>
+        <% categories.slice(0, 3).forEach((category, index)=> { %>
 
-          <% const categoryName=category.name?.toLowerCase() || "" ; let categoryImage="" ; let categoryDescription="" ;
-            if (categoryName.includes("anc")) {
-            categoryImage="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000&auto=format&fit=crop"
-            ; categoryDescription="Premium Noise Cancellation" ; } else if (categoryName.includes("gaming")) {
-            categoryImage="https://images.unsplash.com/photo-1599669454699-29889356238f?q=80&w=1000&auto=format&fit=crop"
-            ; categoryDescription="Immersive Surround Sound" ; } else if ( categoryName.includes("tws") ||
-            categoryName.includes("true wireless") ) {
-            categoryImage="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1000&auto=format&fit=crop"
-            ; categoryDescription="Truly Wireless Freedom" ; } else {
-            categoryImage="https://images.unsplash.com/photo-1484704849700-f032a568e944?q=80&w=1000&auto=format&fit=crop"
-            ; categoryDescription="Premium Audio Collection" ; } %>
+          <% const categoryImages = [
+  "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1000&auto=format&fit=crop"
+]; const categoryDescriptions=[ "Premium Noise Cancellation" , "Immersive Surround Sound" , "Truly Wireless Freedom" ]; %>
 
             <div class="col-md-4">
 
@@ -452,7 +455,7 @@
 
                 <div class="category-card">
 
-                  <img src="<%= categoryImage %>" alt="<%= category.name %>">
+                  <img src="<%= categoryImages[index] %>" alt="<%= category.name %>">
 
                   <div class="category-info">
 
@@ -461,7 +464,7 @@
                     </h5>
 
                     <p class="text-muted small">
-                      <%= categoryDescription %>
+                      <%= categoryDescriptions[index] %>
                     </p>
 
                   </div>

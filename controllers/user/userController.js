@@ -775,8 +775,8 @@ export const getAddAddress = (req, res) => {
   res.render("user/addAddress", {
     errors: {},
     oldData: {}
-  });
-};
+  })
+}
 
 export const postAddAddress = async (req, res) => {
   try {
@@ -1424,3 +1424,25 @@ export const getProductDetails = async (req, res) => {
     res.redirect("/shop")
   }
 }
+
+export const getContact = async(req, res) =>{
+  try{
+    res.render('user/contact')
+  } catch(error){
+    console.log("Error loading contact page:", error);
+
+    res.state(500).send("Internal Server Error")
+    
+  }
+}
+
+export const getAbout = async(req, res) =>{
+  try {
+    res.render("user/about")
+  } catch (error) {
+    console.log("Error loading about page",error);
+    
+    res.state(500).send("Internal server Error")
+  }
+}
+
