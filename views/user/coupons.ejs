@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coupons | OneMore</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+
+        :root {
+            --bg-dark: #1f1f1f;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f6f8;
+            color: #333;
+        }
+
+        /* =========================
+           NAVBAR FIX
+        ========================= */
+
+        @media (min-width: 992px) {
+
+            .navbar-collapse {
+                display: flex !important;
+                visibility: visible !important;
+            }
+
+            .nav-icons {
+                display: flex !important;
+                visibility: visible !important;
+            }
+
+            .nav-icons a {
+                color: #ffffff !important;
+                text-decoration: none !important;
+            }
+
+            .nav-link {
+                color: #ffffff !important;
+                visibility: visible !important;
+            }
+        }
+
+
+        /* =========================
+           ACCOUNT SIDEBAR
+        ========================= */
+
+        .account-sidebar {
+            border: 1px solid #d1d5db;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f9fafb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .account-title {
+            padding: 14px;
+            text-align: center;
+            background: #f3f4f6;
+            border-bottom: 1px solid #d1d5db;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .account-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .account-menu li {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .account-menu li:last-child {
+            border-bottom: none;
+        }
+
+        .account-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 20px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .account-menu a:hover {
+            background: #e5e7eb;
+        }
+
+        .account-menu a.active {
+            background: #e5e7eb;
+        }
+
+        .account-menu i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout-link {
+            color: #dc2626 !important;
+        }
+
+        .logout-link:hover {
+            background: #fef2f2 !important;
+        }
+
+
+        /* =========================
+           COUPON CONTAINER
+        ========================= */
+
+        .coupon-container {
+            border: 1px solid #d1d5db;
+            border-radius: 16px;
+            background: #f9fafb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            padding: 25px;
+        }
+
+        .coupon-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 25px;
+        }
+
+
+        /* =========================
+           COUPON CARD
+        ========================= */
+
+        .coupon-list {
+            max-width: 900px;
+            margin: auto;
+            border: 1px solid #9ca3af;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .coupon-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+
+            padding: 15px 18px;
+
+            border-bottom: 1px solid #9ca3af;
+            min-height: 72px;
+        }
+
+        .coupon-card:last-child {
+            border-bottom: none;
+        }
+
+        .coupon-info {
+            flex: 1;
+        }
+
+
+        .coupon-description {
+    font-size: 11px;
+    color: #555;
+    font-weight: 600;
+    margin: 0;
+}
+
+        .coupon-validity {
+    min-width: 130px;
+    text-align: right;
+    font-size: 11px;
+    color: #555;
+    font-weight: 500;
+}
+
+        .coupon-code {
+    display: inline-block;
+    color: #374151;
+    background: #f3f4f6;
+    border: 1px dashed #9ca3af;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.coupon-discount {
+    color: #16a34a;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.coupon-minimum {
+    font-size: 10px;
+    color: #666;
+    margin: 4px 0 0;
+}
+
+        .copy-btn {
+            border: none;
+            background: #16c784;
+            color: #ffffff;
+
+            padding: 7px 18px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #0eaf6d;
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: #2563eb;
+        }
+
+
+        /* =========================
+           EMPTY COUPONS
+        ========================= */
+
+        .no-coupons {
+            text-align: center;
+            padding: 50px 20px;
+            color: #777;
+        }
+
+        .no-coupons i {
+            font-size: 35px;
+            margin-bottom: 15px;
+            color: #aaa;
+        }
+
+        .copy-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.copy-message {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 10px;
+
+    background: #1f1f1f;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 9999;
+}
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .coupon-container {
+                padding: 18px;
+            }
+
+            .coupon-card {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .coupon-info {
+                width: 100%;
+            }
+
+            .coupon-validity {
+                text-align: left;
+                min-width: auto;
+            }
+
+            .copy-btn {
+                margin-left: auto;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body class="min-h-screen flex flex-col">
+
+
+    <!-- =========================
+         COMMON NAVBAR
+    ========================= -->
+
+    <%- include("../partials/navbar") %>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main class="max-w-7xl mx-auto my-8 px-4 w-full flex-grow">
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+
+            <!-- =========================
+                 LEFT SIDEBAR
+            ========================= -->
+
+            <aside class="lg:col-span-1">
+
+                <div class="account-sidebar">
+
+                    <div class="account-title">
+                        My Account
+                    </div>
+
+
+                    <ul class="account-menu">
+
+                        <li>
+                            <a href="/profile">
+                                <i class="fa-regular fa-user"></i>
+                                <span>Personal Information</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="/address">
+                                <i class="fa-solid fa-address-book"></i>
+                                <span>Address</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="/orders">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span>Order</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="/wallet">
+                                <i class="fa-solid fa-wallet"></i>
+                                <span>Wallet</span>
+                            </a>
+                        </li>
+
+
+                        <!-- ACTIVE COUPON -->
+
+                        <li>
+                            <a href="/coupons" class="active">
+                                <i class="fa-solid fa-ticket"></i>
+                                <span>Coupon</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="/change-password">
+                                <i class="fa-solid fa-lock"></i>
+                                <span>Password Change</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="/logout" class="logout-link">
+                                <i class="fa-solid fa-power-off"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </aside>
+
+
+            <!-- =========================
+                 RIGHT COUPON PANEL
+            ========================= -->
+
+            <section class="lg:col-span-3">
+
+                <div class="coupon-container">
+
+                    <h2 class="coupon-title">
+                        Available Coupons
+                    </h2>
+
+
+                    <div class="coupon-list">
+
+                        <% if (coupons && coupons.length > 0) { %>
+
+                            <% coupons.forEach(coupon => { %>
+
+                                <div class="coupon-card">
+
+                                    <!-- Coupon information -->
+
+                                    <div class="coupon-info">
+
+                                        <div class="coupon-code">
+                                            <%= coupon.couponCode %>
+                                        </div>
+                                        
+                                        <div class="coupon-discount">
+                                            Grab upto
+                                            <%= coupon.discountType==="PERCENTAGE" ? coupon.discountValue + "%" : "₹" + coupon.discountValue %>
+                                                off
+                                        </div>
+
+                                        <p class="coupon-description">
+                                            <%= coupon.description || "Save more on your purchase with this coupon." %>
+                                        </p>
+
+                                        <p class="coupon-minimum">
+                                            Min. purchase ₹<%= coupon.minimumPurchase %>
+                                        </p>
+
+                                        <% if (coupon.discountType==="PERCENTAGE" && coupon.maximumDiscount) { %>
+                                            <p class="coupon-minimum">
+                                                Max discount ₹<%= coupon.maximumDiscount %>
+                                            </p>
+                                            <% } %>
+
+                                    </div>
+
+
+                                    <!-- Validity -->
+
+                                    <div class="coupon-validity">
+
+                                        Valid till
+                                        <%= new Date(coupon.endDate).toLocaleDateString('en-GB', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        }) %>
+
+                                    </div>
+
+
+                                    <!-- Copy button -->
+
+                                    <div class="copy-wrapper">
+                                    
+                                        <button type="button" class="copy-btn" data-code="<%= coupon.couponCode %>" onclick="copyCoupon(this)">
+                                    
+                                            COPY CODE
+                                    
+                                        </button>
+                                    
+                                    </div>
+
+                                </div>
+
+                            <% }) %>
+
+
+                        <% } else { %>
+
+                            <div class="no-coupons">
+
+                                <i class="fa-solid fa-ticket"></i>
+
+                                <p class="mb-1">
+                                    No coupons available
+                                </p>
+
+                                <small>
+                                    Check back later for new offers.
+                                </small>
+
+                            </div>
+
+                        <% } %>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer class="bg-zinc-900 text-white pt-12 pb-6 px-6">
+
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+
+
+            <!-- Logo -->
+
+            <div class="md:col-span-4 flex justify-center mb-4">
+
+                <span class="text-5xl font-extrabold tracking-tighter">
+                    iM
+                </span>
+
+            </div>
+
+
+            <!-- Support -->
+
+            <div>
+
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">
+                    SUPPORT
+                </h4>
+
+                <ul class="space-y-2 text-xs text-gray-400">
+
+                    <li>
+                        <a href="/order-status" class="hover:text-white">
+                            Order Status
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/product-support" class="hover:text-white">
+                            Product Support
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/shipping-policy" class="hover:text-white">
+                            Shipping & Return Policy
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/complaints" class="hover:text-white">
+                            Complaint Registration
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- About -->
+
+            <div>
+
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">
+                    About Us
+                </h4>
+
+                <ul class="space-y-2 text-xs text-gray-400">
+
+                    <li>
+                        <a href="/contact" class="hover:text-white">
+                            Contact Us
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/privacy" class="hover:text-white">
+                            Privacy Policy
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/terms" class="hover:text-white">
+                            Terms of use
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/faq" class="hover:text-white">
+                            FAQ
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Contact -->
+
+            <div>
+
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">
+                    Contact
+                </h4>
+
+                <ul class="space-y-2 text-xs text-gray-400">
+
+                    <li>
+                        <span class="font-semibold text-white">
+                            Email :
+                        </span>
+                        onemore@gmail.com
+                    </li>
+
+                    <li>
+                        <span class="font-semibold text-white">
+                            Phone :
+                        </span>
+                        +91 8888888888
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Social -->
+
+            <div>
+
+                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">
+                    Connect with us
+                </h4>
+
+                <div class="flex space-x-4 text-xl">
+
+                    <a href="#" class="hover:text-gray-400">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="#" class="hover:text-gray-400">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+
+                    <a href="#" class="hover:text-gray-400">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="max-w-7xl mx-auto border-t border-zinc-800 pt-6 text-center text-xs text-gray-500">
+
+            &copy; 2026 OneMore. All Rights Reserved.
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         COPY COUPON SCRIPT
+    ========================= -->
+
+    <script>
+
+        function copyCoupon(button) {
+
+            const couponCode = button.dataset.code;
+
+            navigator.clipboard.writeText(couponCode)
+                .then(() => {
+
+                    const originalText = button.innerText;
+
+                    button.innerText = "COPIED!";
+                    button.classList.add("copied");
+
+                    const message = document.createElement("div");
+
+                    message.className = "copy-message";
+                    message.textContent = `Coupon ${couponCode} copied!`;
+
+                    button.parentElement.appendChild(message);
+
+                    setTimeout(() => {
+                        message.remove();
+                    }, 2000);
+
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.classList.remove("copied");
+                    }, 1500);
+                })
+                .catch(error => {
+
+                    console.error("Failed to copy coupon:", error);
+
+                });
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

@@ -5,45 +5,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Wallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
+    
+        :root {
+            --bg-dark: #1f1f1f;
+        }
+    
         body {
             font-family: 'Inter', sans-serif;
         }
+    
+        @media (min-width: 992px) {
+    .navbar-collapse {
+        display: flex !important;
+        visibility: visible !important;
+    }
+
+    .nav-icons {
+        display: flex !important;
+        visibility: visible !important;
+    }
+
+    .nav-icons a {
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
+    .nav-link {
+        color: #ffffff !important;
+        visibility: visible !important;
+    }
+}   
     </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col justify-between text-gray-800">
 
-    <!-- HEADER / NAVBAR -->
-    <header class="bg-black text-white px-6 py-4 shadow-md">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <!-- Logo -->
-            <div class="flex items-center space-x-2">
-                <span class="text-3xl font-extrabold tracking-tighter text-white">iM</span>
-            </div>
-
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
-                <a href="/" class="hover:text-white transition">Home</a>
-                <a href="/shop" class="hover:text-white transition">Shop</a>
-                <a href="/contact" class="hover:text-white transition">Contact Us</a>
-                <a href="/about" class="hover:text-white transition">About Us</a>
-            </nav>
-
-            <!-- Icons -->
-            <div class="flex items-center space-x-6">
-                <a href="/account" class="hover:text-gray-300"><i class="fa-regular fa-user text-lg"></i></a>
-                <a href="/wishlist" class="hover:text-gray-300"><i class="fa-regular fa-heart text-lg"></i></a>
-                <a href="/cart" class="hover:text-gray-300"><i class="fa-solid fa-cart-shopping text-lg"></i></a>
-            </div>
-        </div>
-    </header>
+<%- include("../partials/navbar") %>
 
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-7xl mx-auto my-8 px-4 w-full flex-grow">

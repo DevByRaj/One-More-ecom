@@ -45,6 +45,8 @@ import { createRazorpayOrder, verifyPayment, getPaymentFailed, retryPayment } fr
 
 import { getWallet, payWithWallet, createWalletTopupOrder, verifyWalletTopupPayment } from "../controllers/user/walletController.js"
 
+import { getCoupons } from "../controllers/user/couponController.js";
+
 const router = express.Router()
 
 router.get("/", getHome)
@@ -173,6 +175,8 @@ router.post("/wallet/pay", isUserLoggedIn, payWithWallet)
 router.post("/wallet/create-order", createWalletTopupOrder)
 
 router.post("/wallet/verify", verifyWalletTopupPayment)
+
+router.get("/coupons", isUserLoggedIn, getCoupons);
 
 
 export default router
