@@ -4,7 +4,6 @@ import { createWalletTopupOrderService, verifyWalletTopupService } from "../../s
 
 export const getWallet = async(req, res) =>{
 
-    console.log("Wallet route hit")
     try{
         const  userId = req.session.user
 
