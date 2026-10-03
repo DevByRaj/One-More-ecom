@@ -779,55 +779,159 @@ export const getAddAddress = (req, res) => {
 }
 
 export const postAddAddress = async (req, res) => {
+
   try {
-    const userId = req.session.user
+
+    const userId = req.session.user;
 
     const {
-      fname, lname, phone,
-      house, street, city,
-      state, pin, type,
+      fname,
+      lname,
+      phone,
+      house,
+      street,
+      city,
+      state,
+      pin,
+      type,
       addressId
-    } = req.body
-    if (!fname || !phone || !house || !city || !state || !pin) {
-      return res.redirect("/address?error=empty")
-    }
-    const name = fname + " " + lname
+    } = req.body;
 
+    const firstName = fname?.trim();
+    const lastName = lname?.trim();
+    const phoneNumber = phone?.trim();
+    const houseName = house?.trim();
+    const streetName = street?.trim();
+    const cityName = city?.trim();
+    const stateName = state?.trim();
+    const pinCode = pin?.trim();
+
+
+    const nameRegex =
+      /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+
+    const phoneRegex =
+      /^[6-9]\d{9}$/;
+
+    const cityStateRegex =
+      /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+
+
+    if (
+      !firstName ||
+      firstName.length < 2 ||
+      firstName.length > 30 ||
+      !nameRegex.test(firstName)
+    ) {
+      return res.redirect("/address?error=invalid-fname");
+    }
+
+    if (
+      !lastName ||
+      lastName.length < 2 ||
+      lastName.length > 30 ||
+      !nameRegex.test(lastName)
+    ) {
+      return res.redirect("/address?error=invalid-lname");
+    }
+
+    if (!phoneRegex.test(phoneNumber)) {
+
+      return res.redirect("/address?error=invalid-phone");
+    }
+
+    if (
+      !houseName ||
+      houseName.length < 2 ||
+      houseName.length > 100
+    ) {
+      return res.redirect("/address?error=invalid-house");
+    }
+
+    if (
+      !streetName ||
+      streetName.length < 2 ||
+      streetName.length > 100
+    ) {
+      return res.redirect("/address?error=invalid-street");
+    }
+
+    if (
+      !cityName ||
+      cityName.length < 2 ||
+      cityName.length > 50 ||
+      !cityStateRegex.test(cityName)
+    ) {
+      return res.redirect("/address?error=invalid-city");
+    }
+
+    if (
+      !stateName ||
+      stateName.length < 2 ||
+      stateName.length > 50 ||
+      !cityStateRegex.test(stateName)
+    ) {
+      return res.redirect("/address?error=invalid-state");
+    }
+
+    if (!/^\d{6}$/.test(pinCode)) {
+
+      return res.redirect("/address?error=invalid-pin");
+    }
+
+
+    const name = `${firstName} ${lastName}`;
 
 
     const addressData = {
       userId,
       name,
-      houseName: house,
-      street,
-      city,
-      state,
+      houseName,
+      street: streetName,
+      city: cityName,
+      state: stateName,
       country: "india",
-      phone,
-      pincode: pin,
+      phone: phoneNumber,
+      pincode: pinCode,
       type
-    }
+    };
 
     if (addressId) {
-      await Address.findByIdAndUpdate(addressId, addressData)
+
+      await Address.findByIdAndUpdate(
+        addressId,
+        addressData
+      );
+
     }
+
     else {
-      const count = await Address.countDocuments({userId})
+
+      const count =
+        await Address.countDocuments({userId});
+
 
       if (count >= 3) {
-        return res.redirect("/address?error=limit")
+        return res.redirect("/address?error=limit");
       }
+
 
       if (count === 0) {
-        addressData.isDefault = true
+        addressData.isDefault = true;
       }
 
-      await Address.create(addressData)
+
+      await Address.create(addressData);
     }
-    res.redirect("/address")
+
+
+    res.redirect("/address");
+
   } catch (error) {
-    console.log(error)
-    res.status(500).send("error saving address")
+
+    console.log(error);
+
+    res.status(500).send("error saving address");
   }
 }
 

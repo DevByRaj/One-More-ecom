@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Signup</title>
+<link rel="icon" type="image/png" href="/images/logo.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -332,11 +333,27 @@ form.addEventListener("submit", function (e) {
   confirmError.textContent = "";
 
   // NAME
+
+  const namePattern = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+
   if (name.value.trim() === "") {
-    nameError.textContent = "Username is required";
+
+    nameError.textContent = "Name is required";
     valid = false;
-  } else if (name.value.length < 3) {
-    nameError.textContent = "Minimum 3 characters required";
+
+  } else if (name.value.trim().length < 3) {
+
+    nameError.textContent = "Name must be at least 3 characters";
+    valid = false;
+
+  } else if (name.value.trim().length > 30) {
+
+    nameError.textContent = "Name must not exceed 30 characters";
+    valid = false;
+
+  } else if (!namePattern.test(name.value.trim())) {
+
+    nameError.textContent = "Please enter a valid name";
     valid = false;
   }
 
@@ -351,11 +368,35 @@ form.addEventListener("submit", function (e) {
   }
 
   // PASSWORD
-  if (password.value.trim() === "") {
+
+  // PASSWORD
+  if (password.value === "") {
     passwordError.textContent = "Password is required";
     valid = false;
-  } else if (password.value.length < 6) {
-    passwordError.textContent = "Minimum 6 characters required";
+
+  } else if (password.value.length < 10) {
+
+    passwordError.textContent = "Password must be at least 10 characters";
+    valid = false;
+
+  } else if (!/[A-Z]/.test(password.value)) {
+
+    passwordError.textContent = "Must contain at least one uppercase letter";
+    valid = false;
+
+  } else if (!/[a-z]/.test(password.value)) {
+
+    passwordError.textContent = "Must contain at least one lowercase letter";
+    valid = false;
+
+  } else if (!/[0-9]/.test(password.value)) {
+
+    passwordError.textContent = "Must contain at least one number";
+    valid = false;
+
+  } else if (!/[@$!%*?&]/.test(password.value)) {
+
+    passwordError.textContent = "Must contain a special character";
     valid = false;
   }
 

@@ -67,7 +67,9 @@ app.use("/", userRouter);
 
 app.use("/admin", adminRouter)
 
-
+app.use((req, res) =>{
+  res.status(404).render("404")
+})
 
 const startServer = async () => {
   try {
