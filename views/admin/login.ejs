@@ -118,6 +118,13 @@
             /* Keeps the gap to prevent button jumping */
         }
 
+        .server-error {
+    color: var(--error-red);
+    font-size: 12px;
+    text-align: left;
+    margin: 5px 0 10px 5px;
+}
+
         .btn-login {
             background-color: #f0f0f0;
             color: #000;
@@ -163,16 +170,22 @@
             <div class="input-wrapper">
                 <input type="email" id="email" name="email" placeholder="Email" autocomplete="off">
             </div>
-            <div id="emailErr" class="error-text">Please enter a valid email address.</div>
+            <div id="emailErr" class="error-text"></div>
 
             <!-- Password -->
             <div class="input-wrapper">
                 <input type="password" id="password" name="password" placeholder="Password">
                 <i class="fa-solid fa-eye toggle-eye" id="togglePassword"></i>
             </div>
-            <div id="passErr" class="error-text">Password is required.</div>
-
-            <button type="submit" class="btn-login">Login</button>
+            <div id="passErr" class="error-text"></div>
+            
+            <% if (error) { %>
+                <div class="server-error">
+                    <%= error %>
+                </div>
+                <% } %>
+            
+                    <button type="submit" class="btn-login">Login</button>
         </form>
     </div>
 
@@ -201,33 +214,57 @@
         const passErr = document.getElementById('passErr');
 
         form.addEventListener('submit', function (e) {
-            let isValid = true;
 
-            // Email Logic
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(emailInput.value.trim())) {
-                emailErr.style.visibility = 'visible';
-                emailInput.style.borderColor = 'var(--error-red)';
-                isValid = false;
-            } else {
-                emailErr.style.visibility = 'hidden';
-                emailInput.style.borderColor = '#333';
-            }
+                let isValid = true;
 
-            // Password Logic
-            if (passwordInput.value.trim() === '') {
-                passErr.style.visibility = 'visible';
-                passwordInput.style.borderColor = 'var(--error-red)';
-                isValid = false;
-            } else {
-                passErr.style.visibility = 'hidden';
-                passwordInput.style.borderColor = '#333';
-            }
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
 
-            if (!isValid) {
-                e.preventDefault(); // Stop form submission
-            }
-        });
+                // Email validation
+                if (email === '') {
+
+                    emailErr.textContent = 'Email is required.';
+                    emailErr.style.visibility = 'visible';
+                    emailInput.style.borderColor = 'var(--error-red)';
+
+                    isValid = false;
+
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+
+                    emailErr.textContent = 'Please enter a valid email address.';
+                    emailErr.style.visibility = 'visible';
+                    emailInput.style.borderColor = 'var(--error-red)';
+
+                    isValid = false;
+
+                } else {
+
+                    emailErr.style.visibility = 'hidden';
+                    emailInput.style.borderColor = '#333';
+                }
+
+
+                // Password validation
+                if (password === '') {
+
+                    passErr.textContent = 'Password is required.';
+                    passErr.style.visibility = 'visible';
+                    passwordInput.style.borderColor = 'var(--error-red)';
+
+                    isValid = false;
+
+                } else {
+
+                    passErr.style.visibility = 'hidden';
+                    passwordInput.style.borderColor = '#333';
+                }
+
+
+                // Stop submission if validation failed
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
 
         // Clear errors immediately when user starts typing
         [emailInput, passwordInput].forEach(input => {

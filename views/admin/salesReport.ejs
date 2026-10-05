@@ -2,563 +2,1204 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Report</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <title>Admin Sales Report | OneMore</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+
         :root {
-            --bg-dark: #070708;
-            --card-bg: #0d0d0f;
-            --border-purple: #63438a;
-            --accent-orange: #b86a1d;
-            --text-muted: #a0a0a0;
+            --bg-black: #000000;
+            --panel-bg: #0b0b0c;
+            --neon-purple: #7a56f5;
+            --text-gray: #a0a0a5;
+            --btn-green: #00c853;
+            --accent-orange: #ff9f43;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--bg-dark);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-black);
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
-        .border-purple {
-            border: 1.5px solid var(--border-purple) !important;
-            border-radius: 12px;
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Sidebar Navigation */
-        .sidebar {
-            background-color: var(--card-bg);
-            min-height: calc(100vh - 120px);
+        /* =========================
+           LOGO HEADER
+        ========================= */
+
+        .admin-header {
+            padding: 10px 20px;
+            margin-bottom: 20px;
         }
 
-        .nav-link {
-            color: var(--text-muted);
-            padding: 10px 16px;
+        .admin-logo {
+            height: 70px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .admin-layout-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .admin-sidebar {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--neon-purple);
+            border-radius: 15px;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
             border-radius: 8px;
             transition: all 0.2s ease;
-            font-size: 0.95rem;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: #ffffff;
-            background-color: rgba(99, 67, 138, 0.2);
-        }
-
-        .nav-link i {
+        .sidebar-menu-item i {
+            width: 20px;
             font-size: 1.1rem;
-            margin-right: 12px;
+            text-align: center;
+            color: var(--text-gray);
         }
 
-        /* Sales Report heading */
-.sales-report-title {
-    color: #ffffff !important;
-}
+        .sidebar-menu-item:hover,
+        .sidebar-menu-item.active {
+            background-color: rgba(122, 86, 245, 0.15);
+            color: #ffffff;
+        }
 
-/* Report Period */
-.report-period {
-    color: #ffffff !important;
-}
+        .sidebar-menu-item:hover i,
+        .sidebar-menu-item.active i {
+            color: var(--neon-purple);
+        }
 
-.report-period strong {
-    color: #ffffff !important;
-}
+        /* =========================
+           MAIN CONTENT
+        ========================= */
 
-.report-period span {
-    color: #ffffff !important;
-}
+        .main-content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
 
-        /* Stat Cards */
+        /* =========================
+           TOP CONTROL
+        ========================= */
+
+        .top-control-banner {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 12px;
+            padding: 15px 30px;
+        }
+
+        .top-control-banner h4 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.3rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================
+           FILTER
+        ========================= */
+
+        .filter-select {
+            background-color: #e0e0e0;
+            color: #000000;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            min-width: 145px;
+        }
+
+        .filter-select:focus {
+            box-shadow: none;
+        }
+
+        /* =========================
+           DOWNLOAD BUTTONS
+        ========================= */
+
+        .download-btn {
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+
+        .pdf-btn {
+            background-color: var(--accent-orange);
+            color: #000000;
+        }
+
+        .pdf-btn:hover {
+            color: #000000;
+        }
+
+        .excel-btn {
+            background-color: var(--btn-green);
+            color: #000000;
+        }
+
+        .excel-btn:hover {
+            color: #000000;
+        }
+
+        /* =========================
+           CUSTOM DATE PANEL
+        ========================= */
+
+        .custom-date-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 12px;
+            padding: 20px 25px;
+        }
+
+        .custom-date-panel label {
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+
+        .custom-date-panel input {
+            background-color: #e0e0e0;
+            color: #000000;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .custom-date-panel input:focus {
+            box-shadow: none;
+        }
+
+        .apply-date-btn {
+            background-color: var(--btn-green);
+            color: #000000;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            width: 100%;
+        }
+
+        .apply-date-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* =========================
+           REPORT PERIOD
+        ========================= */
+
+        .report-period {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 12px;
+            padding: 15px 25px;
+        }
+
+        .report-period strong {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .report-period span {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+
+        /* =========================
+           SUMMARY CARDS
+        ========================= */
+
+        .summary-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
         .stat-card {
-            background-color: var(--card-bg);
-            min-height: 120px;
+            background-color: #111113;
+            border: 1px solid #252528;
+            border-radius: 10px;
+            min-height: 110px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        .stat-card .stat-title {
-            font-size: 0.8rem;
+        .stat-title {
+            font-size: 0.75rem;
             letter-spacing: 1px;
-            color: #ffffff;
+            color: var(--text-gray);
             font-weight: 600;
             margin-bottom: 8px;
         }
 
-        .stat-card .stat-value {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.dropdown-menu {
-    background-color: #0d0d0f;
-    border: 1px solid #333;
-}
-
-.dropdown-item {
-    color: #ffffff;
-}
-
-.dropdown-item:hover {
-    background-color: #1a1a1e;
-    color: #ffffff;
-}
-
-        /* Controls Header */
-        .controls-card {
-            background-color: var(--card-bg);
+        .stat-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
         }
 
-        .btn-pdf {
-            background-color: var(--accent-orange);
-            color: #ffffff;
+        /* =========================
+           SALES DATA PANEL
+        ========================= */
+
+        .sales-data-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        /* =========================
+           SALES TABLE
+        ========================= */
+
+        .sales-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .sales-table {
+            width: 100%;
+            min-width: 850px;
+            border-collapse: collapse;
+        }
+
+        .sales-table-header {
+            display: grid;
+            grid-template-columns:
+                0.5fr
+                1.2fr
+                1.8fr
+                0.8fr
+                1fr
+                1.1fr
+                1.1fr
+                1fr;
+
+            background-color: #1a1a1c;
+            padding: 12px 20px;
+            border-radius: 8px;
             font-weight: 600;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 20px;
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-bottom: 10px;
+            min-width: 850px;
         }
 
-        .btn-pdf:hover {
-            background-color: #a05a18;
-            color: #ffffff;
+        .sales-table-row {
+            display: grid;
+            grid-template-columns:
+                0.5fr
+                1.2fr
+                1.8fr
+                0.8fr
+                1fr
+                1.1fr
+                1.1fr
+                1fr;
+
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #1f1f22;
+            font-size: 0.82rem;
+            min-width: 850px;
         }
 
-        .btn-filter {
-            background-color: #1a1a1e;
-            color: #ffffff;
-            border: 1px solid #333;
+        .sales-table-row:last-child {
+            border-bottom: none;
         }
 
-        /* Custom Table Styling */
-        .table-responsive {
-            border-radius: 12px;
+        .sales-table-row div {
+            padding-right: 10px;
         }
 
-        .custom-table {
-            color: #ffffff;
-            vertical-align: middle;
-            margin-bottom: 0;
-        }
-
-        .custom-table th {
-            background-color: #121215;
-            color: #a0a0a0;
+        .sales-product-name {
             font-weight: 500;
-            border-bottom: 1px solid #222;
-            padding: 14px 12px;
+            color: #ffffff;
+        }
+
+        .sales-order-id {
+            color: #ffffff;
+        }
+
+        .sales-payment {
+            font-weight: 500;
+        }
+
+        .sales-date {
+            color: var(--text-gray);
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .empty-sales {
+            text-align: center;
+            color: var(--text-gray);
+            padding: 40px 20px;
             font-size: 0.85rem;
         }
 
-        .custom-table td {
-            border-bottom: 1px solid #1a1a1f;
-            padding: 14px 12px;
-            font-size: 0.85rem;
+        /* =========================
+           PAGINATION
+        ========================= */
+
+        .admin-pagination-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
         }
 
-        /* Pagination */
-        .pagination-btn {
+        .admin-page-nav {
             background-color: #ffffff;
             color: #000000;
+            border: none;
             border-radius: 6px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
             font-weight: 600;
-            padding: 4px 14px;
             text-decoration: none;
-            font-size: 0.85rem;
         }
 
-        .page-number {
-            width: 32px;
-            height: 32px;
+        .admin-page-nav:hover {
+            color: #000000;
+            opacity: 0.9;
+        }
+
+        .admin-page-circle {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--text-gray);
             border-radius: 50%;
-            border: 1px solid #ffffff;
             color: #ffffff;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.8rem;
             text-decoration: none;
-            font-size: 0.85rem;
         }
 
-        .page-number.active {
-            background-color: rgba(255, 255, 255, 0.1);
+        .admin-page-circle:hover {
+            color: #ffffff;
+            border-color: #ffffff;
         }
+
+        .admin-page-circle.active {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .admin-footer {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            margin-top: 40px;
+            padding-bottom: 20px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1200px) {
+
+            .admin-layout-grid {
+                grid-template-columns: 220px 1fr;
+                gap: 20px;
+            }
+
+            .sales-table-header,
+            .sales-table-row {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+
+            .admin-layout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+            }
+
+            .main-content-area {
+                width: 100%;
+            }
+
+            .top-control-banner {
+                padding: 15px 20px;
+            }
+
+            .sales-data-panel {
+                padding: 15px;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 12px;
+            }
+
+            .admin-header {
+                padding: 5px 10px;
+            }
+
+            .admin-logo {
+                height: 55px;
+            }
+
+            .top-control-banner .control-wrapper {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .download-group {
+                width: 100%;
+            }
+
+            .download-btn {
+                flex: 1;
+            }
+
+            .report-period {
+                padding: 15px;
+            }
+
+            .report-period .period-content {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 5px;
+            }
+
+        }
+
     </style>
+
 </head>
 
-<body class="p-3 p-md-4">
 
-    <!-- Header / Brand Logo -->
-    <div class="mb-4 ps-3">
-        <img src="/images/logo.png" alt="OneMore" style="width: 60px;">
-    </div>
+<body>
 
-    <div class="container-fluid px-0">
-        <!-- Main Controls Header -->
-        <div class="card controls-card border-purple p-3 mb-3">
-            <div class="row align-items-center g-3">
-                <div class="col-12 col-md-3">
-                    <h4 class="mb-0 fw-bold sales-report-title">Sales Report</h4>
-                </div>
-                <div class="col-12 col-sm-6 col-md-5">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-0"><i class="bi bi-search text-dark"></i></span>
-                        <input type="text" class="form-control border-0" placeholder="Search"
-                            value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
-                    </div>
-                </div>
-                <div class="col-6 col-sm-3 col-md-2 text-sm-end">
-                
-                    <div class="dropdown">
-                
-                        <button class="btn btn-filter dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        
-                            <% if (filter==="daily" ) { %>
-                                Daily
-                                <% } else if (filter==="weekly" ) { %>
-                                    Weekly
-                                    <% } else if (filter==="monthly" ) { %>
+    <div class="admin-container">
+
+        <!-- =========================
+             LOGO
+        ========================= -->
+
+        <div class="admin-header">
+
+            <img src="/images/logo.png"
+                 class="admin-logo"
+                 alt="OneMore Logo">
+
+        </div>
+
+
+        <!-- =========================
+             MAIN GRID
+        ========================= -->
+
+        <div class="admin-layout-grid">
+
+
+            <!-- =========================
+                 SIDEBAR
+            ========================= -->
+
+            <aside class="admin-sidebar">
+
+                <a href="/admin/dashboard"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-chart-pie"></i>
+                    Dashboard
+
+                </a>
+
+
+                <a href="/admin/products"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-cubes"></i>
+                    Products
+
+                </a>
+
+
+                <a href="/admin/users"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-users"></i>
+                    Customers
+
+                </a>
+
+
+                <a href="/admin/orders"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Orders
+
+                </a>
+
+
+                <a href="/admin/coupons"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-ticket"></i>
+                    Coupons
+
+                </a>
+
+
+                <a href="/admin/category"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-folder-tree"></i>
+                    Category
+
+                </a>
+
+
+                <a href="/admin/offers"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-percent"></i>
+                    Offers
+
+                </a>
+
+
+                <a href="/admin/banner"
+                   class="sidebar-menu-item">
+
+                    <i class="fa-solid fa-image"></i>
+                    Banner
+
+                </a>
+
+
+                <a href="/admin/sales-report"
+                   class="sidebar-menu-item active">
+
+                    <i class="fa-solid fa-chart-line"></i>
+                    Sales Report
+
+                </a>
+
+
+                <a href="/admin/logout"
+                   class="sidebar-menu-item mt-4">
+
+                    <i class="fa-solid fa-power-off"></i>
+                    Logout
+
+                </a>
+
+            </aside>
+
+
+            <!-- =========================
+                 MAIN CONTENT
+            ========================= -->
+
+            <main class="main-content-area">
+
+
+                <!-- =========================
+                     TOP CONTROL BANNER
+                ========================= -->
+
+                <div class="top-control-banner">
+
+                    <div class="d-flex align-items-center justify-content-between control-wrapper gap-3">
+
+
+                        <div class="control-group">
+
+                            <h4>Sales Report</h4>
+
+                        </div>
+
+
+                        <!-- FILTER -->
+
+                        <div class="control-group">
+
+                            <form action="/admin/sales-report"
+                                  method="GET">
+
+                                <select name="filter"
+                                        class="filter-select"
+                                        onchange="this.form.submit()">
+
+                                    <option value="daily"
+                                        <%= filter === "daily" ? "selected" : "" %>>
+                                        Daily
+                                    </option>
+
+                                    <option value="weekly"
+                                        <%= filter === "weekly" ? "selected" : "" %>>
+                                        Weekly
+                                    </option>
+
+                                    <option value="monthly"
+                                        <%= filter === "monthly" ? "selected" : "" %>>
                                         Monthly
-                                        <% } else if (filter==="yearly" ) { %>
-                                            Yearly
-                                            <% } else if (filter==="custom" ) { %>
-                                                Custom Date Range
-                                                <% } else { %>
-                                                    Filter
-                                                    <% } %>
-                        
-                        </button>
-                
-                        <ul class="dropdown-menu">
-                
-                            <li>
-                                <a class="dropdown-item" href="/admin/sales-report?filter=daily">
-                                    Daily
-                                </a>
-                            </li>
-                
-                            <li>
-                                <a class="dropdown-item" href="/admin/sales-report?filter=weekly">
-                                    Weekly
-                                </a>
-                            </li>
-                
-                            <li>
-                                <a class="dropdown-item" href="/admin/sales-report?filter=monthly">
-                                    Monthly
-                                </a>
-                            </li>
-                
-                            <li>
-                                <a class="dropdown-item" href="/admin/sales-report?filter=yearly">
-                                    Yearly
-                                </a>
-                            </li>
-                
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                
-                            <li>
-                                <a class="dropdown-item" href="/admin/sales-report?filter=custom">
-                                    Custom Date Range
-                                </a>
-                            </li>
-                
-                        </ul>
-                
-                    </div>
-                
-                </div>
-                <div class="col-6 col-sm-3 col-md-2 text-end">
-                
-                    <a href="/admin/sales-report/download-pdf?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
-                        class="btn btn-pdf w-100 mb-2">
-                        PDF Download
-                    </a>
-                
-                    <a href="/admin/sales-report/download-excel?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
-                        class="btn btn-success w-100">
-                        Excel Download
-                    </a>
-                
-                </div>
-            </div>
-        </div>
+                                    </option>
 
-        <% if (filter==="custom" ) { %>
-        
-            <div class="card controls-card border-purple p-3 mb-3">
-        
-                <form action="/admin/sales-report" method="GET">
-        
-                    <input type="hidden" name="filter" value="custom">
-        
-                    <div class="row align-items-end g-3">
-        
-                        <div class="col-12 col-md-4">
-        
-                            <label class="form-label">
-                                From Date
-                            </label>
-        
-                            <input type="date" name="startDate" class="form-control" value="<%= startDate %>" required>
-        
-                        </div>
-        
-                        <div class="col-12 col-md-4">
-        
-                            <label class="form-label">
-                                To Date
-                            </label>
-        
-                            <input type="date" name="endDate" class="form-control" value="<%= endDate %>" required>
-        
-                        </div>
-        
-                        <div class="col-12 col-md-4">
-        
-                            <button type="submit" class="btn btn-pdf w-100">
-                                Apply Date Range
-                            </button>
-        
-                        </div>
-        
-                    </div>
-        
-                </form>
-        
-            </div>
-        
-            <% } %>
+                                    <option value="yearly"
+                                        <%= filter === "yearly" ? "selected" : "" %>>
+                                        Yearly
+                                    </option>
 
-        <div class="row g-3">
-            <!-- Sidebar Navigation -->
-            <div class="col-12 col-lg-2">
-                <div class="card sidebar border-purple p-2">
-                    <ul class="nav flex-column gap-1">
-                        <% const menuItems=[ { name: 'Dashboard' , icon: 'bi-pie-chart' , key: 'dashboard' , path: '/admin/dashboard' }, {
-                            name: 'Products' , icon: 'bi-grid-3x3-gap' , key: 'products' , path: '/admin/products' }, { name: 'Customers' ,
-                            icon: 'bi-people' , key: 'customers' , path: '/admin/users' }, { name: 'Orders' , icon: 'bi-cart' , key: 'orders' ,
-                            path: '/admin/orders' }, { name: 'Coupons' , icon: 'bi-receipt' , key: 'coupons' , path: '/admin/coupons' }, {
-                            name: 'Category' , icon: 'bi-grid' , key: 'category' , path: '/admin/category' }, { name: 'Brand' , icon: 'bi-bag' ,
-                            key: 'brand' , path: '/admin/brand' }, { name: 'Offers' , icon: 'bi-percent' , key: 'offers' , path: '/admin/offers'
-                            }, { name: 'Banner' , icon: 'bi-image' , key: 'banner' , path: '/admin/banner' }, { name: 'Sales Report' ,
-                            icon: 'bi-bar-chart-line' , key: 'sales-report' , path: '/admin/sales-report' }, { name: 'Logout' , icon: 'bi-power'
-                            , key: 'logout' , path: '/admin/logout' } ]; const activePage=typeof currentPage !=='undefined' ? currentPage
-                            : 'sales-report' ; %>
-                        
-                            <% menuItems.forEach(item=> { %>
-                        
-                                <li class="nav-item">
-                        
-                                    <a href="<%= item.path %>" class="nav-link <%= activePage === item.key ? 'active' : '' %>">
-                        
-                                        <i class="bi <%= item.icon %>"></i>
-                        
-                                        <%= item.name %>
-                        
-                                    </a>
-                        
-                                </li>
-                        
-                                <% }); %>
-                    </ul>
-                </div>
-            </div>
+                                    <option value="custom"
+                                        <%= filter === "custom" ? "selected" : "" %>>
+                                        Custom Date Range
+                                    </option>
 
-            <!-- Main Content Area -->
-            <div class="col-12 col-lg-10">
+                                </select>
 
-            <div class="card controls-card border-purple p-3 mb-3 report-period">
-            
-                <div class="d-flex justify-content-between align-items-center">
-            
-                    <strong>Report Period</strong>
-            
-                    <span>
-                        <%= startDate %> → <%= endDate %>
-                    </span>
-            
-                </div>
-            
-            </div>
+                            </form>
 
-                <!-- Summary Cards Row -->
-                <div class="row g-3 mb-3">
-                    <div class="col-12 col-md-4">
-                        <div class="card stat-card border-purple p-3">
-                            <span class="stat-title">TOTAL REVENUE</span>
-                            <span class="stat-value">
-                                ₹<%= report.netRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
-                            </span>
                         </div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="card stat-card border-purple p-3">
-                            <span class="stat-title">TOTAL ORDERS</span>
-                            <span class="stat-value">
-                                <%= report.totalOrders.toLocaleString('en-IN') %>
-                            </span>
+
+
+                        <!-- DOWNLOAD BUTTONS -->
+
+                        <div class="download-group d-flex align-items-center gap-2">
+
+                            <a href="/admin/sales-report/download-pdf?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
+                               class="download-btn pdf-btn">
+
+                                <i class="fa-solid fa-file-pdf"></i>
+                                PDF
+
+                            </a>
+
+
+                            <a href="/admin/sales-report/download-excel?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
+                               class="download-btn excel-btn">
+
+                                <i class="fa-solid fa-file-excel"></i>
+                                Excel
+
+                            </a>
+
                         </div>
+
                     </div>
-                    <div class="col-12 col-md-4">
-                        <div class="card stat-card border-purple p-3">
-                            <span class="stat-title">TOTAL DISCOUNT</span>
-                            <span class="stat-value">
-                                ₹<%= ( report.couponDiscount + report.offerDiscount ).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
-                            </span> 
-                        </div>
-                    </div>
+
                 </div>
 
-                <!-- Table Container -->
-                <div class="card border-purple bg-dark p-3">
-                    <div class="table-responsive">
-                        <table class="table custom-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">SL</th>
-                                    <th scope="col">Order ID</th>
-                                    <th scope="col">Product Name</th>
-                                    <th scope="col" class="text-center">Quantity</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Discounted</th>
-                                    <th scope="col">Payment Method</th>
-                                    <th scope="col">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            
-                                <% if (report.sales && report.sales.length> 0) { %>
-                            
-                                    <% report.sales.forEach((sale, index)=> { %>
-                            
-                                        <tr>
-                            
-                                            <td>
-                                                <%= (report.pagination.currentPage - 1) * 10 + index + 1 %>
-                                            </td>
-                            
-                                            <td>
-                                                <%= sale.orderId %>
-                                            </td>
-                                            
-                                            <td>
-                                                <%= sale.productName %>
-                                            </td>
-                            
-                                            <td class="text-center">
-                                                <%= sale.quantity %>
-                                            </td>
-                            
-                                            <td>
-                                                ₹<%= Number(sale.price).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
-                                            </td>
-                            
-                                            <td>
-                                                ₹<%= Number(sale.discounted).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
-                                            </td>
-                            
-                                            <td>
-                                                <%= sale.paymentMethod %>
-                                            </td>
-                            
-                                            <td>
-                                                <%= new Date(sale.date).toLocaleDateString('en-IN') %>
-                                            </td>
-                            
-                                        </tr>
-                            
-                                        <% }) %>
-                            
-                                            <% } else { %>
-                            
-                                                <tr>
-                                                    <td colspan="8" class="text-center py-4 text-muted">
-                                                        No sales found for this period.
-                                                    </td>
-                                                </tr>
-                            
-                                                <% } %>
-                            
-                            </tbody>
-                        </table>
-                    </div>
 
-                    <!-- Pagination Controls -->
-                    
-                    <% if (report.pagination && report.pagination.totalPages> 1) { %>
-                    
-                        <div class="d-flex justify-content-center align-items-center gap-2 mt-4 mb-2">
-                    
-                            <% if (report.pagination.hasPrev) { %>
-                    
-                                <a href="/admin/sales-report?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= report.pagination.currentPage - 1 %>"
-                                    class="pagination-btn">
-                                    Previous
-                                </a>
-                    
-                                <% } else { %>
-                    
-                                    <button class="pagination-btn opacity-50" disabled>
-                                        Previous
+                <!-- =========================
+                     CUSTOM DATE RANGE
+                ========================= -->
+
+                <% if (filter === "custom") { %>
+
+                    <div class="custom-date-panel">
+
+                        <form action="/admin/sales-report"
+                              method="GET">
+
+                            <input type="hidden"
+                                   name="filter"
+                                   value="custom">
+
+
+                            <div class="row align-items-end g-3">
+
+
+                                <div class="col-12 col-md-4">
+
+                                    <label>
+                                        From Date
+                                    </label>
+
+                                    <input type="date"
+                                           name="startDate"
+                                           class="form-control"
+                                           value="<%= startDate %>"
+                                           required>
+
+                                </div>
+
+
+                                <div class="col-12 col-md-4">
+
+                                    <label>
+                                        To Date
+                                    </label>
+
+                                    <input type="date"
+                                           name="endDate"
+                                           class="form-control"
+                                           value="<%= endDate %>"
+                                           required>
+
+                                </div>
+
+
+                                <div class="col-12 col-md-4">
+
+                                    <button type="submit"
+                                            class="apply-date-btn">
+
+                                        Apply Date Range
+
                                     </button>
-                    
-                                    <% } %>
-                    
-                    
-                                        <% for (let i=1; i <=report.pagination.totalPages; i++) { %>
-                    
-                                            <a href="/admin/sales-report?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= i %>"
-                                                class="page-number <%= report.pagination.currentPage === i ? 'active' : '' %>">
-                    
-                                                <%= i %>
-                    
-                                            </a>
-                    
-                                            <% } %>
-                    
-                    
-                                                <% if (report.pagination.hasNext) { %>
-                    
-                                                    <a href="/admin/sales-report?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= report.pagination.currentPage + 1 %>"
-                                                        class="pagination-btn">
-                    
-                                                        Next
-                    
-                                                    </a>
-                    
-                                                    <% } else { %>
-                    
-                                                        <button class="pagination-btn opacity-50" disabled>
-                                                            Next
-                                                        </button>
-                    
-                                                        <% } %>
-                    
-                        </div>
-                    
-                        <% } %>
-                   
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- =========================
+                     REPORT PERIOD
+                ========================= -->
+
+                <div class="report-period">
+
+                    <div class="d-flex justify-content-between align-items-center period-content">
+
+                        <strong>
+                            Report Period
+                        </strong>
+
+                        <span>
+                            <%= startDate %> → <%= endDate %>
+                        </span>
+
+                    </div>
+
                 </div>
-            </div>
+
+
+                <!-- =========================
+                     SUMMARY
+                ========================= -->
+
+                <div class="summary-panel">
+
+                    <div class="row g-3">
+
+
+                        <!-- TOTAL REVENUE -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="stat-card">
+
+                                <span class="stat-title">
+                                    TOTAL REVENUE
+                                </span>
+
+                                <span class="stat-value">
+
+                                    ₹<%= report.netRevenue.toLocaleString('en-IN', {
+                                        minimumFractionDigits: 2
+                                    }) %>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TOTAL ORDERS -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="stat-card">
+
+                                <span class="stat-title">
+                                    TOTAL ORDERS
+                                </span>
+
+                                <span class="stat-value">
+
+                                    <%= report.totalOrders.toLocaleString('en-IN') %>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TOTAL DISCOUNT -->
+
+                        <div class="col-12 col-md-4">
+
+                            <div class="stat-card">
+
+                                <span class="stat-title">
+                                    TOTAL DISCOUNT
+                                </span>
+
+                                <span class="stat-value">
+
+                                    ₹<%= (
+                                        report.couponDiscount +
+                                        report.offerDiscount
+                                    ).toLocaleString('en-IN', {
+                                        minimumFractionDigits: 2
+                                    }) %>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     SALES DATA
+                ========================= -->
+
+                <div class="sales-data-panel">
+
+
+                    <!-- TABLE HEADER -->
+
+                    <div class="sales-table-wrapper">
+
+                        <div class="sales-table-header">
+
+                            <div>SL</div>
+
+                            <div>Order ID</div>
+
+                            <div>Product Name</div>
+
+                            <div>Qty</div>
+
+                            <div>Price</div>
+
+                            <div>Discounted</div>
+
+                            <div>Payment</div>
+
+                            <div>Date</div>
+
+                        </div>
+
+
+                        <!-- TABLE DATA -->
+
+                        <% if (report.sales && report.sales.length > 0) { %>
+
+
+                            <% report.sales.forEach((sale, index) => { %>
+
+
+                                <div class="sales-table-row">
+
+
+                                    <div>
+
+                                        <%= (
+                                            (report.pagination.currentPage - 1) * 10
+                                        ) + index + 1 %>
+
+                                    </div>
+
+
+                                    <div class="sales-order-id"
+                                         title="<%= sale.orderId %>">
+
+                                        <%= sale.orderId %>
+
+                                    </div>
+
+
+                                    <div class="sales-product-name">
+
+                                        <%= sale.productName %>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <%= sale.quantity %>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        ₹<%= Number(sale.price).toLocaleString(
+                                            'en-IN',
+                                            {
+                                                minimumFractionDigits: 2
+                                            }
+                                        ) %>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        ₹<%= Number(sale.discounted).toLocaleString(
+                                            'en-IN',
+                                            {
+                                                minimumFractionDigits: 2
+                                            }
+                                        ) %>
+
+                                    </div>
+
+
+                                    <div class="sales-payment">
+
+                                        <%= sale.paymentMethod %>
+
+                                    </div>
+
+
+                                    <div class="sales-date">
+
+                                        <%= new Date(
+                                            sale.date
+                                        ).toLocaleDateString('en-IN') %>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            <% }) %>
+
+
+                        <% } else { %>
+
+
+                            <div class="empty-sales">
+
+                                No sales found for this period.
+
+                            </div>
+
+
+                        <% } %>
+
+
+                    </div>
+
+
+                    <!-- =========================
+                         PAGINATION
+                    ========================= -->
+
+                    <% if (
+                        report.pagination &&
+                        report.pagination.totalPages > 1
+                    ) { %>
+
+
+                        <div class="admin-pagination-box">
+
+
+                            <% if (report.pagination.hasPrev) { %>
+
+                                <a href="/admin/sales-report?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= report.pagination.currentPage - 1 %>"
+                                   class="admin-page-nav">
+
+                                    Previous
+
+                                </a>
+
+                            <% } else { %>
+
+                                <button class="admin-page-nav opacity-50"
+                                        disabled>
+
+                                    Previous
+
+                                </button>
+
+                            <% } %>
+
+
+                            <% for (
+                                let i = 1;
+                                i <= report.pagination.totalPages;
+                                i++
+                            ) { %>
+
+
+                                <a href="/admin/sales-report?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= i %>"
+                                   class="admin-page-circle <%= report.pagination.currentPage === i ? 'active' : '' %>">
+
+                                    <%= i %>
+
+                                </a>
+
+
+                            <% } %>
+
+
+                            <% if (report.pagination.hasNext) { %>
+
+                                <a href="/admin/sales-report?filter=<%= filter %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= report.pagination.currentPage + 1 %>"
+                                   class="admin-page-nav">
+
+                                    Next
+
+                                </a>
+
+                            <% } else { %>
+
+                                <button class="admin-page-nav opacity-50"
+                                        disabled>
+
+                                    Next
+
+                                </button>
+
+                            <% } %>
+
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </div>
+
+
+            </main>
+
         </div>
 
-        <!-- Footer -->
-        <footer class="text-center text-muted mt-4 font-size-sm">
-            <small>&copy; <%= new Date().getFullYear() %> onemore. All Rights Reserved.</small>
+
+        <!-- =========================
+             FOOTER
+        ========================= -->
+
+        <footer class="admin-footer">
+
+            © <%= new Date().getFullYear() %> onemore. All Rights Reserved.
+
         </footer>
+
+
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

@@ -325,9 +325,23 @@ export const createProduct = async (productData, file) => {
 
     const errors = {}
 
-    if(!productName?.trim()){
+    const trimmedProductName = productName?.trim()
+
+    if (!trimmedProductName) {
 
         errors.productName = "Product name is required"
+
+    } else if (trimmedProductName.length < 3) {
+
+        errors.productName = "Product name must be at least 3 characters"
+
+    } else if (trimmedProductName.length > 50) {
+
+        errors.productName = "Product name must not exceed 50 characters"
+
+    } else if (!/^[A-Za-z0-9][A-Za-z0-9\s'-]*$/.test(trimmedProductName)) {
+
+        errors.productName = "Product name contains invalid characters"
     }
 
     if(!description?.trim()){
@@ -413,8 +427,23 @@ export const updateProduct = async(productId, productData, file) =>{
 
     const errors = {}
 
-    if(!productName?.trim()){
+    const trimmedProductName = productName?.trim();
+
+    if (!trimmedProductName) {
+
         errors.productName = "Product name is required"
+
+    } else if (trimmedProductName.length < 3) {
+
+        errors.productName = "Product name must be at least 3 characters"
+        
+    } else if (trimmedProductName.length > 50) {
+
+        errors.productName = "Product name must not exceed 50 characters"
+
+    } else if (!/^[A-Za-z0-9][A-Za-z0-9\s'-]*$/.test(trimmedProductName)) {
+        
+        errors.productName = "Product name contains invalid characters"
     }
 
     if(!description?.trim()){
