@@ -272,7 +272,7 @@ export const getProductDetailsService = async (productId) => {
         category: product.category._id,
         _id: { $ne: product._id },
         isListed: true
-    }).limit(4)
+    }).limit(4).lean()
 
     const similarProducts = []
 

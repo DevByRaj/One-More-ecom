@@ -946,31 +946,37 @@
 
                 <!-- SIMILAR COLLECTION GRID -->
                 <h2 class="similar-title">Similar Collection</h2>
+                
                 <div class="row">
-                    <% if(similarProducts && similarProducts.length> 0){ %>
+                    <% if (similarProducts && similarProducts.length> 0) { %>
                         <% similarProducts.forEach(item=> { %>
                             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                                <div class="product-card">
-                                    <a href="/productDetails?id=<%= item._id %>">
-                                        <img src="<%= item.defaultVariant?.variantImage?.[0] || item.productImage?.[0] %>" alt="<%= item.productName %>">
-                                    </a>
-                                    <div class="product-name">
-                                        <%= item.productName %>
+                                <a href="/productDetails?id=<%= item._id %>" class="text-decoration-none text-dark">
+                                    <div class="product-card">
+                                        <img src="<%= item.defaultVariant?.variantImage?.[0] || item.productImage?.[0] %>"
+                                            alt="<%= item.productName %>">
+                
+                                        <div class="product-name">
+                                            <%= item.productName %>
+                                        </div>
+                
+                                        <div class="card-price">
+                                            ₹<%= item.defaultVariant.offer.finalPrice.toFixed(2) %>
+                                        </div>
+                
+                                        <div class="card-rating">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                        </div>
                                     </div>
-                                    <div class="card-price">
-                                        ₹<%= item.defaultVariant.offer.finalPrice.toFixed(2) %>
-                                    </div>
-                                    <div class="card-rating">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                    </div>
-                                </div>
+                                </a>
                             </div>
                             <% }) %>
                                 <% } %>
                 </div>
+
             </div>
         </div>
 
