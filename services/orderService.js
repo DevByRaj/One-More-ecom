@@ -178,6 +178,10 @@ export const getCheckoutData = async (userId, appliedCoupon = null, buyNow = nul
         }
     }
 
+    for(const item of cart.items){
+        item.offer = await calculateBestOffer(item.productId, item.variantId)
+    }
+
     let couponDiscount = 0
 
     if (appliedCoupon?.couponCode) {
