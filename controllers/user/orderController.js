@@ -242,7 +242,40 @@ export const getOrderDetails = async (req, res) => {
             return res.redirect("/orders")
         }
 
-        const order = result.order
+
+        const order = result.order.toObject();
+
+        const deliveredItems = order.items.filter(
+            item => item.status === "Delivered"
+        );
+
+        const roundMoney = value =>
+            Math.round((value + Number.EPSILON) * 100) / 100;
+
+        order.subTotal = deliveredItems.reduce(
+            (total, item) => total + Number(item.totalPrice || 0),
+            0
+        );
+
+        const originalSubtotal = Number(result.order.subTotal || 0);
+        const deliveredSubtotal = order.subTotal;
+
+        const deliveryRatio = originalSubtotal > 0
+            ? Math.min(deliveredSubtotal / originalSubtotal, 1)
+            : 0;
+
+        order.discount = roundMoney(
+            Number(result.order.discount || 0) * deliveryRatio
+        );
+
+        order.shipping = roundMoney(
+            Number(result.order.shipping || 0) * deliveryRatio
+        );
+
+        order.grandTotal = roundMoney(
+            order.subTotal - order.discount + order.shipping
+        );
+
 
         const totalItems = order.items.length
         const totalPages = Math.ceil(totalItems / limit)
@@ -366,12 +399,30 @@ export const downloadInvoice = async(req,res) =>{
             0
         )
 
-        invoiceOrder.discount = order.discount || 0
+        const roundMoney = value =>
+            Math.round((value + Number.EPSILON) * 100) / 100
 
-        invoiceOrder.shipping = order.shipping || 0
+        const orderSubtotal = Number(order.subTotal || 0);
+        const deliveredSubtotal = Number(invoiceOrder.subTotal || 0)
 
-        invoiceOrder.grandTotal = invoiceOrder.subTotal - invoiceOrder.discount + invoiceOrder.shipping
+        const deliveryRatio = orderSubtotal > 0
+            ? Math.min(deliveredSubtotal / orderSubtotal, 1)
+            : 0
 
+        invoiceOrder.discount = roundMoney(
+            Number(order.discount || 0) * deliveryRatio
+        )
+
+        invoiceOrder.shipping = roundMoney(
+            Number(order.shipping || 0) * deliveryRatio
+        )
+
+        invoiceOrder.grandTotal = roundMoney(
+            deliveredSubtotal
+            - invoiceOrder.discount
+            + invoiceOrder.shipping
+        )
+        
         res.setHeader("Content-Type", "application/pdf")
 
         res.setHeader(
