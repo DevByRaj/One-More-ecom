@@ -456,7 +456,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    <% if (successMessage) { %>
+    <% if (typeof successMessage !== "undefined" && successMessage) { %>
         Swal.fire({
             toast: true,
             position: "top-end",
