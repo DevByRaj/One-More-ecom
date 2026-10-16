@@ -452,7 +452,53 @@
         }
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+```html
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    <% if (successMessage) { %>
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "<%= successMessage %>",
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            background: "#ffffff",
+            color: "#171717",
+            iconColor: "#16a34a",
+            customClass: {
+                popup: "onemore-toast",
+                title: "onemore-toast-title",
+                timerProgressBar: "onemore-toast-progress"
+            }
+        });
+    <% } %>
+</script>
+
+<style>
+    .onemore-toast {
+        width: 380px !important;
+        padding: 18px 22px !important;
+        border-radius: 12px !important;
+        border: 1px solid #bbf7d0 !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    .onemore-toast-title {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        line-height: 1.5 !important;
+    }
+
+    .onemore-toast-progress {
+        background: #16a34a !important;
+        height: 4px !important;
+    }
+</style>
+```
+
 </body>
 
 </html>

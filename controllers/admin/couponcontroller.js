@@ -15,11 +15,15 @@ export const getCouponList = async (req, res) =>{
 
         const result = await getCouponListService(page, limit, search)
 
+        const successMessage = req.session.successMessage
+        delete req.session.successMessage
+
         return res.render("admin/couponList", {
              coupons: result.coupons,
              totalPages: result.totalPages,
              currentPage: page,
-             searchQuery: search  
+             searchQuery: search,
+             successMessage: successMessage || null
         })
         
     } catch (error) {
@@ -56,6 +60,7 @@ export const createCoupon = async(req,res) =>{
             })
         }
 
+        req.session.successMessage = "Coupon created successfully"
         return res.redirect("/admin/coupons")
     } catch(error){
         console.log(error);
@@ -108,7 +113,7 @@ export const updateCoupon = async(req, res) =>{
                 error: result.message
             })
         }
-
+        req.session.successMessage = "Coupon updated successfully"
         return res.redirect("/admin/coupons")
         
     } catch (error) {
@@ -136,7 +141,7 @@ export const deleteCoupon = async (req, res) =>{
         if(!result.success){
             return res.redirect("/admin/coupons")
         }
-
+        req.session.successMessage = "Coupon deleted successcully"
         return res.redirect("/admin/coupons")
         
     } catch (error) {
