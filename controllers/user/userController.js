@@ -187,6 +187,10 @@ export const verifyOTP = async (req, res) => {
         return res.send("user not found")
       }
 
+      if(user.isBlocked){
+        return res.redirect("/login?error=blocked")
+      }
+
       if (user.otp !== otp) {
         remainingSeconds = Math.max(0, Math.floor((user.otpExpires - Date.now()) / 1000));
         return res.render('user/verifyOtp', {
@@ -206,6 +210,7 @@ export const verifyOTP = async (req, res) => {
         })
       }
       req.session.resetDone = true
+      req.session.resetEmail = email
 
       return res.redirect(`/reset-password?email=${email}`)
     }
@@ -1142,7 +1147,14 @@ export const postForgotPassword = async (req, res) => {
 export const getResetPassword = (req, res) => {
   const {email} = req.query
 
-  res.render("user/resetPassword", {
+  if (
+    !req.session.resetDone ||
+    req.session.resetEmail !== email
+  ) {
+    return res.redirect("/forgot-password")
+  }
+
+  return res.render("user/resetPassword", {
     email,
     error: null
   })
@@ -1151,7 +1163,14 @@ export const getResetPassword = (req, res) => {
 export const postResetPassword = async (req, res) => {
   try {
 
-    const {email, password, confirmPassword} = req.body
+    const {email, password, confirmPassword} = req.body;
+
+    if (
+      !req.session.resetDone ||
+      req.session.resetEmail !== email
+    ) {
+      return res.redirect("/forgot-password");
+    }
 
     const result = await resetUserPassword(email, password, confirmPassword)
 
@@ -1164,6 +1183,7 @@ export const postResetPassword = async (req, res) => {
     }
 
     req.session.resetDone = false
+    req.session.resetEmail = null
 
     res.redirect("/login?reset=success")
 

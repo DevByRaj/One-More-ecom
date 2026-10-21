@@ -78,6 +78,13 @@ export const sendForgotPasswordOTP = async(email) =>{
         }
     }
 
+    if(user.isBlocked){
+        return{
+            success: false,
+            message: "Your account is blocked"
+        }
+    }
+
     const{otp, isSent} = await sendOTP(email)
 
     if(!isSent){
@@ -109,6 +116,13 @@ export const resetUserPassword = async(email, password, confirmPassword) =>{
         }
     }
 
+    if(user.isBlocked){
+        return{
+            success: false,
+            message: "Your account is blocked by admin. You cannot reset your password"
+        }
+    }
+
     if(password !== confirmPassword){
 
         return{
@@ -119,7 +133,7 @@ export const resetUserPassword = async(email, password, confirmPassword) =>{
 
     if(password.length < 6){
         return{
-            success: true,
+            success: false,
             message: "Password must be at least 6 characters"
         }
     }
