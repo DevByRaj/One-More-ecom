@@ -417,6 +417,32 @@
             outline-offset: 3px;
         }
 
+
+.onemore-alert-popup {
+    border: 1px solid #333333;
+    border-radius: 14px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.onemore-alert-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+}
+
+.onemore-alert-text {
+    font-size: 13px !important;
+    line-height: 1.5;
+}
+
+.onemore-alert-button {
+    color: #121212 !important;
+    border-radius: 20px !important;
+    padding: 8px 24px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+
         /* ================= FOOTER ================= */
         footer {
             background-color: var(--bg-dark);
@@ -672,9 +698,29 @@
 
                 const data = await response.json();
 
+                
                 if (!data.success) {
-                    return alert(data.message || "Unable to retry payment");
+                    await Swal.fire({
+                        icon: "warning",
+                        title: "Unable to Retry",
+                        text: data.message || "Unable to retry payment.",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#ffdc60",
+                        background: "#121212",
+                        color: "#ffffff",
+                        width: "320px",
+                        padding: "1.25rem",
+                        customClass: {
+                            popup: "onemore-alert-popup",
+                            title: "onemore-alert-title",
+                            htmlContainer: "onemore-alert-text",
+                            confirmButton: "onemore-alert-button"
+                        }
+                    });
+
+                    return;
                 }
+
 
                 let isRetrySuccess = false;
 
@@ -750,7 +796,7 @@
         </script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

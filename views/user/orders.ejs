@@ -480,6 +480,13 @@
                                     <a href="/orders/<%= order._id %>" class="btn view-order-pill">
                                         View Details
                                     </a>
+                                    
+                                    <% if ( order.paymentMethod==="RAZORPAY" && ["Pending", "Failed" ].includes(order.paymentStatus) &&
+                                        !["Cancelled", "Returned" ].includes(order.orderStatus) ) { %>
+                                        <a href="/payment-failed/<%= order._id %>" class="btn view-order-pill">
+                                            Retry Payment
+                                        </a>
+                                        <% } %>
                                 </div>
                             </div>
                             <% }) %>

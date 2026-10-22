@@ -57,6 +57,27 @@ export const allowedStatusTransitions = {
 }
 
 export const getOrderStatusInfo = (order) => {
+    if (
+        order.paymentMethod === "RAZORPAY" &&
+        order.paymentStatus !== "Paid"
+    ) {
+        if (order.paymentStatus === "Failed") {
+            return {
+                title: "Payment failed",
+                message: "Your payment failed. Please retry payment.",
+                dot: "cancelled",
+                date: order.updatedAt
+            };
+        }
+
+        return {
+            title: "Payment pending",
+            message: "Your payment is not completed. Please complete your payment.",
+            dot: "expected",
+            date: order.createdAt
+        };
+    }
+
     switch (order.orderStatus) {
         case "Pending":
             return {
@@ -783,11 +804,15 @@ export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
     const skip = (page - 1) * limit
 
+    // const filter = {
+    //     userId,
+    //     $or: [{paymentMethod: {$ne: "RAZORPAY"}},
+    //     {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
+    //     ]
+    // }
+
     const filter = {
-        userId,
-        $or: [{paymentMethod: {$ne: "RAZORPAY"}},
-        {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
-        ]
+        userId
     }
 
     const totalOrders = await Order.countDocuments(filter)

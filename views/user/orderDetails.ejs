@@ -439,9 +439,20 @@
                         <span>₹ <%= order.grandTotal %></span>
                     </div>
                 </div>
-                <% const hasDeliveredItems=order.items.some( item=> item.status === "Delivered"
-                    );
-                    %>
+                
+                <% if ( order.paymentMethod==="RAZORPAY" && ["Pending", "Failed" ].includes(order.paymentStatus) &&
+                    !["Cancelled", "Returned" ].includes(order.orderStatus) ) { %>
+                    <div class="info-section text-center mt-4">
+                        <a href="/payment-failed/<%= order._id %>" class="btn btn-dark w-100">
+                            <i class="fa-solid fa-rotate-right me-2"></i>
+                            Retry Payment
+                        </a>
+                    </div>
+                    <% } %>
+                
+                        <% const hasDeliveredItems=order.items.some( item=> item.status === "Delivered"
+                            ); %>
+
                 
                     <div class="info-section text-center mt-4">
                 
