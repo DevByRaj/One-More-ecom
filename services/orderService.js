@@ -1004,8 +1004,10 @@ export const getAllOrders = async (page = 1, limit = 5, search = "", status = ""
 
     let query = {}
 
-    if (status) {
-        query.orderStatus = status
+    if (status === "Failed") {
+        query.paymentStatus = "Failed";
+    } else if (status) {
+        query.orderStatus = status;
     }
 
     if (search.trim()) {
@@ -1075,6 +1077,15 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
 
     if (!order) {
         throw new Error("Order not found")
+    }
+
+    if (
+        order.paymentMethod === "RAZORPAY" &&
+        order.paymentStatus !== "Paid"
+    ) {
+        throw new Error(
+            "Cannot update order status until payment is completed"
+        );
     }
 
     for (const item of order.items) {

@@ -769,7 +769,7 @@
 
                 </div>
 
-
+                <% const paymentBlocked=order.paymentMethod==="RAZORPAY" && order.paymentStatus !=="Paid" ; %>
 
                 <form id="orderUpdateForm" action="/admin/orders/update-item-status" method="POST">
 
@@ -844,35 +844,28 @@
                                                 <div class="status-update-row">
 
 
-
                                                     <label>Order Status :</label>
-
-
-
-                                                    <select name="status_<%= item._id %>" class="admin-select-dropdown">
-
-
-
-                                                        <% allowedStatusTransitions[item.status].forEach(status=> { %>
-
-
-
-                                                            <option value="<%= status %>" <%=item.status===status
-                                                                ? "selected" : "" %>>
-
-                                                                <%= status %>
-
+                                                    
+                                                    <% if (paymentBlocked) { %>
+                                                    
+                                                        <select class="admin-select-dropdown" disabled>
+                                                            <option selected>
+                                                                <%= item.status %>
                                                             </option>
-
-
-
-                                                            <% }) %>
-
-
-
-                                                    </select>
-
-
+                                                        </select>
+                                                    
+                                                        <% } else { %>
+                                                    
+                                                            <select name="status_<%= item._id %>" class="admin-select-dropdown">
+                                                                <% (allowedStatusTransitions[item.status] || []).forEach(status=> { %>
+                                                                    <option value="<%= status %>" <%=item.status===status ? "selected" : "" %>
+                                                                        >
+                                                                        <%= status %>
+                                                                    </option>
+                                                                    <% }) %>
+                                                            </select>
+                                                    
+                                                            <% } %>
 
                                                 </div>
 
@@ -1031,18 +1024,24 @@
 
                             </div>
 
+                            <% if (paymentBlocked) { %>
+                            
+                                <div class="alert alert-warning mt-3 mb-0" role="alert">
+                                    <strong>Payment <%= order.paymentStatus %></strong>
+                                    <p class="mb-0 mt-1 small">
+                                        Order status updates are disabled until payment succeeds.
+                                    </p>
+                                </div>
+                            
+                                <% } %>
+
 
 
                             <div class="mt-4">
 
-                                <button type="submit" class="btn btn-light w-100 fw-semibold">
-
-
-
+                                <button type="submit" class="btn btn-light w-100 fw-semibold" <%=paymentBlocked ? "disabled" : "" %>
+                                    >
                                     Update
-
-
-
                                 </button>
 
                             </div>
