@@ -243,39 +243,39 @@ export const getOrderDetails = async (req, res) => {
         }
 
 
-        const order = result.order.toObject();
+        const order = result.order.toObject()
 
-        const deliveredItems = order.items.filter(
-            item => item.status === "Delivered"
-        );
+
+        const activeItems = order.items.filter(
+            item => !["Cancelled", "Returned"].includes(item.status)
+        )
 
         const roundMoney = value =>
             Math.round((value + Number.EPSILON) * 100) / 100;
 
-        order.subTotal = deliveredItems.reduce(
+        order.subTotal = activeItems.reduce(
             (total, item) => total + Number(item.totalPrice || 0),
             0
-        );
+        )
 
         const originalSubtotal = Number(result.order.subTotal || 0);
-        const deliveredSubtotal = order.subTotal;
+        const activeSubtotal = order.subTotal;
 
         const deliveryRatio = originalSubtotal > 0
-            ? Math.min(deliveredSubtotal / originalSubtotal, 1)
-            : 0;
+            ? Math.min(activeSubtotal / originalSubtotal, 1)
+            : 0
 
         order.discount = roundMoney(
             Number(result.order.discount || 0) * deliveryRatio
-        );
+        )
 
         order.shipping = roundMoney(
             Number(result.order.shipping || 0) * deliveryRatio
-        );
+        )
 
         order.grandTotal = roundMoney(
             order.subTotal - order.discount + order.shipping
-        );
-
+        )
 
         const totalItems = order.items.length
         const totalPages = Math.ceil(totalItems / limit)
@@ -382,16 +382,6 @@ export const downloadInvoice = async(req,res) =>{
         const invoiceOrder = {
             ...order.toObject(),
             items: deliveredItems
-        }
-
-        for (const item of deliveredItems) {
-            console.log({
-                productName: item.productName,
-                status: item.status,
-                quantity: item.quantity,
-                salePrice: item.salePrice,
-                totalPrice: item.totalPrice
-            });
         }
 
         invoiceOrder.subTotal = deliveredItems.reduce(

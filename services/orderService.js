@@ -804,23 +804,14 @@ export const getUserOrders = async (userId, page = 1, limit = 5) => {
 
     const skip = (page - 1) * limit
 
-    // const filter = {
-    //     userId,
-    //     $or: [{paymentMethod: {$ne: "RAZORPAY"}},
-    //     {paymentMethod: "RAZORPAY", paymentStatus: "Paid"}
-    //     ]
-    // }
-
     const filter = {
         userId
     }
 
     const totalOrders = await Order.countDocuments(filter)
 
-    const orders = await Order.find(filter)
-        .sort({createdAt: -1})
-        .skip(skip)
-        .limit(limit)
+    const orders = await Order.find(filter).sort({createdAt: -1}).skip(skip).limit(limit)
+
     return {
         orders,
         totalPages: Math.ceil(totalOrders / limit),
@@ -963,13 +954,6 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
     const previousGrandTotal = order.grandTotal
-
-    // if (order.discount > 0 && order.subTotal > 0) {
-
-    //     const itemDiscount = (item.totalPrice / order.subTotal) * order.discount
-
-    //     order.discount = Math.max(0, order.discount - itemDiscount)
-    // }
 
     recalculateOrderTotals(order)
 
