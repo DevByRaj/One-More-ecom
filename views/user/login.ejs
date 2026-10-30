@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Login | OneMore</title>
   <link rel="icon" type="image/png" href="/images/logo.png">
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -19,333 +19,935 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: #0f0f0f;
+      background: #0b0b0b;
       color: #fff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+    }
+
+    a {
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* NAVBAR */
-    nav {
-      background: #0f0f0f;
-      padding: 20px 60px;
+    .login-nav {
+      background: #101010;
+      border-bottom: 1px solid #292929;
+      position: relative;
+      z-index: 10;
+    }
+
+    .login-nav .nav-inner {
+      max-width: 1400px;
+      margin: auto;
+      padding: 15px 5%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      gap: 24px;
     }
 
-    .logo-img {
-      width: 60px;
+    .login-nav .logo-img {
+      width: 75px;
+      height: auto;
+      display: block;
+      object-fit: contain;
     }
 
-    .nav-links {
+    .login-nav .nav-links {
       display: flex;
-      gap: 40px;
+      align-items: center;
+      gap: clamp(18px, 3vw, 40px);
     }
 
-    .nav-links a {
+    .login-nav .nav-links a {
       color: #cfcfcf;
       text-decoration: none;
-      font-size: 14px;
-      transition: color 0.3s;
+      font-size: 13px;
+      white-space: nowrap;
+      transition: color 0.25s ease;
     }
 
-    .nav-links a:hover {
+    .login-nav .nav-links a:hover {
       color: #fff;
     }
 
-    .icons {
+    .login-nav .icons {
       display: flex;
-      gap: 25px;
-    }
-
-    .icons i {
-      font-size: 18px;
-      color: #ccc;
-      cursor: pointer;
-    }
-
-    /* MAIN */
-    .main {
-      background: #dcdcdc;
-      flex: 1;
-      display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 40px 20px;
+      gap: 22px;
+      flex-shrink: 0;
     }
 
-    /* CARD */
-    .card {
-      background: #efefef;
-      border: 2px solid #000;
-      border-radius: 20px;
-      padding: 40px 30px;
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    .login-nav .icons a {
+      color: #ccc;
+      font-size: 18px;
+      text-decoration: none;
+      transition: color 0.25s ease;
     }
 
-    .card h2 {
-      margin-bottom: 25px;
-      color: #000;
-      font-weight: 600;
+    .login-nav .icons a:hover {
+      color: #fff;
     }
 
-    /* INPUT */
-    .card input {
-      width: 100%;
-      padding: 12px;
-      padding-right: 40px;
-      margin-bottom: 5px;
-      border-radius: 10px;
-      border: 1.5px solid transparent;
-      background: #cfcfcf;
-      font-family: 'Poppins', sans-serif;
-      transition: border-color 0.3s;
-    }
-
-    .card input:focus {
-      outline: none;
-      border-color: #000;
-    }
-
-    /* INPUT GROUP */
-    .input-group {
+    /* MAIN BACKGROUND */
+    .login-main {
+      flex: 1;
       position: relative;
-    }
-
-    .toggle-eye {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #555;
-      padding: 5px;
-    }
-
-    /* ERROR */
-    .error-msg {
-      color: #d93025;
-      font-size: 11px;
-      text-align: left;
-      margin-bottom: 12px;
-      min-height: 15px;
-    }
-
-    /* LINKS */
-    .links {
+      isolation: isolate;
+      overflow: hidden;
+      padding: 70px 6%;
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
+      align-items: center;
+      background:
+        radial-gradient(ellipse at 12% 30%, rgba(75, 75, 75, 0.20), transparent 40%),
+        radial-gradient(ellipse at 90% 80%, rgba(55, 55, 55, 0.16), transparent 38%),
+        #0b0b0b;
+    }
+
+    .login-main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: linear-gradient(135deg,
+          transparent 49%,
+          rgba(255, 255, 255, 0.025) 50%,
+          transparent 51%);
+      background-size: 38px 38px;
+    }
+
+    .login-layout {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+      align-items: center;
+      gap: clamp(35px, 7vw, 90px);
+    }
+
+    /* LEFT BRANDING */
+    .login-content {
+      max-width: 520px;
+    }
+
+    .login-content .eyebrow {
+      color: #aaa;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
       margin-bottom: 20px;
     }
 
-    .links a {
-      color: #000;
+    .login-content h1 {
+      font-size: clamp(38px, 4.5vw, 60px);
+      line-height: 1.13;
+      font-weight: 700;
+      letter-spacing: -1.7px;
+      margin-bottom: 22px;
+    }
+
+    .login-content h1 span {
+      display: block;
+      color: #a7a7b5;
+    }
+
+    .login-content .intro {
+      color: #bdbdbd;
+      font-size: 14px;
+      line-height: 1.9;
+      max-width: 440px;
+      margin-bottom: 35px;
+    }
+
+    .login-features {
+      display: flex;
+      flex-direction: column;
+      gap: 21px;
+    }
+
+    .login-feature {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .login-feature .feature-icon {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      border: 1px solid #414141;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 17px;
+    }
+
+    .login-feature h3 {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #f5f5f5;
+    }
+
+    .login-feature p {
+      font-size: 11px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    .login-tagline {
+      margin-top: 32px;
+      color: #a7a7b5;
+      font-size: 18px;
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    /* LOGIN CARD */
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      justify-self: center;
+      padding: 38px 32px 30px;
+      background: linear-gradient(145deg, #f8f8fa, #e9e9ed);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      color: #111;
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.38);
+    }
+
+    .login-card .card-icon {
+      width: 55px;
+      height: 55px;
+      background: #dedee4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
+      margin-bottom: 20px;
+    }
+
+    .login-card h2 {
+      color: #111;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.6px;
+      margin-bottom: 8px;
+    }
+
+    .login-card .card-description {
+      color: #777783;
+      font-size: 12px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    /* SERVER MESSAGES */
+    .login-card .success-message {
+      color: #176c35;
+      background: #d9f4df;
+      border: 1px solid #b8e6c2;
+      padding: 11px;
+      border-radius: 8px;
+      text-align: left;
+      margin-bottom: 16px;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .login-card .general-error {
+      color: #b91c1c;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 11px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    /* INPUTS */
+    .login-card .field-label {
+      display: block;
+      color: #202027;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .login-card .input-group {
+      position: relative;
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .login-card .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777783;
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .login-card input {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      padding: 13px 42px 13px 42px;
+      border-radius: 9px;
+      border: 1px solid #c7c7d0;
+      background: rgba(255, 255, 255, 0.8);
+      color: #111;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .login-card input::placeholder {
+      color: #8b8b96;
+    }
+
+    .login-card input:focus {
+      border-color: #333;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .login-card .toggle-eye {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+      padding: 5px;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .login-card .toggle-eye:hover {
+      color: #111;
+    }
+
+    .login-card .error-msg {
+      color: #d93025;
+      font-size: 11px;
+      text-align: left;
+      margin-top: 5px;
+      margin-bottom: 13px;
+      min-height: 15px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    /* LINKS */
+    .login-card .links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      margin: 5px 0 20px;
+    }
+
+    .login-card .links a {
+      color: #111;
       text-decoration: none;
       font-weight: 500;
     }
 
-    .links a:hover {
+    .login-card .links a:hover {
       text-decoration: underline;
     }
 
-    /* BUTTON */
-    .btn {
+    /* LOGIN BUTTON */
+    .login-card .login-btn {
+      display: block;
       width: 100%;
-      padding: 12px;
-      background: #000;
+      padding: 13px;
+      background: #090909;
       color: #fff;
-      border-radius: 10px;
-      border: none;
+      border: 1px solid #090909;
+      border-radius: 9px;
       cursor: pointer;
       font-weight: 500;
       font-family: 'Poppins', sans-serif;
-      transition: background 0.3s;
+      font-size: 13px;
+      transition: background 0.25s, transform 0.2s;
     }
 
-    .btn:hover {
-      background: #333;
+    .login-card .login-btn:hover {
+      background: #292929;
     }
 
-    /* GOOGLE */
-    .google-text {
-      margin-top: 20px;
+    .login-card .login-btn:active {
+      transform: scale(0.99);
+    }
+
+    /* GOOGLE AUTH */
+    .login-card .google-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 23px 0 17px;
+      color: #888;
+      font-size: 11px;
+    }
+
+    .login-card .google-divider::before,
+    .login-card .google-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #d2d2d8;
+    }
+
+    .login-card .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #cccdd4;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 9px;
+      color: #222;
+      font-family: 'Poppins', sans-serif;
       font-size: 12px;
-      color: #555;
-      position: relative;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
     }
 
-    .google-icon {
-      margin-top: 10px;
-    }
-
-    .google-icon a {
-      display: inline-block;
-      padding: 8px;
-      border-radius: 50%;
+    .login-card .google-btn:hover {
       background: #fff;
-      border: 1px solid #ddd;
-      line-height: 0;
+      border-color: #aaa;
+    }
+
+    .login-card .google-btn img {
+      width: 19px;
+      height: 19px;
+      object-fit: contain;
+    }
+
+    .login-card .security-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #888;
+      font-size: 10px;
+      margin-top: 20px;
+      text-align: center;
+      line-height: 1.6;
     }
 
     /* FOOTER */
-    footer {
-      background: #0f0f0f;
-      padding: 60px 80px 30px;
+    .login-footer {
+      background: #101010;
+      border-top: 1px solid #242424;
+      padding: 40px 6% 20px;
     }
 
-    .footer-logo {
+    .login-footer .footer-logo {
       display: flex;
       justify-content: center;
-      margin-bottom: 40px;
+      margin-bottom: 35px;
     }
 
-    .footer-logo img {
-      width: 80px;
+    .login-footer .footer-logo img {
+      width: 75px;
+      height: auto;
+      display: block;
     }
 
-    .footer-container {
+    .login-footer .footer-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px;
       max-width: 1200px;
       margin: 0 auto;
     }
 
-    .footer-section h4 {
+    .login-footer .footer-section {
+      min-width: 0;
+      padding-right: 15px;
+      border-right: 1px solid #292929;
+    }
+
+    .login-footer .footer-section:last-child {
+      border-right: none;
+    }
+
+    .login-footer .footer-section h4 {
       color: #fff;
-      margin-bottom: 15px;
-      font-size: 15px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .footer-section p {
-      color: #aaa;
-      font-size: 13px;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-
-    .footer-section p:hover {
-      color: #fff;
-    }
-
-    .bottom {
-      margin-top: 50px;
+      margin-bottom: 13px;
       font-size: 12px;
-      color: #555;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .login-footer .footer-section p {
+      color: #aaa;
+      font-size: 11px;
+      line-height: 1.8;
+      margin-bottom: 5px;
+      overflow-wrap: anywhere;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .login-footer .footer-section p:hover {
+      color: #fff;
+    }
+
+    .login-footer .bottom {
+      max-width: 1200px;
+      margin: 28px auto 0;
+      padding-top: 17px;
+      font-size: 11px;
+      color: #777;
       text-align: center;
-      border-top: 1px solid #222;
-      padding-top: 20px;
+      border-top: 1px solid #292929;
+      line-height: 1.7;
+    }
+
+    /* TABLET */
+    @media (max-width: 950px) {
+      .login-nav .nav-inner {
+        padding: 14px 4%;
+        gap: 15px;
+      }
+
+      .login-nav .logo-img {
+        width: 60px;
+      }
+
+      .login-nav .nav-links {
+        gap: 18px;
+      }
+
+      .login-nav .nav-links a {
+        font-size: 12px;
+      }
+
+      .login-nav .icons {
+        gap: 15px;
+      }
+
+      .login-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(290px, 360px);
+        gap: 32px;
+      }
+
+      .login-content h1 {
+        font-size: 42px;
+      }
+
+      .login-card {
+        padding: 30px 24px;
+      }
+
+      .login-footer {
+        padding-left: 4%;
+        padding-right: 4%;
+      }
+
+      .login-footer .footer-container {
+        gap: 18px;
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+      .login-nav .nav-inner {
+        padding: 13px 18px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .login-nav .logo-img {
+        width: 48px;
+      }
+
+      .login-nav .icons {
+        margin-left: auto;
+        gap: 18px;
+      }
+
+      .login-nav .icons a {
+        font-size: 16px;
+      }
+
+      .login-nav .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px solid #292929;
+      }
+
+      .login-nav .nav-links a {
+        font-size: 11px;
+      }
+
+      .login-main {
+        padding: 45px 18px;
+      }
+
+      .login-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+        max-width: 450px;
+      }
+
+      .login-content {
+        max-width: 100%;
+      }
+
+      .login-content .eyebrow {
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        margin-bottom: 14px;
+      }
+
+      .login-content h1 {
+        font-size: clamp(34px, 8vw, 44px);
+        letter-spacing: -1px;
+        margin-bottom: 15px;
+      }
+
+      .login-content .intro {
+        font-size: 13px;
+        margin-bottom: 22px;
+      }
+
+      .login-features {
+        gap: 14px;
+      }
+
+      .login-feature .feature-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 14px;
+      }
+
+      .login-feature h3 {
+        font-size: 12px;
+      }
+
+      .login-feature p {
+        font-size: 10px;
+      }
+
+      .login-tagline {
+        display: none;
+      }
+
+      .login-card {
+        max-width: 100%;
+        padding: 30px 24px 25px;
+        border-radius: 17px;
+      }
+
+      .login-card h2 {
+        font-size: 25px;
+      }
+
+      .login-footer {
+        padding: 32px 22px 18px;
+      }
+
+      .login-footer .footer-logo {
+        margin-bottom: 28px;
+      }
+
+      .login-footer .footer-logo img {
+        width: 65px;
+      }
+
+      .login-footer .footer-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px 18px;
+      }
+
+      .login-footer .footer-section {
+        padding-right: 10px;
+      }
+
+      .login-footer .footer-section:nth-child(2) {
+        border-right: none;
+      }
+
+      .login-footer .footer-section h4 {
+        font-size: 11px;
+      }
+
+      .login-footer .footer-section p {
+        font-size: 10px;
+      }
+    }
+
+    /* SMALL MOBILE */
+    @media (max-width: 380px) {
+      .login-nav .nav-inner {
+        padding: 12px;
+      }
+
+      .login-nav .logo-img {
+        width: 42px;
+      }
+
+      .login-nav .icons {
+        gap: 14px;
+      }
+
+      .login-nav .nav-links a {
+        font-size: 10px;
+      }
+
+      .login-main {
+        padding: 35px 13px;
+      }
+
+      .login-content h1 {
+        font-size: 33px;
+      }
+
+      .login-card {
+        padding: 25px 17px 22px;
+      }
+
+      .login-card h2 {
+        font-size: 23px;
+      }
+
+      .login-card .links {
+        gap: 8px;
+        font-size: 10px;
+      }
+
+      .login-footer {
+        padding: 28px 15px 15px;
+      }
+
+      .login-footer .footer-container {
+        gap: 22px 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <nav>
-    <a href="/"><img src="/images/logo.png" class="logo-img" alt="Logo"></a>
+  <!-- NAVBAR -->
+  <nav class="login-nav">
+    <div class="nav-inner">
 
-    <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="#">Shop</a>
-      <a href="#">Contact Us</a>
-      <a href="#">About Us</a>
-    </div>
+      <a href="/" aria-label="OneMore home">
+        <img src="/images/logo.png" class="logo-img" alt="OneMore Logo">
+      </a>
 
-    <div class="icons">
-      <i class="fa-regular fa-user"></i>
-      <i class="fa-regular fa-heart"></i>
-      <i class="fa-solid fa-cart-shopping"></i>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">Contact Us</a>
+        <a href="#">About Us</a>
+      </div>
+
+      <div class="icons">
+        <a href="/login" aria-label="Login"><i class="fa-regular fa-user"></i></a>
+        <a href="/wishlist" aria-label="Wishlist"><i class="fa-regular fa-heart"></i></a>
+        <a href="/cart" aria-label="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+      </div>
+
     </div>
   </nav>
 
-  <div class="main">
-    <div class="card">
-      <h2>Login</h2>
+  <!-- MAIN -->
+  <main class="login-main">
+    <div class="login-layout">
 
-      <% if(success){ %>
+      <!-- BRANDING SECTION -->
+      <section class="login-content">
+        <p class="eyebrow">One More. Always With You.</p>
 
-        <div style="
-          color:#28a745;
-          background:#d4edda;
-          padding:10px;
-          border-radius:8px;
-          text-align:center;
-          margin-bottom:15px;
-          font-size:13px;
-          font-weight:500;
-        ">
+        <h1>
+          Welcome
+          <span>Back.</span>
+        </h1>
 
-          <%= success %>
+        <p class="intro">
+          Sign in to your OneMore account and continue exploring
+          products made for your everyday listening experience.
+        </p>
+
+        <div class="login-features">
+
+          <div class="login-feature">
+            <div class="feature-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <h3>Your Account, Your Space</h3>
+              <p>Access your personal OneMore account</p>
+            </div>
+          </div>
+
+          <div class="login-feature">
+            <div class="feature-icon">
+              <i class="fa-solid fa-headphones"></i>
+            </div>
+            <div>
+              <h3>Your Sound, Your Style</h3>
+              <p>Pick up where your shopping journey paused</p>
+            </div>
+          </div>
+
+          <div class="login-feature">
+            <div class="feature-icon">
+              <i class="fa-regular fa-heart"></i>
+            </div>
+            <div>
+              <h3>Your Favourites Await</h3>
+              <p>Continue your OneMore experience</p>
+            </div>
+          </div>
 
         </div>
 
-        <% } %>
+        <p class="login-tagline">
+          Better sound.<br>
+          Better everyday.
+        </p>
+      </section>
 
-          <% if(errors.general){ %>
-            <div style="color:#d93025; text-align:center; margin-bottom:15px; font-size: 13px;">
-              <%= errors.general %>
-            </div>
-            <% } %>
+      <!-- LOGIN CARD -->
+      <section class="login-card">
+        <div class="card-icon">
+          <i class="fa-regular fa-user"></i>
+        </div>
 
+        <h2>Login</h2>
 
+        <p class="card-description">
+          Welcome back! Enter your details to access your account.
+        </p>
 
-              <!-- FORM -->
-              <form id="loginForm" action="/login" method="POST" novalidate>
+        <% if(success){ %>
+          <div class="success-message" role="status">
+            <i class="fa-solid fa-circle-check"></i>
+            <%= success %>
+          </div>
+          <% } %>
 
-                <!-- EMAIL -->
-                <input type="email" id="email" name="email" placeholder="Email" value="<%= oldData?.email || '' %>">
-                <div id="emailError" class="error-msg">
-                  <%= errors?.email %>
-                </div>
-
-                <!-- PASSWORD -->
-                <div class="input-group">
-                  <input type="password" id="password" name="password" placeholder="Password">
-                  <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()"></i>
-                </div>
-                <div id="passwordError" class="error-msg">
-                  <%= errors?.password %>
-                </div>
-
-                <div class="links">
-                  <a href="/signup">Signup</a>
-                  <a href="/forgot-password">Forgot Password?</a>
-                </div>
-
-                <button type="submit" class="btn">Login</button>
-
-              </form>
-
-              <!-- GOOGLE AUTH -->
-              <p class="google-text">Or continue with</p>
-
-              <div class="google-icon">
-                <a href="/auth/google">
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" alt="Google">
-                </a>
+            <% if(errors.general){ %>
+              <div class="general-error" role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <%= errors.general %>
               </div>
-    </div>
-  </div>
+              <% } %>
 
-  <footer>
+                <!-- LOGIN FORM -->
+                <form id="loginForm" action="/login" method="POST" novalidate>
+
+                  <!-- EMAIL -->
+                  <label for="email" class="field-label">Email Address</label>
+
+                  <div class="input-group">
+                    <i class="fa-regular fa-envelope input-icon"></i>
+                    <input type="email" id="email" name="email" placeholder="Enter your email"
+                      value="<%= oldData?.email || '' %>" autocomplete="email">
+                  </div>
+
+                  <div id="emailError" class="error-msg">
+                    <%= errors?.email %>
+                  </div>
+
+                  <!-- PASSWORD -->
+                  <label for="password" class="field-label">Password</label>
+
+                  <div class="input-group">
+                    <i class="fa-solid fa-lock input-icon"></i>
+
+                    <input type="password" id="password" name="password" placeholder="Enter your password"
+                      autocomplete="current-password">
+
+                    <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword()" role="button" tabindex="0"
+                      aria-label="Show password"
+                      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePassword()}"></i>
+                  </div>
+
+                  <div id="passwordError" class="error-msg">
+                    <%= errors?.password %>
+                  </div>
+
+                  <div class="links">
+                    <a href="/signup">Create Account</a>
+                    <a href="/forgot-password">Forgot Password?</a>
+                  </div>
+
+                  <button type="submit" class="login-btn">Login</button>
+
+                </form>
+
+                <!-- GOOGLE AUTH -->
+                <div class="google-divider">Or continue with</div>
+
+                <a href="/auth/google" class="google-btn">
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                  Continue with Google
+                </a>
+
+                <div class="security-note">
+                  <i class="fa-solid fa-shield-halved"></i>
+                  Secure access to your OneMore account
+                </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="login-footer">
+
     <div class="footer-logo">
-      <img src="/images/logo.png" alt="Footer Logo">
+      <img src="/images/logo.png" alt="OneMore Logo">
     </div>
 
     <div class="footer-container">
+
       <div class="footer-section">
         <h4>SUPPORT</h4>
         <p>Order Status</p>
         <p>Product Support</p>
-        <p>Shipping & Return Policy</p>
+        <p>Shipping &amp; Return Policy</p>
         <p>Complaint Registration</p>
       </div>
 
@@ -369,13 +971,16 @@
         <p>Facebook</p>
         <p>X</p>
       </div>
+
     </div>
 
     <div class="bottom">
-      © 2025 onemore. All Rights Reserved.
+      © 2025 OneMore. All Rights Reserved.
     </div>
+
   </footer>
 
+  <!-- EXISTING LOGIN VALIDATION -->
   <script>
     const form = document.getElementById("loginForm");
 
@@ -392,7 +997,8 @@
       passwordError.textContent = "";
 
       const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+      const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
       // EMAIL VALIDATION
       if (email.value.trim() === "") {
@@ -413,19 +1019,23 @@
         valid = false;
       }
 
-      if (!valid) e.preventDefault();
+      if (!valid) {
+        e.preventDefault();
+      }
     });
 
     function togglePassword() {
       const input = document.getElementById("password");
-      const icon = document.querySelector(".toggle-eye");
+      const icon = document.querySelector(".login-card .toggle-eye");
 
       if (input.type === "password") {
         input.type = "text";
         icon.classList.replace("fa-eye", "fa-eye-slash");
+        icon.setAttribute("aria-label", "Hide password");
       } else {
         input.type = "password";
         icon.classList.replace("fa-eye-slash", "fa-eye");
+        icon.setAttribute("aria-label", "Show password");
       }
     }
   </script>

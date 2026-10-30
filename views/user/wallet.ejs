@@ -2,225 +2,778 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Wallet</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet | OneMore</title>
     <link rel="icon" type="image/png" href="/images/logo.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
         :root {
-            --bg-dark: #1f1f1f;
+            --dark: #242422;
+            --dark-soft: #30302d;
+            --lime: #d7f36b;
+            --lime-hover: #c6e451;
+            --page: #f4f4ee;
+            --white: #ffffff;
+            --text: #242422;
+            --muted: #77776e;
+            --border: #e8e8df;
+            --danger: #c73d35;
         }
-    
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            background: var(--page);
         }
-    
-        @media (min-width: 992px) {
-    .navbar-collapse {
-        display: flex !important;
-        visibility: visible !important;
-    }
 
-    .nav-icons {
-        display: flex !important;
-        visibility: visible !important;
-    }
+        a {
+            text-decoration: none;
+        }
 
-    .nav-icons a {
-        color: #ffffff !important;
-        text-decoration: none !important;
-    }
+        button,
+        input {
+            font-family: inherit;
+        }
 
-    .nav-link {
-        color: #ffffff !important;
-        visibility: visible !important;
+        /* Same navbar styling as the Order page */
+        .profile-page-navbar {
+            position: relative;
+            z-index: 1000;
+            background: var(--dark);
+        }
+
+        .profile-page-navbar nav,
+        .profile-page-navbar .navbar {
+            background-color: var(--dark) !important;
+        }
+
+        .profile-page-navbar .navbar a,
+        .profile-page-navbar .navbar .nav-link,
+        .profile-page-navbar .navbar i,
+        .profile-page-navbar .navbar svg {
+            color: #fff !important;
+        }
+
+        .profile-page-navbar .navbar a:hover,
+        .profile-page-navbar .navbar .nav-link:hover {
+            color: var(--lime) !important;
+        }
+
+        .container.mt-4 {
+    width: 100%;
+    max-width: 1170px;
+    padding-right: 24px;
+    padding-left: 24px;
+    margin-top: 25px !important;
+}
+
+.breadcrumb {
+    margin-bottom: 0;
+    font-size: 11px;
+}
+
+.breadcrumb-item a {
+    color: var(--muted);
+    transition: color .18s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--dark);
+}
+
+.breadcrumb-item.active {
+    color: var(--text);
+    font-weight: 500;
+}
+
+@media (max-width: 767.98px) {
+    .container.mt-4 {
+        margin-top: 18px !important;
+        padding-right: 16px;
+        padding-left: 16px;
     }
-}   
+}
+
+@media (max-width: 480px) {
+    .container.mt-4 {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}
+
+        /* Account layout matches Order page */
+        .account-container {
+            width: 100%;
+            max-width: 1120px;
+            margin: 38px auto 58px;
+            padding: 0 24px;
+            flex: 1;
+        }
+
+        .account-container>.row {
+            --bs-gutter-x: 24px;
+            --bs-gutter-y: 20px;
+        }
+
+        /* Sidebar */
+        .account-sidebar {
+            height: fit-content;
+            overflow: hidden;
+            padding-bottom: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            box-shadow: 0 5px 22px rgba(30, 30, 20, .035);
+        }
+
+        .sidebar-header {
+            padding: 20px 20px 17px;
+            border-bottom: 1px solid var(--border);
+            color: #88887d;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin: 0;
+            padding: 11px;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            min-height: 42px;
+            padding: 10px 12px;
+            border-radius: 7px;
+            color: #626259;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.45;
+            transition: background .18s ease, color .18s ease;
+        }
+
+        .sidebar-item i {
+            width: 16px;
+            flex: 0 0 16px;
+            margin-right: 11px;
+            color: #8b8b80;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .sidebar-item.active a {
+            background: #f0f5dc;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .sidebar-item.active i,
+        .sidebar-item a:hover i {
+            color: var(--dark);
+        }
+
+        .sidebar-item a:hover {
+            background: #f5f6ef;
+            color: var(--dark);
+        }
+
+        /* Main wallet panel matches the Order panel */
+        .orders-panel {
+            min-width: 0;
+            overflow: visible;
+            padding: 25px 24px 30px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            box-shadow: 0 5px 22px rgba(30, 30, 20, .035);
+        }
+
+        .wallet-panel .wallet-panel-title {
+            margin: 0 0 25px;
+            color: var(--text);
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: -.3px;
+            text-align: left;
+        }
+
+        /* Balance card */
+        .wallet-balance-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto 24px;
+            padding: 23px 24px;
+            background: #fcfcf9;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        .wallet-balance-label {
+            color: #55554d;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .wallet-balance-value {
+            color: var(--dark);
+            font-size: clamp(24px, 3vw, 30px);
+            font-weight: 700;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        /* Add money controls */
+        .wallet-add-money {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto 30px;
+        }
+
+        .wallet-add-controls {
+            display: flex;
+            gap: 10px;
+            width: min(100%, 440px);
+        }
+
+        .wallet-amount-input {
+            min-width: 0;
+            width: 100%;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 10px 13px;
+            background: #fff;
+            color: var(--dark);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .wallet-amount-input:focus {
+            border-color: #b7c96b;
+            box-shadow: 0 0 0 3px rgba(215, 243, 107, .28);
+        }
+
+        .wallet-add-button {
+            flex-shrink: 0;
+            border: 1px solid var(--dark);
+            border-radius: 7px;
+            padding: 10px 17px;
+            background: var(--dark);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .18s ease, color .18s ease;
+        }
+
+        .wallet-add-button:hover {
+            border-color: var(--lime-hover);
+            background: var(--lime);
+            color: var(--dark);
+        }
+
+        /* Transactions table */
+        .wallet-transactions {
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .wallet-section-title {
+            margin: 0 0 14px;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .wallet-table-shell {
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .wallet-table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .wallet-table {
+            width: 100%;
+            min-width: 550px;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .wallet-table thead {
+            background: #fcfcf9;
+            color: #77776e;
+        }
+
+        .wallet-table th {
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .wallet-table td {
+            padding: 15px 14px;
+            border-bottom: 1px solid var(--border);
+            color: #55554d;
+            vertical-align: middle;
+            overflow-wrap: anywhere;
+        }
+
+        .wallet-table td:not(:last-child),
+        .wallet-table th:not(:last-child) {
+            border-right: 1px solid #f0f0e9;
+        }
+
+        .wallet-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .wallet-table .amount-cell {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .wallet-table .id-cell {
+            text-transform: uppercase;
+        }
+
+        .wallet-table .status-cell {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .wallet-empty {
+            padding: 28px 15px !important;
+            text-align: center;
+            color: var(--muted) !important;
+        }
+
+        /* Footer matches the Order page, including its logo */
+        footer {
+            margin-top: auto;
+            padding: 38px 24px 18px;
+            border-top: 1px solid #353530;
+            background: var(--dark);
+            color: #fff;
+        }
+
+        footer>.row,
+        footer>.text-center {
+            max-width: 1180px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .footer-logo-container {
+            margin-bottom: 28px;
+        }
+
+        .footer-logo-container img {
+            width: 68px;
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .footer-heading {
+            margin-bottom: 13px;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: #aaa99f;
+            font-size: 10px;
+            line-height: 1.6;
+            text-decoration: none;
+            transition: color .18s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--lime);
+        }
+
+        .footer-contact-text {
+            margin-bottom: 9px;
+            color: #aaa99f;
+            font-size: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .social-icons a {
+            margin-right: 13px;
+            color: #c8c8bf;
+            font-size: 16px;
+            transition: color .18s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--lime);
+        }
+
+        .copyright {
+            margin-top: 25px;
+            padding-top: 17px;
+            border-top: 1px solid rgba(255, 255, 255, .12);
+            color: #88887e;
+            font-size: 10px;
+        }
+
+        /* Tablet */
+        @media (max-width: 991.98px) {
+            .account-container {
+                max-width: 820px;
+            }
+
+            .account-container>.row {
+                --bs-gutter-x: 18px;
+            }
+
+            .wallet-table {
+                min-width: 550px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 767.98px) {
+            .account-container {
+                max-width: 600px;
+                margin: 24px auto 38px;
+                padding: 0 16px;
+            }
+
+            .sidebar-header {
+                padding: 16px 17px 13px;
+            }
+
+            .sidebar-menu {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 5px;
+                padding: 10px;
+            }
+
+            .sidebar-item a {
+                min-height: 40px;
+                padding: 9px 10px;
+            }
+
+            .sidebar-item i {
+                margin-right: 8px;
+            }
+
+            .orders-panel {
+                padding: 22px 18px 24px;
+            }
+
+            .wallet-panel .wallet-panel-title {
+                font-size: 18px;
+            }
+
+            .wallet-balance-card {
+                padding: 18px;
+            }
+
+            .wallet-balance-label {
+                font-size: 15px;
+            }
+
+            .wallet-balance-value {
+                font-size: 26px;
+            }
+
+            footer {
+                padding: 30px 18px 17px;
+                text-align: left;
+            }
+
+            .footer-logo-container {
+                margin-bottom: 24px;
+            }
+
+            .footer-heading {
+                font-size: 9px;
+            }
+
+            .footer-links a,
+            .footer-contact-text {
+                font-size: 10px;
+            }
+
+            .social-icons {
+                display: flex;
+                justify-content: flex-start;
+                margin-top: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .account-container {
+                padding: 0 12px;
+            }
+
+            .orders-panel {
+                padding: 20px 13px 22px;
+            }
+
+            .wallet-panel .wallet-panel-title {
+                font-size: 17px;
+            }
+
+            .wallet-balance-card {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            .wallet-balance-value {
+                font-size: 25px;
+            }
+
+            .wallet-add-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .wallet-amount-input,
+            .wallet-add-button {
+                width: 100%;
+                min-height: 44px;
+            }
+
+            .sidebar-menu {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .sidebar-item a {
+                font-size: 12px;
+            }
+
+            footer {
+                padding-right: 14px;
+                padding-left: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col justify-between text-gray-800">
+<body>
+    <div class="profile-page-navbar">
+        <%- include("../partials/navbar") %>
+    </div>
 
-<%- include("../partials/navbar") %>
+    <!-- Breadcrumb -->
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/" class="text-decoration-none">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/profile" class="text-decoration-none">My Account</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    My Wallet
+                </li>
+            </ol>
+        </nav>
+    </div>
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-7xl mx-auto my-8 px-4 w-full flex-grow">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="account-container">
+        <div class="row g-4">
 
-            <!-- LEFT SIDEBAR: MY ACCOUNT MENU -->
-            <aside class="lg:col-span-1">
-                <div class="border border-gray-400 rounded-2xl overflow-hidden bg-gray-50 shadow-sm">
-                    <div class="border-b border-gray-400 py-3 text-center bg-gray-100 font-medium text-gray-700">
-                        My Account
-                    </div>
-                    <ul class="divide-y divide-gray-200 text-sm font-medium text-gray-700">
-                        <li>
-                            <a href="/profile"
-                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
-                                <i class="fa-regular fa-user w-5 text-center"></i>
-                                <span>Personal Information</span>
+            <!-- Account sidebar -->
+            <div class="col-md-4 col-lg-3">
+                <div class="account-sidebar">
+                    <div class="sidebar-header">My Account</div>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item">
+                            <a href="/profile">
+                                <i class="fa-regular fa-user"></i>
+                                Personal Information
                             </a>
                         </li>
-                        <li>
-                            <a href="/address"
-                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
-                                <i class="fa-solid fa-address-book w-5 text-center"></i>
-                                <span>Address</span>
+                        <li class="sidebar-item">
+                            <a href="/address">
+                                <i class="fa-regular fa-address-book"></i>
+                                Address
                             </a>
                         </li>
-                        <li>
-                            <a href="/orders"
-                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
-                                <i class="fa-solid fa-box-archive w-5 text-center"></i>
-                                <span>Order</span>
+                        <li class="sidebar-item">
+                            <a href="/orders">
+                                <i class="fa-solid fa-box-archive"></i>
+                                Order
                             </a>
                         </li>
-                        <li>
-                            <a href="/wallet"
-                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition bg-gray-200">
-                                <i class="fa-regular fa-wallet w-5 text-center"></i>
-                                <span>Wallet</span>
+                        <li class="sidebar-item active">
+                            <a href="/wallet">
+                                <i class="fa-regular fa-credit-card"></i>
+                                Wallet
                             </a>
                         </li>
-                        <li>
-                            <a href="/coupons"
-                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
-                                <i class="fa-solid fa-ticket w-5 text-center"></i>
-                                <span>Coupon</span>
+                        <li class="sidebar-item">
+                            <a href="/coupons">
+                                <i class="fa-solid fa-ticket"></i>
+                                Coupon
                             </a>
                         </li>
-                        <li>
-                            <a href="/change-password"
-                                class="flex items-center space-x-3 px-5 py-3 hover:bg-gray-200 transition">
-                                <i class="fa-solid fa-lock w-5 text-center"></i>
-                                <span>Password Change</span>
+                        <li class="sidebar-item">
+                            <a href="/change-password">
+                                <i class="fa-solid fa-user-gear"></i>
+                                Password Change
                             </a>
                         </li>
-                        <li>
-                            <a href="/logout"
-                                class="flex items-center space-x-3 px-5 py-3 text-red-600 hover:bg-red-50 transition">
-                                <i class="fa-solid fa-power-off w-5 text-center"></i>
-                                <span>Logout</span>
+                        <li class="sidebar-item">
+                            <a href="/logout">
+                                <i class="fa-solid fa-power-off"></i>
+                                Logout
                             </a>
                         </li>
                     </ul>
                 </div>
-            </aside>
+            </div>
 
-            <!-- RIGHT PANEL: WALLET CONTENT -->
-            <section class="lg:col-span-3">
-                <div class="border border-gray-400 rounded-2xl bg-gray-50 shadow-sm overflow-hidden p-6 md:p-8">
-
-                    <h2 class="text-center font-medium text-gray-800 text-lg mb-6">My Wallet</h2>
+            <!-- Wallet content -->
+            <div class="col-md-8 col-lg-9">
+                <div class="orders-panel wallet-panel">
+                    <h2 class="wallet-panel-title">My Wallet</h2>
 
                     <!-- Balance Card -->
-                    <div
-                        class="border border-gray-400 rounded-xl p-6 bg-white flex justify-between items-center shadow-sm max-w-2xl mx-auto mb-6">
-                        <span class="text-lg font-semibold text-gray-800">Total balance</span>
-                        <span class="text-3xl font-bold text-indigo-900">
+                    <div class="wallet-balance-card">
+                        <span class="wallet-balance-label">Total balance</span>
+                        <span class="wallet-balance-value">
                             ₹<%= wallet ? wallet.balance.toFixed(2) : '0.00' %>
                         </span>
                     </div>
 
-                    <!-- Add Money Button Container -->
-                    <div class="flex justify-end max-w-2xl mx-auto mb-8">
-                    
-                        <div class="flex gap-3">
-                    
-                            <input type="number" id="walletAmount"
-                                class="border border-gray-300 rounded-lg px-4 py-2 w-44 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    <!-- Add Money -->
+                    <div class="wallet-add-money">
+                        <div class="wallet-add-controls">
+                            <input type="number" id="walletAmount" class="wallet-amount-input"
                                 placeholder="₹100 - ₹3000" min="100" max="3000">
-                    
-                            <button id="addMoneyBtn"
-                                class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-5 py-2 rounded-lg shadow">
-                    
+
+                            <button id="addMoneyBtn" class="wallet-add-button">
                                 Add Money
-                    
                             </button>
-                    
                         </div>
-                    
                     </div>
 
-                    <!-- Transactions Table Section -->
-                    <div class="max-w-2xl mx-auto">
-                        <h3 class="text-md font-medium text-gray-800 mb-4">Transactions</h3>
+                    <!-- Transactions -->
+                    <div class="wallet-transactions">
+                        <h3 class="wallet-section-title">Transactions</h3>
 
-                        <div class="border border-gray-400 rounded-xl overflow-hidden bg-white">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm border-collapse">
+                        <div class="wallet-table-shell">
+                            <div class="wallet-table-scroll">
+                                <table class="wallet-table">
                                     <thead>
-                                        <tr
-                                            class="border-b border-gray-300 bg-gray-50 text-gray-600 font-semibold uppercase text-xs">
-                                            <th class="py-3 px-4 border-r border-gray-300">Amount</th>
-                                            <th class="py-3 px-4 border-r border-gray-300">Transaction ID</th>
-                                            <th class="py-3 px-4 border-r border-gray-300">Order ID</th>
-                                            <th class="py-3 px-4 text-center">Status</th>
+                                        <tr>
+                                            <th>Amount</th>
+                                            <th>Transaction ID</th>
+                                            <th>Order ID</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-300 text-gray-700">
+
+                                    <tbody>
                                         <% if (wallet && wallet.transactions.length> 0) { %>
                                             <% wallet.transactions.forEach(txn=> { %>
                                                 <tr>
-                                                    <td class="py-3 px-4 border-r border-gray-300 font-medium">
-                                                    <% if (txn.type==="Credit" || txn.type==="Refund" || txn.type === "Topup" ) { %>
-                                                        <span class="text-green-600">
-                                                            +₹<%= txn.amount.toFixed(2) %>
-                                                        </span>
-                                                        <% } else { %>
-                                                            <span class="text-red-600">
-                                                                -₹<%= txn.amount.toFixed(2) %>
+                                                    <td class="amount-cell">
+                                                        <% if (txn.type==="Credit" || txn.type==="Refund" ||
+                                                            txn.type==="Topup" ) { %>
+                                                            <span class="text-success">
+                                                                +₹<%= txn.amount.toFixed(2) %>
                                                             </span>
-                                                            <% } %>
+                                                            <% } else { %>
+                                                                <span class="text-danger">
+                                                                    -₹<%= txn.amount.toFixed(2) %>
+                                                                </span>
+                                                                <% } %>
                                                     </td>
-                                                    <td class="py-3 px-4 border-r border-gray-300 uppercase">
+
+                                                    <td class="id-cell">
                                                         <%= txn._id.toString().slice(-8).toUpperCase() %>
                                                     </td>
-                                                    <td class="py-3 px-4 border-r border-gray-300 uppercase">
+
+                                                    <td class="id-cell">
                                                         <%= txn.orderId ? txn.orderId.orderId : "-" %>
                                                     </td>
-                                                    <td class="py-3 px-4 text-center font-medium">
-                                                    
+
+                                                    <td class="status-cell">
                                                         <% if (txn.type==="Topup" ) { %>
-                                                    
-                                                            <span class="text-blue-600">
-                                                                Top-up
-                                                            </span>
-                                                    
+                                                            <span class="text-primary">Top-up</span>
                                                             <% } else if (txn.type==="Credit" ) { %>
-                                                    
-                                                                <span class="text-green-600">
-                                                                    Credit
-                                                                </span>
-                                                    
+                                                                <span class="text-success">Credit</span>
                                                                 <% } else if (txn.type==="Refund" ) { %>
-                                                    
-                                                                    <span class="text-indigo-600">
-                                                                        Refund
-                                                                    </span>
-                                                    
+                                                                    <span class="text-info">Refund</span>
                                                                     <% } else { %>
-                                                    
-                                                                        <span class="text-red-600">
-                                                                            Debit
-                                                                        </span>
-                                                    
+                                                                        <span class="text-danger">Debit</span>
                                                                         <% } %>
-                                                    
                                                     </td>
                                                 </tr>
                                                 <% }) %>
                                                     <% } else { %>
                                                         <tr>
-                                                            <td colspan="4" class="py-6 text-center text-gray-500">No
-                                                                transactions found.</td>
+                                                            <td colspan="4" class="wallet-empty">
+                                                                No transactions found.
+                                                            </td>
                                                         </tr>
                                                         <% } %>
                                     </tbody>
@@ -230,108 +783,100 @@
                     </div>
 
                 </div>
-            </section>
+            </div>
 
         </div>
-    </main>
+    </div>
 
-    <!-- FOOTER -->
-    <footer class="bg-zinc-900 text-white pt-12 pb-6 px-6">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-            <!-- Logo Span -->
-            <div class="md:col-span-4 flex justify-center mb-4">
-                <span class="text-5xl font-extrabold tracking-tighter">iM</span>
+    <!-- Footer: matches the Order page -->
+    <footer>
+        <div class="row text-center footer-logo-container">
+            <div class="col-12">
+                <img src="/images/logo.png" alt="OneMore Footer Logo">
             </div>
+        </div>
 
-            <!-- Support Links -->
-            <div>
-                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">SUPPORT</h4>
-                <ul class="space-y-2 text-xs text-gray-400">
-                    <li><a href="/order-status" class="hover:text-white">Order Status</a></li>
-                    <li><a href="/product-support" class="hover:text-white">Product Support</a></li>
-                    <li><a href="/shipping-policy" class="hover:text-white">Shipping & Return Policy</a></li>
-                    <li><a href="/complaints" class="hover:text-white">Complaint Registration</a></li>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <h6 class="footer-heading">Support</h6>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Order Status</a></li>
+                    <li><a href="#">Product Support</a></li>
+                    <li><a href="#">Shipping &amp; Return Policy</a></li>
+                    <li><a href="#">Complaint Registration</a></li>
                 </ul>
             </div>
 
-            <!-- About Links -->
-            <div>
-                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">About Us</h4>
-                <ul class="space-y-2 text-xs text-gray-400">
-                    <li><a href="/contact" class="hover:text-white">Contact Us</a></li>
-                    <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="/terms" class="hover:text-white">Terms of use</a></li>
-                    <li><a href="/faq" class="hover:text-white">FAQ</a></li>
+            <div class="col-md-3">
+                <h6 class="footer-heading">About Us</h6>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of use</a></li>
+                    <li><a href="#">FAQ</a></li>
                 </ul>
             </div>
 
-            <!-- Contact Info -->
-            <div>
-                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">Contact</h4>
-                <ul class="space-y-2 text-xs text-gray-400">
-                    <li><span class="font-semibold text-white">Email :</span> onemore@gmail.com</li>
-                    <li><span class="font-semibold text-white">Phone :</span> +91 8888888888</li>
-                </ul>
+            <div class="col-md-3">
+                <h6 class="footer-heading">Contact</h6>
+                <div class="footer-contact-text">Email: onemore@gmail.com</div>
+                <div class="footer-contact-text">Phone: +91 8888888888</div>
             </div>
 
-            <!-- Social Links -->
-            <div>
-                <h4 class="font-bold text-sm tracking-wider uppercase mb-4">Connect with us</h4>
-                <div class="flex space-x-4 text-xl">
-                    <a href="#" class="hover:text-gray-400"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="hover:text-gray-400"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" class="hover:text-gray-400"><i class="fa-brands fa-x-twitter"></i></a>
+            <div class="col-md-3 text-md-end">
+                <h6 class="footer-heading text-md-end">Connect with us</h6>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto border-t border-zinc-800 pt-6 text-center text-xs text-gray-500">
-            &copy; 2025 onemore . All Rights Reserved.
+        <div class="text-center copyright">
+            © 2026 onemore. All Rights Reserved.
         </div>
     </footer>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-
         document.getElementById("addMoneyBtn").addEventListener("click", async () => {
+            const amount = Number(document.getElementById("walletAmount").value);
 
-                const amount = Number(document.getElementById("walletAmount").value);
-
-                if (!amount) {
-                    return Swal.fire({
-                        icon: "warning",
-                        title: "Enter an amount"
-                    });
-                }
-
-                if (amount < 100) {
-                    return Swal.fire({
-                        icon: "warning",
-                        title: "Minimum amount is ₹100"
-                    });
-                }
-
-                if (amount > 3000) {
-                    return Swal.fire({
-                        icon: "warning",
-                        title: "Maximum amount is ₹3000"
-                    });
-                }
-
-                const response = await fetch("/wallet/create-order", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ amount })
+            if (!amount) {
+                return Swal.fire({
+                    icon: "warning",
+                    title: "Enter an amount"
                 });
+            }
 
-                const data = await response.json();
+            if (amount < 100) {
+                return Swal.fire({
+                    icon: "warning",
+                    title: "Minimum amount is ₹100"
+                });
+            }
 
-               if (!data.success) {
+            if (amount > 3000) {
+                return Swal.fire({
+                    icon: "warning",
+                    title: "Maximum amount is ₹3000"
+                });
+            }
+
+            const response = await fetch("/wallet/create-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ amount })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
                 return Swal.fire({
                     icon: "error",
                     title: data.message || "Something went wrong"
@@ -347,7 +892,6 @@
                 order_id: data.order.id,
 
                 handler: async function (response) {
-
                     const verify = await fetch("/wallet/verify", {
                         method: "POST",
                         headers: {
@@ -359,23 +903,18 @@
                     const result = await verify.json();
 
                     if (result.success) {
-
                         Swal.fire({
                             icon: "success",
                             title: "Money Added Successfully"
                         }).then(() => {
                             location.reload();
                         });
-
                     } else {
-
                         Swal.fire({
                             icon: "error",
                             title: result.message
                         });
-
                     }
-
                 },
 
                 theme: {
@@ -384,13 +923,11 @@
             };
 
             const razorpay = new Razorpay(options);
-
             razorpay.open();
-
-            });
-
+        });
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

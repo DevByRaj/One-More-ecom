@@ -1,428 +1,1013 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Signup</title>
-<link rel="icon" type="image/png" href="/images/logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup | OneMore</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #0f0f0f;
-  color: #fff;
-}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #111;
+      color: #fff;
+      min-height: 100vh;
+    }
 
-/* NAVBAR */
-nav {
-  background: #0f0f0f;
-  padding: 20px 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    /* NAVBAR */
+    .signup-nav {
+      background: #171717;
+      border-bottom: 1px solid #292929;
+      padding: 18px clamp(20px, 5vw, 75px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+    }
 
-.logo-img {
-  width: 60px;
-}
+    .signup-nav>a {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
 
-.nav-links {
-  display: flex;
-  gap: 40px;
-}
+    .signup-nav .logo-img {
+      width: 58px;
+      height: auto;
+      object-fit: contain;
+    }
 
-.nav-links a {
-  color: #cfcfcf;
-  text-decoration: none;
-  font-size: 14px;
-}
+    .signup-nav .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(18px, 3vw, 40px);
+    }
 
-.icons {
-  display: flex;
-  gap: 25px;
-  font-size: 18px;
-}
+    .signup-nav .nav-links a {
+      color: #d0d0d0;
+      text-decoration: none;
+      font-size: 12px;
+      white-space: nowrap;
+      transition: color .2s ease;
+    }
 
-/* MAIN */
-.main {
-  background: #dcdcdc;
-  min-height: 70vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    .signup-nav .nav-links a:hover {
+      color: #fff;
+    }
 
-/* CARD */
-.card {
-  background: #efefef;
-  border: 2px solid #000;
-  border-radius: 20px;
-  padding: 35px 30px;
-  width: 360px;
-  text-align: center;
-}
+    .signup-nav .icons {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
 
-.card h2 {
-  margin-bottom: 20px;
-  color: #000;
-}
+    .signup-nav .icons a {
+      color: #eee;
+      text-decoration: none;
+      transition: color .2s ease;
+    }
 
-/* INPUT */
-.card input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 5px;
-  border-radius: 10px;
-  border: none;
-  background: #cfcfcf;
-  outline: none;
-}
+    .signup-nav .icons a:hover {
+      color: #aaa;
+    }
 
-/* ERROR */
-.error-msg {
-  color: red;
-  font-size: 12px;
-  text-align: left;
-  margin-bottom: 8px;
-}
+    /* MAIN LAYOUT - CENTERED & SPACED */
+    .signup-main {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      min-height: 745px;
+      padding: 45px 20px;
+      display: grid;
+      grid-template-columns: minmax(300px, 560px) 390px;
+      justify-content: center;
+      align-items: center;
+      column-gap: 60px;
+      background-color: #111;
+      background-image: repeating-linear-gradient(135deg,
+          transparent 0,
+          transparent 19px,
+          rgba(255, 255, 255, .025) 20px,
+          transparent 21px);
+    }
 
-/* LOGIN LINK */
-.login-link {
-  text-align: right;
-  font-size: 12px;
-  margin-bottom: 10px;
-}
+    /* LEFT WELCOME SECTION */
+    .signup-welcome {
+      width: 100%;
+      max-width: none;
+      justify-self: end;
+      align-self: center;
+      margin: 0;
+      padding-left: 0;
+      padding-right: 0;
+      color: #fff;
+    }
 
-.login-link a {
-  color: #000;
-}
+    .welcome-eyebrow {
+      color: #b6b6c5;
+      font-size: 10px;
+      letter-spacing: 3px;
+      margin-bottom: 22px;
+    }
 
-.toggle-eye {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #555;
-  font-size: 14px;
-}
+    .signup-welcome h1 {
+      font-size: clamp(42px, 4vw, 58px);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
 
-.toggle-eye:hover {
-  color: #000;
-}
+    .signup-welcome h1 span {
+      display: block;
+      color: #aaaab8;
+    }
 
-/* prevent text overlap */
-.card input {
-  padding-right: 35px;
-}
+    .welcome-description {
+      max-width: 420px;
+      color: #c4c4d0;
+      font-size: 13px;
+      line-height: 1.9;
+      margin-bottom: 30px;
+    }
 
-/* BUTTON */
-.btn {
-  width: 100%;
-  padding: 12px;
-  background: #000;
-  color: #fff;
-  border-radius: 10px;
-  border: none;
-}
+    .welcome-features {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-/* GOOGLE */
-.google-btn {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  text-decoration: none;
-  color: black;
-}
+    .welcome-feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-/* FOOTER */
-footer {
-  background: #0f0f0f;
-  padding: 50px 80px;
-}
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      border: 1px solid #3b3b3b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      background: rgba(255, 255, 255, .035);
+    }
 
-.footer-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 40px;
-}
+    .welcome-feature h4 {
+      color: #f5f5f5;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
 
-.footer-logo img {
-  width: 80px;
-}
+    .welcome-feature p {
+      color: #9d9daa;
+      font-size: 10px;
+      line-height: 1.7;
+    }
 
-.footer-container {
-  display: flex;
-  justify-content: space-between;
-}
+    .welcome-tagline {
+      margin-top: 28px;
+      color: #b5b5c6;
+      font-size: 15px;
+      line-height: 1.8;
+      font-style: italic;
+    }
 
-.footer-section h4 {
-  color: #fff;
-}
+    /* RIGHT SIGNUP CARD */
+    .signup-card {
+      width: 355px;
+      max-width: 100%;
+      justify-self: start;
+      align-self: center;
+      margin: 0;
+      padding: 30px;
+      border-radius: 19px;
+      border: none;
+      background: linear-gradient(145deg, #fafafd, #e9e9ee);
+      color: #111;
+      text-align: left;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, .25);
+    }
 
-.footer-section p {
-  color: #aaa;
-  font-size: 13px;
-}
+    .signup-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #dedee5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      font-size: 19px;
+      margin-bottom: 20px;
+    }
 
-.bottom {
-  margin-top: 30px;
-  font-size: 12px;
-  color: #777;
-}
-</style>
+    .signup-card h2 {
+      color: #111;
+      font-size: 25px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -.5px;
+    }
+
+    .signup-subtitle {
+      color: #77778a;
+      font-size: 11px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    /* FORM LABELS */
+    .signup-card label {
+      display: block;
+      color: #191925;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .optional-text {
+      color: #858595;
+      font-weight: 400;
+    }
+
+    /* INPUTS */
+    .signup-input-wrapper {
+      position: relative;
+      margin-bottom: 3px;
+    }
+
+    .signup-input-wrapper .input-icon {
+      position: absolute;
+      top: 50%;
+      left: 13px;
+      transform: translateY(-50%);
+      color: #77778c;
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .signup-card .signup-input-wrapper input {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      height: 43px;
+      min-height: 43px;
+      padding: 10px 38px;
+      margin: 0;
+      border: 1px solid #cdced8;
+      border-radius: 9px;
+      background: #fff;
+      color: #171721;
+      font-family: inherit;
+      font-size: 11px;
+      outline: none;
+      box-shadow: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .signup-card .signup-input-wrapper input::placeholder {
+      color: #9999ad;
+      opacity: 1;
+    }
+
+    .signup-card .signup-input-wrapper input:focus {
+      border-color: #55556a;
+      box-shadow: 0 0 0 3px rgba(30, 30, 50, .06);
+    }
+
+    .signup-card .password-wrapper input {
+      padding-right: 40px;
+    }
+
+    .signup-card .toggle-eye {
+      position: absolute;
+      right: 13px;
+      top: 0;
+      height: 43px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: #77778c;
+      font-size: 13px;
+    }
+
+    .signup-card .toggle-eye:hover {
+      color: #111;
+    }
+
+    .signup-card .toggle-eye:focus-visible {
+      outline: 2px solid #555;
+      outline-offset: 2px;
+    }
+
+    /* VALIDATION ERRORS */
+    .signup-card .error-msg {
+      min-height: 0;
+      color: #c62828;
+      font-size: 10px;
+      line-height: 1.5;
+      text-align: left;
+      margin: 3px 2px 9px;
+      overflow-wrap: anywhere;
+    }
+
+    /* LOGIN LINK */
+    .signup-links {
+      display: flex;
+      justify-content: flex-end;
+      margin: 10px 0 15px;
+    }
+
+    .signup-links a {
+      color: #171721;
+      font-size: 10px;
+      text-decoration: none;
+    }
+
+    .signup-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* SIGNUP BUTTON */
+    .signup-card .signup-btn {
+      width: 100%;
+      min-height: 43px;
+      padding: 11px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s ease;
+    }
+
+    .signup-card .signup-btn:hover {
+      background: #303030;
+    }
+
+    /* DIVIDER */
+    .signup-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 19px 0 14px;
+    }
+
+    .signup-divider span {
+      flex: 1;
+      height: 1px;
+      background: #d3d3dc;
+    }
+
+    .signup-divider p {
+      color: #858597;
+      white-space: nowrap;
+      font-size: 10px;
+    }
+
+    /* GOOGLE LOGIN */
+    .signup-card .google-btn {
+      min-height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      margin-top: 0;
+      padding: 10px;
+      border: 1px solid #ceced8;
+      border-radius: 9px;
+      background: #fff;
+      color: #15151d;
+      text-decoration: none;
+      font-size: 11px;
+      transition: background .2s ease;
+    }
+
+    .signup-card .google-btn:hover {
+      background: #f5f5f8;
+    }
+
+    .signup-card .google-btn img {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* SECURITY MESSAGE */
+    .signup-security {
+      margin-top: 16px;
+      text-align: center;
+      color: #858597;
+      font-size: 9px;
+    }
+
+    .signup-security i {
+      margin-right: 5px;
+      color: #77778c;
+    }
+
+    /* FOOTER */
+    .signup-footer {
+      background: #171717;
+      border-top: 1px solid #292929;
+      padding: 42px clamp(20px, 5vw, 75px) 20px;
+    }
+
+    .signup-footer .footer-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 34px;
+    }
+
+    .signup-footer .footer-logo img {
+      width: 72px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .signup-footer .footer-container {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 30px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .signup-footer .footer-section h4 {
+      color: #f5f5f5;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 13px;
+    }
+
+    .signup-footer .footer-section p {
+      color: #999;
+      font-size: 11px;
+      line-height: 2;
+      overflow-wrap: anywhere;
+      transition: color .2s ease;
+    }
+
+    .signup-footer .footer-section p:hover {
+      color: #fff;
+    }
+
+    .signup-footer .bottom {
+      max-width: 1180px;
+      margin: 28px auto 0;
+      padding-top: 16px;
+      border-top: 1px solid #303030;
+      font-size: 10px;
+      color: #777;
+      text-align: center;
+    }
+
+    /* TABLET */
+    @media (max-width: 1000px) {
+      .signup-main {
+        grid-template-columns: minmax(0, 1fr) 350px;
+        padding: 40px 20px;
+        column-gap: 30px;
+      }
+
+      .signup-welcome {
+        padding-left: 0;
+        padding-right: 0;
+        justify-self: stretch;
+      }
+
+      .signup-card {
+        width: 330px;
+        max-width: 100%;
+        padding: 26px;
+      }
+
+      .signup-welcome h1 {
+        font-size: 44px;
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+      .signup-nav {
+        padding: 15px 20px;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .signup-nav .logo-img {
+        width: 45px;
+      }
+
+      .signup-nav .nav-links {
+        order: 3;
+        width: 100%;
+        gap: 0;
+        justify-content: space-between;
+        padding: 9px 0 2px;
+        border-top: 1px solid #292929;
+      }
+
+      .signup-nav .nav-links a {
+        font-size: 11px;
+      }
+
+      .signup-nav .icons {
+        gap: 17px;
+        font-size: 16px;
+        margin-left: auto;
+      }
+
+      .signup-main {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+        gap: 32px;
+        min-height: auto;
+        padding: 38px 20px 45px;
+      }
+
+      .signup-welcome,
+      .signup-card {
+        max-width: 440px;
+        width: 100%;
+        justify-self: center;
+        margin: 0 auto;
+      }
+
+      .signup-welcome {
+        padding: 0;
+      }
+
+      .signup-welcome h1 {
+        font-size: 40px;
+      }
+
+      .welcome-eyebrow {
+        margin-bottom: 14px;
+      }
+
+      .welcome-description {
+        margin-bottom: 22px;
+      }
+
+      .welcome-features {
+        gap: 14px;
+      }
+
+      .welcome-tagline {
+        margin-top: 20px;
+      }
+
+      .signup-card {
+        padding: 28px 24px;
+      }
+
+      .signup-footer {
+        padding: 32px 22px 17px;
+      }
+
+      .signup-footer .footer-logo {
+        margin-bottom: 27px;
+      }
+
+      .signup-footer .footer-logo img {
+        width: 62px;
+      }
+
+      .signup-footer .footer-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 23px 18px;
+      }
+
+      .signup-footer .footer-section h4 {
+        font-size: 11px;
+      }
+
+      .signup-footer .footer-section p {
+        font-size: 10px;
+      }
+    }
+
+    /* SMALL MOBILE */
+    @media (max-width: 360px) {
+      .signup-nav {
+        padding: 12px;
+      }
+
+      .signup-nav .logo-img {
+        width: 38px;
+      }
+
+      .signup-nav .nav-links a {
+        font-size: 10px;
+      }
+
+      .signup-nav .icons {
+        gap: 13px;
+        font-size: 15px;
+      }
+
+      .signup-main {
+        padding: 30px 13px;
+        gap: 26px;
+      }
+
+      .signup-welcome h1 {
+        font-size: 34px;
+      }
+
+      .signup-card {
+        padding: 24px 17px;
+      }
+
+      .signup-card h2 {
+        font-size: 23px;
+      }
+
+      .signup-footer {
+        padding: 28px 15px 15px;
+      }
+
+      .signup-footer .footer-container {
+        gap: 21px 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<nav>
-  <img src="/images/logo.png" class="logo-img">
-
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="#">Shop</a>
-    <a href="#">Contact Us</a>
-    <a href="#">About Us</a>
-  </div>
-
-  <div class="icons">
-    <i class="fa-regular fa-user"></i>
-    <i class="fa-regular fa-heart"></i>
-    <i class="fa-solid fa-cart-shopping"></i>
-  </div>
-</nav>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="card">
-
-    <h2>Signup</h2>
-
-    <!-- 🔥 IMPORTANT: novalidate added -->
-    <form id="signupForm" action="/signup" method="POST" novalidate>
-
-      <!-- NAME -->
-      <input type="text" id="name" name="name" placeholder="Username"
-        value="<%= oldData?.name || '' %>">
-      <div id="nameError" class="error-msg">
-        <%= errors?.find(e => e.path === 'name')?.msg %>
-      </div>
-
-      <!-- EMAIL -->
-      <input type="email" id="email" name="email" placeholder="Email"
-        value="<%= oldData?.email || '' %>">
-      <div id="emailError" class="error-msg">
-        <%= errors?.find(e => e.path === 'email')?.msg %>
-      </div>
-
-      <!-- PASSWORD -->
-<div style="position: relative;">
-  <input type="password" id="password" name="password" placeholder="Password">
-  <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('password', this)"></i>
-</div>
-<div id="passwordError" class="error-msg">
-  <%= errors?.find(e => e.path === 'password')?.msg %>
-</div>
-
-<!-- CONFIRM PASSWORD -->
-<div style="position: relative;">
-  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
-  <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('confirmPassword', this)"></i>
-</div>
-<div id="confirmError" class="error-msg">
-  <%= errors?.find(e => e.path === 'confirmPassword')?.msg %>
-</div>
-
-      <!-- REF CODE -->
-      <input type="text" id="refCode" name="refCode" placeholder="Referral Code"
-        value="<%= oldData?.refCode || refCode || '' %>">
-
-      <div class="login-link">
-        <a href="/login">Login</a>
-      </div>
-
-      <button type="submit" class="btn">Signup</button>
-
-    </form>
-
-    <a href="/auth/google" class="google-btn">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-      Continue with Google
+  <!-- NAVBAR -->
+  <nav class="signup-nav">
+    <a href="/" aria-label="OneMore home">
+      <img src="/images/logo.png" class="logo-img" alt="OneMore Logo">
     </a>
 
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-
-  <div class="footer-logo">
-    <img src="/images/logo.png">
-  </div>
-
-  <div class="footer-container">
-
-    <div class="footer-section">
-      <h4>SUPPORT</h4>
-      <p>Order Status</p>
-      <p>Product Support</p>
-      <p>Shipping & Return Policy</p>
-      <p>Complaint Registration</p>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/about">About Us</a>
     </div>
 
-    <div class="footer-section">
-      <h4>About Us</h4>
-      <p>Contact Us</p>
-      <p>Privacy Policy</p>
-      <p>Terms of use</p>
-      <p>FAQ</p>
+    <div class="icons">
+      <a href="/login" aria-label="Login">
+        <i class="fa-regular fa-user"></i>
+      </a>
+      <a href="/wishlist" aria-label="Wishlist">
+        <i class="fa-regular fa-heart"></i>
+      </a>
+      <a href="/cart" aria-label="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="signup-main">
+
+    <!-- LEFT WELCOME SECTION -->
+    <section class="signup-welcome">
+      <p class="welcome-eyebrow">ONE MORE. ALWAYS WITH YOU.</p>
+
+      <h1>
+        Find Your
+        <span>Sound.</span>
+      </h1>
+
+      <p class="welcome-description">
+        Create your OneMore account and discover headphones
+        made for your everyday listening experience.
+      </p>
+
+      <div class="welcome-features">
+
+        <div class="welcome-feature">
+          <div class="feature-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h4>Your Account, Your Space</h4>
+            <p>Create your personal OneMore account.</p>
+          </div>
+        </div>
+
+        <div class="welcome-feature">
+          <div class="feature-icon">
+            <i class="fa-solid fa-headphones"></i>
+          </div>
+          <div>
+            <h4>Your Sound, Your Style</h4>
+            <p>Explore headphones that match your vibe.</p>
+          </div>
+        </div>
+
+        <div class="welcome-feature">
+          <div class="feature-icon">
+            <i class="fa-regular fa-heart"></i>
+          </div>
+          <div>
+            <h4>Your Favourites Await</h4>
+            <p>Save your favourites and enjoy your journey.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="welcome-tagline">
+        Better sound.<br>
+        Better everyday.
+      </p>
+    </section>
+
+    <!-- RIGHT SIGNUP CARD -->
+    <div class="signup-card">
+
+      <div class="signup-card-icon">
+        <i class="fa-regular fa-user"></i>
+      </div>
+
+      <h2>Create Account</h2>
+
+      <p class="signup-subtitle">
+        Join OneMore and start your listening journey.
+      </p>
+
+      <form id="signupForm" action="/signup" method="POST" novalidate>
+
+        <!-- NAME -->
+        <label for="name">Username</label>
+        <div class="signup-input-wrapper">
+          <i class="fa-regular fa-user input-icon"></i>
+          <input type="text" id="name" name="name" placeholder="Enter your username" value="<%= oldData?.name || '' %>"
+            autocomplete="name">
+        </div>
+
+        <div id="nameError" class="error-msg">
+          <%= errors?.find(e=> e.path === 'name')?.msg || '' %>
+        </div>
+
+        <!-- EMAIL -->
+        <label for="email">Email Address</label>
+        <div class="signup-input-wrapper">
+          <i class="fa-regular fa-envelope input-icon"></i>
+          <input type="email" id="email" name="email" placeholder="Enter your email" value="<%= oldData?.email || '' %>"
+            autocomplete="email">
+        </div>
+
+        <div id="emailError" class="error-msg">
+          <%= errors?.find(e=> e.path === 'email')?.msg || '' %>
+        </div>
+
+        <!-- PASSWORD -->
+        <label for="password">Password</label>
+        <div class="signup-input-wrapper password-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="password" name="password" placeholder="Create a password"
+            autocomplete="new-password">
+
+          <i class="fa-solid fa-eye toggle-eye" role="button" tabindex="0" aria-label="Show password"
+            onclick="togglePassword('password', this)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePassword('password',this)}"></i>
+        </div>
+
+        <div id="passwordError" class="error-msg">
+          <%= errors?.find(e=> e.path === 'password')?.msg || '' %>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="signup-input-wrapper password-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password"
+            autocomplete="new-password">
+
+          <i class="fa-solid fa-eye toggle-eye" role="button" tabindex="0" aria-label="Show confirm password"
+            onclick="togglePassword('confirmPassword', this)"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePassword('confirmPassword',this)}"></i>
+        </div>
+
+        <div id="confirmError" class="error-msg">
+          <%= errors?.find(e=> e.path === 'confirmPassword')?.msg || '' %>
+        </div>
+
+        <!-- REFERRAL CODE -->
+        <label for="refCode">
+          Referral Code <span class="optional-text">(Optional)</span>
+        </label>
+
+        <div class="signup-input-wrapper">
+          <i class="fa-solid fa-ticket input-icon"></i>
+          <input type="text" id="refCode" name="refCode" placeholder="Enter referral code"
+            value="<%= oldData?.refCode || refCode || '' %>" autocomplete="off">
+        </div>
+
+        <div class="signup-links">
+          <a href="/login">Already have an account? Login</a>
+        </div>
+
+        <button type="submit" class="signup-btn">
+          Create Account
+        </button>
+
+      </form>
+
+      <div class="signup-divider">
+        <span></span>
+        <p>Or continue with</p>
+        <span></span>
+      </div>
+
+      <a href="/auth/google" class="google-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Continue with Google
+      </a>
+
+      <p class="signup-security">
+        <i class="fa-solid fa-shield-halved"></i>
+        Secure access to your OneMore account
+      </p>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="signup-footer">
+    <div class="footer-logo">
+      <img src="/images/logo.png" alt="OneMore Logo">
     </div>
 
-    <div class="footer-section">
-      <h4>Contact</h4>
-      <p>Email : onemore@gmail.com</p>
-      <p>Phone : +91 8888888888</p>
+    <div class="footer-container">
+      <div class="footer-section">
+        <h4>SUPPORT</h4>
+        <p>Order Status</p>
+        <p>Product Support</p>
+        <p>Shipping &amp; Return Policy</p>
+        <p>Complaint Registration</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>About Us</h4>
+        <p>Contact Us</p>
+        <p>Privacy Policy</p>
+        <p>Terms of use</p>
+        <p>FAQ</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>Email : onemore@gmail.com</p>
+        <p>Phone : +91 8888888888</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Connect with us</h4>
+        <p>Instagram</p>
+        <p>Facebook</p>
+        <p>X</p>
+      </div>
     </div>
 
-    <div class="footer-section">
-      <h4>Connect with us</h4>
-      <p>Instagram</p>
-      <p>Facebook</p>
-      <p>X</p>
+    <div class="bottom">
+      © 2025 OneMore. All Rights Reserved.
     </div>
+  </footer>
 
-  </div>
+  <!-- CLIENT-SIDE VALIDATION -->
+  <script>
+    const form = document.getElementById("signupForm");
 
-  <div class="bottom">
-    © 2025 onemore. All Rights Reserved.
-  </div>
+    form.addEventListener("submit", function (e) {
+      let valid = true;
 
-</footer>
+      const name = document.getElementById("name");
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+      const confirmPassword = document.getElementById("confirmPassword");
 
-<!-- JS VALIDATION -->
-<script>
-const form = document.getElementById("signupForm");
+      const nameError = document.getElementById("nameError");
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+      const confirmError = document.getElementById("confirmError");
 
-form.addEventListener("submit", function (e) {
-  let valid = true;
+      nameError.textContent = "";
+      emailError.textContent = "";
+      passwordError.textContent = "";
+      confirmError.textContent = "";
 
-  const name = document.getElementById("name");
-  const email = document.getElementById("email");
-  const password = document.getElementById("password");
-  const confirmPassword = document.getElementById("confirmPassword");
+      // NAME VALIDATION
+      const namePattern = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+      const nameValue = name.value.trim();
 
-  const nameError = document.getElementById("nameError");
-  const emailError = document.getElementById("emailError");
-  const passwordError = document.getElementById("passwordError");
-  const confirmError = document.getElementById("confirmError");
+      if (nameValue === "") {
+        nameError.textContent = "Name is required";
+        valid = false;
+      } else if (nameValue.length < 3) {
+        nameError.textContent = "Name must be at least 3 characters";
+        valid = false;
+      } else if (nameValue.length > 30) {
+        nameError.textContent = "Name must not exceed 30 characters";
+        valid = false;
+      } else if (!namePattern.test(nameValue)) {
+        nameError.textContent = "Please enter a valid name";
+        valid = false;
+      }
 
-  nameError.textContent = "";
-  emailError.textContent = "";
-  passwordError.textContent = "";
-  confirmError.textContent = "";
+      // EMAIL VALIDATION
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailValue = email.value.trim();
 
-  // NAME
+      if (emailValue === "") {
+        emailError.textContent = "Email is required";
+        valid = false;
+      } else if (!emailPattern.test(emailValue)) {
+        emailError.textContent = "Enter valid email";
+        valid = false;
+      }
 
-  const namePattern = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+      // PASSWORD VALIDATION
+      if (password.value === "") {
+        passwordError.textContent = "Password is required";
+        valid = false;
+      } else if (password.value.length < 10) {
+        passwordError.textContent = "Password must be at least 10 characters";
+        valid = false;
+      } else if (!/[A-Z]/.test(password.value)) {
+        passwordError.textContent = "Must contain at least one uppercase letter";
+        valid = false;
+      } else if (!/[a-z]/.test(password.value)) {
+        passwordError.textContent = "Must contain at least one lowercase letter";
+        valid = false;
+      } else if (!/[0-9]/.test(password.value)) {
+        passwordError.textContent = "Must contain at least one number";
+        valid = false;
+      } else if (!/[@$!%*?&]/.test(password.value)) {
+        passwordError.textContent = "Must contain a special character";
+        valid = false;
+      }
 
-  if (name.value.trim() === "") {
+      // CONFIRM PASSWORD VALIDATION
+      if (confirmPassword.value === "") {
+        confirmError.textContent = "Confirm your password";
+        valid = false;
+      } else if (password.value !== confirmPassword.value) {
+        confirmError.textContent = "Passwords do not match";
+        valid = false;
+      }
 
-    nameError.textContent = "Name is required";
-    valid = false;
+      if (!valid) {
+        e.preventDefault();
+      }
+    });
 
-  } else if (name.value.trim().length < 3) {
+    // PASSWORD VISIBILITY
+    function togglePassword(inputId, icon) {
+      const input = document.getElementById(inputId);
 
-    nameError.textContent = "Name must be at least 3 characters";
-    valid = false;
-
-  } else if (name.value.trim().length > 30) {
-
-    nameError.textContent = "Name must not exceed 30 characters";
-    valid = false;
-
-  } else if (!namePattern.test(name.value.trim())) {
-
-    nameError.textContent = "Please enter a valid name";
-    valid = false;
-  }
-
-  // EMAIL
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (email.value.trim() === "") {
-    emailError.textContent = "Email is required";
-    valid = false;
-  } else if (!emailPattern.test(email.value.trim())) {
-    emailError.textContent = "Enter valid email";
-    valid = false;
-  }
-
-  // PASSWORD
-
-  // PASSWORD
-  if (password.value === "") {
-    passwordError.textContent = "Password is required";
-    valid = false;
-
-  } else if (password.value.length < 10) {
-
-    passwordError.textContent = "Password must be at least 10 characters";
-    valid = false;
-
-  } else if (!/[A-Z]/.test(password.value)) {
-
-    passwordError.textContent = "Must contain at least one uppercase letter";
-    valid = false;
-
-  } else if (!/[a-z]/.test(password.value)) {
-
-    passwordError.textContent = "Must contain at least one lowercase letter";
-    valid = false;
-
-  } else if (!/[0-9]/.test(password.value)) {
-
-    passwordError.textContent = "Must contain at least one number";
-    valid = false;
-
-  } else if (!/[@$!%*?&]/.test(password.value)) {
-
-    passwordError.textContent = "Must contain a special character";
-    valid = false;
-  }
-
-  // CONFIRM PASSWORD
-  if (confirmPassword.value.trim() === "") {
-    confirmError.textContent = "Confirm your password";
-    valid = false;
-  } else if (password.value !== confirmPassword.value) {
-    confirmError.textContent = "Passwords do not match";
-    valid = false;
-  }
-
-  if (!valid) e.preventDefault();
-});
-function togglePassword(inputId, icon) {
-  const input = document.getElementById(inputId);
-
-  if (input.type === "password") {
-    input.type = "text";
-    icon.classList.replace("fa-eye", "fa-eye-slash");
-  } else {
-    input.type = "password";
-    icon.classList.replace("fa-eye-slash", "fa-eye");
-  }
-}
-</script>
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+        icon.setAttribute("aria-label", "Hide password");
+      } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+        icon.setAttribute("aria-label", "Show password");
+      }
+    }
+  </script>
 
 </body>
+
 </html>

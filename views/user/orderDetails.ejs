@@ -13,364 +13,685 @@
 
     <style>
         :root {
-            --bg-dark: #121212;
-            --text-muted: #666666;
-            --border-gray: #cccccc;
-            --accent-yellow: #ffdc60;
-            --btn-red: #e61f26;
+            --dark: #242422;
+            --dark-soft: #30302d;
+            --lime: #d7f36b;
+            --lime-hover: #c6e451;
+            --page: #f4f4ee;
+            --white: #ffffff;
+            --text: #242422;
+            --muted: #77776e;
+            --border: #e8e8df;
+            --danger: #c73d35;
+            --btn-red: #c73d35;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
             font-family: 'Poppins', sans-serif;
-            background-color: #ffffff;
-            color: #000000;
+            color: var(--text);
+            background: var(--page);
         }
 
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        /* Styling is scoped to this page; shared navbar partial is unchanged. */
+        .profile-page-navbar {
+            position: relative;
+            z-index: 1000;
+            background: var(--dark);
+        }
+
+        .profile-page-navbar nav,
+        .profile-page-navbar .navbar {
+            background-color: var(--dark) !important;
+        }
+
+        .profile-page-navbar .navbar a,
+        .profile-page-navbar .navbar .nav-link,
+        .profile-page-navbar .navbar i,
+        .profile-page-navbar .navbar svg {
+            color: #fff !important;
+        }
+
+        .profile-page-navbar .navbar a:hover,
+        .profile-page-navbar .navbar .nav-link:hover {
+            color: var(--lime) !important;
+        }
+
+        .profile-page-navbar img {
+            object-fit: contain;
+        }
+
+        .details-container {
+            width: 100%;
+            max-width: 1170px;
+            margin: 32px auto 58px;
+            padding: 0 24px;
+            flex: 1;
+        }
 
         .main-details-box {
-            border: 1px solid #111111;
-            border-radius: 20px;
-            background-color: #ffffff;
-            overflow: hidden;
             display: flex;
+            align-items: stretch;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            box-shadow: 0 5px 22px rgba(30, 30, 20, .035);
         }
 
-        /* Left Side Info Panel */
         .details-sidebar {
-            width: 28%;
-            border-right: 1px solid var(--border-gray);
-            padding: 40px 30px;
-            font-size: 0.85rem;
+            width: 30%;
+            min-width: 0;
+            padding: 30px 24px;
+            border-right: 1px solid var(--border);
+            font-size: 13px;
         }
 
         .info-section {
             margin-bottom: 25px;
-            line-height: 1.6;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
         }
 
-        .info-section h6 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #000000;
-        }
-
-        .info-section p {
-            color: #333333;
+        .info-section:last-child {
             margin-bottom: 0;
         }
 
-        .status-badge-inline {
+        .info-section h6 {
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 13px;
             font-weight: 600;
-            color: #2ec4b6;
+        }
+
+        .info-section p {
+            margin-bottom: 0;
+            color: #626259;
+            font-size: 12px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .status-badge-inline {
+            color: #258f84;
+            font-weight: 600;
         }
 
         .status-badge-inline.cancelled-text {
-            color: var(--btn-red);
+            color: var(--danger);
         }
 
-        /* Order Summary Alignment Wrap */
         .summary-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
-            margin-bottom: 6px;
-            color: #333333;
+            gap: 12px;
+            margin-bottom: 8px;
+            color: #626259;
+            font-size: 12px;
         }
 
-        /* Right Side Items Panel */
+        .summary-row span:last-child {
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
         .details-main {
-            width: 72%;
-            padding: 40px;
             display: flex;
+            flex: 1;
             flex-direction: column;
+            width: 70%;
+            min-width: 0;
+            padding: 30px;
         }
 
         .panel-title {
-            font-size: 1.4rem;
+            margin: 0 0 22px;
+            color: var(--text);
+            font-size: 19px;
             font-weight: 600;
-            letter-spacing: 1.5px;
-            text-align: center;
-            margin-bottom: 30px;
+            letter-spacing: -.3px;
+            text-align: left;
         }
 
         .items-divider {
-            border-top: 1px solid #111111;
-            margin: 0 0 25px 0;
+            margin: 0 0 22px;
+            border-top: 1px solid var(--border);
             opacity: 1;
         }
 
         .order-item-row {
             display: grid;
-            grid-template-columns: 100px 2.5fr 1fr 1.5fr 2.5fr;
+            grid-template-columns: 76px minmax(0, 1.6fr) minmax(45px, .5fr) minmax(85px, .8fr) minmax(150px, 1.5fr);
             align-items: center;
-            gap: 20px;
-            padding-bottom: 25px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--border-gray);
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .main-details-box .order-item-row:last-of-type {
-            border-bottom: none;
             margin-bottom: 0;
+            border-bottom: none;
         }
 
         .item-img-wrapper {
-            width: 90px;
-            height: 90px;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #f7f7f7;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 76px;
+            height: 76px;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #f4f4ee;
         }
 
         .item-img-wrapper img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .item-details-text-block {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 5px;
+            min-width: 0;
         }
 
         .item-name-txt {
-            font-weight: 600;
-            font-size: 0.95rem;
             margin: 0;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
         }
 
         .item-meta-txt {
-            color: #555555;
-            font-size: 0.9rem;
             margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
         }
 
         .item-price-txt {
+            color: var(--text);
+            font-size: 12px;
             font-weight: 500;
-            font-size: 0.95rem;
-            line-height: 1.4;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
         }
 
-        /* Status & Button Context */
+        .item-price-txt .small {
+            font-size: 11px !important;
+        }
+
         .item-status-block {
-            text-align: right;
+            min-width: 0;
+            text-align: left;
         }
 
         .status-header-line {
             display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 7px;
             margin-bottom: 6px;
+            color: var(--text);
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
         }
 
         .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
             display: inline-block;
+            width: 8px;
+            height: 8px;
+            flex: 0 0 8px;
+            margin-top: 5px;
+            border-radius: 50%;
         }
 
         .dot-active {
-            background-color: #2ec4b6;
+            background: #2aa99c;
         }
 
         .dot-danger {
-            background-color: var(--btn-red);
+            background: var(--danger);
         }
 
         .status-desc {
-            font-size: 0.8rem;
-            color: #333333;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
         }
 
         .cancel-item-btn {
-            background-color: var(--btn-red) !important;
-            color: #ffffff !important;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(230, 31, 38, 0.2);
-            transition: background-color 0.2s ease, opacity 0.2s ease;
+            padding: 7px 14px;
+            border: 1px solid var(--danger) !important;
+            border-radius: 6px;
+            background: var(--danger) !important;
+            color: #fff !important;
+            font-size: 11px;
+            font-weight: 500;
+            box-shadow: none;
+            transition: background .18s ease, opacity .18s ease;
         }
 
         .cancel-item-btn:hover {
-            background-color: #b31419 !important;
-            /* Slightly darker rich red on hover */
-            color: #ffffff !important;
-            opacity: 1;
+            background: #a92f2a !important;
+            color: #fff !important;
         }
 
-        /* ── PAGINATION STYLE ── */
+        .returnOrderForm .btn-outline-danger {
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .returnOrderForm .btn-outline-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .details-sidebar .btn-dark {
+            padding: 10px 12px;
+            border: 1px solid var(--dark);
+            border-radius: 6px;
+            background: var(--dark);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .details-sidebar .btn-dark:hover {
+            border-color: var(--lime-hover);
+            background: var(--lime);
+            color: var(--dark);
+        }
+
         .pagination-wrapper {
-            margin-top: auto;
-            padding-top: 20px;
             display: flex;
             justify-content: center;
+            margin-top: auto;
+            padding-top: 20px;
         }
 
         .custom-pagination {
             display: flex;
-            gap: 12px;
             align-items: center;
-            list-style: none;
-            padding: 0;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 7px;
             margin: 0;
+            padding: 0;
+            list-style: none;
         }
 
         .page-btn-nav {
-            border: 1px solid #111111;
-            background-color: #ffffff;
-            color: #000000;
-            padding: 5px 16px;
-            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            background: #fff;
+            color: var(--text);
+            font-size: 11px;
             font-weight: 500;
-            border-radius: 6px;
-            text-decoration: none;
+        }
+
+        .page-btn-nav:hover {
+            border-color: var(--lime-hover);
+            background: var(--lime);
+            color: var(--dark);
         }
 
         .page-num-circle {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background-color: #000000;
-            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--dark);
+            border-radius: 7px;
+            background: var(--dark);
+            color: #fff;
+            font-size: 11px;
             font-weight: 500;
-            text-decoration: none;
         }
 
         .page-num-circle.inactive-page {
-            background-color: transparent;
-            color: #000000;
+            border-color: var(--border);
+            background: #fff;
+            color: var(--text);
         }
 
-        /* ── FOOTER STYLE ── */
+        .page-num-circle.inactive-page:hover {
+            border-color: var(--lime-hover);
+            background: #f0f5dc;
+        }
+
         footer {
-            background-color: var(--bg-dark);
+            margin-top: auto;
+            padding: 38px 24px 18px;
+            border-top: 1px solid #353530;
+            background: var(--dark);
             color: #fff;
-            padding: 80px 80px 30px;
-            border-top: 1px solid #222;
+        }
+
+        footer>.row,
+        footer>.text-center {
+            max-width: 1180px;
+            margin-right: auto;
+            margin-left: auto;
         }
 
         .footer-logo-container {
-            margin-bottom: 45px;
+            margin-bottom: 28px;
         }
 
         .footer-logo-container img {
-            height: 65px;
-            width: auto;
+            width: 68px;
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
         }
 
         .footer-heading {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 13px;
+            color: var(--lime);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent-yellow);
         }
 
         .footer-links li {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .footer-links a {
-            color: #ffffff;
-            opacity: 0.8;
+            color: #aaa99f;
+            font-size: 11px;
+            line-height: 1.6;
             text-decoration: none;
-            font-size: 13px;
+            transition: color .18s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--lime);
         }
 
         .footer-contact-text {
-            font-size: 13px;
-            color: #ffffff;
-            margin-bottom: 10px;
+            margin-bottom: 9px;
+            color: #aaa99f;
+            font-size: 11px;
+            overflow-wrap: anywhere;
         }
 
         .social-icons a {
-            color: #fff;
-            font-size: 1.3rem;
-            margin-right: 20px;
+            margin-right: 13px;
+            color: #c8c8bf;
+            font-size: 16px;
+            transition: color .18s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--lime);
         }
 
         .copyright {
-            border-top: 1px solid #222;
-            margin-top: 60px;
-            padding-top: 30px;
-            font-size: 12px;
-            color: #777;
+            margin-top: 25px;
+            padding-top: 17px;
+            border-top: 1px solid rgba(255, 255, 255, .12);
+            color: #88887e;
+            font-size: 10px;
         }
 
-        /* Responsive UI Optimization */
-        @media (max-width: 992px) {
+        @media (max-width: 1100px) {
+            .details-sidebar {
+                width: 32%;
+                padding: 25px 20px;
+            }
+
+            .details-main {
+                width: 68%;
+                padding: 25px 22px;
+            }
+
+            .order-item-row {
+                grid-template-columns: 70px minmax(0, 1.5fr) minmax(40px, .5fr) minmax(75px, .8fr);
+                gap: 12px;
+            }
+
+            .item-status-block {
+                grid-column: 2 / -1;
+                padding-top: 12px;
+                border-top: 1px solid #f0f0e9;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .details-container {
+                max-width: 620px;
+                margin: 22px auto 38px;
+                padding: 0 16px;
+            }
+
             .main-details-box {
                 flex-direction: column;
+                border-radius: 11px;
             }
 
             .details-sidebar {
                 width: 100%;
+                padding: 22px 20px;
                 border-right: none;
-                border-bottom: 1px solid var(--border-gray);
-                padding: 30px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .info-section {
+                margin-bottom: 20px;
+            }
+
+            .info-section h6 {
+                font-size: 13px;
+            }
+
+            .info-section p,
+            .summary-row {
+                font-size: 12px;
             }
 
             .details-main {
                 width: 100%;
-                padding: 30px;
+                padding: 22px 20px;
+            }
+
+            .panel-title {
+                margin-bottom: 18px;
+                font-size: 18px;
             }
 
             .order-item-row {
-                grid-template-columns: 90px 1fr 1fr;
-                gap: 15px;
+                grid-template-columns: 72px minmax(0, 1fr) minmax(60px, .5fr);
+                gap: 12px;
+                padding-bottom: 17px;
+                margin-bottom: 17px;
+            }
+
+            .item-img-wrapper {
+                width: 72px;
+                height: 72px;
+            }
+
+            .item-details-text-block {
+                grid-column: span 2;
+            }
+
+            .item-price-txt {
+                grid-column: 2;
             }
 
             .item-status-block {
-                grid-column: span 3;
-                text-align: left;
-                margin-top: 10px;
-                border-top: 1px dashed #eee;
-                padding-top: 15px;
-            }
-
-            .status-header-line {
-                justify-content: flex-start;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .details-container {
-                padding: 0 15px;
-                margin-top: 20px;
+                grid-column: 1 / -1;
+                padding-top: 13px;
+                border-top: 1px solid #f0f0e9;
             }
 
             footer {
-                padding: 60px 20px 30px;
-                text-align: center;
+                padding: 30px 18px 17px;
+            }
+
+            .footer-logo-container {
+                margin-bottom: 24px;
             }
 
             .footer-heading {
-                text-align: center;
+                font-size: 9px;
+            }
+
+            .footer-links a,
+            .footer-contact-text {
+                font-size: 10px;
             }
 
             .social-icons {
                 display: flex;
-                justify-content: center;
-                margin-top: 15px;
+                justify-content: flex-start;
+                margin-top: 12px;
+            }
+
+            .copyright {
+                margin-top: 22px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .details-container {
+                margin-top: 16px;
+                padding: 0 12px;
+            }
+
+            .details-sidebar {
+                padding: 19px 15px;
+            }
+
+            .details-main {
+                padding: 19px 14px;
+            }
+
+            .panel-title {
+                font-size: 17px;
+            }
+
+            .info-section h6 {
+                font-size: 12px;
+            }
+
+            .info-section p,
+            .summary-row {
+                font-size: 12px;
+            }
+
+            .order-item-row {
+                grid-template-columns: 62px minmax(0, 1fr);
+                gap: 10px;
+            }
+
+            .item-img-wrapper {
+                width: 62px;
+                height: 62px;
+            }
+
+            .item-details-text-block {
+                grid-column: 2;
+            }
+
+            .order-item-row>.item-meta-txt {
+                grid-column: 2;
+            }
+
+            .item-price-txt {
+                grid-column: 2;
+            }
+
+            .item-status-block {
+                grid-column: 1 / -1;
+            }
+
+            .item-name-txt {
+                font-size: 13px;
+            }
+
+            .item-meta-txt,
+            .item-price-txt {
+                font-size: 12px;
+            }
+
+            .status-header-line,
+            .status-desc {
+                font-size: 11px;
+            }
+
+            .cancel-item-btn,
+            .returnOrderForm .btn-outline-danger {
+                width: 100%;
+            }
+
+            .custom-pagination {
+                gap: 5px;
+            }
+
+            .page-btn-nav {
+                padding: 7px 9px;
+                font-size: 10px;
+            }
+
+            footer {
+                padding-right: 14px;
+                padding-left: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
@@ -379,7 +700,9 @@
 <body>
 
     <!-- Navbar -->
-    <%- include("../partials/navbar") %>
+    <div class="profile-page-navbar">
+        <%- include("../partials/navbar") %>
+    </div>
 
     <!-- Main Order Details Component Box -->
     <div class="details-container">
@@ -439,7 +762,7 @@
                         <span>₹ <%= order.grandTotal %></span>
                     </div>
                 </div>
-                
+
                 <% if ( order.paymentMethod==="RAZORPAY" && ["Pending", "Failed" ].includes(order.paymentStatus) &&
                     !["Cancelled", "Returned" ].includes(order.orderStatus) ) { %>
                     <div class="info-section text-center mt-4">
@@ -449,26 +772,26 @@
                         </a>
                     </div>
                     <% } %>
-                
+
                         <% const hasDeliveredItems=order.items.some( item=> item.status === "Delivered"
                             ); %>
 
-                
-                    <div class="info-section text-center mt-4">
-                
-                        <% if(hasDeliveredItems){ %>
-                
-                            <a href="/orders/<%= order._id %>/invoice" class="btn btn-dark w-100">
-                
-                                <i class="fa-solid fa-file-pdf me-2"></i>
-                
-                                Download Invoice
-                
-                            </a>
-                
-                            <% } %>
-                
-                    </div>
+
+                            <div class="info-section text-center mt-4">
+
+                                <% if(hasDeliveredItems){ %>
+
+                                    <a href="/orders/<%= order._id %>/invoice" class="btn btn-dark w-100">
+
+                                        <i class="fa-solid fa-file-pdf me-2"></i>
+
+                                        Download Invoice
+
+                                    </a>
+
+                                    <% } %>
+
+                            </div>
             </div>
 
             <!-- Right Tracked Items List Column -->
@@ -559,19 +882,19 @@
                                         <!-- Display Cancel Action Only for Active/Processing Items -->
                                         <!-- Pending Products -->
                                         <% if(["Pending", "Processing" ].includes(item.status)){ %>
-                                        
+
                                             <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
-                                        
+
                                                 <input type="hidden" name="orderId" value="<%= order._id %>">
                                                 <input type="hidden" name="itemId" value="<%= item._id %>">
                                                 <input type="hidden" name="page" value="<%= currentPage %>">
-                                        
+
                                                 <button class="btn cancel-item-btn">
                                                     Cancel Product
                                                 </button>
-                                        
+
                                             </form>
-                                        
+
                                             <% } %>
 
                                                 <!-- Delivered Products -->
@@ -604,7 +927,7 @@
                                 <% if(totalPages> 1){ %>
                                     <div class="pagination-wrapper">
                                         <ul class="custom-pagination">
-                                
+
                                             <% if(currentPage> 1){ %>
                                                 <li>
                                                     <a href="?page=<%= currentPage - 1 %>" class="page-btn-nav">
@@ -612,7 +935,7 @@
                                                     </a>
                                                 </li>
                                                 <% } %>
-                                
+
                                                     <% for(let i=1; i <=totalPages; i++){ %>
                                                         <li>
                                                             <a href="?page=<%= i %>"
@@ -621,15 +944,16 @@
                                                             </a>
                                                         </li>
                                                         <% } %>
-                                
+
                                                             <% if(currentPage < totalPages){ %>
                                                                 <li>
-                                                                    <a href="?page=<%= currentPage + 1 %>" class="page-btn-nav">
+                                                                    <a href="?page=<%= currentPage + 1 %>"
+                                                                        class="page-btn-nav">
                                                                         Next
                                                                     </a>
                                                                 </li>
                                                                 <% } %>
-                                
+
                                         </ul>
                                     </div>
                                     <% } %>
@@ -815,74 +1139,74 @@
     })
 
 
-            document.querySelectorAll(".returnOrderForm").forEach(form => {
+    document.querySelectorAll(".returnOrderForm").forEach(form => {
 
-                form.addEventListener("submit", function (e) {
+        form.addEventListener("submit", function (e) {
 
-                    e.preventDefault()
+            e.preventDefault()
 
-                    Swal.fire({
+            Swal.fire({
 
-                        title: "Return Product?",
+                title: "Return Product?",
 
-                        text: "Please provide a reason for returning this product:",
+                text: "Please provide a reason for returning this product:",
 
-                        icon: "question",
+                icon: "question",
 
-                        input: "textarea",
+                input: "textarea",
 
-                        inputPlaceholder: "Type your return reason here...",
+                inputPlaceholder: "Type your return reason here...",
 
-                        inputAttributes: {
-                            'aria-label': 'Type your return reason here'
-                        },
+                inputAttributes: {
+                    'aria-label': 'Type your return reason here'
+                },
 
-                        showCancelButton: true,
+                showCancelButton: true,
 
-                        confirmButtonColor: "#e61f26",
+                confirmButtonColor: "#e61f26",
 
-                        cancelButtonColor: "#6c757d",
+                cancelButtonColor: "#6c757d",
 
-                        confirmButtonText: "Request Return",
+                confirmButtonText: "Request Return",
 
-                        cancelButtonText: "Keep Product",
+                cancelButtonText: "Keep Product",
 
-                        preConfirm: (reason) => {
+                preConfirm: (reason) => {
 
-                            if (!reason || reason.trim() === "") {
-                                Swal.showValidationMessage(
-                                    "A return reason is required."
-                                )
-                            }
+                    if (!reason || reason.trim() === "") {
+                        Swal.showValidationMessage(
+                            "A return reason is required."
+                        )
+                    }
 
-                            return reason
-                        }
+                    return reason
+                }
 
-                    }).then((result) => {
+            }).then((result) => {
 
-                        if (result.isConfirmed) {
+                if (result.isConfirmed) {
 
-                            const reasonInput = document.createElement("input")
+                    const reasonInput = document.createElement("input")
 
-                            reasonInput.type = "hidden"
+                    reasonInput.type = "hidden"
 
-                            reasonInput.name = "returnReason"
+                    reasonInput.name = "returnReason"
 
-                            reasonInput.value = result.value
+                    reasonInput.value = result.value
 
-                            form.appendChild(reasonInput)
+                    form.appendChild(reasonInput)
 
-                            form.submit()
+                    form.submit()
 
-                        }
-
-                    })
-
-                })
+                }
 
             })
 
+        })
 
-    </script>
+    })
+
+
+</script>
 
 </html>
