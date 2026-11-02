@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import {
+    PAYMENT_STATUS,
+    PAYMENT_METHOD
+} from "../constants/orderConstants.js"
 
 const orderItemschema = new mongoose.Schema({
     productId: {
@@ -85,21 +89,16 @@ const orderSchema = new mongoose.Schema({
         pincode: String
     },
 
-    paymentMethod:{
+    paymentMethod: {
         type: String,
-        enum: ["COD",
-            "RAZORPAY", 
-            "WALLET"],
-        default: "COD"
+        enum: Object.values(PAYMENT_METHOD),
+        default: PAYMENT_METHOD.COD
     },
 
-    paymentStatus:{
+    paymentStatus: {
         type: String,
-        enum: ["Pending", 
-             "Paid", 
-             "Failed",
-             "Refunded"],
-        default: "Pending"
+        enum: Object.values(PAYMENT_STATUS),
+        default: PAYMENT_STATUS.PENDING
     },
 
     razorpayOrderId: {

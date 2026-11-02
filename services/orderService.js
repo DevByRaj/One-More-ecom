@@ -12,6 +12,10 @@ import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
 import {calculateBestOffer} from "./offerCalulationService.js"
 import Coupon from "../models/couponModel.js"
 import {applyCouponService} from "./couponService.js"
+import {
+    PAYMENT_STATUS,
+    PAYMENT_METHOD
+} from "../constants/orderConstants.js"
 
 
 export const allowedStatusTransitions = {
@@ -58,10 +62,10 @@ export const allowedStatusTransitions = {
 
 export const getOrderStatusInfo = (order) => {
     if (
-        order.paymentMethod === "RAZORPAY" &&
-        order.paymentStatus !== "Paid"
+        order.paymentMethod === PAYMENT_METHOD.RAZORPAY &&
+        order.paymentStatus !== PAYMENT_STATUS.PAID
     ) {
-        if (order.paymentStatus === "Failed") {
+        if (order.paymentStatus === PAYMENT_STATUS.FAILED) {
             return {
                 title: "Payment failed",
                 message: "Your payment failed. Please retry payment.",
@@ -242,7 +246,7 @@ export const placeOrderService = async (userId, orderData, session = null) => {
 
     const {addressId,
         paymentMethod,
-        paymentStatus = "Pending",
+        paymentStatus = PAYMENT_STATUS.PENDING,
         razorpayOrderId = null,
         razorpayPaymentId = null,
         coupon = null,
@@ -464,7 +468,7 @@ export const completeRazorpayOrderService = async (
         const alreadyPaidOrder = await Order.findOne({
             userId,
             razorpayOrderId,
-            paymentStatus: "Paid"
+            paymentStatus: PAYMENT_STATUS.PAID
         })
 
         if (alreadyPaidOrder) {
@@ -477,7 +481,7 @@ export const completeRazorpayOrderService = async (
         const pendingOrder = await Order.findOne({
             userId,
             razorpayOrderId,
-            paymentStatus: "Pending"
+            paymentStatus: PAYMENT_STATUS.PENDING
         })
 
         if (pendingOrder) {
@@ -543,7 +547,7 @@ export const completeRazorpayOrderService = async (
                 )
             }
 
-            pendingOrder.paymentStatus = "Paid"
+            pendingOrder.paymentStatus = PAYMENT_STATUS.PAID
             pendingOrder.razorpayPaymentId = razorpayPaymentId
             pendingOrder.razorpaySignature = razorpaySignature
 
@@ -575,8 +579,8 @@ export const completeRazorpayOrderService = async (
             userId,
             {
                 addressId,
-                paymentMethod: "RAZORPAY",
-                paymentStatus: "Paid",
+                paymentMethod: PAYMENT_METHOD.RAZORPAY,
+                paymentStatus: PAYMENT_STATUS.PAID,
                 razorpayOrderId,
                 razorpayPaymentId,
                 coupon: appliedCoupon,
@@ -770,7 +774,7 @@ export const createPendingOrderService = async (userId, orderData, appliedCoupon
 
         paymentMethod,
 
-        paymentStatus: "Pending",
+        paymentStatus: PAYMENT_STATUS.PENDING,
 
         razorpayOrderId,
 
@@ -838,21 +842,72 @@ export const getOrderDetailsService = async (userId, orderId) => {
     }
 }
 
-const recalculateOrderTotals = (order) => {
+// const recalculateOrderTotals = (order) => {
+
+//     const activeItems = order.items.filter(
+//         item => !["Cancelled", "Returned"].includes(item.status)
+//     )
+
+//     const subtotal = activeItems.reduce((total, item) => total + item.totalPrice, 0)
+
+//     order.subTotal = subtotal
+
+//     order.shipping = subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT ? SHIPPING_CHARGE : 0
+
+//     order.discount = Math.min(order.discount || 0, subtotal)
+
+//     order.grandTotal = order.subTotal - order.discount + order.shipping
+// }
+
+const recalculateOrderTotals = async (order) => {
 
     const activeItems = order.items.filter(
         item => !["Cancelled", "Returned"].includes(item.status)
     )
 
-    const subtotal = activeItems.reduce((total, item) => total + item.totalPrice, 0)
+    const subtotal = activeItems.reduce(
+        (total, item) => total + item.totalPrice,
+        0
+    )
+
+    let couponDiscount = 0
+
+    if (order.coupon?.couponId && subtotal > 0) {
+
+        const coupon = await Coupon.findById(order.coupon.couponId)
+
+        if (coupon && subtotal >= coupon.minimumPurchase) {
+
+            if (coupon.discountType === "FLAT") {
+
+                couponDiscount = coupon.discountValue
+
+            } else if (coupon.discountType === "PERCENTAGE") {
+
+                couponDiscount = subtotal * coupon.discountValue / 100
+
+                if (
+                    coupon.maximumDiscount !== null &&
+                    couponDiscount > coupon.maximumDiscount
+                ) {
+                    couponDiscount = coupon.maximumDiscount
+                }
+            }
+
+            couponDiscount = Math.min(couponDiscount, subtotal)
+        }
+    }
 
     order.subTotal = subtotal
+    order.discount = couponDiscount
 
-    order.shipping = subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT ? SHIPPING_CHARGE : 0
+    order.shipping =
+        subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT
+            ? SHIPPING_CHARGE
+            : 0
 
-    order.discount = Math.min(order.discount || 0, subtotal)
-
-    order.grandTotal = order.subTotal - order.discount + order.shipping
+    order.grandTotal =
+        order.subTotal - order.discount + order.shipping
 }
 
 const calculateOverallOrderStatus = (items) => {
@@ -951,15 +1006,15 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     item.cancelReason = cancelReason
 
-    order.orderStatus = calculateOverallOrderStatus(order.items)
-
     const previousGrandTotal = order.grandTotal
 
-    recalculateOrderTotals(order)
+    order.orderStatus = calculateOverallOrderStatus(order.items)
+
+    await recalculateOrderTotals(order)
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
-    if (order.paymentStatus === "Paid") {
+    if (order.paymentStatus === PAYMENT_STATUS.PAID) {
 
         const refundAmount = previousGrandTotal - order.grandTotal
 
@@ -988,10 +1043,10 @@ export const getAllOrders = async (page = 1, limit = 5, search = "", status = ""
 
     let query = {}
 
-    if (status === "Failed") {
-        query.paymentStatus = "Failed";
+    if (status === PAYMENT_STATUS.FAILED) {
+        query.paymentStatus = PAYMENT_STATUS.FAILED
     } else if (status) {
-        query.orderStatus = status;
+        query.orderStatus = status
     }
 
     if (search.trim()) {
@@ -1064,8 +1119,8 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
     }
 
     if (
-        order.paymentMethod === "RAZORPAY" &&
-        order.paymentStatus !== "Paid"
+        order.paymentMethod === PAYMENT_METHOD.RAZORPAY &&
+        order.paymentStatus !== PAYMENT_STATUS.PAID
     ) {
         throw new Error(
             "Cannot update order status until payment is completed"
@@ -1083,9 +1138,54 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
 
-        if (newStatus === "Delivered" && order.paymentMethod === "COD") {
-            order.paymentStatus = "Paid"
+        if (newStatus === "Delivered" && order.paymentMethod === PAYMENT_METHOD.COD) {
+            order.paymentStatus = PAYMENT_STATUS.PAID
         }
+
+        // if (item.status === "Return Requested" && newStatus === "Returned") {
+
+        //     await Variant.findByIdAndUpdate(item.variantId, {
+        //         $inc: {
+        //             stock: item.quantity
+        //         }
+        //     })
+
+        //     if (order.paymentStatus === PAYMENT_STATUS.PAID) {
+
+        //         const itemDiscount =
+        //             order.subTotal > 0
+        //                 ? (item.totalPrice / order.subTotal) * order.discount
+        //                 : 0
+
+        //         let refundAmount = item.totalPrice - itemDiscount
+
+        //         const remainingActiveItems = order.items.filter(orderItem => {
+
+        //             if (orderItem._id.toString() === item._id.toString()) {
+        //                 return false
+        //             }
+
+        //             const status = formData[`status_${orderItem._id}`] || orderItem.status
+
+        //             return !["Cancelled", "Returned"].includes(status)
+        //         })
+
+        //         if (remainingActiveItems.length === 0) {
+        //             refundAmount += order.shipping
+        //         }
+
+        //         await creditWallet(
+        //             order.userId,
+        //             refundAmount,
+        //             `Refund for returned product - ${item.productName}`,
+        //             order._id,
+        //             "Refund"
+        //         )
+
+        //     }
+
+        //     item.returnedAt = new Date()
+        // }
 
         if (item.status === "Return Requested" && newStatus === "Returned") {
 
@@ -1095,41 +1195,30 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                 }
             })
 
-            if (order.paymentStatus === "Paid") {
+            item.status = newStatus
+            item.returnedAt = new Date()
 
-                const itemDiscount =
-                    order.subTotal > 0
-                        ? (item.totalPrice / order.subTotal) * order.discount
-                        : 0
+            const previousGrandTotal = order.grandTotal
 
-                let refundAmount = item.totalPrice - itemDiscount
+            await recalculateOrderTotals(order)
 
-                const remainingActiveItems = order.items.filter(orderItem => {
+            if (order.paymentStatus === PAYMENT_STATUS.PAID) {
 
-                    if (orderItem._id.toString() === item._id.toString()) {
-                        return false
-                    }
+                const refundAmount = previousGrandTotal - order.grandTotal
 
-                    const status = formData[`status_${orderItem._id}`] || orderItem.status
+                if (refundAmount > 0) {
 
-                    return !["Cancelled", "Returned"].includes(status)
-                })
-
-                if (remainingActiveItems.length === 0) {
-                    refundAmount += order.shipping
+                    await creditWallet(
+                        order.userId,
+                        refundAmount,
+                        `Refund for returned product - ${item.productName}`,
+                        order._id,
+                        "Refund"
+                    )
                 }
-
-                await creditWallet(
-                    order.userId,
-                    refundAmount,
-                    `Refund for returned product - ${item.productName}`,
-                    order._id,
-                    "Refund"
-                )
-
             }
 
-            item.returnedAt = new Date()
+            continue
         }
 
         if (
@@ -1143,40 +1232,30 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                 }
             })
 
-            if (order.paymentStatus === "Paid") {
+            const previousGrandTotal = order.grandTotal
 
-                const itemDiscount =
-                    order.subTotal > 0
-                        ? (item.totalPrice / order.subTotal) * order.discount
-                        : 0
+            item.status = newStatus
+            item.cancelledAt = new Date()
 
-                let refundAmount = item.totalPrice - itemDiscount
+            await recalculateOrderTotals(order)
 
-                const remainingActiveItems = order.items.filter(orderItem => {
-                    if (orderItem._id.toString() === item._id.toString()) {
-                        return false
-                    }
+            if (order.paymentStatus === PAYMENT_STATUS.PAID) {
 
-                    const status =
-                        formData[`status_${orderItem._id}`] || orderItem.status
+                const refundAmount = previousGrandTotal - order.grandTotal
 
-                    return !["Cancelled", "Returned"].includes(status)
-                })
+                if (refundAmount > 0) {
 
-                if (remainingActiveItems.length === 0) {
-                    refundAmount += order.shipping
+                    await creditWallet(
+                        order.userId,
+                        refundAmount,
+                        `Refund for cancelled product - ${item.productName}`,
+                        order._id,
+                        "Refund"
+                    )
                 }
-
-                await creditWallet(
-                    order.userId,
-                    refundAmount,
-                    `Refund for cancelled product - ${item.productName}`,
-                    order._id,
-                    "Refund"
-                )
             }
 
-            item.cancelledAt = new Date()
+            continue
         }
 
         item.status = newStatus
@@ -1289,8 +1368,8 @@ export const payWithWalletService = async (
             userId,
             {
                 ...orderData,
-                paymentMethod: "WALLET",
-                paymentStatus: "Paid",
+                paymentMethod: PAYMENT_METHOD.WALLET,
+                paymentStatus: PAYMENT_STATUS.PAID,
                 coupon: appliedCoupon,
                 buyNow
             },

@@ -9,6 +9,10 @@ import { fileURLToPath } from "url";
 import passport from "passport";
 import session from "express-session";
 import { checkBlockedUser } from "./middlewares/auth.js";
+import {
+  PAYMENT_STATUS,
+  PAYMENT_METHOD
+} from "./constants/orderConstants.js"
 
 import navbarCounts from "./middlewares/navbarCounts.js";
 
@@ -16,6 +20,8 @@ import "./config/passport.js";
 
 const app = express();
 
+app.locals.PAYMENT_STATUS = PAYMENT_STATUS
+app.locals.PAYMENT_METHOD = PAYMENT_METHOD
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,7 +1,8 @@
-import crypto from "crypto";
+import crypto from "crypto"
 import Wallet from "../models/walletModel.js"
 import WalletTopup from "../models/walletTopupModel.js"
 import {createRazorpayOrderService} from "./paymentService.js"
+import {PAYMENT_STATUS} from "../constants/orderConstants.js"
 
 export const getOrCreateWallet = async (userId, session = null) => {
 
@@ -66,7 +67,7 @@ export const debitWallet = async(
         }
     }
 
-    wallet.balance -= amount;
+    wallet.balance -= amount
 
     wallet.transactions.unshift({
         type: "Debit",
@@ -140,7 +141,7 @@ export  const verifyWalletTopupService = async(data) =>{
 
     const topup = await WalletTopup.findOne({
         razorpayOrderId: razorpay_order_id,
-        status: "Pending"
+        status: PAYMENT_STATUS.PENDING
     })
 
     if (!topup) {
@@ -150,11 +151,11 @@ export  const verifyWalletTopupService = async(data) =>{
         }
     }
 
-    topup.razorpayPaymentId = razorpay_payment_id;
-    topup.razorpaySignature = razorpay_signature;
-    topup.status = "Paid";
+    topup.razorpayPaymentId = razorpay_payment_id
+    topup.razorpaySignature = razorpay_signature
+    topup.status = PAYMENT_STATUS.PAID
 
-    await topup.save();
+    await topup.save()
 
     await creditWallet(
         topup.userId,

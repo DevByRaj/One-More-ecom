@@ -5,6 +5,7 @@ import {
     getBestSellingCategoriesService,
     getBestSellingBrandsService
 } from "../../services/salesReportService.js"
+import {PAYMENT_STATUS} from "../../constants/orderConstants.js"
 
 export const getDashboard = async (req, res) => {
     try {
@@ -37,8 +38,11 @@ export const getDashboard = async (req, res) => {
                     $gte: startDate,
                     $lt: endDate
                 },
-                paymentStatus:{
-                    $in: ["Paid", "Pending"]
+                paymentStatus: {
+                    $in: [
+                        PAYMENT_STATUS.PAID,
+                        PAYMENT_STATUS.PENDING
+                    ]
                 }
             })
 
@@ -119,9 +123,12 @@ export const getDashboard = async (req, res) => {
                 $gte: startDate,
                 $lt: endDate
             },
-            paymentStatus:{
-                $in: ["Paid", "Pending"]
-            }
+                paymentStatus: {
+                    $in: [
+                        PAYMENT_STATUS.PAID,
+                        PAYMENT_STATUS.PENDING
+                    ]
+                }
         })
 
             const dailySales = Array.from({length:new Date(
