@@ -4,7 +4,6 @@ import Category from "../../models/categoryModel.js"
 import categoryModel from "../../models/categoryModel.js"
 import Product from "../../models/productModel.js"
 import Brand from "../../models/brandModel.js"
-import {uploadCloudinary} from "../../utils/cloudinary.js";
 import Variant from "../../models/variantModel.js"
 import { createVariant, updateVariant } from "../../services/variantService.js"
 import { createProduct, updateProduct } from "../../services/productService.js"
