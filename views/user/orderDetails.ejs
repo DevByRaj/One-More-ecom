@@ -714,10 +714,13 @@
                     <p>Order: <strong>#<%= order.orderId %></strong></p>
                     <p>Date: <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
                     </p>
-                    <p>Status : <span
-                            class="status-badge-inline <%= order.orderStatus === 'Cancelled' ? 'cancelled-text' : '' %>">
-                            <%= order.orderStatus %>
-                        </span></p>
+                    <p>Status :
+                        <span
+                            class="status-badge-inline <%= order.paymentStatus === PAYMENT_STATUS.FAILED ? 'cancelled-text' : order.orderStatus === 'Cancelled' ? 'cancelled-text' : '' %>">
+                            <%= order.paymentMethod===PAYMENT_METHOD.RAZORPAY && order.paymentStatus===PAYMENT_STATUS.FAILED
+                                ? 'Payment Failed' : order.orderStatus %>
+                        </span>
+                    </p>
                 </div>
 
                 <div class="info-section">
@@ -763,8 +766,10 @@
                     </div>
                 </div>
 
-                <% if ( order.paymentMethod==="RAZORPAY" && ["Pending", "Failed" ].includes(order.paymentStatus) &&
-                    !["Cancelled", "Returned" ].includes(order.orderStatus) ) { %>
+                <% if ( order.paymentMethod===PAYMENT_METHOD.RAZORPAY && [PAYMENT_STATUS.PENDING,
+                    PAYMENT_STATUS.FAILED].includes(order.paymentStatus) && !["Cancelled", "Returned" ].includes(order.orderStatus) ) {
+                    %>
+
                     <div class="info-section text-center mt-4">
                         <a href="/payment-failed/<%= order._id %>" class="btn btn-dark w-100">
                             <i class="fa-solid fa-rotate-right me-2"></i>
@@ -827,45 +832,73 @@
 
                             <div class="item-status-block">
                                 <div class="status-header-line">
-                                    <% if(item.status==='Cancelled' ) { %>
-                                        <span class="status-dot dot-danger"></span> Cancelled on
-                                        <%= new Date(item.cancelledAt).toLocaleDateString("en-IN") %>
-                                            <% } else if(item.status==='Delivered' ) { %>
-                                                <span class="status-dot dot-active"></span> Delivered on <%= new
-                                                    Date(order.createdAt).toLocaleDateString("en-IN") %>
-                                                    <% } else { %>
-                                                        <span class="status-dot dot-active"></span> Order placed on <%=
-                                                            new Date(order.createdAt).toLocaleDateString("en-IN") %>
-                                                            <% } %>
+                                
+                                    <% if ( order.paymentMethod===PAYMENT_METHOD.RAZORPAY && order.paymentStatus===PAYMENT_STATUS.FAILED ) { %>
+                                
+                                        <span class="status-dot dot-danger"></span>
+                                        Payment Failed
+                                
+                                        <% } else if (item.status==="Cancelled" ) { %>
+                                
+                                            <span class="status-dot dot-danger"></span>
+                                            Cancelled on
+                                            <%= new Date(item.cancelledAt).toLocaleDateString("en-IN") %>
+                                
+                                                <% } else if (item.status==="Delivered" ) { %>
+                                
+                                                    <span class="status-dot dot-active"></span>
+                                                    Delivered on
+                                                    <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
+                                
+                                                        <% } else { %>
+                                
+                                                            <span class="status-dot dot-active"></span>
+                                                            Order placed on
+                                                            <%= new Date(order.createdAt).toLocaleDateString("en-IN") %>
+                                
+                                                                <% } %>
+                                
                                 </div>
                                 <div class="status-desc">
-
-                                    <% if(item.status==="Pending" ){ %>
-                                        Waiting for confirmation.
-
-                                        <% } else if(item.status==="Processing" ){ %>
-                                            Your order is being prepared.
-
-                                            <% } else if(item.status==="Shipped" ){ %>
-                                                Your package has been shipped.
-
-                                                <% } else if(item.status==="Out For Delivery" ){ %>
-                                                    Your package is out for delivery.
-
-                                                    <% } else if(item.status==="Delivered" ){ %>
-                                                        Delivered successfully.
-
-                                                        <% } else if(item.status==="Cancelled" ){ %>
-                                                            Product cancelled.
-
-                                                            <% } else if(item.status==="Return Requested" ){ %>
-                                                                Return request submitted.
-
-                                                                <% } else if(item.status==="Returned" ){ %>
-                                                                    Product returned successfully.
-
-                                                                    <% } %>
-
+                                
+                                    <% if ( order.paymentMethod===PAYMENT_METHOD.RAZORPAY && order.paymentStatus===PAYMENT_STATUS.FAILED ) { %>
+                                
+                                        Payment failed. Please retry payment.
+                                
+                                        <% } else if (item.status==="Pending" ) { %>
+                                
+                                            Waiting for confirmation.
+                                
+                                            <% } else if (item.status==="Processing" ) { %>
+                                
+                                                Your order is being prepared.
+                                
+                                                <% } else if (item.status==="Shipped" ) { %>
+                                
+                                                    Your package has been shipped.
+                                
+                                                    <% } else if (item.status==="Out For Delivery" ) { %>
+                                
+                                                        Your package is out for delivery.
+                                
+                                                        <% } else if (item.status==="Delivered" ) { %>
+                                
+                                                            Delivered successfully.
+                                
+                                                            <% } else if (item.status==="Cancelled" ) { %>
+                                
+                                                                Product cancelled.
+                                
+                                                                <% } else if (item.status==="Return Requested" ) { %>
+                                
+                                                                    Return request submitted.
+                                
+                                                                    <% } else if (item.status==="Returned" ) { %>
+                                
+                                                                        Product returned successfully.
+                                
+                                                                        <% } %>
+                                
                                 </div>
                                 <% if(item.status==="Cancelled" && item.cancelReason){ %>
 
@@ -881,7 +914,9 @@
 
                                         <!-- Display Cancel Action Only for Active/Processing Items -->
                                         <!-- Pending Products -->
-                                        <% if(["Pending", "Processing" ].includes(item.status)){ %>
+
+                                        <% if ( (order.paymentMethod !==PAYMENT_METHOD.RAZORPAY || order.paymentStatus===PAYMENT_STATUS.PAID) &&
+                                            ["Pending", "Processing" ].includes(item.status) ) { %>
 
                                             <form action="/orders/cancel-item" method="POST" class="cancelOrderForm">
 
@@ -1056,7 +1091,7 @@
 
                 cancelButtonText: "Keep Product",
 
-                ppreConfirm: (reason) => {
+                preConfirm: (reason) => {
 
                     if (!reason) {
 

@@ -12,7 +12,7 @@ import {
   postForgotPassword,
   getResetPassword,
   postResetPassword,
-  getAddressPage, getAddAddress, postAddAddress, postAddAddressFromCheckout, deleteAddress,
+  getAddressPage, postAddAddress, postAddAddressFromCheckout, deleteAddress,
   getSingleAddress,
   resendOTP,
   getChangePassword,

@@ -1,17 +1,34 @@
 import mongoose from "mongoose"
-import Address from "../models/addressModel.js"
-import Product from "../models/productModel.js"
-import Wishlist from "../models/wishlistModel.js"
-import {getUserCart, calculateCartTotals} from "./cartService.js"
 import Order from "../models/orderModel.js"
 import Cart from "../models/cartModel.js"
 import Variant from "../models/variantModel.js";
-import User from "../models/userModel.js"
 import {creditWallet, getOrCreateWallet} from "./walletService.js"
-import {FREE_SHIPPING_LIMIT, SHIPPING_CHARGE} from "../config/appConfig.js"
-import {calculateBestOffer} from "./offerCalulationService.js"
 import Coupon from "../models/couponModel.js"
-import {applyCouponService} from "./couponService.js"
+import {
+    PAYMENT_STATUS,
+    PAYMENT_METHOD
+} from "../constants/orderConstants.js"
+import {
+    recalculateOrderTotals,
+    calculateOverallOrderStatus
+} from "./order/orderCalculationService.js"
+import {
+    getUserOrders,
+    getOrderDetailsService,
+    getAllOrders
+} from "./order/orderFetchService.js"
+import {getCheckoutData} from "./order/checkoutService.js"
+import {
+    placeOrderService,
+    createPendingOrderService
+} from "./order/orderCreationService.js"
+
+export {
+    getUserOrders,
+    getOrderDetailsService,
+    getAllOrders, getCheckoutData,
+    placeOrderService, createPendingOrderService
+}
 
 
 export const allowedStatusTransitions = {
@@ -58,10 +75,10 @@ export const allowedStatusTransitions = {
 
 export const getOrderStatusInfo = (order) => {
     if (
-        order.paymentMethod === "RAZORPAY" &&
-        order.paymentStatus !== "Paid"
+        order.paymentMethod === PAYMENT_METHOD.RAZORPAY &&
+        order.paymentStatus !== PAYMENT_STATUS.PAID
     ) {
-        if (order.paymentStatus === "Failed") {
+        if (order.paymentStatus === PAYMENT_STATUS.FAILED) {
             return {
                 title: "Payment failed",
                 message: "Your payment failed. Please retry payment.",
@@ -153,303 +170,6 @@ export const getOrderStatusInfo = (order) => {
     }
 }
 
-export const getCheckoutData = async (userId, appliedCoupon = null, buyNow = null) => {
-
-    const addresses = await Address.find({userId})
-        .sort({isDefault: -1, createdAt: -1});
-
-    let cart
-    if (buyNow) {
-
-        const product = await Product.findById(buyNow.productId)
-        const variant = await Variant.findById(buyNow.variantId)
-
-        if (!product || !product.isListed ||
-            !variant || !variant.isListed ||
-            variant.stock <= 0
-        ) {
-            return {
-                success: false,
-                message: "Product unavailabe"
-            }
-        }
-        cart = {
-            items: [{
-                productId: product,
-                variantId: variant,
-                quantity: 1
-            }]
-        }
-    } else {
-        cart = await getUserCart(userId)
-
-        if (!cart || cart.items.length === 0) {
-            return {
-                success: false
-            }
-        }
-    }
-
-    for (const item of cart.items) {
-        if (!item.variantId || item.variantId.stock < item.quantity) {
-            return {
-                success: false,
-                message: `${item.productId.productName} has only ${item.variantId?.stock || 0} item(s) available`
-            }
-        }
-    }
-
-    for(const item of cart.items){
-        item.offer = await calculateBestOffer(item.productId, item.variantId)
-    }
-
-    let couponDiscount = 0
-
-    if (appliedCoupon?.couponCode) {
-
-        const couponResult = await applyCouponService(
-            userId,
-            appliedCoupon.couponCode,
-            calculateCartTotals(cart).subtotal
-        )
-
-        if (couponResult.success) {
-            couponDiscount = couponResult.couponDiscount
-        }
-    }
-
-    const totals = calculateCartTotals(cart, couponDiscount)
-
-    const wishlist = await Wishlist.findOne({userId})
-
-    const wishlistCount = wishlist ? wishlist.products.length : 0
-
-    return {
-        success: true,
-        addresses,
-        cart,
-        totals,
-        wishlistCount
-    }
-
-}
-
-const generateOrderId = () => {
-    return "ORD" + Date.now()
-}
-
-export const placeOrderService = async (userId, orderData, session = null) => {
-
-    const {addressId,
-        paymentMethod,
-        paymentStatus = "Pending",
-        razorpayOrderId = null,
-        razorpayPaymentId = null,
-        coupon = null,
-        buyNow = null} = orderData
-
-    let cart
-
-    if (buyNow) {
-
-        const product = await Product.findById(buyNow.productId)
-        const variant = await Variant.findById(buyNow.variantId)
-
-        if (!product || !product.isListed ||
-            !variant || !variant.isListed
-        ) {
-            return {
-                success: false,
-                message: "Product unavailable"
-            }
-        }
-        if (variant.stock <= 0) {
-            return {
-                success: false,
-                message: "Out of stock"
-            }
-        }
-
-        cart = {
-            items: [{
-                productId: product,
-                variantId: variant,
-                quantity: 1
-            }]
-        }
-    } else {
-        cart = await Cart.findOne({userId}).populate("items.productId").populate("items.variantId")
-
-        if (!cart || cart.items.length === 0) {
-            return {
-                success: false,
-                message: "Cart is empty"
-            }
-        }
-    }
-
-    const address = await Address.findOne({
-        _id: addressId,
-        userId
-    })
-
-    if (!address) {
-        return {
-            success: false,
-            message: "Address not found"
-        }
-    }
-    for (const item of cart.items) {
-        item.offer = await calculateBestOffer(
-            item.productId,
-            item.variantId
-        );
-    }
-
-    const couponDiscount = coupon?.discount || 0
-
-    const totals = calculateCartTotals(cart, couponDiscount)
-
-    for (const item of cart.items) {
-
-        if (item.variantId.stock < item.quantity) {
-            return {
-                success: false,
-                message: `${item.productId.productName} has only ${item.variantId.stock} item(s) available`
-            }
-        }
-    }
-
-    const orderItems = await Promise.all(
-        cart.items.map(async (item) => {
-
-            const offer = await calculateBestOffer(
-                item.productId, item.variantId
-            )
-
-            return {
-                productId: item.productId._id,
-
-                variantId: item.variantId._id,
-
-                productName: item.productId.productName,
-
-                variantName: item.variantId.variantName,
-
-                productImage: item.variantId.variantImage[0],
-
-                quantity: item.quantity,
-
-                regularPrice: item.variantId.regularPrice,
-
-                salePrice: offer.finalPrice,
-
-                offerDiscount: offer.discountAmount * item.quantity,
-
-                totalPrice: offer.finalPrice * item.quantity,
-
-                status: "Pending"
-            }
-        })
-    )
-
-    if (coupon?.couponId) {
-
-        const updatedCoupon = await Coupon.findOneAndUpdate(
-            {
-                _id: coupon.couponId,
-                $or: [
-                    {usageLimit: null},
-                    {
-                        $expr: {
-                            $lt: ["$usedCount", "$usageLimit"]
-                        }
-                    }
-                ]
-            },
-            {
-                $inc: {
-                    usedCount: 1
-                }
-            },
-            {
-                returnDocument: "after",
-                ...(session ? {session} : {})
-            }
-        )
-
-        if (!updatedCoupon) {
-            return {
-                success: false,
-                message: "Coupon usage limit reached"
-            }
-        }
-    }
-
-    const orderDataToCreate = {
-        orderId: generateOrderId(),
-        userId,
-        items: orderItems,
-        address: {
-            name: address.name,
-            houseName: address.houseName,
-            street: address.street,
-            city: address.city,
-            state: address.state,
-            country: address.country,
-            phone: address.phone,
-            pincode: address.pincode
-        },
-        paymentMethod,
-        paymentStatus,
-        razorpayOrderId,
-        razorpayPaymentId,
-        orderStatus: "Pending",
-        coupon: coupon
-            ? {
-                couponId: coupon.couponId,
-                couponCode: coupon.couponCode
-            }
-            : null,
-        subTotal: totals.subtotal,
-        shipping: totals.shipping,
-        discount: totals.discount,
-        grandTotal: totals.grandTotal
-    }
-
-    const order = await Order.create(
-        [orderDataToCreate],
-        session ? {session} : undefined
-    )
-
-    const createdOrder = order[0]
-
-
-    for (const item of cart.items) {
-        await Variant.findByIdAndUpdate(
-            item.variantId._id,
-            {
-                $inc: {
-                    stock: -item.quantity
-                }
-            },
-            session ? {session} : undefined
-        )
-    }
-
-    if (!buyNow) {
-
-        cart.items = []
-        await cart.save(session ? {session} : undefined)
-
-    }
-    return {
-        success: true,
-        orderId: createdOrder._id
-    }
-
-}
-
 export const completeRazorpayOrderService = async (
     userId,
     razorpayOrderId,
@@ -464,7 +184,7 @@ export const completeRazorpayOrderService = async (
         const alreadyPaidOrder = await Order.findOne({
             userId,
             razorpayOrderId,
-            paymentStatus: "Paid"
+            paymentStatus: PAYMENT_STATUS.PAID
         })
 
         if (alreadyPaidOrder) {
@@ -477,7 +197,7 @@ export const completeRazorpayOrderService = async (
         const pendingOrder = await Order.findOne({
             userId,
             razorpayOrderId,
-            paymentStatus: "Pending"
+            paymentStatus: PAYMENT_STATUS.PENDING
         })
 
         if (pendingOrder) {
@@ -543,7 +263,7 @@ export const completeRazorpayOrderService = async (
                 )
             }
 
-            pendingOrder.paymentStatus = "Paid"
+            pendingOrder.paymentStatus = PAYMENT_STATUS.PAID
             pendingOrder.razorpayPaymentId = razorpayPaymentId
             pendingOrder.razorpaySignature = razorpaySignature
 
@@ -575,8 +295,8 @@ export const completeRazorpayOrderService = async (
             userId,
             {
                 addressId,
-                paymentMethod: "RAZORPAY",
-                paymentStatus: "Paid",
+                paymentMethod: PAYMENT_METHOD.RAZORPAY,
+                paymentStatus: PAYMENT_STATUS.PAID,
                 razorpayOrderId,
                 razorpayPaymentId,
                 coupon: appliedCoupon,
@@ -602,301 +322,6 @@ export const completeRazorpayOrderService = async (
             message: "Unable to complete Razorpay order"
         }
     }
-}
-export const createPendingOrderService = async (userId, orderData, appliedCoupon = null, buyNow = null) => {
-
-    const {
-        addressId,
-        paymentMethod,
-        razorpayOrderId = null
-    } = orderData
-
-    let cart
-
-    if (buyNow) {
-
-        const product = await Product.findById(buyNow.productId)
-        const variant = await Variant.findById(buyNow.variantId)
-
-        if (
-            !product ||
-            !product.isListed ||
-            !variant ||
-            !variant.isListed
-        ) {
-            return {
-                success: false,
-                message: "Product unavailable"
-            }
-        }
-
-        if (variant.stock <= 0) {
-            return {
-                success: false,
-                message: "Out of stock"
-            }
-        }
-
-        cart = {
-            items: [{
-                productId: product,
-                variantId: variant,
-                quantity: 1
-            }]
-        }
-
-    } else {
-
-        cart = await Cart.findOne({userId})
-            .populate("items.productId")
-            .populate("items.variantId")
-
-        if (!cart || cart.items.length === 0) {
-            return {
-                success: false,
-                message: "Cart is empty"
-            }
-        }
-    }
-
-    const address = await Address.findOne({
-        _id: addressId,
-        userId
-    })
-
-    if (!address) {
-        return {
-            success: false,
-            message: "Address not found"
-        }
-    }
-
-    for (const item of cart.items) {
-
-        item.offer = await calculateBestOffer(
-            item.productId,
-            item.variantId
-        )
-    }
-
-    for (const item of cart.items) {
-
-        if (item.variantId.stock < item.quantity) {
-            return {
-                success: false,
-                message: `${item.productId.productName} is out of stock`
-            }
-        }
-    }
-
-    let couponDiscount = 0
-
-    if (appliedCoupon?.couponCode) {
-
-        const couponResult = await applyCouponService(
-            userId,
-            appliedCoupon.couponCode,
-            calculateCartTotals(cart).subtotal
-        )
-
-        if (!couponResult.success) {
-            return {
-                success: false,
-                message: couponResult.message
-            }
-        }
-
-        couponDiscount = couponResult.couponDiscount
-    }
-
-    const totals = calculateCartTotals(
-        cart,
-        couponDiscount
-    )
-
-    const orderItems = await Promise.all(
-        cart.items.map(async (item) => {
-
-            const offer = await calculateBestOffer(
-                item.productId,
-                item.variantId
-            )
-
-            return {
-                productId: item.productId._id,
-
-                variantId: item.variantId._id,
-
-                productName: item.productId.productName,
-
-                variantName: item.variantId.variantName,
-
-                productImage: item.variantId.variantImage[0],
-
-                quantity: item.quantity,
-
-                regularPrice: item.variantId.regularPrice,
-
-                salePrice: offer.finalPrice,
-
-                offerDiscount: offer.discountAmount * item.quantity,
-
-                totalPrice:
-                    offer.finalPrice * item.quantity,
-
-                status: "Pending"
-            }
-        })
-    )
-
-    const order = await Order.create({
-
-        orderId: generateOrderId(),
-
-        userId,
-
-        items: orderItems,
-
-        address: {
-            name: address.name,
-            houseName: address.houseName,
-            street: address.street,
-            city: address.city,
-            state: address.state,
-            country: address.country,
-            phone: address.phone,
-            pincode: address.pincode
-        },
-
-        paymentMethod,
-
-        paymentStatus: "Pending",
-
-        razorpayOrderId,
-
-        razorpayPaymentId: null,
-
-        orderStatus: "Pending",
-
-        coupon: appliedCoupon
-            ? {
-                couponId: appliedCoupon.couponId,
-                couponCode: appliedCoupon.couponCode
-            }
-            : null,
-
-        subTotal: totals.subtotal,
-
-        shipping: totals.shipping,
-
-        discount: totals.discount,
-
-        grandTotal: totals.grandTotal
-    })
-
-    return {
-        success: true,
-        order
-    }
-}
-
-export const getUserOrders = async (userId, page = 1, limit = 5) => {
-
-    const skip = (page - 1) * limit
-
-    const filter = {
-        userId
-    }
-
-    const totalOrders = await Order.countDocuments(filter)
-
-    const orders = await Order.find(filter).sort({createdAt: -1}).skip(skip).limit(limit)
-
-    return {
-        orders,
-        totalPages: Math.ceil(totalOrders / limit),
-        currentPage: page
-    }
-}
-
-export const getOrderDetailsService = async (userId, orderId) => {
-
-    const order = await Order.findOne({
-        _id: orderId,
-        userId
-    })
-
-    if (!order) {
-        return {
-            success: false
-        }
-    }
-
-    return {
-        success: true,
-        order
-    }
-}
-
-const recalculateOrderTotals = (order) => {
-
-    const activeItems = order.items.filter(
-        item => !["Cancelled", "Returned"].includes(item.status)
-    )
-
-    const subtotal = activeItems.reduce((total, item) => total + item.totalPrice, 0)
-
-    order.subTotal = subtotal
-
-    order.shipping = subtotal > 0 && subtotal < FREE_SHIPPING_LIMIT ? SHIPPING_CHARGE : 0
-
-    order.discount = Math.min(order.discount || 0, subtotal)
-
-    order.grandTotal = order.subTotal - order.discount + order.shipping
-}
-
-const calculateOverallOrderStatus = (items) => {
-
-    const activeItems = items.filter(item => !["Cancelled", "Returned"].includes(item.status))
-
-    if (items.every(item => item.status === "Cancelled")) {
-        return "Cancelled"
-    }
-
-    if (activeItems.some(item => item.status === "Return Requested")) {
-        return "Return Requested";
-    }
-
-    if (items.every(item => item.status === "Returned")) {
-        return "Returned"
-    }
-
-    if (activeItems.length === 0) {
-        return "Delivered"
-    }
-
-    if (activeItems.every(item => item.status === "Delivered")) {
-        return "Delivered"
-    }
-
-    if (activeItems.some(item => item.status === "Out For Delivery")) {
-        return "Out For Delivery"
-    }
-
-    if (activeItems.some(item => item.status === "Shipped")) {
-        return "Shipped"
-    }
-
-    if (activeItems.some(item => item.status === "Processing")) {
-        return "Processing"
-    }
-
-    if (activeItems.some(item => item.status === "Pending")) {
-        return "Pending"
-    }
-
-    return "Pending"
-
 }
 
 export const cancelOrderItemService = async (userId, orderId, itemId, cancelReason) => {
@@ -951,15 +376,15 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     item.cancelReason = cancelReason
 
-    order.orderStatus = calculateOverallOrderStatus(order.items)
-
     const previousGrandTotal = order.grandTotal
 
-    recalculateOrderTotals(order)
+    order.orderStatus = calculateOverallOrderStatus(order.items)
+
+    await recalculateOrderTotals(order)
 
     order.orderStatus = calculateOverallOrderStatus(order.items)
 
-    if (order.paymentStatus === "Paid") {
+    if (order.paymentStatus === PAYMENT_STATUS.PAID) {
 
         const refundAmount = previousGrandTotal - order.grandTotal
 
@@ -979,62 +404,6 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
 
     return {
         success: true
-    }
-}
-
-export const getAllOrders = async (page = 1, limit = 5, search = "", status = "", sort = "newest") => {
-
-    const skip = (page - 1) * limit
-
-    let query = {}
-
-    if (status === "Failed") {
-        query.paymentStatus = "Failed";
-    } else if (status) {
-        query.orderStatus = status;
-    }
-
-    if (search.trim()) {
-
-        const users = await User.find({
-            name: {
-                $regex: search,
-                $options: "i"
-            }
-        })
-
-        const userIds = users.map(user => user._id)
-
-        query.$or = [
-            {
-                orderId: {
-                    $regex: search,
-                    $options: "i"
-                }
-            },
-            {
-                userId: {
-                    $in: userIds
-                }
-            }
-        ]
-    }
-
-    let sortOption = {createdAt: -1}
-
-    if (sort === "oldest") {
-        sortOption = {createdAt: 1}
-    }
-
-    const totalOrders = await Order.countDocuments(query)
-
-    const orders = await Order.find(query).populate("userId").sort(sortOption).skip(skip).limit(limit)
-
-    return {
-        orders,
-        currentPage: page,
-        totalPages: Math.ceil(totalOrders / limit),
-        search
     }
 }
 
@@ -1064,8 +433,8 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
     }
 
     if (
-        order.paymentMethod === "RAZORPAY" &&
-        order.paymentStatus !== "Paid"
+        order.paymentMethod === PAYMENT_METHOD.RAZORPAY &&
+        order.paymentStatus !== PAYMENT_STATUS.PAID
     ) {
         throw new Error(
             "Cannot update order status until payment is completed"
@@ -1083,9 +452,54 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
 
-        if (newStatus === "Delivered" && order.paymentMethod === "COD") {
-            order.paymentStatus = "Paid"
+        if (newStatus === "Delivered" && order.paymentMethod === PAYMENT_METHOD.COD) {
+            order.paymentStatus = PAYMENT_STATUS.PAID
         }
+
+        // if (item.status === "Return Requested" && newStatus === "Returned") {
+
+        //     await Variant.findByIdAndUpdate(item.variantId, {
+        //         $inc: {
+        //             stock: item.quantity
+        //         }
+        //     })
+
+        //     if (order.paymentStatus === PAYMENT_STATUS.PAID) {
+
+        //         const itemDiscount =
+        //             order.subTotal > 0
+        //                 ? (item.totalPrice / order.subTotal) * order.discount
+        //                 : 0
+
+        //         let refundAmount = item.totalPrice - itemDiscount
+
+        //         const remainingActiveItems = order.items.filter(orderItem => {
+
+        //             if (orderItem._id.toString() === item._id.toString()) {
+        //                 return false
+        //             }
+
+        //             const status = formData[`status_${orderItem._id}`] || orderItem.status
+
+        //             return !["Cancelled", "Returned"].includes(status)
+        //         })
+
+        //         if (remainingActiveItems.length === 0) {
+        //             refundAmount += order.shipping
+        //         }
+
+        //         await creditWallet(
+        //             order.userId,
+        //             refundAmount,
+        //             `Refund for returned product - ${item.productName}`,
+        //             order._id,
+        //             "Refund"
+        //         )
+
+        //     }
+
+        //     item.returnedAt = new Date()
+        // }
 
         if (item.status === "Return Requested" && newStatus === "Returned") {
 
@@ -1095,41 +509,30 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                 }
             })
 
-            if (order.paymentStatus === "Paid") {
+            item.status = newStatus
+            item.returnedAt = new Date()
 
-                const itemDiscount =
-                    order.subTotal > 0
-                        ? (item.totalPrice / order.subTotal) * order.discount
-                        : 0
+            const previousGrandTotal = order.grandTotal
 
-                let refundAmount = item.totalPrice - itemDiscount
+            await recalculateOrderTotals(order)
 
-                const remainingActiveItems = order.items.filter(orderItem => {
+            if (order.paymentStatus === PAYMENT_STATUS.PAID) {
 
-                    if (orderItem._id.toString() === item._id.toString()) {
-                        return false
-                    }
+                const refundAmount = previousGrandTotal - order.grandTotal
 
-                    const status = formData[`status_${orderItem._id}`] || orderItem.status
+                if (refundAmount > 0) {
 
-                    return !["Cancelled", "Returned"].includes(status)
-                })
-
-                if (remainingActiveItems.length === 0) {
-                    refundAmount += order.shipping
+                    await creditWallet(
+                        order.userId,
+                        refundAmount,
+                        `Refund for returned product - ${item.productName}`,
+                        order._id,
+                        "Refund"
+                    )
                 }
-
-                await creditWallet(
-                    order.userId,
-                    refundAmount,
-                    `Refund for returned product - ${item.productName}`,
-                    order._id,
-                    "Refund"
-                )
-
             }
 
-            item.returnedAt = new Date()
+            continue
         }
 
         if (
@@ -1143,40 +546,30 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
                 }
             })
 
-            if (order.paymentStatus === "Paid") {
+            const previousGrandTotal = order.grandTotal
 
-                const itemDiscount =
-                    order.subTotal > 0
-                        ? (item.totalPrice / order.subTotal) * order.discount
-                        : 0
+            item.status = newStatus
+            item.cancelledAt = new Date()
 
-                let refundAmount = item.totalPrice - itemDiscount
+            await recalculateOrderTotals(order)
 
-                const remainingActiveItems = order.items.filter(orderItem => {
-                    if (orderItem._id.toString() === item._id.toString()) {
-                        return false
-                    }
+            if (order.paymentStatus === PAYMENT_STATUS.PAID) {
 
-                    const status =
-                        formData[`status_${orderItem._id}`] || orderItem.status
+                const refundAmount = previousGrandTotal - order.grandTotal
 
-                    return !["Cancelled", "Returned"].includes(status)
-                })
+                if (refundAmount > 0) {
 
-                if (remainingActiveItems.length === 0) {
-                    refundAmount += order.shipping
+                    await creditWallet(
+                        order.userId,
+                        refundAmount,
+                        `Refund for cancelled product - ${item.productName}`,
+                        order._id,
+                        "Refund"
+                    )
                 }
-
-                await creditWallet(
-                    order.userId,
-                    refundAmount,
-                    `Refund for cancelled product - ${item.productName}`,
-                    order._id,
-                    "Refund"
-                )
             }
 
-            item.cancelledAt = new Date()
+            continue
         }
 
         item.status = newStatus
@@ -1289,8 +682,8 @@ export const payWithWalletService = async (
             userId,
             {
                 ...orderData,
-                paymentMethod: "WALLET",
-                paymentStatus: "Paid",
+                paymentMethod: PAYMENT_METHOD.WALLET,
+                paymentStatus: PAYMENT_STATUS.PAID,
                 coupon: appliedCoupon,
                 buyNow
             },
@@ -1336,4 +729,3 @@ export const payWithWalletService = async (
 
     }
 }
-

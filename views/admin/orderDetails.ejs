@@ -1015,13 +1015,14 @@
                             </div>
 
                             <div class="current-state-highlight">
-
-                                Current State : <span>
-
-                                    <%= order.orderStatus %>
-
+                                Current State :
+                                <span>
+                                    <% if (order.paymentMethod==="RAZORPAY" && order.paymentStatus==="Failed" ) { %>
+                                        Payment Failed
+                                        <% } else { %>
+                                            <%= order.orderStatus %>
+                                                <% } %>
                                 </span>
-
                             </div>
 
                             <% if (paymentBlocked) { %>

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PAYMENT_STATUS } from "../constants/orderConstants.js";
 
 const walletTopupSchema = new mongoose.Schema({
 
@@ -30,8 +31,12 @@ const walletTopupSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Pending", "Paid", "Failed"],
-        default: "Pending"
+        enum: [
+            PAYMENT_STATUS.PENDING,
+            PAYMENT_STATUS.PAID,
+            PAYMENT_STATUS.FAILED
+        ],
+        default: PAYMENT_STATUS.PENDING
     }
 
 }, {

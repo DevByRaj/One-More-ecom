@@ -5,6 +5,10 @@ import Variant from "../../models/variantModel.js";
 import {createRazorpayOrderService, retryRazorpayOrderService} from "../../services/paymentService.js";
 import {getCheckoutData, createPendingOrderService, completeRazorpayOrderService} from "../../services/orderService.js";
 import {processReferralRewardService} from "../../services/referralOfferService.js";
+import {
+    PAYMENT_STATUS,
+    PAYMENT_METHOD
+} from "../../constants/orderConstants.js"
 
 export const createRazorpayOrder = async (req, res) => {
     try {
@@ -49,7 +53,7 @@ export const createRazorpayOrder = async (req, res) => {
             userId,
             {
                 addressId,
-                paymentMethod: "RAZORPAY",
+                paymentMethod: PAYMENT_METHOD.RAZORPAY,
                 razorpayOrderId: razorpayOrder.id
             },
             appliedCoupon,
@@ -151,8 +155,8 @@ export const getPaymentFailed = async (req, res) => {
             return res.redirect("/orders")
         }
 
-        if (order.paymentStatus !== "Paid") {
-            order.paymentStatus = "Failed"
+        if (order.paymentStatus !== PAYMENT_STATUS.PAID) {
+            order.paymentStatus = PAYMENT_STATUS.FAILED
             await order.save()
         }
 
@@ -185,7 +189,7 @@ export const retryPayment = async (req, res) => {
             })
         }
 
-        if (order.paymentStatus === "Paid") {
+        if (order.paymentStatus === PAYMENT_STATUS.PAID) {
             return res.json({
                 success: false,
                 message: "Order is already paid"
@@ -227,7 +231,7 @@ export const retryPayment = async (req, res) => {
         const razorpayOrder = await retryRazorpayOrderService(order.grandTotal)
 
         order.razorpayOrderId = razorpayOrder.id
-        order.paymentStatus = "Pending"
+        order.paymentStatus = PAYMENT_STATUS.PENDING
 
         await order.save()
 

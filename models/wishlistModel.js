@@ -1,5 +1,4 @@
-import mongoose, {mongo} from "mongoose";
-import Variant from "./variantModel.js";
+import mongoose from "mongoose";
 
 const wishlistSchema = new mongoose.Schema({
 
