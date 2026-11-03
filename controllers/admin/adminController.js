@@ -1,7 +1,6 @@
 import User from "../../models/userModel.js"
 import Address from "../../models/addressModel.js"
 import Category from "../../models/categoryModel.js"
-import categoryModel from "../../models/categoryModel.js"
 import Product from "../../models/productModel.js"
 import Brand from "../../models/brandModel.js"
 import Variant from "../../models/variantModel.js"
