@@ -14,8 +14,6 @@ import {generateInvoice} from "../../utils/invoiceGenerator.js"
 
 export const getBuyNow = async(req, res) =>{
     try {
-
-        const userId = req.session.user
         
         const {productId, variantId} = req.query
 

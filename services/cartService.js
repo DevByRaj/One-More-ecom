@@ -99,7 +99,7 @@ export const addProductToCart = async (userId, cartData) => {
 
         await cart.save()
 
-    const result = await Wishlist.updateOne(
+        await Wishlist.updateOne(
         {userId},
         {
             $pull: {
