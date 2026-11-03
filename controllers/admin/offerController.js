@@ -1,4 +1,3 @@
-import productModel from "../../models/productModel.js";
 import {
     getOfferListService,
     getAddOfferService,

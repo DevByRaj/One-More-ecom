@@ -1366,7 +1366,7 @@ export const getSingleAddress = async (req, res) => {
   try {
     const address = await Address.findById(req.params.id);
     res.json(address);
-  } catch (error) {
+  } catch {
     res.status(500).json({message: "Error fetching address"});
   }
 }
@@ -1488,7 +1488,7 @@ export const checkUserStatus = async (req, res) => {
     }
     res.status(200).json({ok: true})
 
-  } catch (error) {
+  } catch {
     res.status(500).json({error: true})
 
   }
