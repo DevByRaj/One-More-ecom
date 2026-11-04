@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js"
 import {
     addProductToCart,
     getUserCart,
@@ -14,15 +15,10 @@ export const addToCart = async (req, res) => {
 
         const userId = req.session.user
 
-        console.log("ADD TO CART BODY:", req.body);
-
         const result = await addProductToCart(
                 userId,
                 req.body
             )
-
-        
-
         if (!result.success) {
 
             return res.status(400).json({
@@ -39,8 +35,10 @@ export const addToCart = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to add product to cart", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false,
@@ -76,8 +74,10 @@ export const getCart = async (req, res) => {
         )
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to load user cart", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/")
     }
@@ -96,8 +96,10 @@ export const updateCartQuantity = async (req, res) => {
         return res.json(result)
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to update cart quantity", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false
@@ -120,8 +122,10 @@ export const removeCartItem = async (req, res) => {
         return res.redirect("/cart")
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to remove cart item", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/cart")
     }
@@ -139,7 +143,10 @@ export const saveForLater = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to save cart item for later", {
+            message: error.message,
+            stack: error.stack
+        })
         return res.status(500).json({
             success: false
         })
@@ -157,7 +164,10 @@ export const moveSavedItemToCart = async (req, res) => {
         return res.json(result)
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to move saved item to cart",{
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false,
@@ -175,8 +185,10 @@ export const removeSaveditem = async(req, res) =>{
         return res.json(result)
         
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to remove saved cart item", {
+            message: error.message,
+            stack: error.stack
+        })
         
         return res.status(500).json({
             success: false,

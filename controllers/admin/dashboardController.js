@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js"
 import Order from "../../models/orderModel.js"
 import User from "../../models/userModel.js"
 import {
@@ -292,9 +293,11 @@ export const getDashboard = async (req, res) => {
         return res.redirect(`/admin/dashboard?year=${year}&filter=yearly`)
         
     } catch (error) {
+        logger.error("Failed to load admin dashboard", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log("DASHBOARD ERROR:", error);
-
-        return res.status(500).send("Dashboard Error");
+        return res.status(500).send("Dashboard Error")
     }
 }

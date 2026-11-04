@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import crypto from "crypto"
 import Order from "../../models/orderModel.js";
 import Product from "../../models/productModel.js"
@@ -75,8 +76,10 @@ export const createRazorpayOrder = async (req, res) => {
         })
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to create razorpay order", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.json({
             success: false,
@@ -131,8 +134,10 @@ export const verifyPayment = async (req, res) => {
         return res.json(result)
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to verify Razorpay payment",{
+            message: error.message,
+            stack: error.stack
+        })
 
         res.json({
             success: false
@@ -167,7 +172,10 @@ export const getPaymentFailed = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load payment failed page", {
+            message: error.message,
+            stack: error.stack
+        })
 
         res.redirect("/orders")
     }
@@ -243,8 +251,10 @@ export const retryPayment = async (req, res) => {
         })
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to retry Razorpay payment", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false,

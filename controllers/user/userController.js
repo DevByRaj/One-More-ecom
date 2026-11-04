@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js"
 import User from "../../models/userModel.js"
 import {findUserByEmail, hashPassword, sendOTP, comparePassword, sendForgotPasswordOTP, resetUserPassword, loginUser} from "../../services/authService.js"
 import {validationResult} from "express-validator"
@@ -74,7 +75,10 @@ export const postSignup = async (req, res) => {
     res.redirect(`/verify-otp?email=${email}&type=signup`)
 
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to register user", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("user/signup", {
       errors: [{msg: "something went wrong. Please try again.", path: "general"}],
@@ -167,8 +171,10 @@ export const getVerifyOTP = async (req, res) => {
     })
 
   } catch (error) {
-
-    console.log(error)
+    logger.error("Failed to load OTP verification page", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/login")
   }
@@ -384,8 +390,11 @@ export const verifyOTP = async (req, res) => {
 
     return res.redirect("/login?msg=signup-success")
 
-  } catch (err) {
-    console.log("OTP Error:", err);
+  } catch (error) {
+    logger.error("OTP verification failed", {
+      message: error.message,
+      stack: error.stack
+    })
 
     const email = req.body?.email || ""
     const type = req.body?.type || "signup"
@@ -396,7 +405,6 @@ export const verifyOTP = async (req, res) => {
       error: "Something went wrong. Please try again.",
       remainingSeconds: 0
     })
-
   }
 }
 
@@ -441,7 +449,10 @@ export const postLogin = async (req, res) => {
 
     req.session.regenerate((err) => {
       if (err) {
-        console.log(err)
+        logger.error("Failed to regenerate session during login", {
+          message: err.message,
+          stack: err.stack
+        })
         return res.redirect("/login")
       }
       req.session.user = user._id
@@ -453,7 +464,10 @@ export const postLogin = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("User login failed", {
+      message: error.message,
+      stack: error.stack
+    })
     res.render("user/login", {
       errors: {general: 'Something went Wrong'},
       success: null,
@@ -527,8 +541,10 @@ export const getHome = async (req, res) => {
     })
 
   } catch (error) {
-
-    console.error("user/home", error)
+    logger.error("Failed to load home page", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("user/home", {
       products: [],
@@ -545,7 +561,11 @@ export const getLogout = (req, res) => {
 
   req.session.destroy((err) => {
     if (err) {
-      console.log("logout error:", err)
+      logger.error("Failed to destroy user session during logout", {
+        message: err.message,
+        stack: err.stack
+      })
+
       return res.redirect("/")
     }
     res.clearCookie("onemore.sid")
@@ -574,7 +594,11 @@ export const getProfile = async (req, res) => {
     res.render("user/profile", {user, success})
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load user profile", {
+      message: error.message,
+      stack: error.stack
+    })
+
     res.render("user/profile", {
       user: null,
       success: null,
@@ -600,7 +624,11 @@ export const getEditProfile = async (req, res) => {
       message
     })
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load edit profile page", {
+      message: error.message,
+      stack: error.stack
+    })
+
     res.status(500).render("user/editProfile", {
       user: null,
       error: "Something went worng. Please try again.",
@@ -742,7 +770,10 @@ export const postEditProfile = async (req, res) => {
     return res.redirect("/profile")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to update user profile", {
+      message: error.message,
+      stack: error.stack
+    })
 
     const user = await User.findById(req.session.user)
 
@@ -770,9 +801,12 @@ export const getAddressPage = async (req, res) => {
       error
     });
   } catch (error) {
-    console.log(error);
-    res.redirect("/address?error=server")
+    logger.error("Failed to load address page", {
+      message: error.message,
+      stack: error.stack
+    })
 
+    res.redirect("/address?error=server")
   }
 }
 
@@ -933,8 +967,10 @@ export const postAddAddress = async (req, res) => {
     res.redirect("/address");
 
   } catch (error) {
-
-    console.log(error);
+    logger.error("Failed to save user address", {
+      message: error.message,
+      stack: error.stack
+    })
 
     res.status(500).send("error saving address");
   }
@@ -1039,8 +1075,10 @@ export const postAddAddressFromCheckout = async (req, res) => {
     })
 
   } catch (error) {
-
-    console.log("Checkout address error:", error);
+    logger.error("Failed to add address from checkout", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.status(500).json({
       success: false,
@@ -1082,7 +1120,11 @@ export const deleteAddress = async (req, res) => {
     return res.redirect("/address")
 
   } catch (error) {
-    console.log("Delete address error:", error)
+    logger.error("Failed to delete user address", {
+      message: error.message,
+      stack: error.stack
+    })
+
     return res.redirect("/address?error=server")
   }
 }
@@ -1107,10 +1149,12 @@ export const setDefaultAddress = async (req, res) => {
     res.redirect("/address")
 
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to set default address", {
+      message: error.message,
+      stack: error.stack
+    })
+
     res.redirect("/address?error=server")
-
-
   }
 }
 
@@ -1135,12 +1179,14 @@ export const postForgotPassword = async (req, res) => {
     res.redirect(`/verify-otp?email=${email}&type=forgot`)
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to process forgot password request", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("user/forgotPassword", {
       error: "someting went worng"
     })
-
   }
 }
 
@@ -1188,13 +1234,15 @@ export const postResetPassword = async (req, res) => {
     res.redirect("/login?reset=success")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to reset user password", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("user/resetPassword", {
       email: req.body.email,
       error: "Something went wrong"
     })
-
   }
 }
 
@@ -1342,8 +1390,6 @@ export const resendOTP = async (req, res) => {
 
     await sendOtpEmail(email, otp)
 
-    console.log("resend otp:", otp)
-
     res.render("user/verifyOtp", {
       email,
       type,
@@ -1352,7 +1398,10 @@ export const resendOTP = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to resend OTP", {
+      message: error.message,
+      stack: error.stack
+    })
 
     res.render("user/verifyOtp", {
       email: "",
@@ -1366,7 +1415,12 @@ export const getSingleAddress = async (req, res) => {
   try {
     const address = await Address.findById(req.params.id);
     res.json(address);
-  } catch {
+  } catch (error) {
+    logger.error("Failed to fetch address", {
+      message: error.message,
+      stack: error.stack
+    })
+
     res.status(500).json({message: "Error fetching address"});
   }
 }
@@ -1388,8 +1442,10 @@ export const getChangePassword = async (req, res) => {
     })
 
   } catch (error) {
-
-    console.log(error);
+    logger.error("Failed to load change password page", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/profile")
   }
@@ -1461,11 +1517,12 @@ export const postChangePassword = async (req, res) => {
     )
 
   } catch (error) {
-
-    console.log(error)
+    logger.error("Failed to change user password", {
+      message: error.message,
+      stack: error.stack
+    })
 
     const user = await User.findById(req.session.user)
-
     return res.render("user/changePassword", {
       user,
       error: "Something went wrong"
@@ -1488,9 +1545,13 @@ export const checkUserStatus = async (req, res) => {
     }
     res.status(200).json({ok: true})
 
-  } catch {
-    res.status(500).json({error: true})
+  } catch (error) {
+    logger.error("Failed to check user status", {
+      message: error.message,
+      stack: error.stack
+    })
 
+    res.status(500).json({error: true});
   }
 }
 
@@ -1514,11 +1575,13 @@ export const getShop = async (req, res) => {
     res.render("user/shop", {
       ...shopData, query: req.query, wishlist
     })
-  } catch(error){
+  } catch (error) {
+    logger.error("Failed to load shop page", {
+      message: error.message,
+      stack: error.stack
+    })
 
-    console.log(error)
-
-    res.redirect('/')
+    res.redirect("/")
   }
 }
 
@@ -1543,7 +1606,10 @@ export const getProductDetails = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load product details", {
+      message: error.message,
+      stack: error.stack
+    })
 
     res.redirect("/shop")
   }
@@ -1552,11 +1618,13 @@ export const getProductDetails = async (req, res) => {
 export const getContact = async(req, res) =>{
   try{
     res.render('user/contact')
-  } catch(error){
-    console.log("Error loading contact page:", error);
+  } catch (error) {
+    logger.error("Failed to load contact page", {
+      message: error.message,
+      stack: error.stack
+    })
 
-    res.state(500).send("Internal Server Error")
-    
+    res.status(500).send("Internal Server Error")
   }
 }
 
@@ -1564,9 +1632,12 @@ export const getAbout = async(req, res) =>{
   try {
     res.render("user/about")
   } catch (error) {
-    console.log("Error loading about page",error);
-    
-    res.state(500).send("Internal server Error")
+    logger.error("Failed to load about page", {
+      message: error.message,
+      stack: error.stack
+    })
+
+    res.status(500).send("Internal Server Error")
   }
 }
 

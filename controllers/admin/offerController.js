@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import {
     getOfferListService,
     getAddOfferService,
@@ -25,9 +26,12 @@ export const  getOfferList = async(req, res) =>{
         })
         
     } catch (error) {
+        logger.error("Failed to fetch admin offer list", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(error);
-        return res.redirect("/admin/pageerror")        
+        return res.redirect("/admin/pageerror")
     }
 }
 
@@ -49,7 +53,11 @@ export const getAddOffer = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load add offer page", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/admin/pageerror")
     }
 }
@@ -75,7 +83,11 @@ export const addOffer = async(req, res) =>{
         return res.redirect("/admin/offers")
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to create offer", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/admin/pageerror")
     }
 }
@@ -100,7 +112,11 @@ export const getEditOffer = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load edit offer page", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/admin/pageerror")
     }
 }
@@ -131,7 +147,11 @@ export const updateOffer = async(req, res) =>{
         return res.redirect("/admin/offers")
         
     } catch (error) {
-        console.log(error)
+        logger.error("Failed to update offer",{
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/admin/pageerror")
     }
 }
@@ -149,7 +169,11 @@ export const deleteOffer = async(req, res) =>{
         return res.redirect("/admin/offers")
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to delete offer", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/admin/pageerror")
     }
 }

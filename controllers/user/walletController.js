@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js"
 import { getWalletService } from "../../services/walletService.js"
 import { payWithWalletService } from "../../services/orderService.js"
 import { createWalletTopupOrderService, verifyWalletTopupService } from "../../services/walletService.js"
@@ -13,7 +14,10 @@ export const getWallet = async(req, res) =>{
             wallet
         })
     } catch(error){
-        console.log(error);
+        logger.error("Failed to load user wallet", {
+            message: error.message,
+            stack: error.stack
+        })
         
         return res.redirect("/")
     }
@@ -40,8 +44,10 @@ export const payWithWallet = async (req, res) => {
         return res.json(result)
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Wallet payment failed", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.json({
             success: false,
@@ -66,8 +72,10 @@ export const createWalletTopupOrder = async(req, res) =>{
         res.json(result)
         
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to create wallet top-up order", {
+            message: error.message,
+            stack: error.stack
+        })
         
         res.json({
             success: false
@@ -83,8 +91,10 @@ export const verifyWalletTopupPayment = async(req, res) =>{
         res.json(result)
         
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to verify wallet top-up payment", {
+            message: error.message,
+            stack: error.stack
+        })
 
         res.json({
             success: false

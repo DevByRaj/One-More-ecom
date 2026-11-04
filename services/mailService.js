@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 import nodemailer from "nodemailer";
 
 export const sendOtpEmail = async (email, otp) => {
@@ -26,7 +27,10 @@ export const sendOtpEmail = async (email, otp) => {
     return true
 
   } catch (error) {
-    console.log("Email error:", error);
+    logger.error("Failed to send OTP email",{
+      message: error.message,
+      stack: error.stack
+    })
 
     return false
   }

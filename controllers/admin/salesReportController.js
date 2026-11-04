@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import {getSalesReportService} from "../../services/salesReportService.js";
 import { generateSalesReportPdf } from "../../utils/salesReportPdf.js";
 import { generateSalesReportExcel } from "../../utils/salesReportExcel.js";
@@ -68,7 +69,6 @@ export const getSalesReport = async (req, res) => {
                     req.query.endDate
                 )
 
-                // Invalid date protection
                 if (
                     isNaN(startDate.getTime()) ||
                     isNaN(endDate.getTime())
@@ -79,7 +79,6 @@ export const getSalesReport = async (req, res) => {
                     )
                 }
 
-                // Prevent From Date > To Date
                 if (startDate > endDate) {
 
                     return res.redirect(
@@ -100,13 +99,11 @@ export const getSalesReport = async (req, res) => {
 
         }
 
-
         if (!endDate) {
 
             endDate = new Date(today)
 
         }
-
 
         const startDateString =
             formatDate(startDate)
@@ -122,7 +119,6 @@ export const getSalesReport = async (req, res) => {
                 page,
                 10
             )
-
 
         return res.render(
             "admin/salesReport",
@@ -145,13 +141,12 @@ export const getSalesReport = async (req, res) => {
         )
 
     } catch (error) {
+        logger.error("Failed to generate sales report", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(error)
-
-        return res.redirect(
-            "/admin/dashboard"
-        )
-
+        return res.redirect("/admin/dashboard")
     }
 }
 
@@ -272,15 +267,12 @@ export const downloadSalesReportPdf = async (req, res) => {
         )
 
     } catch (error) {
+        logger.error("Failed to download sales report PDF", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(
-            "Sales report PDF error:",
-            error
-        )
-
-        return res.redirect(
-            "/admin/sales-report"
-        )
+        return res.redirect("/admin/sales-report")
     }
 }
 
@@ -405,15 +397,11 @@ export const downloadSalesReportExcel = async (req, res) => {
         )
 
     } catch (error) {
+        logger.error("Failed to download sales report Excel", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(
-            "Sales report Excel error:",
-            error
-        )
-
-        return res.redirect(
-            "/admin/sales-report"
-        )
-
+        return res.redirect("/admin/sales-report")
     }
 }

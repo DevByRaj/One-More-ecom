@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import { getCouponListService, 
     createCouponService, 
     getCouponByIdService, 
@@ -27,8 +28,10 @@ export const getCouponList = async (req, res) =>{
         })
         
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to fetch admin coupon list",{
+            message: error.message,
+            stack: error.stack
+        })
         
         return res.redirect("/admin/dashboard")
     }
@@ -43,7 +46,10 @@ export const getAddCoupon = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load add coupon page", {
+            message: error.message,
+            stack: error.stack
+        })
         
         return res.redirect("/admin/coupons")
     }
@@ -63,7 +69,10 @@ export const createCoupon = async(req,res) =>{
         req.session.successMessage = "Coupon created successfully"
         return res.redirect("/admin/coupons")
     } catch(error){
-        console.log(error);
+        logger.error("Failed to create coupon", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.render("admin/addCoupon", {
             coupon:null,
@@ -90,8 +99,11 @@ export const getEditCoupon = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
-        
+        logger.error("Failed to load edit coupon page", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/admin/coupons")
     }
 }
@@ -117,17 +129,18 @@ export const updateCoupon = async(req, res) =>{
         return res.redirect("/admin/coupons")
         
     } catch (error) {
+        logger.error("Failed to update coupon", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(error);
-        
-        return res.render("admin/addCoupon",{
-            coupon:{
+        return res.render("admin/addCoupon", {
+            coupon: {
                 _id: req.params.id,
                 ...req.body
             },
             error: "Something went wrong"
         })
-        
     }
 }
 
@@ -145,10 +158,12 @@ export const deleteCoupon = async (req, res) =>{
         return res.redirect("/admin/coupons")
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to delete coupon", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/admin/coupons")
-        
     }
 }
 

@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 import User from "../models/userModel.js";
 
 export const isUserLoggedIn = (req, res, next) =>{
@@ -42,7 +43,10 @@ export const checkBlockedUser = async (req, res, next) => {
         }
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to check blocked user", {
+            message: error.message,
+            stack: error.stack
+        });
         next()
 
     }

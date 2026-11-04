@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 import mongoose from "mongoose"
 import Order from "../models/orderModel.js"
 import Cart from "../models/cartModel.js"
@@ -314,8 +315,10 @@ export const completeRazorpayOrderService = async (
         }
 
     } catch (error) {
-
-        console.log("Complete Razorpay Order Error:", error)
+        logger.error("Failed to complete Razorpay order", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return {
             success: false,
@@ -716,7 +719,10 @@ export const payWithWalletService = async (
 
         await session.abortTransaction()
 
-        console.log(error)
+        logger.error("Wallet payment failed", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return {
             success: false,

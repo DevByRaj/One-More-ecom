@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 import Coupon from "../models/couponModel.js";
 import Order from "../models/orderModel.js"
 
@@ -236,7 +237,10 @@ export const deleteCouponService = async(id) =>{
         }
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to delete coupon", {
+            message: error.message,
+            stack: error.stack
+        });
         
         return{
             success: false,
@@ -387,7 +391,10 @@ export const getAvailableCouponsService = async(userId) =>{
         }
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to fetch available coupons", {
+            message: error.message,
+            stack: error.stack
+        });
         
         return {
             success: false,
