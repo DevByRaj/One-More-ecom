@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 import Cart from "../models/cartModel.js"
 import Wishlist from "../models/wishlistModel.js"
 
@@ -28,7 +29,10 @@ const navbarCounts = async(req, res, next) =>{
         next()
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to fetch navbar counts", {
+            message: error.message,
+            stack: error.stack
+        });
         next()        
     }
 }

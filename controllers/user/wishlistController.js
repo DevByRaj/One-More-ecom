@@ -1,5 +1,5 @@
 import { addToWiishlist, getWishlist, removeWishlistitem, toggleWishlistService } from "../../services/wishlistService.js";
-
+import logger from "../../utils/logger.js";
 
 export const addWishlist = async(req, res) =>{
     try {
@@ -23,7 +23,10 @@ export const addWishlist = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error)
+        logger.error("Failed to add product to wishlist",{
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false,
@@ -44,7 +47,10 @@ export const getWishlistPage = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load wishlist page",{
+            message: error.message,
+            stack: error.message
+        })
         return res.redirect("/")        
     }
 }
@@ -64,7 +70,10 @@ export const removeWishlistProduct = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to remove product from wishlist",{
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false
@@ -82,7 +91,10 @@ export const toggleWishlist = async(req, res) =>{
         return res.json(result)
         
     } catch (error) {
-    console.log(error);
+    logger.error("Failed to toggle wishlist", {
+        message: error.message,
+        stack: error.stack
+    })
 
     return res.status(500).json({
         success: false

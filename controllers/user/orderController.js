@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js"
 import {
     getCheckoutData,
     placeOrderService,
@@ -7,17 +8,17 @@ import {
     returnOrderItemService,
     getOrderStatusInfo
 } from "../../services/orderService.js"
-import { applyCouponService, getAvailableCouponsService } from "../../services/couponService.js"
-import { FREE_SHIPPING_LIMIT } from "../../config/appConfig.js"
+import {applyCouponService, getAvailableCouponsService} from "../../services/couponService.js"
+import {FREE_SHIPPING_LIMIT} from "../../config/appConfig.js"
 import Order from "../../models/orderModel.js"
 import {generateInvoice} from "../../utils/invoiceGenerator.js"
 
-export const getBuyNow = async(req, res) =>{
+export const getBuyNow = async (req, res) => {
     try {
-        
+
         const {productId, variantId} = req.query
 
-        if(!productId || !variantId){
+        if (!productId || !variantId) {
             return res.redirect("/shop")
         }
 
@@ -28,11 +29,13 @@ export const getBuyNow = async(req, res) =>{
         delete req.session.appliedCoupon
 
         return res.redirect("/checkout")
-        
-    } catch (error) {
 
-        console.log(error);
-        
+    } catch (error) {
+        logger.error("Failed to load buy now checkout", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/shop")
     }
 }
@@ -41,8 +44,8 @@ export const getCheckout = async (req, res) => {
     try {
 
         const userId = req.session.user
-        
-        if(req.query.source === "cart"){
+
+        if (req.query.source === "cart") {
             delete req.session.buyNow
         }
 
@@ -66,7 +69,10 @@ export const getCheckout = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load checkout page",{
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/cart")
 
@@ -74,7 +80,7 @@ export const getCheckout = async (req, res) => {
 }
 
 
-export const applyCoupon = async(req, res) =>{
+export const applyCoupon = async (req, res) => {
     try {
 
         const userId = req.session.user
@@ -82,7 +88,7 @@ export const applyCoupon = async(req, res) =>{
 
         const checkout = await getCheckoutData(userId, null, req.session.buyNow || null)
 
-        if(!checkout.success){
+        if (!checkout.success) {
             return res.json({
                 success: false,
                 message: checkout.message || "Unable to load checkout"
@@ -95,14 +101,14 @@ export const applyCoupon = async(req, res) =>{
             checkout.totals.subtotal
         )
 
-        if(!result.success){
+        if (!result.success) {
             return res.json({
                 success: false,
                 message: result.message
             })
         }
 
-        req.session.appliedCoupon ={
+        req.session.appliedCoupon = {
             couponId: result.coupon._id,
             couponCode: result.coupon.couponCode,
             discount: result.couponDiscount
@@ -113,11 +119,13 @@ export const applyCoupon = async(req, res) =>{
             couponCode: result.coupon.couponCode,
             discount: result.couponDiscount
         })
-        
-    } catch (error) {
 
-        console.log(error);
-        
+    } catch (error) {
+        logger.error("Failed to apply coupon",{
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.json({
             success: false,
             message: "Unable to apply coupon"
@@ -125,7 +133,7 @@ export const applyCoupon = async(req, res) =>{
     }
 }
 
-export const removeCoupon = async (req, res) =>{
+export const removeCoupon = async (req, res) => {
     try {
 
         delete req.session.appliedCoupon
@@ -134,15 +142,18 @@ export const removeCoupon = async (req, res) =>{
             success: true,
             message: "Coupon removed"
         })
-        
+
     } catch (error) {
-        console.log(error);
-        
+        logger.error("Failed to remove coupon", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.status(500).json({
             success: false,
             message: "Unable to remove coupon"
         })
-        
+
     }
 }
 
@@ -178,7 +189,10 @@ export const placeOrder = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to place order", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.json({
             success: false,
@@ -206,7 +220,7 @@ export const getOrders = async (req, res) => {
 
         const result = await getUserOrders(userId, page, 5)
 
-        result.orders.forEach(order =>{
+        result.orders.forEach(order => {
             order.statusInfo = getOrderStatusInfo(order)
         })
 
@@ -217,10 +231,12 @@ export const getOrders = async (req, res) => {
         })
 
     } catch (error) {
+        logger.error("Failed to load user orders", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(error);
         return res.redirect("/")
-
     }
 }
 
@@ -287,7 +303,10 @@ export const getOrderDetails = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to load order details",{
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/orders")
 
@@ -315,7 +334,10 @@ export const cancelOrderItem = async (req, res) => {
         return res.redirect(`/orders/${orderId}?page=${page}`)
 
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to cancel order item", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/orders")
 
@@ -348,32 +370,34 @@ export const returnOrderItem = async (req, res) => {
         return res.redirect(`/orders/${orderId}?page=${page}`)
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to return order item",{
+            message: error.message,
+            stack: error.stack
+        })
 
         res.redirect("/orders")
 
     }
 }
 
-export const downloadInvoice = async(req,res) =>{
-    try{
-        
+export const downloadInvoice = async (req, res) => {
+    try {
+
         const userId = req.session.user
         const orderId = req.params.id
-        
+
         const order = await Order.findOne({
             _id: orderId,
             userId
         })
 
-        if(!order){
+        if (!order) {
             return res.redirect("/orders")
         }
 
         const deliveredItems = order.items.filter(item => item.status === "Delivered")
 
-        if(deliveredItems.length === 0){
+        if (deliveredItems.length === 0) {
             return res.redirect(`/orders/${orderId}`)
         }
 
@@ -410,7 +434,7 @@ export const downloadInvoice = async(req,res) =>{
             - invoiceOrder.discount
             + invoiceOrder.shipping
         )
-        
+
         res.setHeader("Content-Type", "application/pdf")
 
         res.setHeader(
@@ -420,15 +444,18 @@ export const downloadInvoice = async(req,res) =>{
 
         generateInvoice(invoiceOrder, res)
 
-    } catch(error){
-        console.log(error);
+    } catch (error) {
+        logger.error("Failed to generate or download invoice", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/orders")
-        
+
     }
 }
 
-export const getPaymentPage = async(req, res) =>{
+export const getPaymentPage = async (req, res) => {
     try {
 
         const userId = req.session.user
@@ -437,7 +464,7 @@ export const getPaymentPage = async(req, res) =>{
 
         const result = await getCheckoutData(userId, req.session.appliedCoupon, req.session.buyNow)
 
-        if(!result.success){
+        if (!result.success) {
             req.session.checkoutError = result.message
             return res.redirect("/cart")
         }
@@ -446,11 +473,11 @@ export const getPaymentPage = async(req, res) =>{
             address => address._id.toString() === addressId
         )
 
-        if(!selectedAddress){
+        if (!selectedAddress) {
             return res.redirect("/checkout")
         }
 
-        return res.render("user/payment",{
+        return res.render("user/payment", {
             address: selectedAddress,
             orderSummary: {
                 subtotal: result.totals.subtotal,
@@ -459,12 +486,14 @@ export const getPaymentPage = async(req, res) =>{
                 total: result.totals.grandTotal
             }
         })
-            
-    } catch (error) {
 
-        console.log(error);
-        
+    } catch (error) {
+        logger.error("Failed to load payment page", {
+            message: error.message,
+            stack: error.stack
+        })
+
         return res.redirect("/checkout")
-        
+
     }
 }

@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import {getAvailableCouponsService} from "../../services/couponService.js";
 
 export const getCoupons = async (req, res) => {
@@ -12,8 +13,10 @@ export const getCoupons = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to fetch available coupons", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/")
 

@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js"
 import User from "../../models/userModel.js"
 import Address from "../../models/addressModel.js"
 import Category from "../../models/categoryModel.js"
@@ -70,8 +71,6 @@ export const getUsers = async (req, res) => {
       user.address = address ? `${address.houseName}, ${address.city}` : "No Address"
     }
 
-    //   console.log("USERS:", users);
-
     const totalPages = Math.ceil(totalUsers / limit)
 
     res.render("admin/users", {
@@ -84,7 +83,10 @@ export const getUsers = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error)
+    logger.error("Failed to load users", {
+      message: error.message,
+      stack: error.stack
+    })
 
     res.render("admin/users", {
       users: [],
@@ -113,7 +115,10 @@ export const toggleUserBlock = async (req, res) => {
     res.redirect("/admin/users")
 
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to toggle user block status", {
+      message: error.message,
+      stack: error.stack
+    })
 
     res.redirect("/admin/users")
 
@@ -153,7 +158,10 @@ export const getCategory = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error)
+    logger.error("Failed to load categories", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("admin/category", {
       categories: [],
@@ -209,7 +217,10 @@ export const postAddCategory = async (req, res) => {
     return res.redirect("/admin/category")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to add category", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("admin/addCategory", {
       category: null,
@@ -235,7 +246,10 @@ export const toggleCategoryStatus = async (req, res) => {
     return res.redirect("/admin/category")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to toggle category status", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/category")
 
@@ -258,7 +272,10 @@ export const getEditCategory = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error)
+    logger.error("Failed to load category for editing", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/category")
 
@@ -309,7 +326,10 @@ export const postEditCategory = async (req, res) => {
     return res.redirect("/admin/category")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to update category", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/category")
 
@@ -350,7 +370,10 @@ export const getBrand = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load brands", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("admin/brand", {
       brands: [],
@@ -409,7 +432,10 @@ export const postAddBrand = async (req, res) => {
     return res.redirect("/admin/brand")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to add brand", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("admin/addBrand", {
       brand: null,
@@ -433,7 +459,10 @@ export const getEditBrand = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load brand for editing", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/brand")
 
@@ -485,7 +514,10 @@ export const postEditBrand = async (req, res) => {
     return res.redirect(("/admin/brand"))
 
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to update brand", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/brand")
 
@@ -511,7 +543,10 @@ export const toggleBrand = async (req, res) => {
     return res.redirect("/admin/brand")
 
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to toggle brand status", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/brand")
 
@@ -585,7 +620,10 @@ export const getProducts = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load products", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.render("admin/products", {
       products: [],
@@ -619,7 +657,10 @@ export const getAddProduct = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load add product page", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/product")
 
@@ -661,7 +702,10 @@ export const postAddProduct = async (req, res) => {
     )
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to add product", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/add-product")
     
@@ -686,7 +730,10 @@ export const toggleProduct = async (req, res) => {
     return res.redirect("/admin/products")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to toggle product status", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
 
@@ -722,7 +769,10 @@ export const getEditProduct = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load product for editing", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
 
@@ -766,10 +816,12 @@ export const postEditProduct = async (req, res) =>{
     return res.redirect("/admin/products")
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to update product", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
-    
   }
 }
 
@@ -791,7 +843,10 @@ export const getVariants = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to load variants", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/dashboard")
 
@@ -811,7 +866,10 @@ export const getAddVariant = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to load add variant page", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
 
@@ -840,7 +898,10 @@ export const postAddVariant = async (req, res) => {
     return res.redirect(`/admin/variants/${req.body.productId}`)
     
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to add variant", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/add-variant")
     
@@ -864,7 +925,10 @@ export const toggleVariantStatus = async (req, res) => {
     return res.redirect(`/admin/variants/${variant.productId}`)
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to toggle variant status", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
 
@@ -891,11 +955,12 @@ export const getEditVariant = async (req, res) => {
     })
 
   } catch (error) {
-
-    console.log(error)
+    logger.error("Failed to load variant for editing", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
-
   }
 }
 
@@ -934,7 +999,10 @@ export const postEditVariant = async (req,res) => {
     return res.redirect(`/admin/variants/${result.productId}`)
 
   } catch (error) {
-    console.log(error)
+    logger.error("Failed to update variant", {
+      message: error.message,
+      stack: error.stack
+    })
 
     return res.redirect("/admin/products")
   }

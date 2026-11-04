@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import { getAllOrders, getAdminOrderDetails, updateOrderItemStatusService} from "../../services/orderService.js";
 
 export const getOrders = async(req, res)=>{
@@ -24,10 +25,12 @@ export const getOrders = async(req, res)=>{
         })
         
     } catch (error) {
-    console.log(error);
-    
-    return res.redirect("/admin")
-        
+        logger.error("Failed to fetch admin orders", {
+            message: error.message,
+            stack: error.stack
+        })
+
+        return res.redirect("/admin")
     }
 }
 
@@ -48,7 +51,10 @@ export const getOrderDetails = async(req, res) =>{
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to fetch admin order details", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/admin/orders")        
         
@@ -67,11 +73,14 @@ export const updateOrderItemStatus = async(req, res) =>{
 
         return res.status(200).json({
             success: true,
-            messaage: "Order status updated successfully"
+            message: "Order status updated successfully"
         })
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to update order item status", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.status(500).json({
             success: false,

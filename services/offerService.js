@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js"
 import Offer from "../models/offerModel.js"
 import Product from "../models/productModel.js"
 import Category from "../models/categoryModel.js"
@@ -17,10 +18,13 @@ export const getOfferListService = async(page, limit) =>{
             currentPage: page,
             totalPages: Math.ceil(totalOffers/limit)
         }
-    } catch(error){
-        console.log(error);
-        
-        return{
+    } catch (error) {
+        logger.error("Failed to fetch offers", {
+            message: error.message,
+            stack: error.stack
+        })
+
+        return {
             success: false,
             message: "Failed to fetch offers."
         }
@@ -45,14 +49,16 @@ export const getAddOfferService = async () => {
         }
         
     } catch (error) {
-        console.log(error);
-        
-        return{
+        logger.error("Failed to load add offer page", {
+            message: error.message,
+            stack: error.stack
+        })
+
+        return {
             success: false,
             message: "Failed to load offer page."
         }
     }
-
 }
 
 export const addOfferService = async (formData) => {
@@ -184,14 +190,17 @@ export const addOfferService = async (formData) => {
         success: true,
         message: "Offer added successfully"
     }
-} catch(error){
-    console.log(error);
-    
-    return{
-        success: false,
-        message: "Failed to add offer"
+    } catch (error) {
+        logger.error("Failed to add offer", {
+            message: error.message,
+            stack: error.stack
+        })
+
+        return {
+            success: false,
+            message: "Failed to add offer"
+        }
     }
-}
 }
 
 export const getEditOfferService = async (offerId) => {
@@ -221,15 +230,16 @@ export const getEditOfferService = async (offerId) => {
         }
 
     } catch (error) {
-        console.log(error);
-        
-        return{
+        logger.error("Failed to load offer for editing", {
+            message: error.message,
+            stack: error.stack
+        })
+
+        return {
             success: false,
             message: "Failed to load offer"
         }
-        
     }
-
 }
 
 export const updateOfferService = async (offerId, formData) => {
@@ -373,16 +383,16 @@ export const updateOfferService = async (offerId, formData) => {
         }
         
     } catch (error) {
+        logger.error("Failed to update offer", {
+            message: error.message,
+            stack: error.stack
+        })
 
-        console.log(error);
-        
         return {
             success: false,
             message: "Failed to update offer"
         }
-        
     }
-
 }
 
 export const deleteOfferService = async (offerId) => {
@@ -405,13 +415,14 @@ export const deleteOfferService = async (offerId) => {
         }
         
     } catch (error) {
-        console.log(error);
-        
-         return{
-            success: false,
-             message: "Failed to delete Offer"
-         }
-        
-    }
+        logger.error("Failed to delete offer", {
+            message: error.message,
+            stack: error.stack
+        })
 
+        return {
+            success: false,
+            message: "Failed to delete Offer"
+        }
+    }
 }

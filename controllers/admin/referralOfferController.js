@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import {
     getReferralOffersService,
     createReferralOfferService,
@@ -17,8 +18,10 @@ export const getReferralOfferList = async (req, res) => {
         })
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to fetch referral offers", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/admin/dashboard")
     }
@@ -50,8 +53,10 @@ export const addReferralOffer = async (req, res) => {
         return res.redirect("/admin/referral-offers")
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to create referral offer", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.render("admin/referralOfferForm", {
             offer: req.body,
@@ -79,8 +84,10 @@ export const getEditReferralOffer = async (req, res) => {
         })
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to load referral offer for editing", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/admin/referral-offers")
     }
@@ -110,8 +117,10 @@ export const updateReferralOffer = async (req, res) => {
         return res.redirect("/admin/referral-offers")
 
     } catch (error) {
-
-        console.log(error)
+        logger.error("Failed to update referral offer", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.render("admin/referralOfferForm", {
             offer: {
@@ -138,8 +147,10 @@ export const deleteReferralOffer = async (req, res) => {
         return res.redirect("/admin/referral-offers")
 
     } catch (error) {
-
-        console.log(error);
+        logger.error("Failed to delete referral offer", {
+            message: error.message,
+            stack: error.stack
+        })
 
         return res.redirect("/admin/referral-offers")
     }

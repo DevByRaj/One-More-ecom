@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 import Offer from "../models/offerModel.js";
 
 export const calculateBestOffer = async(product, variant) =>{
@@ -77,7 +78,10 @@ export const calculateBestOffer = async(product, variant) =>{
         }
         
     } catch (error) {
-        console.log(error);
+        logger.error("Failed to calculate best offer", {
+            message: error.message,
+            stack: error.stack
+        });
         
         return {
             originalPrice: variant.salePrice,

@@ -1,4 +1,4 @@
-
+import logger from "./logger.js";
 import cloudinary from "../config/cloudinary.js";
 import fs from "fs";
 
@@ -6,7 +6,6 @@ export const uploadCloudinary = async (filePath) => {
 
     try {
 
-        console.log("Uploading started...")
 
         const result = await cloudinary.uploader.upload(
             filePath,
@@ -17,8 +16,6 @@ export const uploadCloudinary = async (filePath) => {
             }
         );
 
-        console.log("Upload success")
-
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath)
         }
@@ -26,9 +23,10 @@ export const uploadCloudinary = async (filePath) => {
         return result.secure_url
 
     } catch (error) {
-
-        console.log("Cloudinary Upload Error:");
-        console.log(error);
+        logger.error("Cloudinary upload error details", {
+            message: error.message,
+            stack: error.stack
+        });
 
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath)

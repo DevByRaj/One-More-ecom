@@ -1,5 +1,4 @@
-import "dotenv/config";   // ✅ only this needed
-
+import "dotenv/config";
 import express from "express";
 import userRouter from "./routes/userRoute.js";
 import adminRouter from "./routes/adminRoutes.js";
@@ -15,6 +14,7 @@ import {
 } from "./constants/orderConstants.js"
 
 import navbarCounts from "./middlewares/navbarCounts.js";
+import logger from "./utils/logger.js";
 
 import "./config/passport.js";
 
@@ -79,15 +79,22 @@ app.use((req, res) =>{
 
 const startServer = async () => {
   try {
-    console.log("connecting DB....")
+    logger.info("connecting to database....")
+
     await connectDB();
-    console.log("DB connected")
+
+    logger.info("Database connected successfully")
     const PORT = process.env.PORT || 3000;
+
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      logger.info(`Server running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("Failed to start server:", error);
+    logger.error("Failed to start server", {
+      message: error.message,
+      stack: error.stack
+    });
+
     process.exit(1);
   }
 };
