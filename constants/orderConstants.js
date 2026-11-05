@@ -10,3 +10,14 @@ export const PAYMENT_METHOD = {
     RAZORPAY: "RAZORPAY",
     WALLET: "WALLET"
 }
+
+export const ORDER_STATUS = {
+    PENDING: "Pending",
+    PROCESSING: "Processing",
+    SHIPPED: "Shipped",
+    OUT_FOR_DELIVERY: "Out For Delivery",
+    DELIVERED: "Delivered",
+    CANCELLED: "Cancelled",
+    RETURNED: "Returned",
+    RETURN_REQUESTED: "Return Requested"
+};

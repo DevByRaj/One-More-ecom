@@ -7,7 +7,8 @@ import {creditWallet, getOrCreateWallet} from "./walletService.js"
 import Coupon from "../models/couponModel.js"
 import {
     PAYMENT_STATUS,
-    PAYMENT_METHOD
+    PAYMENT_METHOD,
+    ORDER_STATUS
 } from "../constants/orderConstants.js"
 import {
     recalculateOrderTotals,
@@ -33,46 +34,46 @@ export {
 
 
 export const allowedStatusTransitions = {
-    Pending: [
-        "Pending",
-        "Processing",
-        "Cancelled"
+    [ORDER_STATUS.PENDING]: [
+        ORDER_STATUS.PENDING,
+        ORDER_STATUS.PROCESSING,
+        ORDER_STATUS.CANCELLED
     ],
 
-    Processing: [
-        "Processing",
-        "Shipped",
-        "Cancelled"
+    [ORDER_STATUS.PROCESSING]: [
+        ORDER_STATUS.PROCESSING,
+        ORDER_STATUS.SHIPPED,
+        ORDER_STATUS.CANCELLED
     ],
 
-    Shipped: [
-        "Shipped",
-        "Out For Delivery",
-        "Cancelled"
+    [ORDER_STATUS.SHIPPED]: [
+        ORDER_STATUS.SHIPPED,
+        ORDER_STATUS.OUT_FOR_DELIVERY,
+        ORDER_STATUS.CANCELLED
     ],
 
-    "Out For Delivery": [
-        "Out For Delivery",
-        "Delivered"
+    [ORDER_STATUS.OUT_FOR_DELIVERY]: [
+        ORDER_STATUS.OUT_FOR_DELIVERY,
+        ORDER_STATUS.DELIVERED
     ],
 
-    Delivered: [
-        "Delivered"
+    [ORDER_STATUS.DELIVERED]: [
+        ORDER_STATUS.DELIVERED
     ],
 
-    "Return Requested": [
-        "Return Requested",
-        "Returned"
+    [ORDER_STATUS.RETURN_REQUESTED]: [
+        ORDER_STATUS.RETURN_REQUESTED,
+        ORDER_STATUS.RETURNED
     ],
 
-    Returned: [
-        "Returned"
+    [ORDER_STATUS.RETURNED]: [
+        ORDER_STATUS.RETURNED
     ],
 
-    Cancelled: [
-        "Cancelled"
+    [ORDER_STATUS.CANCELLED]: [
+        ORDER_STATUS.CANCELLED
     ]
-}
+};
 
 export const getOrderStatusInfo = (order) => {
     if (
@@ -97,7 +98,7 @@ export const getOrderStatusInfo = (order) => {
     }
 
     switch (order.orderStatus) {
-        case "Pending":
+        case ORDER_STATUS.PENDING:
             return {
                 title: "Order placed",
                 message: "Your order has been placed.",
@@ -105,7 +106,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.createdAt
             }
 
-        case "Processing":
+        case ORDER_STATUS.PROCESSING:
             return {
                 title: "Processing",
                 message: "Your order is being processed.",
@@ -113,7 +114,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.updatedAt
             }
 
-        case "Shipped":
+        case ORDER_STATUS.SHIPPED:
             return {
                 title: "Shipped",
                 message: "Your order has been shipped.",
@@ -121,7 +122,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.updatedAt
             }
 
-        case "Out For Delivery":
+        case ORDER_STATUS.OUT_FOR_DELIVERY:
             return {
                 title: "Out For Delivery",
                 message: "Your order is out for delivery.",
@@ -129,7 +130,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.updatedAt
             }
 
-        case "Delivered":
+        case ORDER_STATUS.DELIVERED:
             return {
                 title: "Delivered",
                 message: "Your order has been delivered.",
@@ -137,7 +138,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.updatedAt
             }
 
-        case "Cancelled":
+        case ORDER_STATUS.CANCELLED:
             return {
                 title: "Cancelled",
                 message: "Your order has been cancelled.",
@@ -145,7 +146,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.updatedAt
             }
 
-        case "Return Requested":
+        case ORDER_STATUS.RETURN_REQUESTED:
             return {
                 title: "Return Requested",
                 message: "Your return request is under review.",
@@ -153,7 +154,7 @@ export const getOrderStatusInfo = (order) => {
                 date: order.updatedAt
             }
 
-        case "Returned":
+        case ORDER_STATUS.RETURNED:
             return {
                 title: "Returned",
                 message: "Your order has been returned successfully.",
@@ -350,16 +351,17 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
         }
     }
 
-    if (item.status === "Cancelled") {
+    if (item.status === ORDER_STATUS.CANCELLED) {
         return {
             success: false,
             message: "Product is already cancelled"
         }
     }
 
-    if (item.status === "Shipped" ||
-        item.status === "Out For Delivery" ||
-        item.status === "Delivered"
+    if (
+        item.status === ORDER_STATUS.SHIPPED ||
+        item.status === ORDER_STATUS.OUT_FOR_DELIVERY ||
+        item.status === ORDER_STATUS.DELIVERED
     ) {
         return {
             success: false,
@@ -373,7 +375,7 @@ export const cancelOrderItemService = async (userId, orderId, itemId, cancelReas
         }
     })
 
-    item.status = "Cancelled"
+    item.status = ORDER_STATUS.CANCELLED
 
     item.cancelledAt = new Date()
 
@@ -455,56 +457,11 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
             throw new Error(`Invalid status transaction from ${item.status} to ${newStatus}`)
         }
 
-        if (newStatus === "Delivered" && order.paymentMethod === PAYMENT_METHOD.COD) {
+        if (newStatus === ORDER_STATUS.DELIVERED && order.paymentMethod === PAYMENT_METHOD.COD) {
             order.paymentStatus = PAYMENT_STATUS.PAID
         }
 
-        // if (item.status === "Return Requested" && newStatus === "Returned") {
-
-        //     await Variant.findByIdAndUpdate(item.variantId, {
-        //         $inc: {
-        //             stock: item.quantity
-        //         }
-        //     })
-
-        //     if (order.paymentStatus === PAYMENT_STATUS.PAID) {
-
-        //         const itemDiscount =
-        //             order.subTotal > 0
-        //                 ? (item.totalPrice / order.subTotal) * order.discount
-        //                 : 0
-
-        //         let refundAmount = item.totalPrice - itemDiscount
-
-        //         const remainingActiveItems = order.items.filter(orderItem => {
-
-        //             if (orderItem._id.toString() === item._id.toString()) {
-        //                 return false
-        //             }
-
-        //             const status = formData[`status_${orderItem._id}`] || orderItem.status
-
-        //             return !["Cancelled", "Returned"].includes(status)
-        //         })
-
-        //         if (remainingActiveItems.length === 0) {
-        //             refundAmount += order.shipping
-        //         }
-
-        //         await creditWallet(
-        //             order.userId,
-        //             refundAmount,
-        //             `Refund for returned product - ${item.productName}`,
-        //             order._id,
-        //             "Refund"
-        //         )
-
-        //     }
-
-        //     item.returnedAt = new Date()
-        // }
-
-        if (item.status === "Return Requested" && newStatus === "Returned") {
+        if (item.status === ORDER_STATUS.RETURN_REQUESTED && newStatus === ORDER_STATUS.RETURNED) {
 
             await Variant.findByIdAndUpdate(item.variantId, {
                 $inc: {
@@ -539,8 +496,8 @@ export const updateOrderItemStatusService = async (orderId, formData) => {
         }
 
         if (
-            item.status !== "Cancelled" &&
-            newStatus === "Cancelled"
+            item.status !== ORDER_STATUS.CANCELLED &&
+            newStatus === ORDER_STATUS.CANCELLED
         ) {
 
             await Variant.findByIdAndUpdate(item.variantId, {
@@ -607,14 +564,14 @@ export const returnOrderItemService = async (userId, orderId, itemId, returnReas
         }
     }
 
-    if (item.status !== "Delivered") {
+    if (item.status !== ORDER_STATUS.DELIVERED) {
         return {
             success: false,
             message: "Only delivered Product can be Returned"
         }
     }
 
-    item.status = "Return Requested"
+    item.status = ORDER_STATUS.RETURN_REQUESTED
     item.returnReason = returnReason
     item.returnedAt = new Date()
 

@@ -6,7 +6,7 @@ import Variant from "../../models/variantModel.js"
 import Coupon from "../../models/couponModel.js"
 import {calculateCartTotals} from "../cartService.js"
 import {calculateBestOffer} from "../offerCalulationService.js"
-import {PAYMENT_STATUS} from "../../constants/orderConstants.js"
+import {PAYMENT_STATUS, ORDER_STATUS} from "../../constants/orderConstants.js"
 import { applyCouponService } from "../couponService.js";
 
 const generateOrderId = () => {
@@ -123,7 +123,7 @@ export const placeOrderService = async (userId, orderData, session = null) => {
 
                 totalPrice: offer.finalPrice * item.quantity,
 
-                status: "Pending"
+                status: ORDER_STATUS.PENDING
             }
         })
     )
@@ -179,7 +179,7 @@ export const placeOrderService = async (userId, orderData, session = null) => {
         paymentStatus,
         razorpayOrderId,
         razorpayPaymentId,
-        orderStatus: "Pending",
+        orderStatus: ORDER_STATUS.PENDING,
         coupon: coupon
             ? {
                 couponId: coupon.couponId,
@@ -365,7 +365,7 @@ export const createPendingOrderService = async (userId, orderData, appliedCoupon
                 totalPrice:
                     offer.finalPrice * item.quantity,
 
-                status: "Pending"
+                status: ORDER_STATUS.PENDING
             }
         })
     )
@@ -397,7 +397,7 @@ export const createPendingOrderService = async (userId, orderData, appliedCoupon
 
         razorpayPaymentId: null,
 
-        orderStatus: "Pending",
+        orderStatus: ORDER_STATUS.PENDING,
 
         coupon: appliedCoupon
             ? {

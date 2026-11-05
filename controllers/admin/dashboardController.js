@@ -6,7 +6,7 @@ import {
     getBestSellingCategoriesService,
     getBestSellingBrandsService
 } from "../../services/salesReportService.js"
-import {PAYMENT_STATUS} from "../../constants/orderConstants.js"
+import {PAYMENT_STATUS, ORDER_STATUS} from "../../constants/orderConstants.js"
 
 export const getDashboard = async (req, res) => {
     try {
@@ -60,8 +60,8 @@ export const getDashboard = async (req, res) => {
             
             for(const order of orders){
                 const validItems = order.items.filter(item =>
-                    item.status !== "Cancelled" &&
-                    item.status !== "Returned"
+                    item.status !== ORDER_STATUS.CANCELLED &&
+                    item.status !== ORDER_STATUS.RETURNED
                 )
 
                 if(validItems.length === 0){
@@ -149,7 +149,7 @@ export const getDashboard = async (req, res) => {
             for(const order of orders){
 
                 const validItems = order.items.filter(item =>
-                    item.status !== "Cancelled" && item.status !== "Returned"
+                    item.status !== ORDER_STATUS.CANCELLED && item.status !== ORDER_STATUS.RETURNED
                 )
 
                 if(validItems.length === 0){
@@ -217,7 +217,7 @@ export const getDashboard = async (req, res) => {
                     $lte: endDate
                 },
                 paymentStatus: {
-                    $in:["Paid", "Pending"]
+                    $in: [PAYMENT_STATUS.PAID, PAYMENT_STATUS.PENDING]
                 }
             })
 
@@ -235,8 +235,8 @@ export const getDashboard = async (req, res) => {
 
                 for(const order of orders){
                     const validItems =  order.items.filter(item =>
-                        item.status !== "Cancelled" &&
-                        item.status !== "Returned"
+                        item.status !== ORDER_STATUS.CANCELLED &&
+                        item.status !== ORDER_STATUS.RETURNED
                     )
                     if (validItems.length === 0) {
                         continue;

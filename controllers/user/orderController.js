@@ -12,6 +12,7 @@ import {applyCouponService, getAvailableCouponsService} from "../../services/cou
 import {FREE_SHIPPING_LIMIT} from "../../config/appConfig.js"
 import Order from "../../models/orderModel.js"
 import {generateInvoice} from "../../utils/invoiceGenerator.js"
+import { ORDER_STATUS } from "../../constants/orderConstants.js"
 
 export const getBuyNow = async (req, res) => {
     try {
@@ -260,9 +261,7 @@ export const getOrderDetails = async (req, res) => {
         const order = result.order.toObject()
 
 
-        const activeItems = order.items.filter(
-            item => !["Cancelled", "Returned"].includes(item.status)
-        )
+        const activeItems = order.items.filter(item =>item.status !== ORDER_STATUS.CANCELLED && item.status !== ORDER_STATUS.RETURNED)
 
         const roundMoney = value =>
             Math.round((value + Number.EPSILON) * 100) / 100;
@@ -315,7 +314,6 @@ export const getOrderDetails = async (req, res) => {
 
 export const cancelOrderItem = async (req, res) => {
     try {
-
         const userId = req.session.user
 
         const {orderId, itemId, page, cancelReason} = req.body
@@ -340,13 +338,11 @@ export const cancelOrderItem = async (req, res) => {
         })
 
         return res.redirect("/orders")
-
     }
 }
 
 export const returnOrderItem = async (req, res) => {
     try {
-
         const userId = req.session.user
 
         const {
@@ -370,13 +366,12 @@ export const returnOrderItem = async (req, res) => {
         return res.redirect(`/orders/${orderId}?page=${page}`)
 
     } catch (error) {
-        logger.error("Failed to return order item",{
+        logger.error("Failed to return order item", {
             message: error.message,
             stack: error.stack
         })
 
-        res.redirect("/orders")
-
+        return res.redirect("/orders")
     }
 }
 
@@ -395,7 +390,7 @@ export const downloadInvoice = async (req, res) => {
             return res.redirect("/orders")
         }
 
-        const deliveredItems = order.items.filter(item => item.status === "Delivered")
+        const deliveredItems = order.items.filter(item => item.status === ORDER_STATUS.DELIVERED)
 
         if (deliveredItems.length === 0) {
             return res.redirect(`/orders/${orderId}`)

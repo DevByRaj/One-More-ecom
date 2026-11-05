@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import {
     PAYMENT_STATUS,
-    PAYMENT_METHOD
+    PAYMENT_METHOD,
+    ORDER_STATUS
 } from "../constants/orderConstants.js"
 
 const orderItemschema = new mongoose.Schema({
@@ -29,17 +30,10 @@ const orderItemschema = new mongoose.Schema({
     },
     totalPrice: Number,
 
-    status:{
+    status: {
         type: String,
-        enum: ["Pending", 
-            "Processing",
-            "Shipped", 
-            "Out For Delivery", 
-            "Delivered", 
-            "Cancelled", 
-            "Return Requested", 
-            "Returned"],
-        default: "Pending"
+        enum: Object.values(ORDER_STATUS),
+        default: ORDER_STATUS.PENDING
     },
 
     cancelledAt:{
@@ -116,17 +110,10 @@ const orderSchema = new mongoose.Schema({
         default: null
     },
 
-    orderStatus:{
+    orderStatus: {
         type: String,
-        enum:["Pending", 
-            "Processing",
-            "Shipped", 
-            "Out For Delivery",
-            "Delivered", 
-            "Cancelled", 
-            "Return Requested", 
-            "Returned"],
-        default: "Pending"
+        enum: Object.values(ORDER_STATUS),
+        default: ORDER_STATUS.PENDING
     },
 
     subTotal: Number,

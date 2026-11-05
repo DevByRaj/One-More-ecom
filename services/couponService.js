@@ -1,6 +1,7 @@
 import logger from "../utils/logger.js";
 import Coupon from "../models/couponModel.js";
 import Order from "../models/orderModel.js"
+import {ORDER_STATUS, PAYMENT_STATUS} from "../constants/orderConstants.js"
 
 export const getCouponListService = async(page, limit, search) =>{
 
@@ -265,15 +266,15 @@ export const applyCouponService = async(userId,couponCode, subtotal) =>{
     const alreadyUsed = await Order.findOne({
         userId,
         "coupon.couponId": coupon._id,
-        orderStatus: {$ne: "Cancelled"},
+        orderStatus: {$ne: ORDER_STATUS.CANCELLED},
         $or: [
             {
                 paymentMethod: {$ne: "RAZORPAY"},
-                paymentStatus: {$ne: "Failed"}
+                paymentStatus: {$ne: PAYMENT_STATUS.FAILED}
             },
             {
                 paymentMethod: "RAZORPAY",
-                paymentStatus: "Paid"
+                paymentStatus: PAYMENT_STATUS.PAID
             }
         ]
     })
@@ -355,15 +356,15 @@ export const getAvailableCouponsService = async(userId) =>{
         const usedOrders = await Order.find({
             userId,
             "coupon.couponId": {$ne: null},
-            orderStatus: {$ne: "Cancelled"},
+            orderStatus: {$ne: ORDER_STATUS.CANCELLED},
             $or: [
                 {
                     paymentMethod: {$ne: "RAZORPAY"},
-                    paymentStatus: {$ne: "Failed"}
+                    paymentStatus: {$ne: PAYMENT_STATUS.FAILED}
                 },
                 {
                     paymentMethod: "RAZORPAY",
-                    paymentStatus: "Paid"
+                    paymentStatus: PAYMENT_STATUS.PAID
                 }
             ]
         }).select("coupon.couponId")

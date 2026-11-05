@@ -1,4 +1,5 @@
 import Order from "../models/orderModel.js";
+import { ORDER_STATUS, PAYMENT_STATUS } from "../constants/orderConstants.js";
 
 export const getSalesReportService = async (startDate, endDate, page = 1, limit = 10, paginate = true) => {
 
@@ -13,7 +14,7 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
             $gte: start,
             $lte: end
         },
-        paymentStatus: "Paid"
+        paymentStatus: PAYMENT_STATUS.PAID
     }).populate("userId", "name username");
 
     let totalSales = 0
@@ -25,10 +26,7 @@ export const getSalesReportService = async (startDate, endDate, page = 1, limit 
 
     for (const order of orders) {
 
-        const validItems = order.items.filter(item =>
-            item.status !== "Cancelled" &&
-            item.status !== "Returned"
-        )
+        const validItems = order.items.filter(item => item.status !== ORDER_STATUS.CANCELLED && item.status !== ORDER_STATUS.RETURNED)
 
         if (validItems.length === 0) {
             continue;
@@ -133,7 +131,7 @@ export const getBestSellingProductsService = async (page = 1, limit = 10) => {
 
         {
             $match: {
-                "items.status": "Delivered"
+                "items.status": ORDER_STATUS.DELIVERED
             }
         },
 
@@ -179,7 +177,7 @@ export const getBestSellingProductsService = async (page = 1, limit = 10) => {
 
         {
             $match: {
-                "items.status": "Delivered"
+                "items.status": ORDER_STATUS.DELIVERED
             }
         },
 
@@ -218,7 +216,7 @@ export const getBestSellingCategoriesService = async (page = 1, limit = 10) => {
 
         {
             $match: {
-                "items.status": "Delivered"
+                "items.status": ORDER_STATUS.DELIVERED
             }
         },
 
@@ -290,7 +288,7 @@ export const getBestSellingCategoriesService = async (page = 1, limit = 10) => {
 
         {
             $match: {
-                "items.status": "Delivered"
+                "items.status": ORDER_STATUS.DELIVERED
             }
         },
 
@@ -342,7 +340,7 @@ export const getBestSellingBrandsService = async (page = 1, limit = 10) => {
 
         {
             $match: {
-                "items.status": "Delivered"
+                "items.status": ORDER_STATUS.DELIVERED
             }
         },
 
@@ -414,7 +412,7 @@ export const getBestSellingBrandsService = async (page = 1, limit = 10) => {
 
         {
             $match: {
-                "items.status": "Delivered"
+                "items.status": ORDER_STATUS.DELIVERED
             }
         },
 

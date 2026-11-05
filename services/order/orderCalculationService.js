@@ -1,10 +1,11 @@
 import Coupon from "../../models/couponModel.js"
 import { FREE_SHIPPING_LIMIT, SHIPPING_CHARGE } from "../../config/appConfig.js"
+import { ORDER_STATUS } from "../../constants/orderConstants.js"
 
 export const recalculateOrderTotals = async (order) => {
 
     const activeItems = order.items.filter(
-        item => !["Cancelled", "Returned"].includes(item.status)
+        item => ![ORDER_STATUS.CANCELLED,ORDER_STATUS.RETURNED].includes(item.status)
     )
 
     const subtotal = activeItems.reduce(
@@ -54,44 +55,44 @@ export const recalculateOrderTotals = async (order) => {
 
 export const calculateOverallOrderStatus = (items) => {
 
-    const activeItems = items.filter(item => !["Cancelled", "Returned"].includes(item.status))
+    const activeItems = items.filter(item => ![ORDER_STATUS.CANCELLED, ORDER_STATUS.RETURNED].includes(item.status))
 
-    if (items.every(item => item.status === "Cancelled")) {
-        return "Cancelled"
+    if (items.every(item => item.status === ORDER_STATUS.CANCELLED)) {
+        return ORDER_STATUS.CANCELLED
     }
 
-    if (activeItems.some(item => item.status === "Return Requested")) {
-        return "Return Requested";
+    if (activeItems.some(item => item.status === ORDER_STATUS.RETURN_REQUESTED)) {
+        return ORDER_STATUS.RETURN_REQUESTED;
     }
 
-    if (items.every(item => item.status === "Returned")) {
-        return "Returned"
+    if (items.every(item => item.status === ORDER_STATUS.RETURNED)) {
+        return ORDER_STATUS.RETURNED
     }
 
     if (activeItems.length === 0) {
-        return "Delivered"
+        return ORDER_STATUS.DELIVERED
     }
 
-    if (activeItems.every(item => item.status === "Delivered")) {
-        return "Delivered"
+    if (activeItems.every(item => item.status === ORDER_STATUS.DELIVERED)) {
+        return ORDER_STATUS.DELIVERED
     }
 
-    if (activeItems.some(item => item.status === "Out For Delivery")) {
-        return "Out For Delivery"
+    if (activeItems.some(item => item.status === ORDER_STATUS.OUT_FOR_DELIVERY)) {
+        return ORDER_STATUS.OUT_FOR_DELIVERY
     }
 
-    if (activeItems.some(item => item.status === "Shipped")) {
-        return "Shipped"
+    if (activeItems.some(item => item.status === ORDER_STATUS.SHIPPED)) {
+        return ORDER_STATUS.SHIPPED
     }
 
-    if (activeItems.some(item => item.status === "Processing")) {
-        return "Processing"
+    if (activeItems.some(item => item.status === ORDER_STATUS.PROCESSING)) {
+        return ORDER_STATUS.PROCESSING
     }
 
-    if (activeItems.some(item => item.status === "Pending")) {
-        return "Pending"
+    if (activeItems.some(item => item.status === ORDER_STATUS.PENDING)) {
+        return ORDER_STATUS.PENDING
     }
 
-    return "Pending"
+    return ORDER_STATUS.PENDING
 
 }

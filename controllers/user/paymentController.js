@@ -8,7 +8,7 @@ import {getCheckoutData, createPendingOrderService, completeRazorpayOrderService
 import {processReferralRewardService} from "../../services/referralOfferService.js";
 import {
     PAYMENT_STATUS,
-    PAYMENT_METHOD
+    PAYMENT_METHOD, ORDER_STATUS
 } from "../../constants/orderConstants.js"
 
 export const createRazorpayOrder = async (req, res) => {
@@ -206,7 +206,7 @@ export const retryPayment = async (req, res) => {
 
         for (const item of order.items) {
 
-            if (item.status === "Cancelled" || item.status === "Returned") {
+            if (item.status === ORDER_STATUS.CANCELLED || item.status === ORDER_STATUS.RETURNED) {
                 continue
             }
 
